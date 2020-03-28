@@ -21,7 +21,8 @@ if(OPENGL_FOUND)
 endif(OPENGL_FOUND)
 
 # Assimp
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/lib/assimp" ${CMAKE_CURRENT_BINARY_DIR}/assimp)
+#add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/lib/assimp" ${CMAKE_CURRENT_BINARY_DIR}/assimp)
+find_package(assimp REQUIRED)
 
 # GLAD
 include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/lib/glad")
