@@ -3,7 +3,7 @@
 
 #include <GLHeader.h>
 #include "Mesh.h"
-#include "ShaderProgram.h"
+#include "shaders/ShaderProgram.h"
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>

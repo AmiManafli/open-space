@@ -2,7 +2,7 @@
 #define CG1_PROJECT_MESH_H
 
 #include <GLHeader.h>
-#include "ShaderProgram.h"
+#include "shaders/ShaderProgram.h"
 
 struct Vertex {
     glm::vec3 position;

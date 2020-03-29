@@ -1,4 +1,4 @@
-#include "Model.h"
+#include "meshes/Model.h"
 
 
 Model::Model(const std::string filename) : filename(filename) {

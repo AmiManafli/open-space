@@ -2,7 +2,7 @@
 #define CG1_PROJECT_GLCONTEXT_H
 
 #include <GLHeader.h>
-#include "Shader.h"
+#include "shaders/Shader.h"
 
 class GLContext {
 public:

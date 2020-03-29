@@ -3,8 +3,8 @@
 
 #include <GLHeader.h>
 #include "GLContext.h"
-#include "Mesh.h"
-#include "Model.h"
+#include "meshes/Mesh.h"
+#include "meshes/Model.h"
 
 
 class RenderSystem {

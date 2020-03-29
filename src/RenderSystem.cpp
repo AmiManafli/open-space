@@ -9,7 +9,7 @@ void RenderSystem::init() {
 
     createShaders();
 
-    models.push_back(new Model("../assets/models/ico-sphere.obj"));
+    models.push_back(new Model("../assets/models/ico-sphere.dae"));
 }
 
 void RenderSystem::createShaders() {
