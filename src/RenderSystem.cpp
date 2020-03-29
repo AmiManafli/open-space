@@ -1,6 +1,7 @@
 #include "RenderSystem.h"
 
 RenderSystem::RenderSystem(GLContext *context) : context(context) {
+    setClearColor(0.8f, 0.8f, 0.8f, 0.8f);
 }
 
 void RenderSystem::init() {
@@ -23,6 +24,6 @@ void RenderSystem::render() {
     lastTime = currentTime;
 }
 
-void RenderSystem::setClearColor(glm::vec4 color) {
-    clearColor = color;
+void RenderSystem::setClearColor(float r, float g, float b, float a) {
+    clearColor = glm::vec4(r, b, g, a);
 }

@@ -9,7 +9,7 @@ class RenderSystem {
 public:
     RenderSystem(GLContext *context);
 
-    void setClearColor(glm::vec4 color);
+    void setClearColor(float r, float g, float b, float a);
 
     void init();
     void render();
