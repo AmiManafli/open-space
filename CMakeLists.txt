@@ -23,6 +23,8 @@ endif(OPENGL_FOUND)
 # Assimp
 #add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/lib/assimp" ${CMAKE_CURRENT_BINARY_DIR}/assimp)
 find_package(assimp REQUIRED)
+link_directories(${ASSIMP_LIBRARY_DIRS})
+include_directories(${ASSIMP_INCLUDE_DIRS})
 
 # GLAD
 include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/lib/glad")
@@ -34,5 +36,5 @@ include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/lib/glm")
 aux_source_directory("${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui" PROJECT_SRCS)
 include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui")
 
-add_executable(${CMAKE_PROJECT_NAME} src/main.cpp lib/glad/glad.c src/GLContext.cpp include/GLContext.h include/GLHeader.h src/RenderSystem.cpp include/RenderSystem.h src/InputManager.cpp include/InputManager.h src/Camera.cpp include/Camera.h src/Shader.cpp include/Shader.h src/Texture.cpp include/Texture.h)
-target_link_libraries(${CMAKE_PROJECT_NAME} glfw ${PROJECT_LIBRARIES} ${GLFW_LIBRARIES})
+add_executable(${CMAKE_PROJECT_NAME} src/main.cpp lib/glad/glad.c src/GLContext.cpp include/GLContext.h include/GLHeader.h src/RenderSystem.cpp include/RenderSystem.h src/InputManager.cpp include/InputManager.h src/Camera.cpp include/Camera.h src/Shader.cpp include/Shader.h src/Texture.cpp include/Texture.h src/Mesh.cpp include/Mesh.h include/Model.cpp include/Model.h include/ShaderProgram.cpp include/ShaderProgram.h)
+target_link_libraries(${CMAKE_PROJECT_NAME} glfw ${PROJECT_LIBRARIES} ${GLFW_LIBRARIES} ${ASSIMP_LIBRARIES})

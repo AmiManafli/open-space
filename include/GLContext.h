@@ -14,18 +14,13 @@ public:
     bool shouldClose();
     void pollEvents();
 
-    void use();
-    void linkProgram();
     void swapBuffers();
-
-    void attach(Shader *shader);
 
 private:
     const std::string title;
     uint16_t width;
     uint16_t height;
 
-    unsigned int program;
     GLFWwindow *window;
 
     static void framebufferSizeCallback(GLFWwindow *window, int width, int height);

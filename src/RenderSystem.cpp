@@ -9,28 +9,14 @@ void RenderSystem::init() {
 
     createShaders();
 
-    glGenBuffers(1, &vbo);
-    glGenVertexArrays(1, &vao);
-
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    glBindVertexArray(vao);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
-    glEnableVertexAttribArray(0);
+    models.push_back(new Model("../assets/models/ico-sphere.obj"));
 }
 
 void RenderSystem::createShaders() {
-    auto vertexShader = new Shader("../assets/shaders/test.vert", GL_VERTEX_SHADER);
-    auto fragmentShader = new Shader("../assets/shaders/test.frag", GL_FRAGMENT_SHADER);
-
-    context->attach(vertexShader);
-    context->attach(fragmentShader);
-    context->linkProgram();
-
-    // Cleanup shader objects
-    delete vertexShader;
-    delete fragmentShader;
+    shaderProgram = new ShaderProgram();
+    shaderProgram->attachShader("../assets/shaders/test.vert", ShaderType::VertexShader);
+    shaderProgram->attachShader("../assets/shaders/test.frag", ShaderType::FragmentShader);
+    shaderProgram->link();
 }
 
 void RenderSystem::render() {
@@ -39,10 +25,9 @@ void RenderSystem::render() {
     glClearColor(clearColor.x, clearColor.y, clearColor.z, clearColor.w);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    context->use();
-
-    glBindVertexArray(vao);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    for (auto &model : models) {
+        model->draw(*shaderProgram);
+    }
 
     // Process events and swap buffers
     context->swapBuffers();
