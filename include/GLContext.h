@@ -12,10 +12,12 @@ public:
     uint16_t getWidth() { return width; }
     uint16_t getHeight() { return height; }
 
+    double getDeltaTime() { return deltaTime; }
+
     void init();
 
     bool shouldClose();
-    void pollEvents();
+    void update();
 
     void swapBuffers();
 
@@ -25,6 +27,9 @@ private:
     uint16_t height;
 
     GLFWwindow *window;
+
+    double lastTime;
+    double deltaTime;
 
     static void framebufferSizeCallback(GLFWwindow *window, int width, int height);
 };

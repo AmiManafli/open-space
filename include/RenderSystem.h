@@ -14,7 +14,7 @@ public:
     void setClearColor(float r, float g, float b, float a);
 
     void init();
-    void render();
+    void render(double deltaTime);
 
 private:
     GLContext *context;

@@ -7,5 +7,5 @@ InputManager::InputManager(GLContext *context) : context(context) {
 void InputManager::init() {
 }
 
-void InputManager::process() {
+void InputManager::process(double deltaTime) {
 }

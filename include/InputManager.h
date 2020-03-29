@@ -10,7 +10,7 @@ public:
     InputManager(GLContext *context);
 
     void init();
-    void process();
+    void process(double deltaTime);
 
 private:
     GLContext *context;

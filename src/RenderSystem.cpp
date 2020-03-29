@@ -19,7 +19,7 @@ void RenderSystem::createShaders() {
     shaderProgram->link();
 }
 
-void RenderSystem::render() {
+void RenderSystem::render(double deltaTime) {
     double currentTime = glfwGetTime();
 
     glClearColor(clearColor.x, clearColor.y, clearColor.z, clearColor.w);

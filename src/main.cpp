@@ -14,10 +14,13 @@ int main() {
     inputManager.init();
 
     while (!context->shouldClose()) {
-        context->pollEvents();
-        inputManager.process();
+        context->update();
 
-        renderer.render();
+        double deltaTime = context->getDeltaTime();
+
+        inputManager.process(deltaTime);
+
+        renderer.render(deltaTime);
     }
 
     delete context;

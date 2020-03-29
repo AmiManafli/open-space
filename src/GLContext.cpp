@@ -29,13 +29,20 @@ void GLContext::init() {
     if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
         throw std::runtime_error("failed to initialize GLAD");
     }
+
+    lastTime = glfwGetTime();
+    deltaTime = 0;
 }
 
 bool GLContext::shouldClose() {
     return glfwWindowShouldClose(window);
 }
 
-void GLContext::pollEvents() {
+void GLContext::update() {
+    double currentTime = glfwGetTime();
+    deltaTime = currentTime - lastTime;
+    lastTime = currentTime;
+
     glfwPollEvents();
 }
 
