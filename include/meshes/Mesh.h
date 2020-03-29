@@ -20,15 +20,13 @@ public:
     Mesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices, std::vector<Texture> textures);
     ~Mesh();
 
-    void draw(ShaderProgram& program);
+    void draw(ShaderProgram& program, glm::mat4 model);
 
 private:
     uint32_t vao, vbo, ebo;
     std::vector<Vertex> vertices;
     std::vector<uint32_t> indices;
     std::vector<Texture> textures;
-
-    glm::mat4 model, view, projection;
 
     void setup();
 };

@@ -23,6 +23,7 @@ private:
 
     std::vector<Model*> models;
 
+    glm::mat4 view;
     glm::vec4 clearColor;
     double lastTime;
 

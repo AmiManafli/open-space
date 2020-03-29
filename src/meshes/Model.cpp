@@ -1,14 +1,20 @@
 #include "meshes/Model.h"
 
 
-Model::Model(const std::string filename) : filename(filename) {
+Model::Model(const std::string filename, glm::vec3 position) : filename(filename), position(position) {
     loadModel();
+
+    updateModelMatrix();
 }
 
 void Model::draw(ShaderProgram& shaderProgram) {
     for (auto &mesh : meshes) {
-        mesh.draw(shaderProgram);
+        mesh.draw(shaderProgram, model);
     }
+}
+
+void Model::updateModelMatrix() {
+    model = glm::mat4(1.0f);
 }
 
 void Model::loadModel() {

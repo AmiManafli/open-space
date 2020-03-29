@@ -3,6 +3,7 @@
 
 #include <GLHeader.h>
 #include "shaders/Shader.h"
+#include "Camera.h"
 
 class GLContext {
 public:
@@ -11,6 +12,11 @@ public:
 
     uint16_t getWidth() { return width; }
     uint16_t getHeight() { return height; }
+
+    GLFWwindow* getWindow() { return window; }
+    Camera* getCamera() { return camera; }
+
+    glm::mat4 getProjection();
 
     double getDeltaTime() { return deltaTime; }
 
@@ -27,6 +33,8 @@ private:
     uint16_t height;
 
     GLFWwindow *window;
+
+    Camera *camera;
 
     double lastTime;
     double deltaTime;

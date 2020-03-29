@@ -9,7 +9,12 @@ void RenderSystem::init() {
 
     createShaders();
 
-    models.push_back(new Model("../assets/models/ico-sphere.dae"));
+//    view = glm::lookAt(glm::vec3(150.0f, 200.0f, 200.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+    shaderProgram->use();
+    shaderProgram->setUniform("projection", context->getProjection());
+
+    models.push_back(new Model("../assets/models/ico-sphere.dae", glm::vec3(0, 0, 0)));
 }
 
 void RenderSystem::createShaders() {
@@ -24,6 +29,8 @@ void RenderSystem::render(double deltaTime) {
 
     glClearColor(clearColor.x, clearColor.y, clearColor.z, clearColor.w);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    shaderProgram->setUniform("view", context->getCamera()->getView());
 
     for (auto &model : models) {
         model->draw(*shaderProgram);

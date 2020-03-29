@@ -14,6 +14,10 @@ public:
 
 private:
     GLContext *context;
+
+    double lastMouseX, lastMouseY;
+
+    static void mousePositionCallback(GLFWwindow* window, double x, double y);
 };
 
 
