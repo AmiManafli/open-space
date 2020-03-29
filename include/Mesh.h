@@ -28,6 +28,8 @@ private:
     std::vector<uint32_t> indices;
     std::vector<Texture> textures;
 
+    glm::mat4 model, view, projection;
+
     void setup();
 };
 

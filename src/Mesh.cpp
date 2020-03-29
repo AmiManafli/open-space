@@ -3,6 +3,9 @@
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices, std::vector<Texture> textures)
         : vertices(vertices), indices(indices), textures(textures) {
     setup();
+    model = glm::mat4(1.0f);
+    view = glm::lookAt(glm::vec3(0.0f, 200.0f, 200.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    projection = glm::perspective(glm::radians(45.0f), 800.f / 600.f, 0.1f, 1000.0f);
 }
 
 Mesh::~Mesh() {
@@ -35,6 +38,9 @@ void Mesh::setup() {
 
 void Mesh::draw(ShaderProgram& program) {
     program.use();
+    program.setUniform("model", model);
+    program.setUniform("view", view);
+    program.setUniform("projection", projection);
     glBindVertexArray(vao);
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);

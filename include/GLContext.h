@@ -9,6 +9,9 @@ public:
     GLContext(std::string title, uint16_t width, uint16_t height);
     ~GLContext();
 
+    uint16_t getWidth() { return width; }
+    uint16_t getHeight() { return height; }
+
     void init();
 
     bool shouldClose();
