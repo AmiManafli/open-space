@@ -20,6 +20,14 @@ private:
     glm::vec4 clearColor;
     double lastTime;
 
+    unsigned int vbo;
+    unsigned int vao;
+    float vertices[9] = {
+        -0.5f, -0.5f, 0.0f,
+        0.5f, -0.5f, 0.0f,
+        0.0f,  0.5f, 0.0f
+    };
+
     void createShaders();
 };
 

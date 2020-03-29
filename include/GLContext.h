@@ -14,6 +14,7 @@ public:
     bool shouldClose();
     void pollEvents();
 
+    void use();
     void linkProgram();
     void swapBuffers();
 

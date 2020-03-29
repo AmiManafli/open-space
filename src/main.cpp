@@ -7,6 +7,7 @@ int main() {
     context->init();
 
     RenderSystem renderer(context);
+    renderer.setClearColor(0.8, 0.8, 0.8, 1.0);
     renderer.init();
 
     InputManager inputManager(context);

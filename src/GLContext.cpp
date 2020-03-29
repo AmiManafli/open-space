@@ -41,6 +41,10 @@ void GLContext::pollEvents() {
     glfwPollEvents();
 }
 
+void GLContext::use() {
+    glUseProgram(program);
+}
+
 void GLContext::linkProgram() {
     glLinkProgram(program);
 
