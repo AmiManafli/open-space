@@ -7,7 +7,20 @@ RenderSystem::RenderSystem(GLContext *context) : context(context) {
 void RenderSystem::init() {
     glEnable(GL_DEPTH_TEST);
 
-    // TODO: Create shaders
+    createShaders();
+}
+
+void RenderSystem::createShaders() {
+    auto vertexShader = new Shader("../assets/shaders/test.vert", GL_VERTEX_SHADER);
+    auto fragmentShader = new Shader("../assets/shaders/test.frag", GL_FRAGMENT_SHADER);
+
+    context->attach(vertexShader);
+    context->attach(fragmentShader);
+    context->linkProgram();
+
+    // Cleanup shader objects
+    delete vertexShader;
+    delete fragmentShader;
 }
 
 void RenderSystem::render() {

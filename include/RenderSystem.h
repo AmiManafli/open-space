@@ -19,6 +19,8 @@ private:
 
     glm::vec4 clearColor;
     double lastTime;
+
+    void createShaders();
 };
 
 

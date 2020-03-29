@@ -29,6 +29,8 @@ void GLContext::init() {
     if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
         throw std::runtime_error("failed to initialize GLAD");
     }
+
+    program = glCreateProgram();
 }
 
 bool GLContext::shouldClose() {
@@ -39,8 +41,24 @@ void GLContext::pollEvents() {
     glfwPollEvents();
 }
 
+void GLContext::linkProgram() {
+    glLinkProgram(program);
+
+    int success;
+    char infoLog[512];
+    glGetProgramiv(program, GL_LINK_STATUS, &success);
+    if (!success) {
+        glGetProgramInfoLog(program, 512, nullptr, infoLog);
+        throw std::runtime_error(infoLog);
+    }
+}
+
 void GLContext::swapBuffers() {
     glfwSwapBuffers(window);
+}
+
+void GLContext::attach(Shader *shader) {
+    glAttachShader(program, shader->get());
 }
 
 void GLContext::framebufferSizeCallback(GLFWwindow *window, int width, int height) {
