@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
 project(cg1_project)
 
-#find_package(glfw3 3.3 REQUIRED)
-
 set(CMAKE_CXX_STANDARD 17)
 
 include_directories(${CMAKE_SOURCE_DIR}/include)
@@ -12,6 +10,8 @@ include_directories(${CMAKE_SOURCE_DIR}/src)
 set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/lib/glfw" ${CMAKE_CURRENT_BINARY_DIR}/glfw)
 include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/lib/glfw/include")
+
+set(PROJECT_LIBRARIES)
 
 # OpenGL
 find_package(OpenGL REQUIRED)
@@ -34,5 +34,5 @@ include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/lib/glm")
 aux_source_directory("${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui" PROJECT_SRCS)
 include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui")
 
-add_executable(${CMAKE_PROJECT_NAME} src/main.cpp src/RenderWindow.cpp include/RenderWindow.h include/GLHeader.h src/RenderSystem.cpp include/RenderSystem.h src/InputManager.cpp include/InputManager.h src/Camera.cpp include/Camera.h src/Shader.cpp include/Shader.h src/Texture.cpp include/Texture.h)
-target_link_libraries(${CMAKE_PROJECT_NAME} glfw ${PROJECT_LIBRARIES})
+add_executable(${CMAKE_PROJECT_NAME} src/main.cpp lib/glad/glad.c src/GLContext.cpp include/GLContext.h include/GLHeader.h src/RenderSystem.cpp include/RenderSystem.h src/InputManager.cpp include/InputManager.h src/Camera.cpp include/Camera.h src/Shader.cpp include/Shader.h src/Texture.cpp include/Texture.h)
+target_link_libraries(${CMAKE_PROJECT_NAME} glfw ${PROJECT_LIBRARIES} ${GLFW_LIBRARIES})

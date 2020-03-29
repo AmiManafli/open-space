@@ -2,17 +2,18 @@
 #define CG1_PROJECT_INPUTMANAGER_H
 
 #include <GLHeader.h>
-#include "RenderWindow.h"
+#include "GLContext.h"
 
 
 class InputManager {
 public:
-    InputManager(RenderWindow &window);
+    InputManager(GLContext *context);
 
+    void init();
     void process();
 
 private:
-    RenderWindow window;
+    GLContext *context;
 };
 
 

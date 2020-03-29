@@ -2,17 +2,23 @@
 #define CG1_PROJECT_RENDERSYSTEM_H
 
 #include <GLHeader.h>
-#include "RenderWindow.h"
+#include "GLContext.h"
 
 
 class RenderSystem {
 public:
-    RenderSystem(RenderWindow &window);
+    RenderSystem(GLContext *context);
 
+    void setClearColor(glm::vec4 color);
+
+    void init();
     void render();
 
 private:
-    RenderWindow window;
+    GLContext *context;
+
+    glm::vec4 clearColor;
+    double lastTime;
 };
 
 
