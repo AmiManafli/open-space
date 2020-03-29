@@ -10,6 +10,7 @@ public:
 
     glm::mat4& getView() { return view; }
 
+    void pitch(float angle);
     void yaw(float angle);
 
 private:
