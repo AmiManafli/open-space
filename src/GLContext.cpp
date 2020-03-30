@@ -2,7 +2,7 @@
 
 GLContext::GLContext(std::string title, uint16_t width, uint16_t height)
         : title(title), width(width), height(height) {
-    camera = new Camera(glm::vec3(400, 400, 0), glm::vec3(0, 0, 0));
+    camera = new Camera(Camera::Mode::Free, glm::vec3(0, 0, 100));
 }
 
 GLContext::~GLContext() {

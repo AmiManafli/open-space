@@ -1,35 +1,57 @@
 #include "Camera.h"
 
-Camera::Camera(glm::vec3 position, glm::vec3 target) : position(position), target(target) {
+Camera::Camera(Mode mode, glm::vec3 position)
+        : mode(mode), position(position), yawAngle(-90), pitchAngle(0), rollAngle(0) {
     up = glm::vec3(0, 1, 0);
+    direction = glm::vec3(0, 0, -1);
     updateView();
 }
 
-void Camera::pitch(float angle) {
-    auto theta = glm::atan(position.y / position.z);
-    auto length = glm::sqrt(position.y * position.y + position.z * position.z);
-    auto newAngle = theta + glm::radians(angle);
-
-    // Update position
-    position.y = length * glm::sin(newAngle);
-    position.z = length * glm::cos(newAngle);
+void Camera::forward(float amount) {
+    position = position + amount * direction;
 
     updateView();
 }
 
-void Camera::yaw(float angle) {
-    auto theta = glm::atan(position.z / position.x);
-    auto length = glm::sqrt(position.x * position.x + position.z * position.z);
-    auto newAngle = theta + glm::radians(angle);
+void Camera::backward(float amount) {
+    position = position - amount * direction;
 
-    // Update position
-    auto oldPosition = glm::vec3(position.x, position.y, position.z);
-    position.x = length * glm::cos(newAngle);
-    position.z = length * glm::sin(newAngle);
+    updateView();
+}
+
+void Camera::strafeLeft(float amount) {
+    right = glm::normalize(glm::cross(direction, up));
+    position = position - amount * right;
+
+    printf("Position: (%.1f, %.1f, %.1f)\n", position.x, position.y, position.z);
+
+    updateView();
+}
+
+void Camera::strafeRight(float amount) {
+    right = glm::normalize(glm::cross(direction, up));
+    position = position + amount * right;
+
+    updateView();
+}
+
+void Camera::rotate(float yaw, float pitch, float roll) {
+    yawAngle += yaw;
+    pitchAngle = glm::clamp(pitchAngle + pitch, -89.0f, 89.0f);
+    rollAngle += roll;
+
+    direction.x = glm::cos(glm::radians(yawAngle)) * glm::cos(glm::radians(pitchAngle));
+    direction.y = glm::sin(glm::radians(pitchAngle));
+    direction.z = glm::sin(glm::radians(yawAngle)) * glm::cos(glm::radians(pitchAngle));
+    direction = glm::normalize(direction);
 
     updateView();
 }
 
 void Camera::updateView() {
-    view = glm::lookAt(position, target, up);
+    if (mode == Free) {
+        view = glm::lookAt(position, position + direction, up);
+    } else {
+        throw std::runtime_error("camera mode not implemented");
+    }
 }

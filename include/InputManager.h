@@ -3,6 +3,7 @@
 
 #include <GLHeader.h>
 #include "GLContext.h"
+#include <unordered_map>
 
 
 class InputManager {
@@ -12,8 +13,14 @@ public:
     void init();
     void process(double deltaTime);
 
+    bool isKeyDown(int key);
+    bool isKeyUp(int key);
+    bool isKeyPressed(int key);
+
 private:
     GLContext *context;
+
+    std::unordered_map<int, int> keysDown;
 
     double lastMouseX, lastMouseY;
 

@@ -6,16 +6,32 @@
 
 class Camera {
 public:
-    Camera(glm::vec3 position, glm::vec3 target);
+    enum Mode {
+        Free,
+        Target,
+        Follow
+    };
+
+public:
+    Camera(Mode mode, glm::vec3 position);
 
     glm::mat4& getView() { return view; }
 
-    void pitch(float angle);
-    void yaw(float angle);
+    void forward(float amount);
+    void backward(float amount);
+    void strafeLeft(float amount);
+    void strafeRight(float amount);
+
+    void rotate(float yaw, float pitch, float roll);
 
 private:
+    Mode mode;
+    float yawAngle;
+    float pitchAngle;
+    float rollAngle;
     glm::vec3 position;
     glm::vec3 target;
+    glm::vec3 direction;
     glm::vec3 up;
     glm::vec3 right;
 
