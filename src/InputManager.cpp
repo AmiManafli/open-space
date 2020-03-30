@@ -22,6 +22,12 @@ void InputManager::process(double deltaTime) {
         glfwSetWindowShouldClose(window, true);
     }
 
+    if (isKeyPressed(GLFW_KEY_1)) {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    } else if (isKeyPressed(GLFW_KEY_2)) {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    }
+
     if (isKeyDown(GLFW_KEY_W)) {
         camera->forward(deltaTime * moveSpeed);
     } else if (isKeyDown(GLFW_KEY_S)) {

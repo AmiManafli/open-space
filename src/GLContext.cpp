@@ -11,7 +11,7 @@ GLContext::~GLContext() {
 }
 
 glm::mat4 GLContext::getProjection() {
-    return glm::perspective(glm::radians(45.0f), (float) width / (float) height, 0.1f, 1000.0f);
+    return glm::perspective(glm::radians(45.0f), (float) width / (float) height, 0.1f, 100000.0f);
 }
 
 void GLContext::init() {

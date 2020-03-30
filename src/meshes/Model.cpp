@@ -1,5 +1,10 @@
 #include "meshes/Model.h"
 
+Model::Model(Mesh& mesh, glm::vec3 position) : position(position) {
+    meshes.push_back(mesh);
+
+    updateModelMatrix();
+}
 
 Model::Model(const std::string filename, glm::vec3 position) : filename(filename), position(position) {
     loadModel();

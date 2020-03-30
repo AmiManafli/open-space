@@ -12,6 +12,7 @@
 
 class Model {
 public:
+    Model(Mesh& mesh, glm::vec3 position);
     Model(const std::string filename, glm::vec3 position);
 
     void draw(ShaderProgram& shaderProgram);

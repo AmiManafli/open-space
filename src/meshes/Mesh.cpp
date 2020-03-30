@@ -9,6 +9,8 @@ Mesh::~Mesh() {
 }
 
 void Mesh::setup() {
+    mode = GL_TRIANGLES;
+
     glGenVertexArrays(1, &vao);
     glGenBuffers(1, &vbo);
     glGenBuffers(1, &ebo);
@@ -34,6 +36,6 @@ void Mesh::setup() {
 void Mesh::draw(ShaderProgram& program, glm::mat4 model) {
     program.setUniform("model", model);
     glBindVertexArray(vao);
-    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+    glDrawElements(mode, indices.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 }

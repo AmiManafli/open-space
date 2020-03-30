@@ -3,7 +3,7 @@
 #include <InputManager.h>
 
 int main() {
-    auto context = new GLContext("CG1: Project", 800, 600);
+    auto context = new GLContext("CG1: Project", 1200, 800);
     context->init();
 
     RenderSystem renderer(context);

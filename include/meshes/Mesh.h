@@ -20,6 +20,8 @@ public:
     Mesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices, std::vector<Texture> textures);
     ~Mesh();
 
+    void setDrawMode(GLenum mode) { this->mode = mode; }
+
     void draw(ShaderProgram& program, glm::mat4 model);
 
 private:
@@ -27,6 +29,7 @@ private:
     std::vector<Vertex> vertices;
     std::vector<uint32_t> indices;
     std::vector<Texture> textures;
+    GLenum mode;
 
     void setup();
 };
