@@ -7,6 +7,7 @@ void InputManager::init() {
     auto window = context->getWindow();
     glfwSetWindowUserPointer(window, this);
     glfwSetCursorPosCallback(window, mousePositionCallback);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     lastMouseX = -1;
     lastMouseY = -1;
@@ -29,15 +30,15 @@ void InputManager::process(double deltaTime) {
     }
 
     if (isKeyDown(GLFW_KEY_W)) {
-        camera->forward(deltaTime * moveSpeed);
+        camera->processKeyboard(Camera::Direction::Forward, deltaTime);
     } else if (isKeyDown(GLFW_KEY_S)) {
-        camera->backward(deltaTime * moveSpeed);
+        camera->processKeyboard(Camera::Direction::Backward, deltaTime);
     }
 
     if (isKeyDown(GLFW_KEY_A)) {
-        camera->strafeLeft(deltaTime * strafeSpeed);
+        camera->processKeyboard(Camera::Direction::Left, deltaTime);
     } else if (isKeyDown(GLFW_KEY_D)) {
-        camera->strafeRight(deltaTime * strafeSpeed);
+        camera->processKeyboard(Camera::Direction::Right, deltaTime);
     }
 }
 
@@ -65,15 +66,16 @@ void InputManager::mousePositionCallback(GLFWwindow *window, double x, double y)
     auto camera = context->getCamera();
     auto deltaTime = context->getDeltaTime();
 
-    double mouseSpeed = 0.5;
+    if (!inputManager->processedMouse) {
+        inputManager->lastMouseX = x;
+        inputManager->lastMouseY = y;
+        inputManager->processedMouse = true;
+    }
 
-    double diffX = inputManager->lastMouseX == -1 ? 1.0 : x - inputManager->lastMouseX;
-    double diffY = inputManager->lastMouseY == -1 ? 1.0 : inputManager->lastMouseY - y;
+    auto offsetX = x - inputManager->lastMouseX;
+    auto offsetY = inputManager->lastMouseY - y;
 
-    auto yawAngle = static_cast<float>(deltaTime * diffX * mouseSpeed);
-    auto pitchAngle = static_cast<float>(deltaTime * diffY * mouseSpeed);
-
-    camera->rotate(yawAngle, pitchAngle, 0);
+    camera->processMouseMovement(offsetX, offsetY);
 
     inputManager->lastMouseX = x;
     inputManager->lastMouseY = y;

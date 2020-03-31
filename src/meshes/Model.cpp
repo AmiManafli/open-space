@@ -1,15 +1,22 @@
 #include "meshes/Model.h"
 
-Model::Model(Mesh& mesh, glm::vec3 position) : position(position) {
-    meshes.push_back(mesh);
+Model::Model(std::vector<Mesh>& meshes, glm::vec3 position) : position(position) {
+    for (auto mesh : meshes) {
+        this->meshes.push_back(mesh);
+    }
 
     updateModelMatrix();
 }
 
-Model::Model(const std::string filename, glm::vec3 position) : filename(filename), position(position) {
+Model::Model(const std::string filename, glm::vec3 position) : Model(filename, position, glm::mat4(1.0f)) {
+}
+
+Model::Model(const std::string filename, glm::vec3 position, glm::mat4 model)
+        : filename(filename), position(position), model(model) {
     loadModel();
 
-    updateModelMatrix();
+    auto modelTranslated = glm::translate(glm::mat4(1.0f), position);
+    this->model = model * modelTranslated;
 }
 
 void Model::draw(ShaderProgram& shaderProgram) {
@@ -19,7 +26,7 @@ void Model::draw(ShaderProgram& shaderProgram) {
 }
 
 void Model::updateModelMatrix() {
-    model = glm::mat4(1.0f);
+//    model = glm::mat4(1.0f);
 }
 
 void Model::loadModel() {

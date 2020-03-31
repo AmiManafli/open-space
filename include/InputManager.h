@@ -22,6 +22,7 @@ private:
 
     std::unordered_map<int, int> keysDown;
 
+    bool processedMouse = false;
     double lastMouseX, lastMouseY;
 
     static void mousePositionCallback(GLFWwindow* window, double x, double y);

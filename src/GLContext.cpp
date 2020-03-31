@@ -2,7 +2,7 @@
 
 GLContext::GLContext(std::string title, uint16_t width, uint16_t height)
         : title(title), width(width), height(height) {
-    camera = new Camera(Camera::Mode::Free, glm::vec3(0, 0, 100));
+    camera = new Camera(Camera::Mode::Free, glm::vec3(0, 0, 0));
 }
 
 GLContext::~GLContext() {
@@ -11,7 +11,7 @@ GLContext::~GLContext() {
 }
 
 glm::mat4 GLContext::getProjection() {
-    return glm::perspective(glm::radians(45.0f), (float) width / (float) height, 0.1f, 100000.0f);
+    return glm::perspective(glm::radians(45.0f), (float) width / (float) height, 0.1f, 100.0f);
 }
 
 void GLContext::init() {

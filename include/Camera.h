@@ -11,33 +11,35 @@ public:
         Target,
         Follow
     };
+    enum Direction {
+        Forward,
+        Backward,
+        Left,
+        Right,
+    };
 
 public:
     Camera(Mode mode, glm::vec3 position);
 
-    glm::mat4& getView() { return view; }
+    glm::mat4 getView();
 
-    void forward(float amount);
-    void backward(float amount);
-    void strafeLeft(float amount);
-    void strafeRight(float amount);
-
-    void rotate(float yaw, float pitch, float roll);
+    void processKeyboard(Direction direction, float deltaTime);
+    void processMouseMovement(float offsetX, float offsetY);
 
 private:
     Mode mode;
-    float yawAngle;
-    float pitchAngle;
-    float rollAngle;
     glm::vec3 position;
-    glm::vec3 target;
-    glm::vec3 direction;
+    glm::vec3 front;
     glm::vec3 up;
+    glm::vec3 worldUp;
     glm::vec3 right;
+    float movementSpeed;
+    float mouseSensitivity;
+    float yaw;
+    float pitch;
+    float roll;
 
-    glm::mat4 view;
-
-    void updateView();
+    void update();
 };
 
 
