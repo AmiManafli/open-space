@@ -48,6 +48,8 @@ private:
     float pitch;
     float roll;
 
+    glm::mat4 view;
+
     void update();
 };
 

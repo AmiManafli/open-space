@@ -14,7 +14,7 @@ void RenderSystem::init() {
 
     glm::mat4 initialModel = glm::scale(glm::mat4(1.0f), glm::vec3(0.01, 0.01, 0.01));
     models.push_back(new Model("../assets/models/ico-sphere.dae", glm::vec3(0, 0, 0), initialModel));
-    models.push_back(new Model("../assets/models/cylinder.dae", glm::vec3(3, 0, 0), initialModel));
+    models.push_back(new Model("../assets/models/cylinder.dae", glm::vec3(4, 0, 0), initialModel));
 }
 
 void RenderSystem::createShaders() {
@@ -30,18 +30,19 @@ void RenderSystem::render(double deltaTime) {
     glClearColor(clearColor.x, clearColor.y, clearColor.z, clearColor.w);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-//    auto view = glm::lookAt(glm::vec3(0, 15, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, -1));
     shaderProgram->setUniform("view", context->getView());
 
     for (auto &model : models) {
         model->draw(*shaderProgram);
     }
 
-    // Render cameras
+    // Render cameras (except the active one)
     auto cameras = context->getCameras();
+//    cameras[2]->processMouseMovement(0.1f, 0.0f);
     auto activeCameraIndex = context->getActiveCamera();
+    auto perspectiveCameraIndex = 2;
     for (size_t i = 0; i < cameras.size(); i++) {
-        if (i != activeCameraIndex) {
+        if (i != activeCameraIndex && i != perspectiveCameraIndex) {
             cameras[i]->draw(*shaderProgram);
         }
     }

@@ -1,9 +1,9 @@
 #include "InputManager.h"
 
 InputManager::InputManager(GLContext *context) : context(context) {
-    auto topCamera = new Camera(Camera::Mode::Free, glm::vec3(0, 15, 0), glm::vec3(0, 0, -1), glm::vec3(0, -1, 0));
-    auto sideCamera = new Camera(Camera::Mode::Free, glm::vec3(0, 0, 15), glm::vec3(0, 1, 0), glm::vec3(0, 0, -1));
-    auto perspectiveCamera = new Camera(Camera::Mode::Target, glm::vec3(0, 15, 15), glm::vec3(0, 1, 0), glm::normalize(glm::vec3(0, -15, -15)));
+    auto topCamera = new Camera(Camera::Mode::Free, glm::vec3(0, 5, 0), glm::vec3(0, 0, -1), glm::vec3(0, -1, 0));
+    auto sideCamera = new Camera(Camera::Mode::Free, glm::vec3(0, 0, 5), glm::vec3(0, 1, 0), glm::vec3(0, 0, -1));
+    auto perspectiveCamera = new Camera(Camera::Mode::Target, glm::vec3(5, 5, 10), glm::vec3(0, 1, 0), glm::normalize(glm::vec3(-5, -5, -10)));
     perspectiveCamera->setTarget(glm::vec3(0, 0, 0));
 
     auto cameraMeshes = Model::loadModel("../assets/models/camera.dae");
@@ -28,7 +28,7 @@ void InputManager::init() {
 
 void InputManager::process(double deltaTime) {
     auto window = context->getWindow();
-    auto camera = context->getCameras()[0];
+    auto cameras = context->getCameras();
     float moveSpeed = 100.0f;
     float strafeSpeed = 5.0f;
 
@@ -53,16 +53,17 @@ void InputManager::process(double deltaTime) {
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     }
 
+    auto moveCamera = cameras[0];
     if (isKeyDown(GLFW_KEY_W)) {
-        camera->processKeyboard(Camera::Direction::Forward, deltaTime);
+        moveCamera->processKeyboard(Camera::Direction::Forward, deltaTime);
     } else if (isKeyDown(GLFW_KEY_S)) {
-        camera->processKeyboard(Camera::Direction::Backward, deltaTime);
+        moveCamera->processKeyboard(Camera::Direction::Backward, deltaTime);
     }
 
     if (isKeyDown(GLFW_KEY_A)) {
-        camera->processKeyboard(Camera::Direction::Left, deltaTime);
+        moveCamera->processKeyboard(Camera::Direction::Left, deltaTime);
     } else if (isKeyDown(GLFW_KEY_D)) {
-        camera->processKeyboard(Camera::Direction::Right, deltaTime);
+        moveCamera->processKeyboard(Camera::Direction::Right, deltaTime);
     }
 }
 

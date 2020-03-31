@@ -15,8 +15,8 @@ Model::Model(const std::string filename, glm::vec3 position, glm::mat4 model)
         : filename(filename), position(position), model(model) {
     meshes = loadModel(filename);
 
-    auto modelTranslated = glm::translate(glm::mat4(1.0f), position);
-    this->model = model * modelTranslated;
+    auto scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.01, 0.01, 0.01));
+    this->model = glm::translate(scale, position);
 }
 
 void Model::draw(ShaderProgram& shaderProgram) {
