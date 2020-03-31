@@ -5,6 +5,7 @@
 #include "GLContext.h"
 #include "meshes/Mesh.h"
 #include "meshes/Model.h"
+#include "Grid.h"
 
 
 class RenderSystem {
@@ -20,8 +21,10 @@ private:
     GLContext *context;
 
     ShaderProgram* shaderProgram;
+    ShaderProgram* gridShaderProgram;
 
     std::vector<Model*> models;
+    Grid *grid;
 
     glm::mat4 view;
     glm::vec4 clearColor;
