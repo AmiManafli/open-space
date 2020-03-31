@@ -1,6 +1,10 @@
 #include "InputManager.h"
 
 InputManager::InputManager(GLContext *context) : context(context) {
+    topCamera = new Camera(Camera::Mode::Free, glm::vec3(0, 15, 0), glm::vec3(0, 0, -1), glm::vec3(0, -1, 0));
+    sideCamera = new Camera(Camera::Mode::Free, glm::vec3(0, 0, 15));
+
+    context->setCamera(topCamera);
 }
 
 void InputManager::init() {
@@ -21,6 +25,14 @@ void InputManager::process(double deltaTime) {
 
     if (isKeyPressed(GLFW_KEY_Q)) {
         glfwSetWindowShouldClose(window, true);
+    }
+
+    if (isKeyPressed(GLFW_KEY_UP)) {
+        printf("Switched top top-view camera!\n");
+        context->setCamera(topCamera);
+    } else if (isKeyPressed(GLFW_KEY_LEFT)) {
+        printf("Switched top side-view camera!\n");
+        context->setCamera(sideCamera);
     }
 
     if (isKeyPressed(GLFW_KEY_1)) {

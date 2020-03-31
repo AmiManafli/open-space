@@ -14,7 +14,9 @@ void RenderSystem::init() {
 
     glm::mat4 initialModel = glm::scale(glm::mat4(1.0f), glm::vec3(0.01, 0.01, 0.01));
     models.push_back(new Model("../assets/models/ico-sphere.dae", glm::vec3(0, 0, 0), initialModel));
-    models.push_back(new Model("../assets/models/cube.dae", glm::vec3(3, 0, 0), initialModel));
+//    models.push_back(new Model("../assets/models/cube.dae", glm::vec3(3, 0, 0), initialModel));
+
+//    context->getCamera()->loadMesh();
 }
 
 void RenderSystem::createShaders() {
@@ -30,7 +32,8 @@ void RenderSystem::render(double deltaTime) {
     glClearColor(clearColor.x, clearColor.y, clearColor.z, clearColor.w);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    shaderProgram->setUniform("view", context->getCamera()->getView());
+//    auto view = glm::lookAt(glm::vec3(0, 15, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, -1));
+    shaderProgram->setUniform("view", context->getView());
 
     for (auto &model : models) {
         model->draw(*shaderProgram);

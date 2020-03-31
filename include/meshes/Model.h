@@ -20,6 +20,8 @@ public:
 
     void draw(ShaderProgram& shaderProgram);
 
+    static void loadModel(std::string filename, std::vector<Mesh>& meshes);
+
 private:
     const std::string filename;
     std::vector<Mesh> meshes;
@@ -28,9 +30,8 @@ private:
     glm::vec3 position;
 
     void updateModelMatrix();
-    void loadModel();
-    void processNode(aiNode *node, const aiScene *scene);
-    Mesh processMesh(aiMesh *mesh, const aiScene *scene);
+    static void processNode(std::vector<Mesh>& meshes, aiNode *node, const aiScene *scene);
+    static Mesh processMesh(std::vector<Mesh>& meshes, aiMesh *mesh, const aiScene *scene);
 };
 
 

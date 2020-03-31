@@ -16,7 +16,10 @@ public:
     GLFWwindow* getWindow() { return window; }
     Camera* getCamera() { return camera; }
 
+    void setCamera(Camera* camera) { this->camera = camera; }
+
     glm::mat4 getProjection();
+    glm::mat4 getView() { return camera->getView(); }
 
     double getDeltaTime() { return deltaTime; }
 

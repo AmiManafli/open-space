@@ -2,6 +2,7 @@
 #define CG1_PROJECT_CAMERA_H
 
 #include <GLHeader.h>
+#include <meshes/Model.h>
 
 
 class Camera {
@@ -20,8 +21,13 @@ public:
 
 public:
     Camera(Mode mode, glm::vec3 position);
+    Camera(Mode mode, glm::vec3 position, glm::vec3 up, glm::vec3 front);
+
+    void loadMesh();
 
     glm::mat4 getView();
+
+    void draw(ShaderProgram& shaderProgram);
 
     void processKeyboard(Direction direction, float deltaTime);
     void processMouseMovement(float offsetX, float offsetY);
@@ -38,6 +44,7 @@ private:
     float yaw;
     float pitch;
     float roll;
+    std::vector<Mesh> meshes;
 
     void update();
 };

@@ -13,7 +13,7 @@ Model::Model(const std::string filename, glm::vec3 position) : Model(filename, p
 
 Model::Model(const std::string filename, glm::vec3 position, glm::mat4 model)
         : filename(filename), position(position), model(model) {
-    loadModel();
+    loadModel(filename, meshes);
 
     auto modelTranslated = glm::translate(glm::mat4(1.0f), position);
     this->model = model * modelTranslated;
@@ -29,7 +29,7 @@ void Model::updateModelMatrix() {
 //    model = glm::mat4(1.0f);
 }
 
-void Model::loadModel() {
+void Model::loadModel(std::string filename, std::vector<Mesh>& meshes) {
     Assimp::Importer importer;
     const aiScene *scene = importer.ReadFile(filename, aiProcess_Triangulate | aiProcess_FlipUVs);
 
@@ -37,20 +37,20 @@ void Model::loadModel() {
         throw std::runtime_error(importer.GetErrorString());
     }
 
-    processNode(scene->mRootNode, scene);
+    processNode(meshes, scene->mRootNode, scene);
 }
 
-void Model::processNode(aiNode *node, const aiScene *scene) {
+void Model::processNode(std::vector<Mesh>& meshes, aiNode *node, const aiScene *scene) {
     for (size_t i = 0; i < node->mNumMeshes; i++) {
         auto mesh = scene->mMeshes[node->mMeshes[i]];
-        meshes.push_back(processMesh(mesh, scene));
+        meshes.push_back(processMesh(meshes, mesh, scene));
     }
     for (size_t i = 0; i < node->mNumChildren; i++) {
-        processNode(node->mChildren[i], scene);
+        processNode(meshes, node->mChildren[i], scene);
     }
 }
 
-Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene) {
+Mesh Model::processMesh(std::vector<Mesh>& meshes, aiMesh *mesh, const aiScene *scene) {
     std::vector<Vertex> vertices;
     std::vector<uint32_t> indices;
     std::vector<Texture> textures;
