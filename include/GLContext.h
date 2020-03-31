@@ -14,12 +14,15 @@ public:
     uint16_t getHeight() { return height; }
 
     GLFWwindow* getWindow() { return window; }
-    Camera* getCamera() { return camera; }
 
-    void setCamera(Camera* camera) { this->camera = camera; }
+    Camera* getCamera() { return cameras[activeCamera]; }
+    std::vector<Camera *> getCameras() { return cameras; }
+    uint16_t getActiveCamera() { return activeCamera; }
+    void setActiveCamera(uint16_t cameraIndex) { activeCamera = cameraIndex; }
+    void addCamera(Camera *camera) { cameras.push_back(camera); }
 
     glm::mat4 getProjection();
-    glm::mat4 getView() { return camera->getView(); }
+    glm::mat4 getView() { return getCamera()->getView(); }
 
     double getDeltaTime() { return deltaTime; }
 
@@ -37,7 +40,8 @@ private:
 
     GLFWwindow *window;
 
-    Camera *camera;
+    uint16_t activeCamera = 0;
+    std::vector<Camera *> cameras;
 
     double lastTime;
     double deltaTime;

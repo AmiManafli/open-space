@@ -20,7 +20,7 @@ public:
 
     void draw(ShaderProgram& shaderProgram);
 
-    static void loadModel(std::string filename, std::vector<Mesh>& meshes);
+    static std::vector<Mesh> loadModel(std::string filename);
 
 private:
     const std::string filename;

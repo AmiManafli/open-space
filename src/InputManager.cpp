@@ -1,10 +1,19 @@
 #include "InputManager.h"
 
 InputManager::InputManager(GLContext *context) : context(context) {
-    topCamera = new Camera(Camera::Mode::Free, glm::vec3(0, 15, 0), glm::vec3(0, 0, -1), glm::vec3(0, -1, 0));
-    sideCamera = new Camera(Camera::Mode::Free, glm::vec3(0, 0, 15));
+    auto topCamera = new Camera(Camera::Mode::Free, glm::vec3(0, 15, 0), glm::vec3(0, 0, -1), glm::vec3(0, -1, 0));
+    auto sideCamera = new Camera(Camera::Mode::Free, glm::vec3(0, 0, 15), glm::vec3(0, 1, 0), glm::vec3(0, 0, -1));
+    auto perspectiveCamera = new Camera(Camera::Mode::Target, glm::vec3(0, 15, 15), glm::vec3(0, 1, 0), glm::normalize(glm::vec3(0, -15, -15)));
+    perspectiveCamera->setTarget(glm::vec3(0, 0, 0));
 
-    context->setCamera(topCamera);
+    auto cameraMeshes = Model::loadModel("../assets/models/camera.dae");
+    topCamera->meshes = cameraMeshes;
+    sideCamera->meshes = cameraMeshes;
+    perspectiveCamera->meshes = cameraMeshes;
+
+    context->addCamera(topCamera);
+    context->addCamera(sideCamera);
+    context->addCamera(perspectiveCamera);
 }
 
 void InputManager::init() {
@@ -19,7 +28,7 @@ void InputManager::init() {
 
 void InputManager::process(double deltaTime) {
     auto window = context->getWindow();
-    auto camera = context->getCamera();
+    auto camera = context->getCameras()[0];
     float moveSpeed = 100.0f;
     float strafeSpeed = 5.0f;
 
@@ -29,10 +38,13 @@ void InputManager::process(double deltaTime) {
 
     if (isKeyPressed(GLFW_KEY_UP)) {
         printf("Switched top top-view camera!\n");
-        context->setCamera(topCamera);
+        context->setActiveCamera(0);
     } else if (isKeyPressed(GLFW_KEY_LEFT)) {
         printf("Switched top side-view camera!\n");
-        context->setCamera(sideCamera);
+        context->setActiveCamera(1);
+    } else if (isKeyPressed(GLFW_KEY_DOWN)) {
+        printf("Switched top perspective-view camera!\n");
+        context->setActiveCamera(2);
     }
 
     if (isKeyPressed(GLFW_KEY_1)) {
@@ -75,7 +87,7 @@ bool InputManager::isKeyPressed(int key) {
 void InputManager::mousePositionCallback(GLFWwindow *window, double x, double y) {
     auto inputManager = (InputManager *) glfwGetWindowUserPointer(window);
     auto context = inputManager->context;
-    auto camera = context->getCamera();
+    auto camera = context->getCameras()[2];
     auto deltaTime = context->getDeltaTime();
 
     if (!inputManager->processedMouse) {

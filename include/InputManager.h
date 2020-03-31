@@ -19,8 +19,6 @@ public:
 
 private:
     GLContext *context;
-    Camera* topCamera;
-    Camera* sideCamera;
 
     std::unordered_map<int, int> keysDown;
 

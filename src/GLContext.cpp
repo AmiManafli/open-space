@@ -5,7 +5,6 @@ GLContext::GLContext(std::string title, uint16_t width, uint16_t height)
 }
 
 GLContext::~GLContext() {
-    delete camera;
     glfwTerminate();
 }
 

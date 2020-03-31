@@ -13,7 +13,7 @@ Model::Model(const std::string filename, glm::vec3 position) : Model(filename, p
 
 Model::Model(const std::string filename, glm::vec3 position, glm::mat4 model)
         : filename(filename), position(position), model(model) {
-    loadModel(filename, meshes);
+    meshes = loadModel(filename);
 
     auto modelTranslated = glm::translate(glm::mat4(1.0f), position);
     this->model = model * modelTranslated;
@@ -29,7 +29,8 @@ void Model::updateModelMatrix() {
 //    model = glm::mat4(1.0f);
 }
 
-void Model::loadModel(std::string filename, std::vector<Mesh>& meshes) {
+std::vector<Mesh> Model::loadModel(std::string filename) {
+    std::vector<Mesh> meshes;
     Assimp::Importer importer;
     const aiScene *scene = importer.ReadFile(filename, aiProcess_Triangulate | aiProcess_FlipUVs);
 
@@ -38,6 +39,8 @@ void Model::loadModel(std::string filename, std::vector<Mesh>& meshes) {
     }
 
     processNode(meshes, scene->mRootNode, scene);
+
+    return meshes;
 }
 
 void Model::processNode(std::vector<Mesh>& meshes, aiNode *node, const aiScene *scene) {

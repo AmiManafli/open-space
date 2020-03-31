@@ -37,7 +37,7 @@ void Camera::processMouseMovement(float offsetX, float offsetY) {
     yaw += offsetX;
 //    pitch = glm::clamp(pitch + offsetY, -89.0f, 89.0f);
 
-//    update();
+    update();
 }
 
 void Camera::update() {
@@ -50,23 +50,23 @@ void Camera::update() {
     right = glm::normalize(glm::cross(front, worldUp));
     up = glm::normalize(glm::cross(right, front));
 
-    printf("Up: (%.3f, %.3f, %.3f)\n", up.x, up.y, up.z);
-}
-
-void Camera::loadMesh() {
-    Model::loadModel("../assets/models/camera.dae", meshes);
+    printf("Yaw: %.3f degrees\n", yaw);
 }
 
 glm::mat4 Camera::getView() {
-    auto target = position + front;
-    printf("Target: (%.3f, %.3f, %.3f)\n", target.x, target.y, target.z);
-    return glm::lookAt(position, position + front, up);
-//    return glm::lookAt(position, glm::vec3(0, 0, 0), up);
+    if (mode == Free) {
+        return glm::lookAt(position, position + front, up);
+    } else if (mode == Target) {
+        return glm::lookAt(position, target, up);
+    } else {
+        throw std::runtime_error("camera mode not implemented!");
+    }
 }
 
 void Camera::draw(ShaderProgram &shaderProgram) {
+//    printf("Position: (%.3f, %.3f, %.3f)\n", position.x, position.y, position.z);
     auto scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.01, 0.01, 0.01));
     auto translation = glm::translate(scale, position);
-    auto model = glm::rotate(translation, 90.f + yaw, glm::vec3(0, 1, 0));
+    auto model = glm::rotate(translation, yaw, up);
     meshes[0].draw(shaderProgram, model);
 }

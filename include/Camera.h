@@ -23,7 +23,9 @@ public:
     Camera(Mode mode, glm::vec3 position);
     Camera(Mode mode, glm::vec3 position, glm::vec3 up, glm::vec3 front);
 
-    void loadMesh();
+    void setTarget(glm::vec3 target) { this->target = target; }
+
+    std::vector<Mesh> meshes;
 
     glm::mat4 getView();
 
@@ -39,12 +41,12 @@ private:
     glm::vec3 up;
     glm::vec3 worldUp;
     glm::vec3 right;
+    glm::vec3 target;
     float movementSpeed;
     float mouseSensitivity;
     float yaw;
     float pitch;
     float roll;
-    std::vector<Mesh> meshes;
 
     void update();
 };
