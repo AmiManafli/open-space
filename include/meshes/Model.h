@@ -8,6 +8,7 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include <Axis.h>
 
 
 class Model {
@@ -28,6 +29,8 @@ private:
 
     glm::mat4 model;
     glm::vec3 position;
+
+    Axis *axis;
 
     void updateModelMatrix();
     static void processNode(std::vector<Mesh>& meshes, aiNode *node, const aiScene *scene);

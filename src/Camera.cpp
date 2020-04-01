@@ -43,9 +43,7 @@ void Camera::processMouseMovement(float offsetX, float offsetY) {
     yaw += offsetX;
     pitch = glm::clamp(pitch + offsetY, -89.0f, 89.0f);
 
-    printf("Yaw: %.3f\n", yaw);
-
-    update();
+   update();
 }
 
 void Camera::update() {

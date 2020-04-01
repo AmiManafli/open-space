@@ -5,6 +5,8 @@ Model::Model(std::vector<Mesh>& meshes, glm::vec3 position) : position(position)
         this->meshes.push_back(mesh);
     }
 
+    axis = new Axis(position);
+
     updateModelMatrix();
 }
 
@@ -17,9 +19,12 @@ Model::Model(const std::string filename, glm::vec3 position, glm::mat4 model)
 
 //    auto scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.01, 0.01, 0.01));
     this->model = glm::translate(glm::mat4(1.0f), position);
+
+    axis = new Axis(position);
 }
 
 void Model::draw(ShaderProgram& shaderProgram) {
+    axis->draw(shaderProgram);
     for (auto &mesh : meshes) {
         mesh.draw(shaderProgram, model);
     }

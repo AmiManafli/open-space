@@ -77,8 +77,6 @@ void RenderSystem::render(double deltaTime) {
 
     // Process events and swap buffers
     context->swapBuffers();
-
-    lastTime = currentTime;
 }
 
 void RenderSystem::setClearColor(float r, float g, float b, float a) {

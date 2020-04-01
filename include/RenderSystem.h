@@ -24,11 +24,11 @@ private:
     ShaderProgram* gridShaderProgram;
 
     std::vector<Model*> models;
+
     Grid *grid;
 
     glm::mat4 view;
     glm::vec4 clearColor;
-    double lastTime;
 
     void createShaders();
 };

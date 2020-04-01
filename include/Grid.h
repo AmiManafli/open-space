@@ -12,11 +12,10 @@ public:
     void draw(ShaderProgram& shaderProgram);
 
 private:
-    uint32_t vao, vbo, ebo;
+    uint32_t vao, vbo;
     glm::mat4 model;
 
     std::vector<Vertex> vertices;
-    std::vector<uint32_t> indices;
 
     bool showAxisLinesY = false;
 };
