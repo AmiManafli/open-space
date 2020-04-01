@@ -65,6 +65,11 @@ void InputManager::process(double deltaTime) {
     } else if (isKeyDown(GLFW_KEY_D)) {
         moveCamera->processKeyboard(Camera::Direction::Right, deltaTime);
     }
+
+    if (isKeyPressed(GLFW_KEY_G)) {
+        bool display = context->showGrid();
+        context->setShowGrid(!display);
+    }
 }
 
 bool InputManager::isKeyDown(int key) {

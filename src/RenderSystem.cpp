@@ -38,11 +38,13 @@ void RenderSystem::render(double deltaTime) {
     glClearColor(clearColor.x, clearColor.y, clearColor.z, clearColor.w);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    gridShaderProgram->use();
-    gridShaderProgram->setUniform("model", glm::mat4());
-    gridShaderProgram->setUniform("view", context->getView());
-    gridShaderProgram->setUniform("projection", context->getProjection());
-    grid->draw(*gridShaderProgram);
+    if (context->showGrid()) {
+        gridShaderProgram->use();
+        gridShaderProgram->setUniform("model", glm::mat4());
+        gridShaderProgram->setUniform("view", context->getView());
+        gridShaderProgram->setUniform("projection", context->getProjection());
+        grid->draw(*gridShaderProgram);
+    }
 
     shaderProgram->use();
     shaderProgram->setUniform("view", context->getView());

@@ -4,18 +4,31 @@ in vec3 vPos;
 
 out vec4 fragColor;
 
+/**
+ * Calculate grid fade value using linear interpolation.
+ */
+float calcFade(float length, float maxDistance, float min, float max) {
+    float k = (max - min) / (0 - maxDistance);
+
+    return clamp(k * length + max, min, max);
+}
+
 void main() {
-    float length = sqrt(vPos.x * vPos.x + vPos.z * vPos.z);
-    float fade = clamp(-0.01 * length + 0.3, 0.2, 0.3);
     float r, g, b;
 
+    float maxDistance = 10.0;
+    float length = sqrt(vPos.x * vPos.x + vPos.z * vPos.z);
+
+    float fade = calcFade(length, maxDistance, 0.2, 0.3);
+    float colorFade = calcFade(length, maxDistance, 0.2, 1.0);
+
     if (vPos.x == 0) {
-        r = 1.0;
+        r = colorFade;
     } else {
         r = fade;
     }
     if (vPos.z == 0) {
-        b = 1.0;
+        b = colorFade;
     } else {
         b = fade;
     }

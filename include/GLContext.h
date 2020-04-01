@@ -16,6 +16,9 @@ public:
 
     GLFWwindow* getWindow() { return window; }
 
+    bool showGrid() { return displayGrid; }
+    void setShowGrid(bool display) { displayGrid = display; }
+
     Camera* getCamera() { return cameras[activeCamera]; }
     std::vector<Camera *> getCameras() { return cameras; }
     uint16_t getActiveCamera() { return activeCamera; }
@@ -38,6 +41,8 @@ private:
     const std::string title;
     uint16_t width;
     uint16_t height;
+
+    bool displayGrid = false;
 
     GLFWwindow *window;
 
