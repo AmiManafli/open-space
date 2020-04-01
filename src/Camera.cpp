@@ -15,7 +15,10 @@ Camera::Camera(Mode mode, glm::vec3 position, glm::vec3 up, glm::vec3 front)
     target = glm::vec3(0, 0, 0);
     view = glm::lookAt(position, front, up);
 
-    yaw = glm::degrees(glm::atan(position.z / position.x));
+    yaw = 180.0f + glm::degrees(glm::atan((position.z - target.z) / (position.x - target.x)));
+
+    auto q = glm::vec3(position.x, 0, position.z);
+    pitch = -glm::degrees(glm::acos(glm::dot(position, q) / (glm::length(position) * glm::length(q))));
 }
 
 void Camera::processKeyboard(Camera::Direction direction, float deltaTime) {
@@ -40,20 +43,29 @@ void Camera::processMouseMovement(float offsetX, float offsetY) {
     yaw += offsetX;
     pitch = glm::clamp(pitch + offsetY, -89.0f, 89.0f);
 
-    auto pos = glm::vec2(position.x, position.z);
-    auto length = glm::length(pos);
-    auto angle = glm::atan(position.z / position.x) + glm::radians(offsetX);
-    position.x = length * cos(angle);
-    position.z = length * sin(angle);
+    printf("Yaw: %.3f\n", yaw);
+
+    update();
 }
 
 void Camera::update() {
+    auto yawRad = glm::radians(yaw);
+    auto pitchRad = glm::radians(pitch);
+
+    glm::vec3 direction;
+    direction.x = glm::cos(yawRad) * glm::cos(pitchRad);
+    direction.y = glm::sin(pitchRad);
+    direction.z = glm::sin(yawRad) * glm::cos(pitchRad);
+
+    front = glm::normalize(direction);
+    right = glm::normalize(glm::cross(front, worldUp));
+    up = glm::normalize(glm::cross(right, front));
 }
 
 glm::mat4 Camera::getView() {
-    if (mode == Free) {
-        return glm::lookAt(position, target, up);
-    } else if (mode == Target) {
+    if (targetingMode == Free) {
+        return glm::lookAt(position, position + front, up);
+    } else if (targetingMode == Target) {
         return glm::lookAt(position, target, up);
     } else {
         throw std::runtime_error("camera mode not implemented!");

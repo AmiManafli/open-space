@@ -14,6 +14,8 @@ InputManager::InputManager(GLContext *context) : context(context) {
     context->addCamera(topCamera);
     context->addCamera(sideCamera);
     context->addCamera(perspectiveCamera);
+
+    context->setActiveCamera(2);
 }
 
 void InputManager::init() {
@@ -52,7 +54,7 @@ void InputManager::process(double deltaTime) {
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     }
 
-    auto moveCamera = cameras[0];
+    auto moveCamera = context->getCamera();
     if (!isDebug && isKeyDown(GLFW_KEY_W)) {
         moveCamera->processKeyboard(Camera::Direction::Forward, deltaTime);
     } else if (!isDebug && isKeyDown(GLFW_KEY_S)) {
