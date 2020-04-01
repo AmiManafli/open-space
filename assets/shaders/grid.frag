@@ -6,7 +6,7 @@ out vec4 fragColor;
 
 void main() {
     float length = sqrt(vPos.x * vPos.x + vPos.z * vPos.z);
-    float fade = clamp(-0.5 * length + 0.3, 0.2, 0.3);
+    float fade = clamp(-0.01 * length + 0.3, 0.2, 0.3);
     float r, g, b;
 
     if (vPos.x == 0) {

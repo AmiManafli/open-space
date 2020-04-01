@@ -10,15 +10,12 @@ void RenderSystem::init() {
     createShaders();
 
     shaderProgram->use();
-    shaderProgram->setUniform("projection", context->getProjection());
 
-    glm::mat4 initialModel = glm::scale(glm::mat4(1.0f), glm::vec3(0.01, 0.01, 0.01));
-    models.push_back(new Model("../assets/models/ico-sphere.dae", glm::vec3(0, 0, 0), initialModel));
-    models.push_back(new Model("../assets/models/cylinder.dae", glm::vec3(4, 0, 0), initialModel));
+//    glm::mat4 initialModel = glm::scale(glm::mat4(1.0f), glm::vec3(0.01, 0.01, 0.01));
+    models.push_back(new Model("../assets/models/ico-sphere.dae", glm::vec3(0, 0, 0)));
+    models.push_back(new Model("../assets/models/cylinder.dae", glm::vec3(2, 0, 0)));
 
     grid = new Grid(100, 100);
-    gridShaderProgram->use();
-    gridShaderProgram->setUniform("projection", context->getProjection());
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
@@ -42,11 +39,14 @@ void RenderSystem::render(double deltaTime) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     gridShaderProgram->use();
+    gridShaderProgram->setUniform("model", glm::mat4());
     gridShaderProgram->setUniform("view", context->getView());
+    gridShaderProgram->setUniform("projection", context->getProjection());
     grid->draw(*gridShaderProgram);
 
     shaderProgram->use();
     shaderProgram->setUniform("view", context->getView());
+    shaderProgram->setUniform("projection", context->getProjection());
     for (auto &model : models) {
         model->draw(*shaderProgram);
     }

@@ -9,9 +9,7 @@ GLContext::~GLContext() {
 }
 
 glm::mat4 GLContext::getProjection() {
-//    return glm::perspective(glm::radians(45.0f), (float) width / (float) height, 0.001f, 100000.0f);
-    float aspect = (float) width / height;
-    return glm::ortho(-aspect, aspect, -1.0f, 1.0f, -1000.0f, 100.0f);
+    return getCamera()->getProjection(getAspect());
 }
 
 void GLContext::init() {

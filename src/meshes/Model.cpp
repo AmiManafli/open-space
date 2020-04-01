@@ -15,8 +15,8 @@ Model::Model(const std::string filename, glm::vec3 position, glm::mat4 model)
         : filename(filename), position(position), model(model) {
     meshes = loadModel(filename);
 
-    auto scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.01, 0.01, 0.01));
-    this->model = glm::translate(scale, position);
+//    auto scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.01, 0.01, 0.01));
+    this->model = glm::translate(glm::mat4(1.0f), position);
 }
 
 void Model::draw(ShaderProgram& shaderProgram) {
@@ -64,8 +64,10 @@ Mesh Model::processMesh(std::vector<Mesh>& meshes, aiMesh *mesh, const aiScene *
         auto position = mesh->mVertices[i];
         vertex.position = glm::vec3(position.x, position.y, position.z);
 
-        auto normal = mesh->mNormals[i];
-        vertex.normal = glm::vec3(normal.x, normal.y, normal.z);
+        if (mesh->mNormals) {
+            auto normal = mesh->mNormals[i];
+            vertex.normal = glm::vec3(normal.x, normal.y, normal.z);
+        }
 
         if (mesh->mTextureCoords[0]) {
             auto coords = mesh->mTextureCoords[0][i];

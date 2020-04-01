@@ -1,9 +1,9 @@
 #include "InputManager.h"
 
 InputManager::InputManager(GLContext *context) : context(context) {
-    auto topCamera = new Camera(Camera::Mode::Free, glm::vec3(0, 5, 0), glm::vec3(0, 0, -1), glm::vec3(0, -1, 0));
-    auto sideCamera = new Camera(Camera::Mode::Free, glm::vec3(0, 0, 5), glm::vec3(0, 1, 0), glm::vec3(0, 0, -1));
-    auto perspectiveCamera = new Camera(Camera::Mode::Target, glm::vec3(5, 5, 10), glm::vec3(0, 1, 0), glm::normalize(glm::vec3(-5, -5, -10)));
+    auto topCamera = new Camera(Camera::Mode::Orthographic, glm::vec3(0, 5, 0), glm::vec3(0, 0, -1), glm::vec3(0, -1, 0));
+    auto sideCamera = new Camera(Camera::Mode::Orthographic, glm::vec3(0, 0, 5), glm::vec3(0, 1, 0), glm::vec3(0, 0, -1));
+    auto perspectiveCamera = new Camera(Camera::Mode::Perspective, glm::vec3(5, 5, 10), glm::vec3(0, 1, 0), glm::normalize(glm::vec3(-5, -5, -10)));
     perspectiveCamera->setTarget(glm::vec3(0, 0, 0));
 
     auto cameraMeshes = Model::loadModel("../assets/models/camera.dae");

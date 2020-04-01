@@ -7,6 +7,7 @@ Camera::Camera(Mode mode, glm::vec3 position)
 Camera::Camera(Mode mode, glm::vec3 position, glm::vec3 up, glm::vec3 front)
         : mode(mode), position(position), target(glm::vec3(0, 0, 0)),
           mouseSensitivity(0.1f), movementSpeed(2.5f) {
+    this->targetingMode = Free;
     this->up = glm::normalize(up);
     this->worldUp = this->up;
     this->front = glm::normalize(front);
@@ -19,8 +20,6 @@ Camera::Camera(Mode mode, glm::vec3 position, glm::vec3 up, glm::vec3 front)
 
 void Camera::processKeyboard(Camera::Direction direction, float deltaTime) {
     float velocity = movementSpeed * deltaTime;
-    printf("Right: (%.3f, %.3f, %.3f)\n", right.x, right.y, right.z);
-    printf("Front: (%.3f, %.3f, %.3f)\n", front.x, front.y, front.z);
     if (direction == Forward) {
         position += front * velocity;
     } else if (direction == Backward) {
@@ -40,8 +39,6 @@ void Camera::processMouseMovement(float offsetX, float offsetY) {
 
     yaw += offsetX;
     pitch = glm::clamp(pitch + offsetY, -89.0f, 89.0f);
-
-//    printf("yaw: %.3f\n", yaw);
 
     auto pos = glm::vec2(position.x, position.z);
     auto length = glm::length(pos);
@@ -63,8 +60,18 @@ glm::mat4 Camera::getView() {
     }
 }
 
+glm::mat4 Camera::getProjection(float aspectRatio) {
+    if (mode == Orthographic) {
+        return glm::ortho(-aspectRatio, aspectRatio, -1.0f, 1.0f, -1000.0f, 100.0f);
+    } else if (mode == Perspective) {
+        return glm::perspective(glm::radians(45.0f), aspectRatio, 0.001f, 100000.0f);
+    } else {
+        throw std::runtime_error("failed to get projection: unknown projection mode");
+    }
+}
+
 void Camera::draw(ShaderProgram& shaderProgram) {
-    float scaleFactor = 0.005f;
+    float scaleFactor = 1.0f;
     auto scale = glm::scale(glm::mat4(1.0f), glm::vec3(scaleFactor, scaleFactor, scaleFactor));
     auto translation = glm::translate(scale, position);
 //    auto model = glm::rotate(translation, yaw, front);

@@ -10,6 +10,7 @@ public:
     GLContext(std::string title, uint16_t width, uint16_t height);
     ~GLContext();
 
+    float getAspect() { return (float) width / (float) height; }
     uint16_t getWidth() { return width; }
     uint16_t getHeight() { return height; }
 

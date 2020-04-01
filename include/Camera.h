@@ -4,10 +4,13 @@
 #include <GLHeader.h>
 #include <meshes/Model.h>
 
-
 class Camera {
 public:
     enum Mode {
+        Orthographic,
+        Perspective,
+    };
+    enum TargetingMode {
         Free,
         Target,
         Follow
@@ -28,6 +31,7 @@ public:
     std::vector<Mesh> meshes;
 
     glm::mat4 getView();
+    glm::mat4 getProjection(float aspectRatio);
 
     void draw(ShaderProgram& shaderProgram);
 
@@ -36,6 +40,7 @@ public:
 
 private:
     Mode mode;
+    TargetingMode targetingMode;
     glm::vec3 position;
     glm::vec3 front;
     glm::vec3 up;
