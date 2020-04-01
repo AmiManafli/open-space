@@ -11,7 +11,6 @@ void RenderSystem::init() {
 
     shaderProgram->use();
 
-//    glm::mat4 initialModel = glm::scale(glm::mat4(1.0f), glm::vec3(0.01, 0.01, 0.01));
     models.push_back(new Model("../assets/models/ico-sphere.dae", glm::vec3(0, 0, 0)));
     models.push_back(new Model("../assets/models/cylinder.dae", glm::vec3(2, 0, 0)));
 

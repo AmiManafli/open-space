@@ -27,10 +27,11 @@ void InputManager::init() {
 }
 
 void InputManager::process(double deltaTime) {
+    auto isDebug = context->isDebug();
     auto window = context->getWindow();
     auto cameras = context->getCameras();
 
-    if (isKeyPressed(GLFW_KEY_Q)) {
+    if (!isDebug && isKeyPressed(GLFW_KEY_Q)) {
         glfwSetWindowShouldClose(window, true);
     }
 
@@ -52,15 +53,15 @@ void InputManager::process(double deltaTime) {
     }
 
     auto moveCamera = cameras[0];
-    if (isKeyDown(GLFW_KEY_W)) {
+    if (!isDebug && isKeyDown(GLFW_KEY_W)) {
         moveCamera->processKeyboard(Camera::Direction::Forward, deltaTime);
-    } else if (isKeyDown(GLFW_KEY_S)) {
+    } else if (!isDebug && isKeyDown(GLFW_KEY_S)) {
         moveCamera->processKeyboard(Camera::Direction::Backward, deltaTime);
     }
 
-    if (isKeyDown(GLFW_KEY_A)) {
+    if (!isDebug && isKeyDown(GLFW_KEY_A)) {
         moveCamera->processKeyboard(Camera::Direction::Left, deltaTime);
-    } else if (isKeyDown(GLFW_KEY_D)) {
+    } else if (!isDebug && isKeyDown(GLFW_KEY_D)) {
         moveCamera->processKeyboard(Camera::Direction::Right, deltaTime);
     }
 
@@ -104,6 +105,8 @@ bool InputManager::isKeyPressed(int key) {
 void InputManager::mousePositionCallback(GLFWwindow *window, double x, double y) {
     auto inputManager = (InputManager *) glfwGetWindowUserPointer(window);
     auto context = inputManager->context;
+    if (context->isDebug()) return;
+
     auto camera = context->getCameras()[2];
     auto deltaTime = context->getDeltaTime();
 
