@@ -15,7 +15,7 @@ void RenderSystem::init() {
     models.push_back(new Model("../assets/models/ico-sphere.dae", glm::vec3(0, 0, 0)));
     models.push_back(new Model("../assets/models/cylinder.dae", glm::vec3(2, 0, 0)));
 
-    grid = new Grid(100, 100);
+    grid = new Grid(62, 62);
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }

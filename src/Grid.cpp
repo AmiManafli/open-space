@@ -18,6 +18,11 @@ Grid::Grid(int width, int height) {
         vertices.push_back(end);
     }
 
+    if (showAxisLinesY) {
+        vertices.push_back(Vertex { glm::vec3(0, 0, 0) });
+        vertices.push_back(Vertex { glm::vec3(0, 10, 0) });
+    }
+
     glGenVertexArrays(1, &vao);
     glGenBuffers(1, &vbo);
 
