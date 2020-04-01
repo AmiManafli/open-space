@@ -40,6 +40,5 @@ void main() {
     } else {
         b = fade;
     }
-//    fragColor = vec4(r, g, b, 1.0);
-    fragColor = vec4(1.0, 1.0, 1.0, 1.0);
+    fragColor = vec4(r, g, b, 1.0);
 }

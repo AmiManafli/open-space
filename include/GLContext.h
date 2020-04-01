@@ -16,12 +16,6 @@ public:
 
     GLFWwindow* getWindow() { return window; }
 
-    bool showGrid() { return displayGrid; }
-    void setShowGrid(bool display) { displayGrid = display; }
-
-    bool isDebug() { return debug; }
-    void setDebug(bool debug) { this->debug = debug; }
-
     Camera* getCamera() { return cameras[activeCamera]; }
     std::vector<Camera *> getCameras() { return cameras; }
     uint16_t getActiveCamera() { return activeCamera; }
@@ -40,13 +34,14 @@ public:
 
     void swapBuffers();
 
+    bool debug = false;
+    bool displayGui = false;
+    bool displayGrid = true;
+
 private:
     const std::string title;
     uint16_t width;
     uint16_t height;
-
-    bool displayGrid = false;
-    bool debug = false;
 
     GLFWwindow *window;
 

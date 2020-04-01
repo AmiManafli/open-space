@@ -33,6 +33,8 @@ Grid::Grid(int width, int height) {
 
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), nullptr);
+
+    model = glm::mat4(1.0f);
 }
 
 void Grid::draw(ShaderProgram &shaderProgram) {

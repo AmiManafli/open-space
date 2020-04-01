@@ -27,7 +27,7 @@ void InputManager::init() {
 }
 
 void InputManager::process(double deltaTime) {
-    auto isDebug = context->isDebug();
+    auto isDebug = context->debug;
     auto window = context->getWindow();
     auto cameras = context->getCameras();
 
@@ -66,19 +66,20 @@ void InputManager::process(double deltaTime) {
     }
 
     if (isKeyPressed(GLFW_KEY_G)) {
-        bool display = context->showGrid();
-        context->setShowGrid(!display);
+        context->displayGrid = !context->displayGrid;
     }
 
     if (isKeyPressed(GLFW_KEY_GRAVE_ACCENT)) {
-        auto debug = !context->isDebug();
-        context->setDebug(debug);
+        context->debug = !isDebug;
+        isDebug = !isDebug;
 
-        if (debug) {
+        if (isDebug) {
             printf("Debug mode: On\n");
+            context->displayGui = true;
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
         } else {
             printf("Debug mode: Off\n");
+            context->displayGui = false;
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         }
     }
@@ -105,7 +106,7 @@ bool InputManager::isKeyPressed(int key) {
 void InputManager::mousePositionCallback(GLFWwindow *window, double x, double y) {
     auto inputManager = (InputManager *) glfwGetWindowUserPointer(window);
     auto context = inputManager->context;
-    if (context->isDebug()) return;
+    if (context->debug) return;
 
     auto camera = context->getCameras()[2];
     auto deltaTime = context->getDeltaTime();
