@@ -62,7 +62,8 @@ glm::mat4 Camera::getView() {
 
 glm::mat4 Camera::getProjection(float aspectRatio) {
     if (mode == Orthographic) {
-        return glm::ortho(-aspectRatio, aspectRatio, -1.0f, 1.0f, -1000.0f, 100.0f);
+        auto zoomOut = 1.5f;
+        return glm::ortho(-aspectRatio * zoomOut, aspectRatio * zoomOut, -1.0f * zoomOut, 1.0f * zoomOut, -1000.0f, 100.0f);
     } else if (mode == Perspective) {
         return glm::perspective(glm::radians(45.0f), aspectRatio, 0.001f, 100000.0f);
     } else {
