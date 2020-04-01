@@ -16,7 +16,7 @@ void RenderSystem::init() {
     models.push_back(new Model("../assets/models/ico-sphere.dae", glm::vec3(0, 0, 0), initialModel));
     models.push_back(new Model("../assets/models/cylinder.dae", glm::vec3(4, 0, 0), initialModel));
 
-    grid = new Grid(10, 10);
+    grid = new Grid(100, 100);
     gridShaderProgram->use();
     gridShaderProgram->setUniform("projection", context->getProjection());
 

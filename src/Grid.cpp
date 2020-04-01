@@ -5,18 +5,16 @@ Grid::Grid(int width, int height) {
     int startZ = height / 2;
     for (int i = 0; i < width; i++) {
         float step = 0.01f;
-        float index = step * i;
-        auto start = Vertex { glm::vec3(index, 0, -startZ) };
-        auto end = Vertex { glm::vec3(index, 0, -startZ + height) };
+        auto start = Vertex { step * glm::vec3(-startX + i, 0, -startZ) };
+        auto end = Vertex { step * glm::vec3(-startX + i, 0, -startZ + height) };
         printf("(%.3f, %.3f, %.3f)  --->  (%.3f, %.3f, %.3f)\n", start.position.x, start.position.y, start.position.z, end.position.x, end.position.y, end.position.z);
         vertices.push_back(start);
         vertices.push_back(end);
     }
     for (int i = 0; i < height; i++) {
         float step = 0.01f;
-        float index = step * i;
-        auto start = Vertex { glm::vec3(-startX, 0, index) };
-        auto end = Vertex { glm::vec3(-startX + width, 0, index) };
+        auto start = Vertex { step * glm::vec3(-startX, 0, -startZ + i) };
+        auto end = Vertex { step * glm::vec3(-startX + width, 0, -startZ + i) };
         printf("(%.3f, %.3f, %.3f)  --->  (%.3f, %.3f, %.3f)\n", start.position.x, start.position.y, start.position.z, end.position.x, end.position.y, end.position.z);
         vertices.push_back(start);
         vertices.push_back(end);
