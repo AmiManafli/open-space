@@ -35,6 +35,16 @@ void RenderSystem::createShaders() {
 void RenderSystem::render(double deltaTime) {
     double currentTime = glfwGetTime();
 
+    if (context->isDebug()) {
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
+        ImGui::ShowDemoWindow();
+
+        ImGui::Render();
+    }
+
     glClearColor(clearColor.x, clearColor.y, clearColor.z, clearColor.w);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -61,6 +71,10 @@ void RenderSystem::render(double deltaTime) {
         if (i != activeCameraIndex && i != perspectiveCameraIndex) {
             cameras[i]->draw(*shaderProgram);
         }
+    }
+
+    if (context->isDebug()) {
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     }
 
     // Process events and swap buffers

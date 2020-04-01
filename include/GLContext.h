@@ -19,6 +19,9 @@ public:
     bool showGrid() { return displayGrid; }
     void setShowGrid(bool display) { displayGrid = display; }
 
+    bool isDebug() { return debug; }
+    void setDebug(bool debug) { this->debug = debug; }
+
     Camera* getCamera() { return cameras[activeCamera]; }
     std::vector<Camera *> getCameras() { return cameras; }
     uint16_t getActiveCamera() { return activeCamera; }
@@ -43,6 +46,7 @@ private:
     uint16_t height;
 
     bool displayGrid = false;
+    bool debug = false;
 
     GLFWwindow *window;
 
@@ -51,6 +55,8 @@ private:
 
     double lastTime;
     double deltaTime;
+
+    void setupImgui();
 
     static void framebufferSizeCallback(GLFWwindow *window, int width, int height);
 };

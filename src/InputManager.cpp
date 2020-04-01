@@ -29,21 +29,19 @@ void InputManager::init() {
 void InputManager::process(double deltaTime) {
     auto window = context->getWindow();
     auto cameras = context->getCameras();
-    float moveSpeed = 100.0f;
-    float strafeSpeed = 5.0f;
 
     if (isKeyPressed(GLFW_KEY_Q)) {
         glfwSetWindowShouldClose(window, true);
     }
 
     if (isKeyPressed(GLFW_KEY_UP)) {
-        printf("Switched top top-view camera!\n");
+        printf("Camera view: Top\n");
         context->setActiveCamera(0);
     } else if (isKeyPressed(GLFW_KEY_LEFT)) {
-        printf("Switched top side-view camera!\n");
+        printf("Camera view: Side\n");
         context->setActiveCamera(1);
     } else if (isKeyPressed(GLFW_KEY_DOWN)) {
-        printf("Switched top perspective-view camera!\n");
+        printf("Camera view: Perspective\n");
         context->setActiveCamera(2);
     }
 
@@ -69,6 +67,19 @@ void InputManager::process(double deltaTime) {
     if (isKeyPressed(GLFW_KEY_G)) {
         bool display = context->showGrid();
         context->setShowGrid(!display);
+    }
+
+    if (isKeyPressed(GLFW_KEY_GRAVE_ACCENT)) {
+        auto debug = !context->isDebug();
+        context->setDebug(debug);
+
+        if (debug) {
+            printf("Debug mode: On\n");
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        } else {
+            printf("Debug mode: Off\n");
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        }
     }
 }
 
