@@ -13,26 +13,15 @@ Model::Model(std::vector<Mesh> meshes, glm::vec3 position, glm::mat4 model) : po
     }
 
     this->model = glm::translate(model, position);
-    axis = new Axis(position);
-}
-
-void Model::draw(ShaderProgram& shaderProgram, ShaderProgram& gridShaderProgram) {
-    gridShaderProgram.use();
-    axis->draw(gridShaderProgram);
-
-    shaderProgram.use();
-    draw(shaderProgram);
 }
 
 void Model::draw(ShaderProgram& shaderProgram) {
-    shaderProgram.use();
     for (auto &mesh : meshes) {
         mesh.draw(shaderProgram, model);
     }
 }
 
 void Model::updateModelMatrix() {
-//    model = glm::mat4(1.0f);
 }
 
 std::vector<Mesh> Model::loadModel(std::string filename) {

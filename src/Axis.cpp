@@ -9,12 +9,12 @@ Axis::Axis(glm::vec3 position, glm::mat4 rotation) : Axis(position, rotation, 1.
 Axis::Axis(glm::vec3 position, glm::mat4 rotation, float scale)
         : position(position), rotation(rotation), scale(scale) {
     // Add axis lines
-    vertices.push_back(glm::vec3(0, 0, 0));
-    vertices.push_back(glm::vec3(2, 0, 0));
-    vertices.push_back(glm::vec3(0, 0, 0));
-    vertices.push_back(glm::vec3(0, 2, 0));
-    vertices.push_back(glm::vec3(0, 0, 0));
-    vertices.push_back(glm::vec3(0, 0, 2));
+    vertices.emplace_back(glm::vec3(0, 0, 0));
+    vertices.emplace_back(glm::vec3(2, 0, 0));
+    vertices.emplace_back(glm::vec3(0, 0, 0));
+    vertices.emplace_back(glm::vec3(0, 2, 0));
+    vertices.emplace_back(glm::vec3(0, 0, 0));
+    vertices.emplace_back(glm::vec3(0, 0, 2));
 
     glGenVertexArrays(1, &vao);
     glGenBuffers(1, &vbo);
