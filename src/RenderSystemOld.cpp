@@ -81,14 +81,14 @@ void RenderSystemOld::render(double deltaTime) {
     }
 
     // Render cameras (except the active one)
-    auto cameras = context->getCameras();
-    auto activeCameraIndex = context->getActiveCamera();
-    auto perspectiveCameraIndex = 2;
-    for (size_t i = 0; i < cameras.size(); i++) {
-        if (i != activeCameraIndex && i != perspectiveCameraIndex) {
-            cameras[i]->draw(*shaderProgram);
-        }
-    }
+//    auto cameras = context->getCameras();
+//    auto activeCameraIndex = context->getActiveCamera();
+//    auto perspectiveCameraIndex = 2;
+//    for (size_t i = 0; i < cameras.size(); i++) {
+//        if (i != activeCameraIndex && i != perspectiveCameraIndex) {
+//            cameras[i]->draw(*shaderProgram);
+//        }
+//    }
 
     if (context->displayGui) {
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

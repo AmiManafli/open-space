@@ -13,12 +13,26 @@ Entity *EntityBuilder::build() {
     if (positionComponent != nullptr) {
         entityManager->addPositionComponent(entity->id, positionComponent);
     }
+    if (cameraComponent != nullptr) {
+        entityManager->addCameraComponent(entity->id, cameraComponent);
+    }
 
     for (auto& mesh : meshComponents) {
         entityManager->addMeshComponent(entity->id, mesh);
     }
 
     return entity;
+}
+
+/**
+ * Destroy entity and all components.
+ */
+void EntityBuilder::destroy() {
+    for (auto mesh : meshComponents) {
+        delete mesh;
+    }
+    delete positionComponent;
+    delete this;
 }
 
 EntityBuilder *EntityBuilder::withPosition(float x, float y, float z) {
@@ -48,13 +62,10 @@ EntityBuilder *EntityBuilder::withMesh(std::vector<MeshComponent::Vertex> &verti
     return this;
 }
 
-/**
- * Destroy entity and all components.
- */
-void EntityBuilder::destroy() {
-    for (auto mesh : meshComponents) {
-        delete mesh;
+EntityBuilder * EntityBuilder::withCamera(CameraComponent::Mode mode, CameraComponent::Type type, glm::vec3 target, glm::vec3 front, glm::vec3 up, float aspectRatio) {
+    if (positionComponent == nullptr) {
+        throw std::runtime_error("need a PositionComponent to initialize the CameraComponent");
     }
-    delete positionComponent;
-    delete this;
+    cameraComponent = new CameraComponent(mode, type, target, front, up, aspectRatio, positionComponent);
+    return this;
 }

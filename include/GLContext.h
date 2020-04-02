@@ -2,12 +2,14 @@
 #define CG1_PROJECT_GLCONTEXT_H
 
 #include <GLHeader.h>
+#include <entities/Entity.h>
+#include <entities/EntityManager.h>
 #include "shaders/Shader.h"
 #include "Camera.h"
 
 class GLContext {
 public:
-    GLContext(std::string title, uint16_t width, uint16_t height);
+    GLContext(EntityManager *entityManager, std::string title, uint16_t width, uint16_t height);
     ~GLContext();
 
     float getAspect() { return (float) width / (float) height; }
@@ -16,14 +18,14 @@ public:
 
     GLFWwindow* getWindow() { return window; }
 
-    Camera* getCamera() { return cameras[activeCamera]; }
-    std::vector<Camera *> getCameras() { return cameras; }
-    uint16_t getActiveCamera() { return activeCamera; }
-    void setActiveCamera(uint16_t cameraIndex) { activeCamera = cameraIndex; }
-    void addCamera(Camera *camera) { cameras.push_back(camera); }
+    Entity* getCamera() { return cameras[activeCameraIndex]; }
+    std::vector<Entity *> getCameras() { return cameras; }
+    uint16_t getActiveCamera() { return activeCameraIndex; }
+    void setActiveCamera(uint16_t cameraIndex) { activeCameraIndex = cameraIndex; }
+    void addCamera(Entity *camera) { cameras.push_back(camera); }
 
     glm::mat4 getProjection();
-    glm::mat4 getView() { return getCamera()->getView(); }
+    glm::mat4 getView();
 
     double getDeltaTime() { return deltaTime; }
 
@@ -39,14 +41,15 @@ public:
     bool displayGrid = true;
 
 private:
+    EntityManager *entityManager;
     const std::string title;
     uint16_t width;
     uint16_t height;
 
     GLFWwindow *window;
 
-    uint16_t activeCamera = 0;
-    std::vector<Camera *> cameras;
+    uint16_t activeCameraIndex = 0;
+    std::vector<Entity *> cameras;
 
     double lastTime;
     double deltaTime;

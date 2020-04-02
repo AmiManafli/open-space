@@ -1,15 +1,24 @@
 #include "GLContext.h"
 
-GLContext::GLContext(std::string title, uint16_t width, uint16_t height)
-        : title(title), width(width), height(height) {
+GLContext::GLContext(EntityManager *entityManager, std::string title, uint16_t width, uint16_t height)
+        : entityManager(entityManager), title(title), width(width), height(height) {
 }
 
 GLContext::~GLContext() {
     glfwTerminate();
 }
 
+glm::mat4 GLContext::getView() {
+    auto cameraId = getCamera()->id;
+    auto cameraComponent = entityManager->getCameraComponent(cameraId);
+    auto positionComponent = entityManager->getPositionComponent(cameraId);
+    return cameraComponent->getView(positionComponent);
+}
+
 glm::mat4 GLContext::getProjection() {
-    return getCamera()->getProjection(getAspect());
+    auto cameraId = getCamera()->id;
+    auto cameraComponent = entityManager->getCameraComponent(cameraId);
+    return cameraComponent->getProjection(getAspect());
 }
 
 void GLContext::init() {

@@ -24,6 +24,14 @@ PositionComponent* EntityManager::getPositionComponent(uint32_t entityId) {
     return positionComponents.at(entityId);
 }
 
+void EntityManager::addCameraComponent(uint32_t entityId, CameraComponent* component) {
+    cameraComponents.emplace(entityId, component);
+}
+
+CameraComponent* EntityManager::getCameraComponent(uint32_t entityId) {
+    return cameraComponents.at(entityId);
+}
+
 uint32_t EntityManager::getNextEntityId() {
     return nextId++;
 }

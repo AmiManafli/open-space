@@ -5,11 +5,13 @@
 #include <unordered_map>
 #include <entities/components/MeshComponent.h>
 #include <entities/components/PositionComponent.h>
+#include <entities/components/CameraComponent.h>
 #include "Component.h"
 #include "Entity.h"
 
 
 typedef std::unordered_multimap<uint32_t, MeshComponent *> MeshComponentMultimap;
+typedef std::unordered_map<uint32_t, CameraComponent *> CameraComponentMap;
 typedef std::unordered_map<uint32_t, PositionComponent *> PositionComponentMap;
 
 class EntityManager {
@@ -28,6 +30,11 @@ public:
     PositionComponentMap getPositionComponents() { return positionComponents; }
     PositionComponent* getPositionComponent(uint32_t entityId);
 
+    /// Camera component
+    void addCameraComponent(uint32_t entityId, CameraComponent *component);
+    CameraComponentMap getCameraComponents() { return cameraComponents; }
+    CameraComponent* getCameraComponent(uint32_t entityId);
+
 private:
     /// Entities
     uint32_t getNextEntityId();
@@ -36,6 +43,7 @@ private:
 
     /// Components
     MeshComponentMultimap meshComponents;
+    CameraComponentMap cameraComponents;
     PositionComponentMap positionComponents;
 };
 

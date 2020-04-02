@@ -38,17 +38,17 @@ void InputSystem::update() {
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     }
 
-    auto moveCamera = context->getCamera();
+    auto camera = context->getCamera();
     if (!isDebug && isKeyDown(GLFW_KEY_W)) {
-        moveCamera->processKeyboard(Camera::Direction::Forward, deltaTime);
+        moveCamera(camera, CameraComponent::Direction::Forward, deltaTime);
     } else if (!isDebug && isKeyDown(GLFW_KEY_S)) {
-        moveCamera->processKeyboard(Camera::Direction::Backward, deltaTime);
+        moveCamera(camera, CameraComponent::Direction::Backward, deltaTime);
     }
 
     if (!isDebug && isKeyDown(GLFW_KEY_A)) {
-        moveCamera->processKeyboard(Camera::Direction::Left, deltaTime);
+        moveCamera(camera, CameraComponent::Direction::Left, deltaTime);
     } else if (!isDebug && isKeyDown(GLFW_KEY_D)) {
-        moveCamera->processKeyboard(Camera::Direction::Right, deltaTime);
+        moveCamera(camera, CameraComponent::Direction::Right, deltaTime);
     }
 
     if (isKeyPressed(GLFW_KEY_G)) {
@@ -105,8 +105,11 @@ void InputSystem::mousePositionCallback(GLFWwindow *window, double x, double y) 
     auto offsetX = x - inputManager->lastMouseX;
     auto offsetY = inputManager->lastMouseY - y;
 
-    camera->processMouseMovement(offsetX, offsetY);
+//    camera->processMouseMovement(offsetX, offsetY);
 
     inputManager->lastMouseX = x;
     inputManager->lastMouseY = y;
+}
+
+void InputSystem::moveCamera(Entity *camera, CameraComponent::Direction direction, float deltaTime) {
 }
