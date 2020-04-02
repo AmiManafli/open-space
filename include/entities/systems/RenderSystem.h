@@ -2,6 +2,7 @@
 #define CG1_PROJECT_RENDERSYSTEM_H
 
 #include <entities/System.h>
+#include <Grid.h>
 
 class RenderSystem : public System {
 public:
@@ -17,13 +18,12 @@ private:
 
     void setupShaders();
     ShaderProgram *gridShaderProgram;
-    ShaderProgram *testShaderProgram;
-    ShaderProgram *highlightShaderProgram;
 
     void setupGrid();
     Grid *grid;
 
     void renderEntities();
+    void renderMesh(MeshComponent *component);
 };
 
 #endif //CG1_PROJECT_RENDERSYSTEM_H

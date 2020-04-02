@@ -12,8 +12,8 @@ void EntityManager::addMeshComponent(uint32_t entityId, MeshComponent *component
     meshComponents.emplace(entityId, component);
 }
 
-MeshComponentMultimap::iterator EntityManager::getMeshComponents(uint32_t entityId) {
-    return meshComponents.find(entityId);
+std::pair<MeshComponentMultimap::iterator, MeshComponentMultimap::iterator> EntityManager::getMeshComponents(uint32_t entityId) {
+    return meshComponents.equal_range(entityId);
 }
 
 void EntityManager::addPositionComponent(uint32_t entityId, PositionComponent* component) {

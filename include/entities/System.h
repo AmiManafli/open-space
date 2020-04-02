@@ -6,14 +6,14 @@
 
 class System {
 public:
-    System(EntityManager *manager);
+    System(EntityManager *entityManager);
     virtual ~System() {}
 
     virtual void init() = 0;
     virtual void update() = 0;
 
 protected:
-    EntityManager *manager;
+    EntityManager *entityManager;
 };
 
 #endif //CG1_PROJECT_SYSTEM_H

@@ -1,5 +1,4 @@
 #include <GLContext.h>
-#include <RenderSystemOld.h>
 #include <InputManager.h>
 #include <entities/EntityManager.h>
 #include <entities/systems/RenderSystem.h>
@@ -7,10 +6,10 @@
 /**
  * Create example entities.
  */
-void createEntities(EntityManager *entityManager) {
+void createSphere(EntityManager *entityManager, ShaderProgram *shaderProgram) {
     auto sphere = entityManager->createEntity();
     auto spherePosition = new PositionComponent { glm::vec3(0, 0, 0) };
-    auto sphereMeshes = createMeshComponentsFromFile("../assets/models/ico-sphere.dae");
+    auto sphereMeshes = createMeshComponentsFromFile("../assets/models/ico-sphere.dae", shaderProgram);
 
     entityManager->addPositionComponent(sphere->id, spherePosition);
     for (auto& meshComponent : sphereMeshes) {
@@ -22,9 +21,14 @@ int main() {
     auto context = new GLContext("CG1: Project", 1200, 800);
     context->init();
 
+    auto shaderProgram = new ShaderProgram();
+    shaderProgram->attachShader("../assets/shaders/test.vert", ShaderType::VertexShader);
+    shaderProgram->attachShader("../assets/shaders/test.frag", ShaderType::FragmentShader);
+    shaderProgram->link();
+
     auto entityManager = new EntityManager();
 
-    createEntities(entityManager);
+    createSphere(entityManager, shaderProgram);
 
     auto renderSystem = new RenderSystem(entityManager, context);
     renderSystem->init();

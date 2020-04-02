@@ -5,10 +5,10 @@
 #include <assimp/postprocess.h>
 
 
-void processNode(std::vector<MeshComponent *>& meshes, aiNode *node, const aiScene *scene);
-MeshComponent* processMesh(std::vector<MeshComponent *>& meshes, aiMesh *mesh, const aiScene *scene);
+void processNode(std::vector<MeshComponent *>& meshes, aiNode *node, const aiScene *scene, ShaderProgram *shaderProgram);
+MeshComponent* processMesh(std::vector<MeshComponent *>& meshes, aiMesh *mesh, const aiScene *scene, ShaderProgram *shaderProgram);
 
-std::vector<MeshComponent *> createMeshComponentsFromFile(std::string filename) {
+std::vector<MeshComponent *> createMeshComponentsFromFile(std::string filename, ShaderProgram *shaderProgram) {
     auto meshes = std::vector<MeshComponent *>();
     Assimp::Importer importer;
     const aiScene *scene = importer.ReadFile(filename, aiProcess_Triangulate | aiProcess_FlipUVs);
@@ -17,18 +17,18 @@ std::vector<MeshComponent *> createMeshComponentsFromFile(std::string filename) 
         throw std::runtime_error(importer.GetErrorString());
     }
 
-    processNode(meshes, scene->mRootNode, scene);
+    processNode(meshes, scene->mRootNode, scene, shaderProgram);
 
     return meshes;
 }
 
-void processNode(std::vector<MeshComponent *>& meshes, aiNode *node, const aiScene *scene) {
+void processNode(std::vector<MeshComponent *>& meshes, aiNode *node, const aiScene *scene, ShaderProgram *shaderProgram) {
     for (size_t i = 0; i < node->mNumMeshes; i++) {
         auto mesh = scene->mMeshes[node->mMeshes[i]];
-        meshes.push_back(processMesh(meshes, mesh, scene));
+        meshes.push_back(processMesh(meshes, mesh, scene, shaderProgram));
     }
     for (size_t i = 0; i < node->mNumChildren; i++) {
-        processNode(meshes, node->mChildren[i], scene);
+        processNode(meshes, node->mChildren[i], scene, shaderProgram);
     }
 }
 
@@ -55,7 +55,7 @@ void setupBuffers(MeshComponent *component) {
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(MeshVertex), (void *) offsetof(MeshVertex, textureCoord));
 }
 
-MeshComponent* processMesh(std::vector<MeshComponent *>& meshes, aiMesh *mesh, const aiScene *scene) {
+MeshComponent* processMesh(std::vector<MeshComponent *>& meshes, aiMesh *mesh, const aiScene *scene, ShaderProgram *shaderProgram) {
     auto component = new MeshComponent {};
 
     for (size_t i = 0; i < mesh->mNumVertices; i++) {
@@ -86,6 +86,9 @@ MeshComponent* processMesh(std::vector<MeshComponent *>& meshes, aiMesh *mesh, c
         }
     }
 
+    component->shaderProgram = shaderProgram;
+    // TODO: mode should be defined when creating the mesh component
+    component->mode = GL_TRIANGLES;
     setupBuffers(component);
 
     return component;

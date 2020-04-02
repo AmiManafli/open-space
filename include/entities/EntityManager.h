@@ -14,14 +14,18 @@ typedef std::unordered_map<uint32_t, PositionComponent *> PositionComponentMap;
 
 class EntityManager {
 public:
+    /// Entities
     Entity* createEntity();
+    std::vector<Entity *> getEntities() { return entities; }
 
     /// Mesh component
     void addMeshComponent(uint32_t entityId, MeshComponent *component);
-    MeshComponentMultimap::iterator getMeshComponents(uint32_t entityId);
+    MeshComponentMultimap getMeshComponents() { return meshComponents; }
+    std::pair<MeshComponentMultimap::iterator, MeshComponentMultimap::iterator> getMeshComponents(uint32_t entityId);
 
     /// Position component
     void addPositionComponent(uint32_t entityId, PositionComponent *component);
+    PositionComponentMap getPositionComponents() { return positionComponents; }
     PositionComponent* getPositionComponent(uint32_t entityId);
 
 private:
