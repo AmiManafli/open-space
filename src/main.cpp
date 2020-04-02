@@ -10,7 +10,7 @@
  */
 void createSphere(EntityManager *entityManager, ShaderProgram *shaderProgram) {
     auto sphere = entityManager->createEntity();
-    auto spherePosition = new PositionComponent { glm::vec3(0, 0, 0) };
+    auto spherePosition = new PositionComponent { glm::vec3(2, 0, 0) };
     auto sphereMeshes = MeshComponent::createMeshComponentsFromFile("../assets/models/ico-sphere.dae", shaderProgram);
 
     entityManager->addPositionComponent(sphere->id, spherePosition);

@@ -23,7 +23,7 @@ private:
     Grid *grid;
 
     void renderEntities();
-    void renderMesh(MeshComponent *component);
+    void renderMesh(MeshComponent *mesh, PositionComponent *position);
 };
 
 #endif //CG1_PROJECT_RENDERSYSTEM_H

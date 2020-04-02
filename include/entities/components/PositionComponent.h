@@ -2,9 +2,15 @@
 #define CG1_PROJECT_POSITIONCOMPONENT_H
 
 #include <GLHeader.h>
+#include <entities/Component.h>
 
-struct PositionComponent {
+class PositionComponent : public Component {
+public:
+    PositionComponent(float x, float y, float z);
+    PositionComponent(glm::vec3 position);
+
     glm::vec3 position;
+    glm::mat4 model;
 };
 
 #endif //CG1_PROJECT_POSITIONCOMPONENT_H

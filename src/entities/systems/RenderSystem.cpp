@@ -74,20 +74,20 @@ void RenderSystem::renderEntities() {
     for (auto& pair : entityManager->getPositionComponents()) {
         auto entityId = pair.first;
 
-        auto position = pair.second->position;
+        auto position = pair.second;
         auto meshes = entityManager->getMeshComponents(entityId);
         for (auto it = meshes.first; it != meshes.second; it++) {
-            renderMesh(it->second);
+            renderMesh(it->second, position);
         }
     }
 }
 
-void RenderSystem::renderMesh(MeshComponent *component) {
-    component->shaderProgram->use();
-    component->shaderProgram->setUniform("view", context->getView());
-    component->shaderProgram->setUniform("projection", context->getProjection());
-    component->shaderProgram->setUniform("model", glm::mat4(1.0f));
-    glBindVertexArray(component->vao);
-    glDrawElements(component->mode, component->indices.size(), GL_UNSIGNED_INT, nullptr);
+void RenderSystem::renderMesh(MeshComponent *mesh, PositionComponent *position) {
+    mesh->shaderProgram->use();
+    mesh->shaderProgram->setUniform("view", context->getView());
+    mesh->shaderProgram->setUniform("projection", context->getProjection());
+    mesh->shaderProgram->setUniform("model", position->model);
+    glBindVertexArray(mesh->vao);
+    glDrawElements(mesh->mode, mesh->indices.size(), GL_UNSIGNED_INT, nullptr);
     glBindVertexArray(0);
 }
