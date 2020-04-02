@@ -4,12 +4,14 @@
 #include <entities/systems/RenderSystem.h>
 
 /**
- * Create example entities.
+ * Create example sphere.
+ * @param entityManager entity manager instance.
+ * @param shaderProgram shader program to use for this entity.
  */
 void createSphere(EntityManager *entityManager, ShaderProgram *shaderProgram) {
     auto sphere = entityManager->createEntity();
     auto spherePosition = new PositionComponent { glm::vec3(0, 0, 0) };
-    auto sphereMeshes = createMeshComponentsFromFile("../assets/models/ico-sphere.dae", shaderProgram);
+    auto sphereMeshes = MeshComponent::createMeshComponentsFromFile("../assets/models/ico-sphere.dae", shaderProgram);
 
     entityManager->addPositionComponent(sphere->id, spherePosition);
     for (auto& meshComponent : sphereMeshes) {
@@ -18,7 +20,7 @@ void createSphere(EntityManager *entityManager, ShaderProgram *shaderProgram) {
 }
 
 int main() {
-    auto context = new GLContext("CG1: Project", 1200, 800);
+    auto context = new GLContext("Computer Graphics: Project", 1200, 800);
     context->init();
 
     auto shaderProgram = new ShaderProgram();
