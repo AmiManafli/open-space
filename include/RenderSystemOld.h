@@ -1,5 +1,5 @@
-#ifndef CG1_PROJECT_RENDERSYSTEM_H
-#define CG1_PROJECT_RENDERSYSTEM_H
+#ifndef CG1_PROJECT_RENDERSYSTEMOLD_H
+#define CG1_PROJECT_RENDERSYSTEMOLD_H
 
 #include <GLHeader.h>
 #include "GLContext.h"
@@ -8,9 +8,9 @@
 #include "Grid.h"
 
 
-class RenderSystem {
+class RenderSystemOld {
 public:
-    explicit RenderSystem(GLContext *context);
+    explicit RenderSystemOld(GLContext *context);
 
     void setClearColor(float r, float g, float b, float a);
 
@@ -35,4 +35,4 @@ private:
 };
 
 
-#endif //CG1_PROJECT_RENDERSYSTEM_H
+#endif //CG1_PROJECT_RENDERSYSTEMOLD_H

@@ -1,10 +1,10 @@
-#include "RenderSystem.h"
+#include "RenderSystemOld.h"
 
-RenderSystem::RenderSystem(GLContext *context) : context(context) {
+RenderSystemOld::RenderSystemOld(GLContext *context) : context(context) {
     setClearColor(0.0f, 0.0f, 0.0f, 0.8f);
 }
 
-void RenderSystem::init() {
+void RenderSystemOld::init() {
     // Depth buffer
     glEnable(GL_DEPTH_TEST);
 
@@ -28,7 +28,7 @@ void RenderSystem::init() {
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
-void RenderSystem::createShaders() {
+void RenderSystemOld::createShaders() {
     gridShaderProgram = new ShaderProgram();
     gridShaderProgram->attachShader("../assets/shaders/grid.vert", ShaderType::VertexShader);
     gridShaderProgram->attachShader("../assets/shaders/grid.frag", ShaderType::FragmentShader);
@@ -45,7 +45,7 @@ void RenderSystem::createShaders() {
     highlightShaderProgram->link();
 }
 
-void RenderSystem::render(double deltaTime) {
+void RenderSystemOld::render(double deltaTime) {
     if (context->displayGui) {
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -98,6 +98,6 @@ void RenderSystem::render(double deltaTime) {
     context->swapBuffers();
 }
 
-void RenderSystem::setClearColor(float r, float g, float b, float a) {
+void RenderSystemOld::setClearColor(float r, float g, float b, float a) {
     clearColor = glm::vec4(r, b, g, a);
 }
