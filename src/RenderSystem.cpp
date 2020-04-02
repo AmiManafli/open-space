@@ -5,18 +5,27 @@ RenderSystem::RenderSystem(GLContext *context) : context(context) {
 }
 
 void RenderSystem::init() {
+    // Depth buffer
     glEnable(GL_DEPTH_TEST);
+
+    // Stencil buffer
+    glEnable(GL_STENCIL_TEST);
+    glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
     createShaders();
 
     shaderProgram->use();
 
-    models.push_back(new Model("../assets/models/ico-sphere.dae", glm::vec3(0, 0, 0)));
-    models.push_back(new Model("../assets/models/cylinder.dae", glm::vec3(2, 0, 0)));
+    auto model = new Model("../assets/models/ico-sphere.dae", glm::vec3(0, 0, 0));
+    model->setHighlighted(true);
+
+    models.push_back(model);
+    models.push_back(new Model("../assets/models/cube.dae", glm::vec3(5, 0, 0)));
 
     grid = new Grid(62, 62);
 
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
 void RenderSystem::createShaders() {
@@ -29,11 +38,14 @@ void RenderSystem::createShaders() {
     shaderProgram->attachShader("../assets/shaders/test.vert", ShaderType::VertexShader);
     shaderProgram->attachShader("../assets/shaders/test.frag", ShaderType::FragmentShader);
     shaderProgram->link();
+
+    highlightShaderProgram = new ShaderProgram();
+    highlightShaderProgram->attachShader("../assets/shaders/test.vert", ShaderType::VertexShader);
+    highlightShaderProgram->attachShader("../assets/shaders/highlight.frag", ShaderType::FragmentShader);
+    highlightShaderProgram->link();
 }
 
 void RenderSystem::render(double deltaTime) {
-    double currentTime = glfwGetTime();
-
     if (context->displayGui) {
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -45,7 +57,10 @@ void RenderSystem::render(double deltaTime) {
     }
 
     glClearColor(clearColor.x, clearColor.y, clearColor.z, clearColor.w);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+    // glClear is affected by glStencilMask so disable it after it's cleared
+    glStencilMask(0x00);
 
     if (context->displayGrid) {
         gridShaderProgram->use();
@@ -54,11 +69,15 @@ void RenderSystem::render(double deltaTime) {
         grid->draw(*gridShaderProgram);
     }
 
+    highlightShaderProgram->use();
+    highlightShaderProgram->setUniform("view", context->getView());
+    highlightShaderProgram->setUniform("projection", context->getProjection());
+
     shaderProgram->use();
     shaderProgram->setUniform("view", context->getView());
     shaderProgram->setUniform("projection", context->getProjection());
     for (auto &model : models) {
-        model->draw(*shaderProgram);
+        model->draw(*shaderProgram, *highlightShaderProgram);
     }
 
     // Render cameras (except the active one)

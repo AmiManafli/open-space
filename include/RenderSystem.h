@@ -10,7 +10,7 @@
 
 class RenderSystem {
 public:
-    RenderSystem(GLContext *context);
+    explicit RenderSystem(GLContext *context);
 
     void setClearColor(float r, float g, float b, float a);
 
@@ -22,6 +22,7 @@ private:
 
     ShaderProgram* shaderProgram;
     ShaderProgram* gridShaderProgram;
+    ShaderProgram* highlightShaderProgram;
 
     std::vector<Model*> models;
 

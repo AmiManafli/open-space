@@ -19,8 +19,10 @@ public:
 
     std::vector<Mesh> getMeshes() { return meshes; }
 
-    void draw(ShaderProgram& shaderProgram);
-    void drawAxis(ShaderProgram& shaderProgram);
+    bool isHighlighted() { return this->highlighted; }
+    void setHighlighted(bool highlighted) { this->highlighted = highlighted; }
+
+    void draw(ShaderProgram& shaderProgram, ShaderProgram& highlightShaderProgram);
 
     static std::vector<Mesh> loadModel(std::string filename);
 
@@ -29,7 +31,11 @@ private:
     std::vector<Mesh> meshes;
 
     glm::mat4 model;
+    glm::mat4 highlightModel;
+
     glm::vec3 position;
+
+    bool highlighted = false;
 
     void updateModelMatrix();
     static void processNode(std::vector<Mesh>& meshes, aiNode *node, const aiScene *scene);

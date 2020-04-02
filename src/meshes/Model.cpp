@@ -13,16 +13,34 @@ Model::Model(std::vector<Mesh> meshes, glm::vec3 position, glm::mat4 model) : po
     }
 
     this->model = glm::translate(model, position);
+
+    float highlightScale = 1.05;
+    this->highlightModel = glm::scale(this->model, glm::vec3(highlightScale, highlightScale, highlightScale));
 }
 
-void Model::draw(ShaderProgram& shaderProgram) {
+void Model::draw(ShaderProgram& shaderProgram, ShaderProgram& highlightShaderProgram) {
+    if (highlighted) {
+        glStencilFunc(GL_ALWAYS, 1, 0xFF); // all fragments passes the stencil test
+        glStencilMask(0xFF); // enable writing to the stencil buffer
+    }
+
     for (auto &mesh : meshes) {
         mesh.draw(shaderProgram, model);
     }
-}
 
-void Model::drawAxis(ShaderProgram& shaderProgram) {
-    throw std::runtime_error("draw axis not implemented");
+    if (highlighted) {
+        glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+        glStencilMask(0x00); // disable writing to the stencil buffer
+        glDisable(GL_DEPTH_TEST);
+
+        for (auto &mesh : meshes) {
+            mesh.draw(highlightShaderProgram, highlightModel);
+        }
+
+        glStencilMask(0xFF);
+        glStencilFunc(GL_ALWAYS, 1, 0xFF);
+        glEnable(GL_DEPTH_TEST);
+    }
 }
 
 void Model::updateModelMatrix() {
