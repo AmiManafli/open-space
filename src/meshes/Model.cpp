@@ -23,8 +23,16 @@ Model::Model(const std::string filename, glm::vec3 position, glm::mat4 model)
     axis = new Axis(position);
 }
 
+void Model::draw(ShaderProgram& shaderProgram, ShaderProgram& gridShaderProgram) {
+    gridShaderProgram.use();
+    axis->draw(gridShaderProgram);
+
+    shaderProgram.use();
+    draw(shaderProgram);
+}
+
 void Model::draw(ShaderProgram& shaderProgram) {
-    axis->draw(shaderProgram);
+    shaderProgram.use();
     for (auto &mesh : meshes) {
         mesh.draw(shaderProgram, model);
     }

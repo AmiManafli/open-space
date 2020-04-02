@@ -32,6 +32,8 @@ Axis::Axis(glm::vec3 position, glm::mat4 rotation, float scale)
 }
 
 void Axis::draw(ShaderProgram &shaderProgram) {
+    shaderProgram.use();
+    shaderProgram.setUniform("model", model);
     glBindVertexArray(vao);
     glDrawArrays(GL_LINES, 0, vertices.size());
     glBindVertexArray(0);

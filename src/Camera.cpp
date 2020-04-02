@@ -16,9 +16,15 @@ Camera::Camera(Mode mode, glm::vec3 position, glm::vec3 up, glm::vec3 front)
     view = glm::lookAt(position, front, up);
 
     yaw = 180.0f + glm::degrees(glm::atan((position.z - target.z) / (position.x - target.x)));
+    if (isnan(yaw)) {
+        yaw = 0.0f;
+    }
 
     auto q = glm::vec3(position.x, 0, position.z);
     pitch = -glm::degrees(glm::acos(glm::dot(position, q) / (glm::length(position) * glm::length(q))));
+    if (isnan(pitch)) {
+        pitch = 0.0f;
+    }
 }
 
 void Camera::processKeyboard(Camera::Direction direction, float deltaTime) {
@@ -82,9 +88,10 @@ glm::mat4 Camera::getProjection(float aspectRatio) {
 }
 
 void Camera::draw(ShaderProgram& shaderProgram) {
-    float scaleFactor = 1.0f;
-    auto scale = glm::scale(glm::mat4(1.0f), glm::vec3(scaleFactor, scaleFactor, scaleFactor));
-    auto translation = glm::translate(scale, position);
-//    auto model = glm::rotate(translation, yaw, front);
-    meshes[0].draw(shaderProgram, translation);
+    float scaleFactor = 0.5f;
+    auto translation = glm::translate(glm::mat4(1.0f), position);
+    auto rotation = glm::rotate(translation, glm::radians(yaw - 90.0f), up);
+    rotation = glm::rotate(rotation, glm::radians(pitch + 90.0f), front);
+    auto model = glm::scale(rotation, glm::vec3(scaleFactor, scaleFactor, scaleFactor));
+    meshes[0].draw(shaderProgram, model);
 }

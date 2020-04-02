@@ -58,7 +58,7 @@ void RenderSystem::render(double deltaTime) {
     shaderProgram->setUniform("view", context->getView());
     shaderProgram->setUniform("projection", context->getProjection());
     for (auto &model : models) {
-        model->draw(*shaderProgram);
+        model->draw(*shaderProgram, *gridShaderProgram);
     }
 
     // Render cameras (except the active one)
