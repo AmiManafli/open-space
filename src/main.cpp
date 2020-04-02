@@ -2,21 +2,18 @@
 #include <InputManager.h>
 #include <entities/EntityManager.h>
 #include <entities/systems/RenderSystem.h>
+#include <entities/EntityBuilder.h>
 
 /**
  * Create example sphere.
- * @param entityManager entity manager instance.
+ * @param entityBuilder entity builder.
  * @param shaderProgram shader program to use for this entity.
  */
-void createSphere(EntityManager *entityManager, ShaderProgram *shaderProgram) {
-    auto sphere = entityManager->createEntity();
-    auto spherePosition = new PositionComponent { glm::vec3(2, 0, 0) };
-    auto sphereMeshes = MeshComponent::createMeshComponentsFromFile("../assets/models/ico-sphere.dae", shaderProgram);
-
-    entityManager->addPositionComponent(sphere->id, spherePosition);
-    for (auto& meshComponent : sphereMeshes) {
-        entityManager->addMeshComponent(sphere->id, meshComponent);
-    }
+Entity* createSphere(EntityBuilder *builder, ShaderProgram *shaderProgram) {
+    return builder
+        ->withMesh("../assets/models/ico-sphere.dae", shaderProgram)
+        ->withPosition(0, 0, 0)
+        ->build();
 }
 
 int main() {
@@ -30,7 +27,7 @@ int main() {
 
     auto entityManager = new EntityManager();
 
-    createSphere(entityManager, shaderProgram);
+    auto sphere = createSphere( new EntityBuilder(entityManager), shaderProgram);
 
     auto renderSystem = new RenderSystem(entityManager, context);
     renderSystem->init();

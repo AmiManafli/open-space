@@ -1,8 +1,8 @@
 #include <entities/components/MeshComponent.h>
 
 
-MeshComponent::MeshComponent(std::vector<MeshVertex>& vertices, std::vector<uint32_t>& indices,
-                             std::vector<MeshTexture>& textures, ShaderProgram *shaderProgram)
+MeshComponent::MeshComponent(std::vector<Vertex>& vertices, std::vector<uint32_t>& indices,
+                             std::vector<Texture>& textures, ShaderProgram *shaderProgram)
                                 : vertices(vertices), indices(indices), textures(textures),
                                   shaderProgram(shaderProgram), mode(GL_TRIANGLES) {
     setupBuffers();
@@ -44,28 +44,28 @@ void MeshComponent::setupBuffers() {
     glBindVertexArray(vao);
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(MeshVertex), &vertices[0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint32_t), &indices[0], GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(MeshVertex), nullptr);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), nullptr);
 
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(MeshVertex), (void *) offsetof(MeshVertex, normal));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) offsetof(Vertex, normal));
 
     glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(MeshVertex), (void *) offsetof(MeshVertex, textureCoord));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) offsetof(Vertex, textureCoord));
 }
 
 MeshComponent* MeshComponent::processMesh(std::vector<MeshComponent *>& meshes, aiMesh *mesh, const aiScene *scene, ShaderProgram *shaderProgram) {
-    std::vector<MeshComponent::MeshVertex> vertices;
+    std::vector<Vertex> vertices;
     std::vector<uint32_t> indices;
-    std::vector<MeshComponent::MeshTexture> textures;
+    std::vector<Texture> textures;
 
     for (size_t i = 0; i < mesh->mNumVertices; i++) {
-        MeshComponent::MeshVertex vertex;
+        Vertex vertex {};
 
         auto position = mesh->mVertices[i];
         vertex.position = glm::vec3(position.x, position.y, position.z);

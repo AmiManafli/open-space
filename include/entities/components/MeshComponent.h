@@ -12,19 +12,19 @@
 
 class MeshComponent : public Component {
 public:
-    struct MeshVertex {
+    struct Vertex {
         glm::vec3 position;
         glm::vec3 normal;
         glm::vec2 textureCoord;
     };
 
-    struct MeshTexture {
+    struct Texture {
         uint32_t id;
         std::string type;
     };
 
 public:
-    MeshComponent(std::vector<MeshVertex>& vertices, std::vector<uint32_t>& indices, std::vector<MeshTexture>& textures, ShaderProgram *shaderProgram);
+    MeshComponent(std::vector<Vertex>& vertices, std::vector<uint32_t>& indices, std::vector<Texture>& textures, ShaderProgram *shaderProgram);
     ~MeshComponent() override;
 
     static std::vector<MeshComponent *> createMeshComponentsFromFile(std::string filename, ShaderProgram *shaderProgram);
@@ -32,9 +32,9 @@ public:
     uint32_t vao, vbo, ebo;
     ShaderProgram *shaderProgram;
     GLenum mode;
-    std::vector<MeshVertex> vertices;
+    std::vector<Vertex> vertices;
     std::vector<uint32_t> indices;
-    std::vector<MeshTexture> textures;
+    std::vector<Texture> textures;
 
 private:
     void setupBuffers();
