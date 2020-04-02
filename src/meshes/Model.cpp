@@ -1,25 +1,18 @@
 #include "meshes/Model.h"
 
-Model::Model(std::vector<Mesh>& meshes, glm::vec3 position) : position(position) {
-    for (auto mesh : meshes) {
-        this->meshes.push_back(mesh);
-    }
-
-    axis = new Axis(position);
-
-    updateModelMatrix();
-}
-
 Model::Model(const std::string filename, glm::vec3 position) : Model(filename, position, glm::mat4(1.0f)) {
 }
 
 Model::Model(const std::string filename, glm::vec3 position, glm::mat4 model)
-        : filename(filename), position(position), model(model) {
-    meshes = loadModel(filename);
+        : Model(loadModel(filename), position, model) {
+}
 
-//    auto scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.01, 0.01, 0.01));
-    this->model = glm::translate(glm::mat4(1.0f), position);
+Model::Model(std::vector<Mesh> meshes, glm::vec3 position, glm::mat4 model) : position(position) {
+    for (auto mesh : meshes) {
+        this->meshes.push_back(mesh);
+    }
 
+    this->model = glm::translate(model, position);
     axis = new Axis(position);
 }
 

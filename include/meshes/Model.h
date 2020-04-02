@@ -13,9 +13,9 @@
 
 class Model {
 public:
-    Model(std::vector<Mesh>& meshes, glm::vec3 position);
     Model(const std::string filename, glm::vec3 position);
     Model(const std::string filename, glm::vec3 position, glm::mat4 model);
+    Model(std::vector<Mesh> meshes, glm::vec3 position, glm::mat4 model);
 
     std::vector<Mesh> getMeshes() { return meshes; }
 
