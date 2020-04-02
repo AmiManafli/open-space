@@ -21,6 +21,10 @@ void Model::draw(ShaderProgram& shaderProgram) {
     }
 }
 
+void Model::drawAxis(ShaderProgram& shaderProgram) {
+    throw std::runtime_error("draw axis not implemented");
+}
+
 void Model::updateModelMatrix() {
 }
 

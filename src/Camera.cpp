@@ -35,10 +35,8 @@ void Camera::processKeyboard(Camera::Direction direction, float deltaTime) {
         position -= front * velocity;
     } else if (direction == Left) {
         position -= right * velocity;
-        target -= right * velocity;
     } else if (direction == Right) {
         position += right * velocity;
-        target += right * velocity;
     }
 }
 

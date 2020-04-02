@@ -20,7 +20,7 @@ public:
     std::vector<Mesh> getMeshes() { return meshes; }
 
     void draw(ShaderProgram& shaderProgram);
-    void draw(ShaderProgram& shaderProgram);
+    void drawAxis(ShaderProgram& shaderProgram);
 
     static std::vector<Mesh> loadModel(std::string filename);
 

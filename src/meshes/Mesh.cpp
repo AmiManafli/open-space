@@ -33,8 +33,9 @@ void Mesh::setup() {
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) offsetof(Vertex, textureCoord));
 }
 
-void Mesh::draw(ShaderProgram& program, glm::mat4 model) {
-    program.setUniform("model", model);
+void Mesh::draw(ShaderProgram& shaderProgram, glm::mat4 model) {
+    shaderProgram.use();
+    shaderProgram.setUniform("model", model);
     glBindVertexArray(vao);
     glDrawElements(mode, indices.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
