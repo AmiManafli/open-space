@@ -22,13 +22,13 @@ public:
         Right,
     };
 
-    CameraComponent(Mode mode, Type type, glm::vec3 target, glm::vec3 front, glm::vec3 up, float aspectRatio, PositionComponent *positionComponent);
+    CameraComponent(Mode mode, Type type, glm::vec3 target, glm::vec3 front, glm::vec3 up, PositionComponent *positionComponent);
 
     glm::mat4 getView(PositionComponent *component);
     glm::mat4 getProjection(float aspectRatio);
 
-//    void processKeyboard(Direction direction, float deltaTime);
-//    void processMouseMovement(float offsetX, float offsetY);
+    void processKeyboard(CameraComponent::Direction direction, float deltaTime, PositionComponent *positionComponent);
+    void processMouseMovement(float offsetX, float offsetY);
 
 private:
     Mode mode;
@@ -41,9 +41,11 @@ private:
     glm::vec3 front;
 
     float yaw, pitch, roll;
-    float aspectRatio;
 
     float movementSpeed;
+    float mouseSensitivity;
+
+    void updateVectors();
 };
 
 #endif //CG1_PROJECT_CAMERACOMPONENT_H

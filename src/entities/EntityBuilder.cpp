@@ -66,6 +66,6 @@ EntityBuilder * EntityBuilder::withCamera(CameraComponent::Mode mode, CameraComp
     if (positionComponent == nullptr) {
         throw std::runtime_error("need a PositionComponent to initialize the CameraComponent");
     }
-    cameraComponent = new CameraComponent(mode, type, target, front, up, aspectRatio, positionComponent);
+    cameraComponent = new CameraComponent(mode, type, target, front, up, positionComponent);
     return this;
 }

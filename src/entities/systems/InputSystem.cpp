@@ -95,6 +95,7 @@ void InputSystem::mousePositionCallback(GLFWwindow *window, double x, double y) 
     if (context->debug) return;
 
     auto camera = context->getCamera();
+    auto cameraComponent = inputManager->entityManager->getCameraComponent(camera->id);
 
     if (!inputManager->processedMouse) {
         inputManager->lastMouseX = x;
@@ -105,11 +106,15 @@ void InputSystem::mousePositionCallback(GLFWwindow *window, double x, double y) 
     auto offsetX = x - inputManager->lastMouseX;
     auto offsetY = inputManager->lastMouseY - y;
 
-//    camera->processMouseMovement(offsetX, offsetY);
+    cameraComponent->processMouseMovement(offsetX, offsetY);
 
     inputManager->lastMouseX = x;
     inputManager->lastMouseY = y;
 }
 
 void InputSystem::moveCamera(Entity *camera, CameraComponent::Direction direction, float deltaTime) {
+    auto cameraComponent = entityManager->getCameraComponent(camera->id);
+    auto positionComponent = entityManager->getPositionComponent(camera->id);
+
+    cameraComponent->processKeyboard(direction, deltaTime, positionComponent);
 }
