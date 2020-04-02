@@ -22,6 +22,8 @@ private:
 
     void setupGrid();
     Grid *grid;
+
+    void renderEntities();
 };
 
 #endif //CG1_PROJECT_RENDERSYSTEM_H

@@ -4,17 +4,30 @@
 #include <entities/EntityManager.h>
 #include <entities/systems/RenderSystem.h>
 
+/**
+ * Create example entities.
+ */
+void createEntities(EntityManager *entityManager) {
+    auto sphere = entityManager->createEntity();
+    auto spherePosition = new PositionComponent { glm::vec3(0, 0, 0) };
+    auto sphereMeshes = createMeshComponentsFromFile("../assets/models/ico-sphere.dae");
+
+    entityManager->addPositionComponent(sphere->id, spherePosition);
+    for (auto& meshComponent : sphereMeshes) {
+        entityManager->addMeshComponent(sphere->id, meshComponent);
+    }
+}
+
 int main() {
     auto context = new GLContext("CG1: Project", 1200, 800);
     context->init();
 
-    EntityManager *entityManager = new EntityManager();
+    auto entityManager = new EntityManager();
+
+    createEntities(entityManager);
+
     auto renderSystem = new RenderSystem(entityManager, context);
     renderSystem->init();
-
-//    RenderSystemOld renderer(context);
-//    renderer.setClearColor(0.2, 0.2, 0.2, 1.0);
-//    renderer.init();
 
     InputManager inputManager(context);
     inputManager.init();
@@ -30,6 +43,7 @@ int main() {
         renderSystem->update();
     }
 
+    delete renderSystem;
     delete entityManager;
     delete context;
 

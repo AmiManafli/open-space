@@ -49,6 +49,7 @@ void RenderSystem::update() {
     }
 
     /// Render entities
+    renderEntities();
 
     /// Display UI
     if (context->displayGui) {
@@ -77,4 +78,7 @@ void RenderSystem::setupShaders() {
 
 void RenderSystem::setupGrid() {
     grid = new Grid(62, 62);
+}
+
+void RenderSystem::renderEntities() {
 }
