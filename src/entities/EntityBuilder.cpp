@@ -1,4 +1,4 @@
-#include "EntityBuilder.h"
+#include "entities/EntityBuilder.h"
 
 
 EntityBuilder::EntityBuilder(EntityManager *entityManager) : entityManager(entityManager) {

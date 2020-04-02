@@ -1,34 +1,18 @@
-#include "InputManager.h"
+#include "entities/systems/InputSystem.h"
 
-InputManager::InputManager(GLContext *context) : context(context) {
-    auto topCamera = new Camera(Camera::Mode::Orthographic, glm::vec3(0, 5, 0), glm::vec3(0, 0, -1), glm::vec3(0, -1, 0));
-    auto sideCamera = new Camera(Camera::Mode::Orthographic, glm::vec3(0, 0, 5), glm::vec3(0, 1, 0), glm::vec3(0, 0, -1));
-    auto perspectiveCamera = new Camera(Camera::Mode::Perspective, glm::vec3(5, 5, 10), glm::vec3(0, 1, 0), glm::normalize(glm::vec3(-5, -5, -10)));
-    perspectiveCamera->setTarget(glm::vec3(0, 0, 0));
-
-    auto cameraMeshes = Model::loadModel("../assets/models/camera.dae");
-    topCamera->meshes = cameraMeshes;
-    sideCamera->meshes = cameraMeshes;
-    perspectiveCamera->meshes = cameraMeshes;
-
-    context->addCamera(topCamera);
-    context->addCamera(sideCamera);
-    context->addCamera(perspectiveCamera);
-
-    context->setActiveCamera(2);
+InputSystem::InputSystem(EntityManager *entityManager, GLContext *context)
+        : System(entityManager), context(context), lastMouseX(-1), lastMouseY(-1) {
 }
 
-void InputManager::init() {
+void InputSystem::init() {
     auto window = context->getWindow();
     glfwSetWindowUserPointer(window, this);
     glfwSetCursorPosCallback(window, mousePositionCallback);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-    lastMouseX = -1;
-    lastMouseY = -1;
 }
 
-void InputManager::process(double deltaTime) {
+void InputSystem::update() {
+    auto deltaTime = context->getDeltaTime();
     auto isDebug = context->debug;
     auto window = context->getWindow();
     auto cameras = context->getCameras();
@@ -87,15 +71,15 @@ void InputManager::process(double deltaTime) {
     }
 }
 
-bool InputManager::isKeyDown(int key) {
+bool InputSystem::isKeyDown(int key) {
     return glfwGetKey(context->getWindow(), key) == GLFW_PRESS;
 }
 
-bool InputManager::isKeyUp(int key) {
+bool InputSystem::isKeyUp(int key) {
     return glfwGetKey(context->getWindow(), key) == GLFW_RELEASE;
 }
 
-bool InputManager::isKeyPressed(int key) {
+bool InputSystem::isKeyPressed(int key) {
     auto keyStatus = glfwGetKey(context->getWindow(), key);
     bool pressed = false;
     if (keysDown[key] == GLFW_PRESS && keyStatus == GLFW_RELEASE) {
@@ -105,13 +89,12 @@ bool InputManager::isKeyPressed(int key) {
     return pressed;
 }
 
-void InputManager::mousePositionCallback(GLFWwindow *window, double x, double y) {
-    auto inputManager = (InputManager *) glfwGetWindowUserPointer(window);
+void InputSystem::mousePositionCallback(GLFWwindow *window, double x, double y) {
+    auto inputManager = (InputSystem *) glfwGetWindowUserPointer(window);
     auto context = inputManager->context;
     if (context->debug) return;
 
-    auto camera = context->getCameras()[2];
-    auto deltaTime = context->getDeltaTime();
+    auto camera = context->getCamera();
 
     if (!inputManager->processedMouse) {
         inputManager->lastMouseX = x;
