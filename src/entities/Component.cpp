@@ -1,4 +1,4 @@
-#include "entities/Component.h"
+#include "cg/entities/Component.h"
 
 
 Component::Component() {

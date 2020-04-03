@@ -1,4 +1,4 @@
-#include <entities/components/PositionComponent.h>
+#include <cg/entities/components/PositionComponent.h>
 
 PositionComponent::PositionComponent(float x, float y, float z)
         : PositionComponent(glm::vec3(x, y, z)){

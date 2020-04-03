@@ -1,8 +1,8 @@
-#include <GLContext.h>
-#include <entities/EntityManager.h>
-#include <entities/systems/RenderSystem.h>
-#include <entities/EntityBuilder.h>
-#include <entities/systems/InputSystem.h>
+#include <cg/GLContext.h>
+#include <cg/entities/EntityManager.h>
+#include <cg/entities/systems/RenderSystem.h>
+#include <cg/entities/EntityBuilder.h>
+#include <cg/entities/systems/InputSystem.h>
 
 Entity *createPerspectiveCamera(EntityBuilder *pBuilder, float aspect);
 

@@ -36,5 +36,51 @@ include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/lib/glm")
 aux_source_directory("${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui" PROJECT_SRCS)
 include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui")
 
-add_executable(${CMAKE_PROJECT_NAME} src/main.cpp lib/glad/glad.c src/GLContext.cpp include/GLContext.h include/GLHeader.h src/shaders/Shader.cpp include/shaders/Shader.h src/shaders/ShaderProgram.cpp include/shaders/ShaderProgram.h ${PROJECT_SRCS} src/Axis.cpp include/Axis.h src/entities/Entity.cpp include/entities/Entity.h src/entities/Component.cpp include/entities/Component.h src/entities/System.cpp include/entities/System.h src/entities/EntityManager.cpp include/entities/EntityManager.h src/entities/systems/MovementSystem.cpp include/entities/systems/MovementSystem.h src/entities/systems/RenderSystem.cpp include/entities/systems/RenderSystem.h src/entities/components/PositionComponent.cpp include/entities/components/PositionComponent.h include/entities/components/MeshComponent.h src/entities/components/MeshComponent.cpp src/entities/EntityBuilder.cpp include/entities/EntityBuilder.h src/entities/systems/InputSystem.cpp include/entities/systems/InputSystem.h src/entities/components/CameraComponent.cpp include/entities/components/CameraComponent.h include/entities/components/HighlightComponent.cpp include/entities/components/HighlightComponent.h include/Grid.h src/Grid.cpp)
-target_link_libraries(${CMAKE_PROJECT_NAME} glfw ${PROJECT_LIBRARIES} ${GLFW_LIBRARIES} ${ASSIMP_LIBRARIES} ${IMGUI_LIBRARIES})
+add_executable(${CMAKE_PROJECT_NAME}
+    ${PROJECT_SRCS}
+    src/main.cpp
+    lib/glad/glad.c
+    src/GLContext.cpp
+    include/cg/GLContext.h
+    include/cg/GLHeader.h
+    src/shaders/Shader.cpp
+    include/cg/shaders/Shader.h
+    src/shaders/ShaderProgram.cpp
+    include/cg/shaders/ShaderProgram.h
+    src/Axis.cpp
+    include/cg/Axis.h
+    src/entities/Entity.cpp
+    include/cg/entities/Entity.h
+    src/entities/Component.cpp
+    include/cg/entities/Component.h
+    src/entities/System.cpp
+    include/cg/entities/System.h
+    src/entities/EntityManager.cpp
+    include/cg/entities/EntityManager.h
+    src/entities/systems/MovementSystem.cpp
+    include/cg/entities/systems/MovementSystem.h
+    src/entities/systems/RenderSystem.cpp
+    include/cg/entities/systems/RenderSystem.h
+    src/entities/components/PositionComponent.cpp
+    include/cg/entities/components/PositionComponent.h
+    include/cg/entities/components/MeshComponent.h
+    src/entities/components/MeshComponent.cpp
+    src/entities/EntityBuilder.cpp
+    include/cg/entities/EntityBuilder.h
+    src/entities/systems/InputSystem.cpp
+    include/cg/entities/systems/InputSystem.h
+    src/entities/components/CameraComponent.cpp
+    include/cg/entities/components/CameraComponent.h
+    include/cg/entities/components/HighlightComponent.cpp
+    include/cg/entities/components/HighlightComponent.h
+    include/cg/Grid.h
+    src/Grid.cpp
+)
+
+target_link_libraries(${CMAKE_PROJECT_NAME}
+    glfw
+    ${PROJECT_LIBRARIES}
+    ${GLFW_LIBRARIES}
+    ${ASSIMP_LIBRARIES}
+    ${IMGUI_LIBRARIES}
+)

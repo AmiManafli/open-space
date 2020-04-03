@@ -3,10 +3,10 @@
 
 #include <vector>
 #include <unordered_map>
-#include <entities/components/MeshComponent.h>
-#include <entities/components/PositionComponent.h>
-#include <entities/components/CameraComponent.h>
-#include <entities/components/HighlightComponent.h>
+#include <cg/entities/components/MeshComponent.h>
+#include <cg/entities/components/PositionComponent.h>
+#include <cg/entities/components/CameraComponent.h>
+#include <cg/entities/components/HighlightComponent.h>
 #include "Component.h"
 #include "Entity.h"
 

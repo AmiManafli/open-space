@@ -1,4 +1,4 @@
-#include "Axis.h"
+#include <cg/Axis.h>
 
 Axis::Axis(glm::vec3 position) : Axis(position, glm::mat4()) {
 }

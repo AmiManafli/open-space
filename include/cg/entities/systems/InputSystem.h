@@ -1,8 +1,8 @@
 #ifndef CG1_PROJECT_INPUTSYSTEM_H
 #define CG1_PROJECT_INPUTSYSTEM_H
 
-#include <GLHeader.h>
-#include <entities/System.h>
+#include <cg/GLHeader.h>
+#include <cg/entities/System.h>
 
 
 class InputSystem : public System {

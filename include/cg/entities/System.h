@@ -1,7 +1,7 @@
 #ifndef CG1_PROJECT_SYSTEM_H
 #define CG1_PROJECT_SYSTEM_H
 
-#include <GLContext.h>
+#include <cg/GLContext.h>
 #include "EntityManager.h"
 
 class System {

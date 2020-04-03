@@ -1,8 +1,8 @@
 #ifndef CG1_PROJECT_AXIS_H
 #define CG1_PROJECT_AXIS_H
 
-#include <GLHeader.h>
-#include <shaders/ShaderProgram.h>
+#include <cg/GLHeader.h>
+#include <cg/shaders/ShaderProgram.h>
 
 class Axis {
 public:

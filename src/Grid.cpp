@@ -1,4 +1,4 @@
-#include "Grid.h"
+#include "cg/Grid.h"
 
 Grid::Grid(int width, int height) {
     int startX = width / 2;

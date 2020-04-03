@@ -1,4 +1,4 @@
-#include "entities/components/CameraComponent.h"
+#include "cg/entities/components/CameraComponent.h"
 
 CameraComponent::CameraComponent(CameraComponent::Mode mode, CameraComponent::Type type, glm::vec3 target, glm::vec3 front, glm::vec3 up, PositionComponent *positionComponent)
         : mode(mode), type(type), target(target), zoom(1.0f), mouseSensitivity(0.1f), movementSpeed(2.5f) {

@@ -1,7 +1,7 @@
 #ifndef CG1_PROJECT_SHADER_H
 #define CG1_PROJECT_SHADER_H
 
-#include <GLHeader.h>
+#include <cg/GLHeader.h>
 
 class Shader {
 public:

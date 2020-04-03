@@ -1,7 +1,7 @@
 #ifndef CG1_PROJECT_ENTITYBUILDER_H
 #define CG1_PROJECT_ENTITYBUILDER_H
 
-#include <entities/components/CameraComponent.h>
+#include <cg/entities/components/CameraComponent.h>
 #include "EntityManager.h"
 
 class EntityBuilder {

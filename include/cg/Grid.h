@@ -1,9 +1,9 @@
 #ifndef CG1_PROJECT_GRID_H
 #define CG1_PROJECT_GRID_H
 
-#include <GLHeader.h>
-#include <shaders/ShaderProgram.h>
-#include <entities/components/MeshComponent.h>
+#include <cg/GLHeader.h>
+#include <cg/shaders/ShaderProgram.h>
+#include <cg/entities/components/MeshComponent.h>
 
 
 class Grid {

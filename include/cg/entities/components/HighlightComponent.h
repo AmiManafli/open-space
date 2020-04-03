@@ -1,9 +1,9 @@
 #ifndef CG1_PROJECT_HIGHLIGHTCOMPONENT_H
 #define CG1_PROJECT_HIGHLIGHTCOMPONENT_H
 
-#include <GLHeader.h>
-#include <entities/Component.h>
-#include <shaders/ShaderProgram.h>
+#include <cg/GLHeader.h>
+#include <cg/entities/Component.h>
+#include <cg/shaders/ShaderProgram.h>
 
 
 class HighlightComponent : public Component {

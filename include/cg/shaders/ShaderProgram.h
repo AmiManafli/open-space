@@ -1,7 +1,7 @@
 #ifndef CG1_PROJECT_SHADERPROGRAM_H
 #define CG1_PROJECT_SHADERPROGRAM_H
 
-#include <GLHeader.h>
+#include <cg/GLHeader.h>
 
 enum ShaderType {
     VertexShader = GL_VERTEX_SHADER,

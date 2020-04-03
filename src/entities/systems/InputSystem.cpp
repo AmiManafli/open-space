@@ -1,4 +1,4 @@
-#include "entities/systems/InputSystem.h"
+#include "cg/entities/systems/InputSystem.h"
 
 InputSystem::InputSystem(EntityManager *entityManager, GLContext *context)
         : System(entityManager), context(context), lastMouseX(-1), lastMouseY(-1) {

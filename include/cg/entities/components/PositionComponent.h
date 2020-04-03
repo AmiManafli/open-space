@@ -1,8 +1,8 @@
 #ifndef CG1_PROJECT_POSITIONCOMPONENT_H
 #define CG1_PROJECT_POSITIONCOMPONENT_H
 
-#include <GLHeader.h>
-#include <entities/Component.h>
+#include <cg/GLHeader.h>
+#include <cg/entities/Component.h>
 
 class PositionComponent : public Component {
 public:

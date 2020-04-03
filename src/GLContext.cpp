@@ -1,4 +1,4 @@
-#include "GLContext.h"
+#include "cg/GLContext.h"
 
 GLContext::GLContext(EntityManager *entityManager, std::string title, uint16_t width, uint16_t height)
         : entityManager(entityManager), title(title), width(width), height(height) {

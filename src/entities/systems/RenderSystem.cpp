@@ -1,5 +1,5 @@
-#include <Grid.h>
-#include "entities/systems/RenderSystem.h"
+#include <cg/Grid.h>
+#include "cg/entities/systems/RenderSystem.h"
 
 RenderSystem::RenderSystem(EntityManager *entityManager, GLContext *context)
         : System(entityManager), context(context) {

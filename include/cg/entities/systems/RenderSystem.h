@@ -1,8 +1,8 @@
 #ifndef CG1_PROJECT_RENDERSYSTEM_H
 #define CG1_PROJECT_RENDERSYSTEM_H
 
-#include <entities/System.h>
-#include <Grid.h>
+#include <cg/entities/System.h>
+#include <cg/Grid.h>
 
 class RenderSystem : public System {
 public:

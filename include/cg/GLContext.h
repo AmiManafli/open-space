@@ -1,10 +1,10 @@
 #ifndef CG1_PROJECT_GLCONTEXT_H
 #define CG1_PROJECT_GLCONTEXT_H
 
-#include <GLHeader.h>
-#include <entities/Entity.h>
-#include <entities/EntityManager.h>
-#include "shaders/Shader.h"
+#include <cg/GLHeader.h>
+#include <cg/entities/Entity.h>
+#include <cg/entities/EntityManager.h>
+#include <cg/shaders/Shader.h>
 
 class GLContext {
 public:

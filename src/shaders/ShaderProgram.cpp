@@ -1,4 +1,4 @@
-#include "shaders/ShaderProgram.h"
+#include "cg/shaders/ShaderProgram.h"
 #include <fstream>
 
 static std::string readFile(const std::string &filename) {

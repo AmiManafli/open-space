@@ -1,4 +1,4 @@
-#include <entities/components/MeshComponent.h>
+#include <cg/entities/components/MeshComponent.h>
 
 
 MeshComponent::MeshComponent(std::vector<Vertex>& vertices, std::vector<uint32_t>& indices,
