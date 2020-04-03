@@ -73,9 +73,9 @@ add_executable(${CMAKE_PROJECT_NAME}
     include/cg/entities/components/CameraComponent.h
     include/cg/entities/components/HighlightComponent.cpp
     include/cg/entities/components/HighlightComponent.h
-    include/cg/Grid.h
-    src/Grid.cpp
-        src/Application.cpp include/cg/Application.h)
+    src/Application.cpp
+    include/cg/Application.h
+)
 
 target_link_libraries(${CMAKE_PROJECT_NAME}
     glfw

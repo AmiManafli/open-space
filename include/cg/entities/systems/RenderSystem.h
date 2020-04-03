@@ -2,7 +2,6 @@
 #define CG1_PROJECT_RENDERSYSTEM_H
 
 #include <cg/entities/System.h>
-#include <cg/Grid.h>
 
 class RenderSystem : public System {
 public:
@@ -15,12 +14,6 @@ private:
     GLContext *context;
 
     glm::vec4 clearColor;
-
-    void setupShaders();
-    ShaderProgram *gridShaderProgram;
-
-    void setupGrid();
-    Grid *grid;
 
     void renderEntities();
     void renderMesh(MeshComponent *mesh, ShaderProgram *shaderProgram, glm::mat4 model);

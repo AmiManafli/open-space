@@ -44,7 +44,7 @@ void Application::init() {
     inputSystem->init();
 
     createCameras();
-
+    createGrid(62, 62, false);
     createModel("../assets/models/ico-sphere.dae", glm::vec3(0, 0, 0), meshShaderProgram, false);
 }
 
@@ -83,6 +83,48 @@ void Application::createCameras() {
         ->build(entityManager);
 
     context->setActiveCamera(context->perspectiveCamera);
+}
+
+Entity* Application::createGrid(int width, int height, bool showYAxis) {
+    int startX = width / 2;
+    int startZ = height / 2;
+    std::vector<MeshComponent::Vertex> vertices;
+    std::vector<uint32_t> indices;
+    std::vector<MeshComponent::Texture> textures;
+    uint32_t index = 0;
+    for (int i = 0; i < width; i++) {
+        float step = 1.0f;
+        auto start = MeshComponent::Vertex { step * glm::vec3(-startX + i, 0, -startZ) };
+        auto end = MeshComponent::Vertex { step * glm::vec3(-startX + i, 0, -startZ + height) };
+        vertices.push_back(start);
+        vertices.push_back(end);
+        indices.push_back(index++);
+        indices.push_back(index++);
+    }
+    for (int i = 0; i < height; i++) {
+        float step = 1.0f;
+        auto start = MeshComponent::Vertex { step * glm::vec3(-startX, 0, -startZ + i) };
+        auto end = MeshComponent::Vertex { step * glm::vec3(-startX + width, 0, -startZ + i) };
+        vertices.push_back(start);
+        vertices.push_back(end);
+        indices.push_back(index++);
+        indices.push_back(index++);
+    }
+
+    if (showYAxis) {
+        vertices.push_back(MeshComponent::Vertex { glm::vec3(0, 0, 0) });
+        vertices.push_back(MeshComponent::Vertex { glm::vec3(0, 10, 0) });
+        indices.push_back(index++);
+        indices.push_back(index++);
+    }
+
+    std::vector<MeshComponent::Texture> test;
+
+    return EntityBuilder::create()
+        ->withPosition(0, 0, 0)
+        ->withMesh(vertices, indices, textures, gridShaderProgram)
+        ->withMeshMode(GL_LINES)
+        ->build(entityManager);
 }
 
 Entity *Application::createModel(std::string filename, glm::vec3 position, ShaderProgram *shaderProgram, bool highlight) {

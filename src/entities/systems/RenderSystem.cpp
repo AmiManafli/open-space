@@ -1,4 +1,3 @@
-#include <cg/Grid.h>
 #include "cg/entities/systems/RenderSystem.h"
 
 RenderSystem::RenderSystem(EntityManager *entityManager, GLContext *context)
@@ -17,9 +16,6 @@ void RenderSystem::init() {
     glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-    setupShaders();
-    setupGrid();
 }
 
 void RenderSystem::update() {
@@ -37,16 +33,7 @@ void RenderSystem::update() {
     /// Clear buffers
     glClearColor(clearColor.x, clearColor.y, clearColor.z, clearColor.w);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    // glClear is affected by glStencilMask so disable it after it's cleared
-    glStencilMask(0x00);
-
-    /// Render grid
-    if (context->displayGrid) {
-        gridShaderProgram->use();
-        gridShaderProgram->setUniform("view", context->getView());
-        gridShaderProgram->setUniform("projection", context->getProjection());
-        grid->draw(*gridShaderProgram);
-    }
+    glStencilMask(0x00); // glClear is affected by glStencilMask so disable it after it's cleared
 
     /// Render entities
     renderEntities();
@@ -57,17 +44,6 @@ void RenderSystem::update() {
     }
 
     context->swapBuffers();
-}
-
-void RenderSystem::setupShaders() {
-    gridShaderProgram = new ShaderProgram();
-    gridShaderProgram->attachShader("../assets/shaders/grid.vert", ShaderType::VertexShader);
-    gridShaderProgram->attachShader("../assets/shaders/grid.frag", ShaderType::FragmentShader);
-    gridShaderProgram->link();
-}
-
-void RenderSystem::setupGrid() {
-    grid = new Grid(62, 62);
 }
 
 void RenderSystem::renderEntities() {

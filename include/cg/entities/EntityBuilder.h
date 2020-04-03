@@ -13,6 +13,7 @@ public:
 
     EntityBuilder* withMesh(std::string filename, ShaderProgram *shaderProgram);
     EntityBuilder* withMesh(std::vector<MeshComponent::Vertex>& vertices, std::vector<uint32_t>& indices, std::vector<MeshComponent::Texture>& textures, ShaderProgram *shaderProgram);
+    EntityBuilder* withMeshMode(GLenum mode);
 
     EntityBuilder* withCamera(CameraComponent::Mode mode, CameraComponent::Type type, glm::vec3 target, glm::vec3 front, glm::vec3 up, float aspectRatio);
 
