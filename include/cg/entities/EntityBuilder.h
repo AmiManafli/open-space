@@ -6,8 +6,7 @@
 
 class EntityBuilder {
 public:
-    explicit EntityBuilder(EntityManager *entityManager);
-    ~EntityBuilder();
+    static EntityBuilder* create() { return new EntityBuilder(); }
 
     EntityBuilder* withPosition(float x, float y, float z);
     EntityBuilder* withPosition(glm::vec3 position);
@@ -19,12 +18,10 @@ public:
 
     EntityBuilder* withHighlight(float scaleFactor, ShaderProgram *shaderProgram);
 
-    Entity* build();
+    Entity* build(EntityManager *entityManager);
     void destroy();
 
 private:
-    EntityManager *entityManager;
-
     std::vector<MeshComponent *> meshComponents;
     PositionComponent *positionComponent = nullptr;
     CameraComponent *cameraComponent = nullptr;

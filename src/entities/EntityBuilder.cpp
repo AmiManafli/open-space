@@ -1,13 +1,7 @@
 #include "cg/entities/EntityBuilder.h"
 
 
-EntityBuilder::EntityBuilder(EntityManager *entityManager) : entityManager(entityManager) {
-}
-
-EntityBuilder::~EntityBuilder() {
-}
-
-Entity *EntityBuilder::build() {
+Entity *EntityBuilder::build(EntityManager *entityManager) {
     auto entity = entityManager->createEntity();
 
     if (positionComponent != nullptr) {

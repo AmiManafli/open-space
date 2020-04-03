@@ -17,11 +17,8 @@ public:
 
     GLFWwindow* getWindow() { return window; }
 
-    Entity* getCamera() { return cameras[activeCameraIndex]; }
-    std::vector<Entity *> getCameras() { return cameras; }
-    uint16_t getActiveCamera() { return activeCameraIndex; }
-    void setActiveCamera(uint16_t cameraIndex) { activeCameraIndex = cameraIndex; }
-    void addCamera(Entity *camera) { cameras.push_back(camera); }
+    Entity* getCamera() { return activeCamera; }
+    void setActiveCamera(Entity *entity) { activeCamera = entity; }
 
     glm::mat4 getProjection();
     glm::mat4 getView();
@@ -39,6 +36,10 @@ public:
     bool displayGui = false;
     bool displayGrid = true;
 
+    Entity *perspectiveCamera = nullptr;
+    Entity *topCamera = nullptr;
+    Entity *sideCamera = nullptr;
+
 private:
     EntityManager *entityManager;
     const std::string title;
@@ -47,8 +48,7 @@ private:
 
     GLFWwindow *window;
 
-    uint16_t activeCameraIndex = 0;
-    std::vector<Entity *> cameras;
+    Entity *activeCamera = nullptr;
 
     double lastTime;
     double deltaTime;

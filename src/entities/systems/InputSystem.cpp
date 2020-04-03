@@ -15,7 +15,6 @@ void InputSystem::update() {
     auto deltaTime = context->getDeltaTime();
     auto isDebug = context->debug;
     auto window = context->getWindow();
-    auto cameras = context->getCameras();
 
     if (!isDebug && isKeyPressed(GLFW_KEY_Q)) {
         glfwSetWindowShouldClose(window, true);
@@ -23,13 +22,13 @@ void InputSystem::update() {
 
     if (isKeyPressed(GLFW_KEY_UP)) {
         printf("Camera view: Top\n");
-        context->setActiveCamera(0);
+        context->setActiveCamera(context->topCamera);
     } else if (isKeyPressed(GLFW_KEY_LEFT)) {
         printf("Camera view: Side\n");
-        context->setActiveCamera(1);
+        context->setActiveCamera(context->sideCamera);
     } else if (isKeyPressed(GLFW_KEY_DOWN)) {
         printf("Camera view: Perspective\n");
-        context->setActiveCamera(2);
+        context->setActiveCamera(context->perspectiveCamera);
     }
 
     if (isKeyPressed(GLFW_KEY_1)) {
