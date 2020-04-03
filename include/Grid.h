@@ -2,7 +2,8 @@
 #define CG1_PROJECT_GRID_H
 
 #include <GLHeader.h>
-#include <meshes/Mesh.h>
+#include <shaders/ShaderProgram.h>
+#include <entities/components/MeshComponent.h>
 
 
 class Grid {
@@ -15,7 +16,7 @@ private:
     uint32_t vao, vbo;
     glm::mat4 model;
 
-    std::vector<Vertex> vertices;
+    std::vector<MeshComponent::Vertex> vertices;
 
     bool showAxisLinesY = false;
 };

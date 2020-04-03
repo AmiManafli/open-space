@@ -5,7 +5,6 @@
 #include <entities/Entity.h>
 #include <entities/EntityManager.h>
 #include "shaders/Shader.h"
-#include "Camera.h"
 
 class GLContext {
 public:
