@@ -2,6 +2,11 @@
 
 RenderSystem::RenderSystem(EntityManager *entityManager, GLContext *context)
         : System(entityManager), context(context) {
+    userInterface = new UserInterface();
+}
+
+RenderSystem::~RenderSystem() {
+    delete userInterface;
 }
 
 void RenderSystem::init() {
@@ -21,13 +26,7 @@ void RenderSystem::init() {
 void RenderSystem::update() {
     /// Setup UI
     if (context->displayGui) {
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
-
-        ImGui::ShowDemoWindow();
-
-        ImGui::Render();
+        userInterface->render();
     }
 
     /// Clear buffers

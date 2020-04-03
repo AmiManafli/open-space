@@ -74,11 +74,8 @@ add_executable(${CMAKE_PROJECT_NAME}
         include/cg/entities/components/HighlightComponent.h
         src/Application.cpp
         include/cg/Application.h
-        lib/imgui/imgui_demo.cpp
-        lib/imgui/imgui_impl_glfw.h
-        lib/imgui/imgui_impl_glfw.cpp
-        lib/imgui/imgui_impl_opengl3.h
-        lib/imgui/imgui_impl_opengl3.cpp
+        src/ui/UserInterface.cpp
+        include/cg/ui/UserInterface.h
 )
 
 target_link_libraries(${CMAKE_PROJECT_NAME}
