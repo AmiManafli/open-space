@@ -26,8 +26,8 @@ void Application::init() {
     context->init();
 
     meshShaderProgram = new ShaderProgram();
-    meshShaderProgram->attachShader("../assets/shaders/test.vert", ShaderType::VertexShader);
-    meshShaderProgram->attachShader("../assets/shaders/test.frag", ShaderType::FragmentShader);
+    meshShaderProgram->attachShader("../assets/shaders/mesh.vert", ShaderType::VertexShader);
+    meshShaderProgram->attachShader("../assets/shaders/mesh.frag", ShaderType::FragmentShader);
     meshShaderProgram->link();
 
     gridShaderProgram = new ShaderProgram();
@@ -36,7 +36,7 @@ void Application::init() {
     gridShaderProgram->link();
 
     highlightShaderProgram = new ShaderProgram();
-    highlightShaderProgram->attachShader("../assets/shaders/test.vert", ShaderType::VertexShader);
+    highlightShaderProgram->attachShader("../assets/shaders/mesh.vert", ShaderType::VertexShader);
     highlightShaderProgram->attachShader("../assets/shaders/highlight.frag", ShaderType::FragmentShader);
     highlightShaderProgram->link();
 
