@@ -17,15 +17,18 @@ public:
 
     EntityBuilder* withCamera(CameraComponent::Mode mode, CameraComponent::Type type, glm::vec3 target, glm::vec3 front, glm::vec3 up, float aspectRatio);
 
+    EntityBuilder* withHighlight(float scaleFactor, ShaderProgram *shaderProgram);
+
     Entity* build();
     void destroy();
 
 private:
     EntityManager *entityManager;
 
+    std::vector<MeshComponent *> meshComponents;
     PositionComponent *positionComponent = nullptr;
     CameraComponent *cameraComponent = nullptr;
-    std::vector<MeshComponent *> meshComponents;
+    HighlightComponent *highlightComponent = nullptr;
 };
 
 #endif //CG1_PROJECT_ENTITYBUILDER_H

@@ -23,7 +23,7 @@ private:
     Grid *grid;
 
     void renderEntities();
-    void renderMesh(MeshComponent *mesh, PositionComponent *position);
+    void renderMesh(MeshComponent *mesh, ShaderProgram *shaderProgram, glm::mat4 model);
 };
 
 #endif //CG1_PROJECT_RENDERSYSTEM_H

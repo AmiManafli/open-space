@@ -73,21 +73,45 @@ void RenderSystem::setupGrid() {
 void RenderSystem::renderEntities() {
     for (auto& pair : entityManager->getPositionComponents()) {
         auto entityId = pair.first;
-
         auto position = pair.second;
         auto meshes = entityManager->getMeshComponents(entityId);
+        auto highlight = entityManager->getHighlightComponent(entityId);
+
+        if (highlight) {
+            glStencilFunc(GL_ALWAYS, 1, 0xFF);
+            glStencilMask(0xFF);
+        }
+
+        // Render meshes
         for (auto it = meshes.first; it != meshes.second; it++) {
-            renderMesh(it->second, position);
+            renderMesh(it->second, it->second->shaderProgram, position->model);
+        }
+
+        if (highlight) {
+            glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+            glStencilMask(0x00); // disable writing to the stencil buffer
+            glDisable(GL_DEPTH_TEST);
+
+            auto highlightModel = highlight->getModel(position->model);
+
+            for (auto it = meshes.first; it != meshes.second; it++) {
+                renderMesh(it->second, highlight->shaderProgram, highlightModel);
+            }
+
+            glStencilMask(0xFF);
+            glStencilFunc(GL_ALWAYS, 1, 0xFF);
+            glEnable(GL_DEPTH_TEST);
         }
     }
 }
 
-void RenderSystem::renderMesh(MeshComponent *mesh, PositionComponent *position) {
-    mesh->shaderProgram->use();
-    mesh->shaderProgram->setUniform("view", context->getView());
-    mesh->shaderProgram->setUniform("projection", context->getProjection());
-    mesh->shaderProgram->setUniform("model", position->model);
+void RenderSystem::renderMesh(MeshComponent *mesh, ShaderProgram *shaderProgram, glm::mat4 model) {
+    shaderProgram->use();
+    shaderProgram->setUniform("view", context->getView());
+    shaderProgram->setUniform("projection", context->getProjection());
+    shaderProgram->setUniform("model", model);
     glBindVertexArray(mesh->vao);
     glDrawElements(mesh->mode, mesh->indices.size(), GL_UNSIGNED_INT, nullptr);
     glBindVertexArray(0);
 }
+

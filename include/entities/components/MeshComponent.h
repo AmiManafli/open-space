@@ -35,6 +35,7 @@ public:
     std::vector<Vertex> vertices;
     std::vector<uint32_t> indices;
     std::vector<Texture> textures;
+    bool highlighted;
 
 private:
     void setupBuffers();

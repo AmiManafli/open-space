@@ -16,6 +16,9 @@ Entity *EntityBuilder::build() {
     if (cameraComponent != nullptr) {
         entityManager->addCameraComponent(entity->id, cameraComponent);
     }
+    if (highlightComponent != nullptr) {
+        entityManager->addHighlightComponent(entity->id, highlightComponent);
+    }
 
     for (auto& mesh : meshComponents) {
         entityManager->addMeshComponent(entity->id, mesh);
@@ -43,7 +46,6 @@ EntityBuilder *EntityBuilder::withPosition(glm::vec3 position) {
     if (positionComponent != nullptr) {
         throw std::runtime_error("entity already has a position");
     }
-
     positionComponent = new PositionComponent(position);
     return this;
 }
@@ -63,9 +65,20 @@ EntityBuilder *EntityBuilder::withMesh(std::vector<MeshComponent::Vertex> &verti
 }
 
 EntityBuilder * EntityBuilder::withCamera(CameraComponent::Mode mode, CameraComponent::Type type, glm::vec3 target, glm::vec3 front, glm::vec3 up, float aspectRatio) {
+    if (cameraComponent != nullptr) {
+        throw std::runtime_error("entity already has a camera");
+    }
     if (positionComponent == nullptr) {
         throw std::runtime_error("need a PositionComponent to initialize the CameraComponent");
     }
     cameraComponent = new CameraComponent(mode, type, target, front, up, positionComponent);
+    return this;
+}
+
+EntityBuilder *EntityBuilder::withHighlight(float scaleFactor, ShaderProgram *shaderProgram) {
+    if (highlightComponent != nullptr) {
+        throw std::runtime_error("entity already has a highlight");
+    }
+    highlightComponent = new HighlightComponent(scaleFactor, shaderProgram);
     return this;
 }

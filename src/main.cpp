@@ -11,11 +11,14 @@ Entity *createPerspectiveCamera(EntityBuilder *pBuilder, float aspect);
  * @param entityBuilder entity builder.
  * @param shaderProgram shader program to use for this entity.
  */
-Entity* createSphere(EntityBuilder *entityBuilder, ShaderProgram *shaderProgram) {
-    return entityBuilder
+Entity* createSphere(EntityBuilder *entityBuilder, glm::vec3 position, ShaderProgram *shaderProgram, ShaderProgram *highlightShaderProgram) {
+    auto entity = entityBuilder
         ->withMesh("../assets/models/ico-sphere.dae", shaderProgram)
-        ->withPosition(0, 0, 0)
-        ->build();
+        ->withPosition(position);
+    if (highlightShaderProgram) {
+        entity->withHighlight(1.05, highlightShaderProgram);
+    }
+    return entity->build();
 }
 
 //void setupCamera(GLContext *context) {
@@ -34,7 +37,7 @@ Entity* createSphere(EntityBuilder *entityBuilder, ShaderProgram *shaderProgram)
 //}
 
 Entity *createPerspectiveCamera(EntityBuilder *entityBuilder, float aspectRatio) {
-    auto position = glm::vec3(5, 10, 5);
+    auto position = glm::vec3(5, 5, 10);
     return entityBuilder
         ->withPosition(position)
         ->withCamera(CameraComponent::Mode::Free, CameraComponent::Type::Perspective, glm::vec3(0, 0, 0), glm::normalize(-position), glm::vec3(0, 1, 0), aspectRatio)
@@ -52,7 +55,14 @@ int main() {
     shaderProgram->attachShader("../assets/shaders/test.frag", ShaderType::FragmentShader);
     shaderProgram->link();
 
-    auto sphere = createSphere( new EntityBuilder(entityManager), shaderProgram);
+    auto highlightShaderProgram = new ShaderProgram();
+    highlightShaderProgram->attachShader("../assets/shaders/test.vert", ShaderType::VertexShader);
+    highlightShaderProgram->attachShader("../assets/shaders/highlight.frag", ShaderType::FragmentShader);
+    highlightShaderProgram->link();
+
+    auto sphere1 = createSphere( new EntityBuilder(entityManager), glm::vec3(0, 0, 0), shaderProgram, highlightShaderProgram);
+    auto sphere2 = createSphere( new EntityBuilder(entityManager), glm::vec3(3, 0, 0), shaderProgram, nullptr);
+
     auto perspectiveCamera = createPerspectiveCamera(new EntityBuilder(entityManager), context->getAspect());
 
     context->addCamera(perspectiveCamera);
