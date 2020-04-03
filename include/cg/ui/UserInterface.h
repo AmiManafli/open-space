@@ -6,17 +6,20 @@
 
 class UserInterface {
 public:
-    explicit UserInterface(GLContext *context);
+    explicit UserInterface(EntityManager *entityManager, GLContext *context);
 
     void render();
 
 private:
+    EntityManager *entityManager;
     GLContext *context;
 
     bool showDemoWindow = false;
 
     char* currentView = nullptr;
     std::vector<const char *> views;
+
+    ImVec2 cameraWindowSize;
 
     void renderMainMenu();
     void renderSceneInfoWindow();

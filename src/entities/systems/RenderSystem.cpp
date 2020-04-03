@@ -2,7 +2,7 @@
 
 RenderSystem::RenderSystem(EntityManager *entityManager, GLContext *context)
         : System(entityManager), context(context) {
-    userInterface = new UserInterface(context);
+    userInterface = new UserInterface(entityManager, context);
 }
 
 RenderSystem::~RenderSystem() {

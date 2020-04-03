@@ -1,9 +1,12 @@
 #include "cg/ui/UserInterface.h"
 
 
-UserInterface::UserInterface(GLContext *context) : context(context) {
+UserInterface::UserInterface(EntityManager *entityManager, GLContext *context)
+        : entityManager(entityManager), context(context) {
     views = { "Perspective", "Top", "Side" };
     currentView = const_cast<char *>(views[0]);
+
+    cameraWindowSize = ImVec2(0, 0);
 }
 
 void UserInterface::render() {
@@ -50,7 +53,11 @@ void UserInterface::renderSceneInfoWindow() {
 }
 
 void UserInterface::renderCameraInfoWindow() {
-    ImGui::SetNextWindowPos(ImVec2(context->getWidth() - 280, context->getHeight() - 200));
+    auto cameraEntity = context->getCamera();
+    auto position = entityManager->getPositionComponent(cameraEntity->id);
+    auto camera = entityManager->getCameraComponent(cameraEntity->id);
+
+    ImGui::SetNextWindowPos(ImVec2(context->getWidth() - 320, context->getHeight() - 160));
     ImGui::Begin("Camera Information", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize);
 
     if (ImGui::BeginCombo("View", currentView)) {
@@ -72,6 +79,12 @@ void UserInterface::renderCameraInfoWindow() {
         }
         ImGui::EndCombo();
     }
+    auto pos = position->position;
+    auto direction = camera->front;
+    ImGui::Text("Position: (x=%.3f, y=%.3f, z=%.3f)", pos.x, pos.y, pos.z);
+    ImGui::Text("Direction: (x=%.3f, y=%.3f, z=%.3f)", direction.x, direction.y, direction.z);
+    ImGui::Text("Yaw: %.3f deg.", camera->yaw);
+    ImGui::Text("Pitch: %.3f deg.", camera->pitch);
 
     ImGui::End();
 }
