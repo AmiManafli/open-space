@@ -16,10 +16,6 @@ void InputSystem::update() {
     auto isDebug = context->debug;
     auto window = context->getWindow();
 
-    if (!isDebug && isKeyPressed(GLFW_KEY_Q)) {
-        glfwSetWindowShouldClose(window, true);
-    }
-
     if (isKeyPressed(GLFW_KEY_UP)) {
         printf("Camera view: Top\n");
         context->setActiveCamera(context->topCamera);
@@ -59,11 +55,9 @@ void InputSystem::update() {
         isDebug = !isDebug;
 
         if (isDebug) {
-            printf("Debug mode: On\n");
             context->displayGui = true;
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
         } else {
-            printf("Debug mode: Off\n");
             context->displayGui = false;
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         }

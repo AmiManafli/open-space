@@ -2,7 +2,7 @@
 
 RenderSystem::RenderSystem(EntityManager *entityManager, GLContext *context)
         : System(entityManager), context(context) {
-    userInterface = new UserInterface();
+    userInterface = new UserInterface(context);
 }
 
 RenderSystem::~RenderSystem() {
@@ -46,6 +46,8 @@ void RenderSystem::update() {
 }
 
 void RenderSystem::renderEntities() {
+    uint32_t triangleCount = 0;
+
     for (auto& pair : entityManager->getPositionComponents()) {
         auto entityId = pair.first;
         auto position = pair.second;
@@ -59,6 +61,7 @@ void RenderSystem::renderEntities() {
 
         // Render meshes
         for (auto it = meshes.first; it != meshes.second; it++) {
+            triangleCount += (double) it->second->indices.size() / 3.0;
             renderMesh(it->second, it->second->shaderProgram, position->model);
         }
 
@@ -78,6 +81,8 @@ void RenderSystem::renderEntities() {
             glEnable(GL_DEPTH_TEST);
         }
     }
+
+    context->triangleCount = triangleCount;
 }
 
 void RenderSystem::renderMesh(MeshComponent *mesh, ShaderProgram *shaderProgram, glm::mat4 model) {

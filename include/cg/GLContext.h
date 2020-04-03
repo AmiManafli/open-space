@@ -24,6 +24,7 @@ public:
     glm::mat4 getView();
 
     double getDeltaTime() { return deltaTime; }
+    double getFrameTime() { return timePerFrame; }
 
     void init();
 
@@ -35,6 +36,8 @@ public:
     bool debug = false;
     bool displayGui = false;
     bool displayGrid = true;
+
+    uint32_t triangleCount = 0;
 
     Entity *perspectiveCamera = nullptr;
     Entity *topCamera = nullptr;
@@ -51,7 +54,11 @@ private:
     Entity *activeCamera = nullptr;
 
     double lastTime;
+    double lastFrameTime;
     double deltaTime;
+    uint32_t frameCount;
+
+    double timePerFrame;
 
     void setupImgui();
 

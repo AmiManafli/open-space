@@ -44,7 +44,10 @@ void GLContext::init() {
     }
 
     lastTime = glfwGetTime();
+    lastFrameTime = lastTime;
+    frameCount = 0;
     deltaTime = 0;
+    timePerFrame = 0.0;
 
     setupImgui();
 }
@@ -68,8 +71,16 @@ bool GLContext::shouldClose() {
 
 void GLContext::update() {
     double currentTime = glfwGetTime();
-    deltaTime = currentTime - lastTime;
-    lastTime = currentTime;
+    deltaTime = currentTime - lastFrameTime;
+
+    frameCount++;
+    if (currentTime - lastTime >= 1.0) {
+        timePerFrame = 1000.0 / double(frameCount);
+        frameCount = 0;
+        lastTime = currentTime;
+    }
+
+    lastFrameTime = currentTime;
 
     glfwPollEvents();
 }
