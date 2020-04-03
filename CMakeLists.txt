@@ -6,10 +6,10 @@ set(CMAKE_CXX_STANDARD 17)
 include_directories(${CMAKE_SOURCE_DIR}/include)
 include_directories(${CMAKE_SOURCE_DIR}/src)
 
+include_directories(${CMAKE_SOURCE_DIR}/lib/imgui)
+
 # GLFW
-set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/lib/glfw" ${CMAKE_CURRENT_BINARY_DIR}/glfw)
-include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/lib/glfw/include")
+find_package(glfw3 CONFIG REQUIRED)
 
 set(PROJECT_LIBRARIES)
 
@@ -21,66 +21,72 @@ if(OPENGL_FOUND)
 endif(OPENGL_FOUND)
 
 # Assimp
-#add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/lib/assimp" ${CMAKE_CURRENT_BINARY_DIR}/assimp)
-find_package(assimp REQUIRED)
-link_directories(${ASSIMP_LIBRARY_DIRS})
-include_directories(${ASSIMP_INCLUDE_DIRS})
+find_package(assimp CONFIG REQUIRED)
+find_library(ASSIMP_ZLIB_LIBRARY z)
+find_library(ASSIMP_IRRXML_LIBRARY IrrXML)
 
 # GLAD
 include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/lib/glad")
 
 # GLM
-include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/lib/glm")
+find_package(glm CONFIG REQUIRED)
 
 # ImGui
 aux_source_directory("${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui" PROJECT_SRCS)
 include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui")
 
 add_executable(${CMAKE_PROJECT_NAME}
-    ${PROJECT_SRCS}
-    src/main.cpp
-    lib/glad/glad.c
-    src/GLContext.cpp
-    include/cg/GLContext.h
-    include/cg/GLHeader.h
-    src/shaders/Shader.cpp
-    include/cg/shaders/Shader.h
-    src/shaders/ShaderProgram.cpp
-    include/cg/shaders/ShaderProgram.h
-    src/Axis.cpp
-    include/cg/Axis.h
-    src/entities/Entity.cpp
-    include/cg/entities/Entity.h
-    src/entities/Component.cpp
-    include/cg/entities/Component.h
-    src/entities/System.cpp
-    include/cg/entities/System.h
-    src/entities/EntityManager.cpp
-    include/cg/entities/EntityManager.h
-    src/entities/systems/MovementSystem.cpp
-    include/cg/entities/systems/MovementSystem.h
-    src/entities/systems/RenderSystem.cpp
-    include/cg/entities/systems/RenderSystem.h
-    src/entities/components/PositionComponent.cpp
-    include/cg/entities/components/PositionComponent.h
-    include/cg/entities/components/MeshComponent.h
-    src/entities/components/MeshComponent.cpp
-    src/entities/EntityBuilder.cpp
-    include/cg/entities/EntityBuilder.h
-    src/entities/systems/InputSystem.cpp
-    include/cg/entities/systems/InputSystem.h
-    src/entities/components/CameraComponent.cpp
-    include/cg/entities/components/CameraComponent.h
-    include/cg/entities/components/HighlightComponent.cpp
-    include/cg/entities/components/HighlightComponent.h
-    src/Application.cpp
-    include/cg/Application.h
+        ${PROJECT_SRCS}
+        src/main.cpp
+        lib/glad/glad.c
+        src/GLContext.cpp
+        include/cg/GLContext.h
+        include/cg/GLHeader.h
+        src/shaders/Shader.cpp
+        include/cg/shaders/Shader.h
+        src/shaders/ShaderProgram.cpp
+        include/cg/shaders/ShaderProgram.h
+        src/Axis.cpp
+        include/cg/Axis.h
+        src/entities/Entity.cpp
+        include/cg/entities/Entity.h
+        src/entities/Component.cpp
+        include/cg/entities/Component.h
+        src/entities/System.cpp
+        include/cg/entities/System.h
+        src/entities/EntityManager.cpp
+        include/cg/entities/EntityManager.h
+        src/entities/systems/MovementSystem.cpp
+        include/cg/entities/systems/MovementSystem.h
+        src/entities/systems/RenderSystem.cpp
+        include/cg/entities/systems/RenderSystem.h
+        src/entities/components/PositionComponent.cpp
+        include/cg/entities/components/PositionComponent.h
+        include/cg/entities/components/MeshComponent.h
+        src/entities/components/MeshComponent.cpp
+        src/entities/EntityBuilder.cpp
+        include/cg/entities/EntityBuilder.h
+        src/entities/systems/InputSystem.cpp
+        include/cg/entities/systems/InputSystem.h
+        src/entities/components/CameraComponent.cpp
+        include/cg/entities/components/CameraComponent.h
+        include/cg/entities/components/HighlightComponent.cpp
+        include/cg/entities/components/HighlightComponent.h
+        src/Application.cpp
+        include/cg/Application.h
+        lib/imgui/imgui_demo.cpp
+        lib/imgui/imgui_impl_glfw.h
+        lib/imgui/imgui_impl_glfw.cpp
+        lib/imgui/imgui_impl_opengl3.h
+        lib/imgui/imgui_impl_opengl3.cpp
 )
 
 target_link_libraries(${CMAKE_PROJECT_NAME}
-    glfw
-    ${PROJECT_LIBRARIES}
-    ${GLFW_LIBRARIES}
-    ${ASSIMP_LIBRARIES}
-    ${IMGUI_LIBRARIES}
+        glfw
+        assimp::assimp
+        glm
+        ${IMGUI_LIBRARIES}
+        ${PROJECT_LIBRARIES}
+        ${ASSIMP_ZLIB_LIBRARY}
+        ${ASSIMP_IRRXML_LIBRARY}
 )
