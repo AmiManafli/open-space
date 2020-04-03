@@ -8,6 +8,13 @@ MeshComponent::MeshComponent(std::vector<Vertex>& vertices, std::vector<uint32_t
     setupBuffers();
 }
 
+MeshComponent::MeshComponent(std::vector<Vertex>& vertices, std::vector<uint32_t>& indices,
+	std::vector<Texture>& textures, ShaderProgram* shaderProgram, GLenum mode)
+	: vertices(vertices), indices(indices), textures(textures),
+	shaderProgram(shaderProgram), mode(mode) {
+	setupBuffers();
+}
+
 MeshComponent::~MeshComponent() {
     // TODO: Cleanup mesh buffers
 }

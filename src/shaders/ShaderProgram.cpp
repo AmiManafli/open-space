@@ -19,7 +19,7 @@ void ShaderProgram::use() {
 void ShaderProgram::attachShader(const std::string filename, ShaderType type) {
     unsigned int shader = glCreateShader(type);
     auto source = readFile(filename);
-    const char *sourceCode = source.c_str();
+	auto sourceCode = source.c_str();
 
     glShaderSource(shader, 1, &sourceCode, nullptr);
     glCompileShader(shader);

@@ -22,9 +22,10 @@ endif(OPENGL_FOUND)
 
 # Assimp
 #add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/lib/assimp" ${CMAKE_CURRENT_BINARY_DIR}/assimp)
-find_package(assimp REQUIRED)
-link_directories(${ASSIMP_LIBRARY_DIRS})
-include_directories(${ASSIMP_INCLUDE_DIRS})
+#find_package(assimp REQUIRED)
+#link_directories(${ASSIMP_LIBRARY_DIRS})
+#include_directories(${ASSIMP_INCLUDE_DIRS})
+#find_package(assimp CONFIG REQUIRED)
 
 # GLAD
 include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/lib/glad")
@@ -81,6 +82,5 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
     glfw
     ${PROJECT_LIBRARIES}
     ${GLFW_LIBRARIES}
-    ${ASSIMP_LIBRARIES}
     ${IMGUI_LIBRARIES}
 )
