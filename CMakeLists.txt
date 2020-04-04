@@ -1,15 +1,14 @@
 cmake_minimum_required(VERSION 3.15)
 project(cg1_project)
-
 set(CMAKE_CXX_STANDARD 17)
 
 include_directories(${CMAKE_SOURCE_DIR}/include)
 include_directories(${CMAKE_SOURCE_DIR}/src)
 
-include_directories(${CMAKE_SOURCE_DIR}/lib/imgui)
-
 # GLFW
-find_package(glfw3 CONFIG REQUIRED)
+set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/lib/glfw" ${CMAKE_CURRENT_BINARY_DIR}/glfw)
+include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/lib/glfw/include")
 
 set(PROJECT_LIBRARIES)
 
@@ -21,15 +20,17 @@ if(OPENGL_FOUND)
 endif(OPENGL_FOUND)
 
 # Assimp
-find_package(assimp CONFIG REQUIRED)
-find_library(ASSIMP_ZLIB_LIBRARY z)
-find_library(ASSIMP_IRRXML_LIBRARY IrrXML)
+if (NOT ${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+    find_package(assimp REQUIRED)
+    link_directories(${ASSIMP_LIBRARY_DIRS})
+    include_directories(${ASSIMP_INCLUDE_DIRS})
+endif()
 
 # GLAD
 include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/lib/glad")
 
 # GLM
-find_package(glm CONFIG REQUIRED)
+include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/lib/glm")
 
 # ImGui
 aux_source_directory("${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui" PROJECT_SRCS)
@@ -79,11 +80,9 @@ add_executable(${CMAKE_PROJECT_NAME}
 )
 
 target_link_libraries(${CMAKE_PROJECT_NAME}
-        glfw
-        assimp::assimp
-        glm
-        ${IMGUI_LIBRARIES}
-        ${PROJECT_LIBRARIES}
-        ${ASSIMP_ZLIB_LIBRARY}
-        ${ASSIMP_IRRXML_LIBRARY}
+    glfw
+    ${PROJECT_LIBRARIES}
+    ${GLFW_LIBRARIES}
+    ${ASSIMP_LIBRARIES}
+    ${IMGUI_LIBRARIES}
 )
