@@ -17,6 +17,7 @@ Application::~Application() {
     delete highlightShaderProgram;
     delete gridShaderProgram;
     delete meshShaderProgram;
+	delete meshTextureShaderProgram;
 
     delete context;
     delete entityManager;
@@ -29,6 +30,11 @@ void Application::init() {
     meshShaderProgram->attachShader("./assets/shaders/mesh.vert", ShaderType::VertexShader);
     meshShaderProgram->attachShader("./assets/shaders/mesh.frag", ShaderType::FragmentShader);
     meshShaderProgram->link();
+
+	meshTextureShaderProgram = new ShaderProgram();
+	meshTextureShaderProgram->attachShader("./assets/shaders/meshTexture.vert", ShaderType::VertexShader);
+	meshTextureShaderProgram->attachShader("./assets/shaders/meshTexture.frag", ShaderType::FragmentShader);
+	meshTextureShaderProgram->link();
 
     gridShaderProgram = new ShaderProgram();
     gridShaderProgram->attachShader("./assets/shaders/grid.vert", ShaderType::VertexShader);
@@ -47,7 +53,7 @@ void Application::init() {
     createGrid(62, 62, false);
 //    createModel("./assets/models/ico-sphere.dae", glm::vec3(0, 0, 0), meshShaderProgram, false);
 	//createModel("./assets/models/plane.dae", glm::vec3(0, 0.2, 0), meshShaderProgram, false);
-	createModel("./assets/models/nanosuit.obj", glm::vec3(0, 0, 0), meshShaderProgram, false);
+	createModel("./assets/models/nanosuit.obj", glm::vec3(0, 0, 0), meshTextureShaderProgram, false);
 }
 
 void Application::run() {

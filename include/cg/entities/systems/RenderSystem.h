@@ -21,6 +21,7 @@ private:
 
     void renderEntities();
     void renderMesh(MeshComponent *mesh, ShaderProgram *shaderProgram, glm::mat4 model);
+	void renderTexture(MeshComponent* mesh, ShaderProgram* shader);
 };
 
 #endif //CG1_PROJECT_RENDERSYSTEM_H
