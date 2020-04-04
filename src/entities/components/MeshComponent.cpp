@@ -1,10 +1,11 @@
 #include <cg/entities/components/MeshComponent.h>
+#include <filesystem>
 
 
 MeshComponent::MeshComponent(std::vector<Vertex>& vertices, std::vector<uint32_t>& indices,
-                             std::vector<Texture>& textures, ShaderProgram *shaderProgram)
+                             std::vector<Texture>& textures, ShaderProgram *shaderProgram, GLenum mode)
                                 : vertices(vertices), indices(indices), textures(textures),
-                                  shaderProgram(shaderProgram), mode(GL_TRIANGLES) {
+                                  shaderProgram(shaderProgram), mode(mode) {
     setupBuffers();
 }
 
@@ -15,7 +16,7 @@ MeshComponent::~MeshComponent() {
 std::vector<MeshComponent *> MeshComponent::createMeshComponentsFromFile(std::string filename, ShaderProgram *shaderProgram) {
     auto meshes = std::vector<MeshComponent *>();
     Assimp::Importer importer;
-    const aiScene *scene = importer.ReadFile(filename, aiProcess_Triangulate | aiProcess_FlipUVs);
+    const aiScene *scene = importer.ReadFile(std::filesystem::absolute(filename), aiProcess_Triangulate | aiProcess_FlipUVs);
 
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
         throw std::runtime_error(importer.GetErrorString());
@@ -94,6 +95,6 @@ MeshComponent* MeshComponent::processMesh(std::vector<MeshComponent *>& meshes, 
 
     shaderProgram = shaderProgram;
 
-    return new MeshComponent(vertices, indices, textures, shaderProgram);
+    return new MeshComponent(vertices, indices, textures, shaderProgram, GL_TRIANGLES);
 }
 

@@ -122,8 +122,7 @@ Entity* Application::createGrid(int width, int height, bool showYAxis) {
 
     return EntityBuilder::create()
         ->withPosition(0, 0, 0)
-        ->withMesh(vertices, indices, textures, gridShaderProgram)
-        ->withMeshMode(GL_LINES)
+        ->withMesh(vertices, indices, textures, gridShaderProgram, GL_LINES)
         ->build(entityManager);
 }
 
