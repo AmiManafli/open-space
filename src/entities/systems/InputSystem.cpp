@@ -13,7 +13,6 @@ void InputSystem::init() {
 
 void InputSystem::update() {
     auto deltaTime = context->getDeltaTime();
-    auto isDebug = context->debug;
     auto window = context->getWindow();
 
     if (isKeyPressed(GLFW_KEY_UP)) {
@@ -50,20 +49,18 @@ void InputSystem::update() {
         context->displayGrid = !context->displayGrid;
     }
 
-    if (isKeyPressed(GLFW_KEY_GRAVE_ACCENT)) {
-        context->debug = !isDebug;
-        isDebug = !isDebug;
-
-        if (isDebug) {
-            context->displayGui = true;
-        } else {
-            context->displayGui = false;
-        }
+    if (isKeyPressed(GLFW_KEY_BACKSLASH)) {
+        context->displayGui = !context->displayGui;
     }
 
-//    if (isKeyPressed(GLFW_KEY_ESCAPE)) {
-//        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-//    }
+    if (isKeyPressed(GLFW_KEY_GRAVE_ACCENT)) {
+        context->displayCursor = !context->displayCursor;
+        if (context->displayCursor) {
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        } else {
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        }
+    }
 }
 
 bool InputSystem::isKeyDown(int key) {
@@ -87,6 +84,7 @@ bool InputSystem::isKeyPressed(int key) {
 void InputSystem::mousePositionCallback(GLFWwindow *window, double x, double y) {
     auto inputManager = (InputSystem *) glfwGetWindowUserPointer(window);
     auto context = inputManager->context;
+    if (context->displayCursor) return;
 
     auto camera = context->getCamera();
     auto cameraComponent = inputManager->entityManager->getCameraComponent(camera->id);

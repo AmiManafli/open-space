@@ -14,10 +14,14 @@ void UserInterface::render() {
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
-    renderMainMenu();
+    if (context->displayCursor) {
+        renderMainMenu();
+    }
 
-    renderSceneInfoWindow();
-    renderCameraInfoWindow();
+    if (context->displayGui) {
+        renderSceneInfoWindow();
+        renderCameraInfoWindow();
+    }
 
     if (showDemoWindow) {
         ImGui::ShowDemoWindow();

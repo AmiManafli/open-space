@@ -33,7 +33,7 @@ public:
 
     void swapBuffers();
 
-    bool debug = false;
+    bool displayCursor = false;
     bool displayGui = false;
     bool displayGrid = true;
 

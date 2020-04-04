@@ -25,7 +25,7 @@ void RenderSystem::init() {
 
 void RenderSystem::update() {
     /// Setup UI
-    if (context->displayGui) {
+    if (context->displayGui || context->displayCursor) {
         userInterface->render();
     }
 
@@ -38,7 +38,7 @@ void RenderSystem::update() {
     renderEntities();
 
     /// Display UI
-    if (context->displayGui) {
+    if (context->displayGui || context->displayCursor) {
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     }
 
