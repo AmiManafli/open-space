@@ -21,6 +21,9 @@ void ShaderProgram::use() {
 void ShaderProgram::attachShader(const std::string filename, ShaderType type) {
     unsigned int shader = glCreateShader(type);
     auto source = readFile(filename);
+    if (source.empty()) {
+        throw std::runtime_error("empty source code for shader");
+    }
     auto code = source.c_str();
 
     glShaderSource(shader, 1, &code, nullptr);

@@ -29,6 +29,9 @@ endif()
 # GLAD
 include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/lib/glad")
 
+# stb image
+include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/lib/stb")
+
 # GLM
 include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/lib/glm")
 
@@ -40,6 +43,7 @@ add_executable(${CMAKE_PROJECT_NAME}
         ${PROJECT_SRCS}
         src/main.cpp
         lib/glad/glad.c
+#        lib/stb/stb_image.h
         src/GLContext.cpp
         include/cg/GLContext.h
         include/cg/GLHeader.h
