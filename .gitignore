@@ -518,3 +518,5 @@ MigrationBackup/
 
 lib/assimp/*
 
+
+!/assets/models/**/*.obj

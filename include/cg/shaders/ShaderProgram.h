@@ -16,6 +16,7 @@ public:
     void link();
 
     void setUniform(const std::string name, glm::mat4 value);
+	void setUniform(const std::string name, int value);
 
     void use();
 

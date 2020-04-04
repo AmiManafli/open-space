@@ -14,6 +14,10 @@ void InputSystem::init() {
 void InputSystem::update() {
     auto deltaTime = context->getDeltaTime();
     auto window = context->getWindow();
+	
+	if (isKeyPressed(GLFW_KEY_Q)) {
+		glfwSetWindowShouldClose(context->getWindow(), GLFW_TRUE);
+	}
 
     if (isKeyPressed(GLFW_KEY_UP)) {
         printf("Camera view: Top\n");
