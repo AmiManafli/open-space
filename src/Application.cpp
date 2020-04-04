@@ -51,9 +51,12 @@ void Application::init() {
 
     createCameras();
     createGrid(62, 62, false);
-//    createModel("./assets/models/ico-sphere.dae", glm::vec3(0, 0, 0), meshShaderProgram, false);
-	//createModel("./assets/models/plane.dae", glm::vec3(0, 0.2, 0), meshShaderProgram, false);
-	createModel("./assets/models/nanosuit.obj", glm::vec3(0, 0, 0), meshTextureShaderProgram, false);
+
+    auto nano = EntityBuilder::create()
+        ->withMesh("./assets/models/nanosuit.obj", meshTextureShaderProgram)
+        ->withPosition(0, 0, 0)
+        ->withScale(0.1)
+        ->build(entityManager);
 }
 
 void Application::run() {
@@ -132,14 +135,4 @@ Entity* Application::createGrid(int width, int height, bool showYAxis) {
         ->withPosition(0, 0, 0)
         ->withMesh(vertices, indices, textures, gridShaderProgram, GL_LINES)
         ->build(entityManager);
-}
-
-Entity *Application::createModel(std::string filename, glm::vec3 position, ShaderProgram *shaderProgram, bool highlight) {
-    auto entity = EntityBuilder::create()
-        ->withMesh(filename, shaderProgram)
-        ->withPosition(position);
-    if (highlight) {
-        entity->withHighlight(1.05, highlightShaderProgram);
-    }
-    return entity->build(entityManager);
 }

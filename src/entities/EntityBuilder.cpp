@@ -44,6 +44,14 @@ EntityBuilder *EntityBuilder::withPosition(glm::vec3 position) {
     return this;
 }
 
+EntityBuilder* EntityBuilder::withScale(float scale) {
+    if (positionComponent == nullptr) {
+        throw std::runtime_error("need a position to scale");
+    }
+    positionComponent->scale(scale);
+    return this;
+}
+
 EntityBuilder *EntityBuilder::withMesh(std::string filename, ShaderProgram *shaderProgram) {
     auto meshes = MeshComponent::createMeshComponentsFromFile(filename, shaderProgram);
     for (auto& mesh : meshes) {

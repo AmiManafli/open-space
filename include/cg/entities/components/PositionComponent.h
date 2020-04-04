@@ -9,6 +9,8 @@ public:
     PositionComponent(float x, float y, float z);
     PositionComponent(glm::vec3 position);
 
+    void scale(float factor);
+
     glm::vec3 position;
     glm::mat4 model;
 };

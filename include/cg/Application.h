@@ -31,7 +31,6 @@ private:
 
     void createCameras();
     Entity* createGrid(int width, int height, bool showYAxis);
-    Entity* createModel(std::string filename, glm::vec3 position, ShaderProgram *shaderProgram, bool highlight);
 };
 
 #endif //CG1_PROJECT_APPLICATION_H

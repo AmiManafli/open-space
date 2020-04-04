@@ -10,6 +10,7 @@ public:
 
     EntityBuilder* withPosition(float x, float y, float z);
     EntityBuilder* withPosition(glm::vec3 position);
+    EntityBuilder* withScale(float scale);
 
     EntityBuilder* withMesh(std::string filename, ShaderProgram *shaderProgram);
     EntityBuilder* withMesh(std::vector<MeshComponent::Vertex>& vertices, std::vector<uint32_t>& indices, std::vector<MeshComponent::Texture>& textures, ShaderProgram *shaderProgram, GLenum mode);
