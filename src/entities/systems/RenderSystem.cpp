@@ -2,6 +2,11 @@
 
 RenderSystem::RenderSystem(EntityManager *entityManager, GLContext *context)
         : System(entityManager), context(context) {
+    userInterface = new UserInterface(entityManager, context);
+}
+
+RenderSystem::~RenderSystem() {
+    delete userInterface;
 }
 
 void RenderSystem::init() {
@@ -20,14 +25,8 @@ void RenderSystem::init() {
 
 void RenderSystem::update() {
     /// Setup UI
-    if (context->displayGui) {
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
-
-        ImGui::ShowDemoWindow();
-
-        ImGui::Render();
+    if (context->displayGui || context->displayCursor) {
+        userInterface->render();
     }
 
     /// Clear buffers
@@ -39,7 +38,7 @@ void RenderSystem::update() {
     renderEntities();
 
     /// Display UI
-    if (context->displayGui) {
+    if (context->displayGui || context->displayCursor) {
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     }
 
@@ -47,6 +46,8 @@ void RenderSystem::update() {
 }
 
 void RenderSystem::renderEntities() {
+    uint32_t triangleCount = 0;
+
     for (auto& pair : entityManager->getPositionComponents()) {
         auto entityId = pair.first;
         auto position = pair.second;
@@ -60,6 +61,7 @@ void RenderSystem::renderEntities() {
 
         // Render meshes
         for (auto it = meshes.first; it != meshes.second; it++) {
+            triangleCount += (double) it->second->indices.size() / 3.0;
             renderMesh(it->second, it->second->shaderProgram, position->model);
         }
 
@@ -79,6 +81,8 @@ void RenderSystem::renderEntities() {
             glEnable(GL_DEPTH_TEST);
         }
     }
+
+    context->triangleCount = triangleCount;
 }
 
 void RenderSystem::renderMesh(MeshComponent *mesh, ShaderProgram *shaderProgram, glm::mat4 model) {

@@ -30,7 +30,6 @@ public:
     void processKeyboard(CameraComponent::Direction direction, float deltaTime, PositionComponent *positionComponent);
     void processMouseMovement(float offsetX, float offsetY);
 
-private:
     Mode mode;
     Type type;
     float zoom;
@@ -45,6 +44,7 @@ private:
     float movementSpeed;
     float mouseSensitivity;
 
+private:
     void updateVectors();
 };
 

@@ -13,12 +13,7 @@ void InputSystem::init() {
 
 void InputSystem::update() {
     auto deltaTime = context->getDeltaTime();
-    auto isDebug = context->debug;
     auto window = context->getWindow();
-
-    if (!isDebug && isKeyPressed(GLFW_KEY_Q)) {
-        glfwSetWindowShouldClose(window, true);
-    }
 
     if (isKeyPressed(GLFW_KEY_UP)) {
         printf("Camera view: Top\n");
@@ -38,15 +33,15 @@ void InputSystem::update() {
     }
 
     auto camera = context->getCamera();
-    if (!isDebug && isKeyDown(GLFW_KEY_W)) {
+    if (isKeyDown(GLFW_KEY_W)) {
         moveCamera(camera, CameraComponent::Direction::Forward, deltaTime);
-    } else if (!isDebug && isKeyDown(GLFW_KEY_S)) {
+    } else if (isKeyDown(GLFW_KEY_S)) {
         moveCamera(camera, CameraComponent::Direction::Backward, deltaTime);
     }
 
-    if (!isDebug && isKeyDown(GLFW_KEY_A)) {
+    if (isKeyDown(GLFW_KEY_A)) {
         moveCamera(camera, CameraComponent::Direction::Left, deltaTime);
-    } else if (!isDebug && isKeyDown(GLFW_KEY_D)) {
+    } else if (isKeyDown(GLFW_KEY_D)) {
         moveCamera(camera, CameraComponent::Direction::Right, deltaTime);
     }
 
@@ -54,17 +49,15 @@ void InputSystem::update() {
         context->displayGrid = !context->displayGrid;
     }
 
-    if (isKeyPressed(GLFW_KEY_GRAVE_ACCENT)) {
-        context->debug = !isDebug;
-        isDebug = !isDebug;
+    if (isKeyPressed(GLFW_KEY_BACKSLASH)) {
+        context->displayGui = !context->displayGui;
+    }
 
-        if (isDebug) {
-            printf("Debug mode: On\n");
-            context->displayGui = true;
+    if (isKeyPressed(GLFW_KEY_GRAVE_ACCENT)) {
+        context->displayCursor = !context->displayCursor;
+        if (context->displayCursor) {
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
         } else {
-            printf("Debug mode: Off\n");
-            context->displayGui = false;
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         }
     }
@@ -91,7 +84,7 @@ bool InputSystem::isKeyPressed(int key) {
 void InputSystem::mousePositionCallback(GLFWwindow *window, double x, double y) {
     auto inputManager = (InputSystem *) glfwGetWindowUserPointer(window);
     auto context = inputManager->context;
-    if (context->debug) return;
+    if (context->displayCursor) return;
 
     auto camera = context->getCamera();
     auto cameraComponent = inputManager->entityManager->getCameraComponent(camera->id);

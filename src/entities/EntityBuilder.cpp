@@ -53,18 +53,9 @@ EntityBuilder *EntityBuilder::withMesh(std::string filename, ShaderProgram *shad
 }
 
 EntityBuilder *EntityBuilder::withMesh(std::vector<MeshComponent::Vertex> &vertices, std::vector<uint32_t> &indices,
-                                       std::vector<MeshComponent::Texture> &textures, ShaderProgram *shaderProgram) {
-    meshComponents.push_back(new MeshComponent(vertices, indices, textures, shaderProgram));
+                                       std::vector<MeshComponent::Texture> &textures, ShaderProgram *shaderProgram, GLenum mode) {
+    meshComponents.push_back(new MeshComponent(vertices, indices, textures, shaderProgram, mode));
     return this;
-}
-
-EntityBuilder* EntityBuilder::withMeshMode(GLenum mode) {
-    if (meshComponents.size() == 0) {
-        throw std::runtime_error("need a mesh component to set the mesh mode");
-    }
-    for (auto& mesh : meshComponents) {
-        mesh->mode = mode;
-    }
 }
 
 EntityBuilder * EntityBuilder::withCamera(CameraComponent::Mode mode, CameraComponent::Type type, glm::vec3 target, glm::vec3 front, glm::vec3 up, float aspectRatio) {

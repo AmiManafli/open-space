@@ -26,18 +26,18 @@ void Application::init() {
     context->init();
 
     meshShaderProgram = new ShaderProgram();
-    meshShaderProgram->attachShader("../assets/shaders/mesh.vert", ShaderType::VertexShader);
-    meshShaderProgram->attachShader("../assets/shaders/mesh.frag", ShaderType::FragmentShader);
+    meshShaderProgram->attachShader("./assets/shaders/mesh.vert", ShaderType::VertexShader);
+    meshShaderProgram->attachShader("./assets/shaders/mesh.frag", ShaderType::FragmentShader);
     meshShaderProgram->link();
 
     gridShaderProgram = new ShaderProgram();
-    gridShaderProgram->attachShader("../assets/shaders/grid.vert", ShaderType::VertexShader);
-    gridShaderProgram->attachShader("../assets/shaders/grid.frag", ShaderType::FragmentShader);
+    gridShaderProgram->attachShader("./assets/shaders/grid.vert", ShaderType::VertexShader);
+    gridShaderProgram->attachShader("./assets/shaders/grid.frag", ShaderType::FragmentShader);
     gridShaderProgram->link();
 
     highlightShaderProgram = new ShaderProgram();
-    highlightShaderProgram->attachShader("../assets/shaders/mesh.vert", ShaderType::VertexShader);
-    highlightShaderProgram->attachShader("../assets/shaders/highlight.frag", ShaderType::FragmentShader);
+    highlightShaderProgram->attachShader("./assets/shaders/mesh.vert", ShaderType::VertexShader);
+    highlightShaderProgram->attachShader("./assets/shaders/highlight.frag", ShaderType::FragmentShader);
     highlightShaderProgram->link();
 
     renderSystem->init();
@@ -45,7 +45,7 @@ void Application::init() {
 
     createCameras();
     createGrid(62, 62, false);
-    createModel("../assets/models/ico-sphere.dae", glm::vec3(0, 0, 0), meshShaderProgram, false);
+    createModel("./assets/models/ico-sphere.dae", glm::vec3(0, 0, 0), meshShaderProgram, false);
 }
 
 void Application::run() {
@@ -122,8 +122,7 @@ Entity* Application::createGrid(int width, int height, bool showYAxis) {
 
     return EntityBuilder::create()
         ->withPosition(0, 0, 0)
-        ->withMesh(vertices, indices, textures, gridShaderProgram)
-        ->withMeshMode(GL_LINES)
+        ->withMesh(vertices, indices, textures, gridShaderProgram, GL_LINES)
         ->build(entityManager);
 }
 

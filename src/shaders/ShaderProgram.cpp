@@ -1,8 +1,10 @@
 #include "cg/shaders/ShaderProgram.h"
+#include <filesystem>
 #include <fstream>
 
 static std::string readFile(const std::string &filename) {
-    std::ifstream ifs(filename);
+    auto path = std::filesystem::absolute(filename);
+    std::ifstream ifs(path);
     std::string content((std::istreambuf_iterator<char>(ifs)),
                         (std::istreambuf_iterator<char>()));
     return content;
@@ -19,9 +21,9 @@ void ShaderProgram::use() {
 void ShaderProgram::attachShader(const std::string filename, ShaderType type) {
     unsigned int shader = glCreateShader(type);
     auto source = readFile(filename);
-    const char *sourceCode = source.c_str();
+    auto code = source.c_str();
 
-    glShaderSource(shader, 1, &sourceCode, nullptr);
+    glShaderSource(shader, 1, &code, nullptr);
     glCompileShader(shader);
 
     int success;
