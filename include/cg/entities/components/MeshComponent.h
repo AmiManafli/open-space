@@ -21,12 +21,14 @@ public:
     struct Texture {
         uint32_t id;
         std::string type;
+		std::string path;
     };
 
 public:
     MeshComponent(std::vector<Vertex>& vertices, std::vector<uint32_t>& indices, std::vector<Texture>& textures, ShaderProgram *shaderProgram, GLenum mode);
     ~MeshComponent() override;
 
+	//void addTexture(std::string filename);
     static std::vector<MeshComponent *> createMeshComponentsFromFile(std::string filename, ShaderProgram *shaderProgram);
 
     uint32_t vao, vbo, ebo;
@@ -39,8 +41,10 @@ public:
 
 private:
     void setupBuffers();
-
-    static void processNode(std::vector<MeshComponent *>& meshes, aiNode *node, const aiScene *scene, ShaderProgram *shaderProgram);
+	static std::vector<Texture> loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
+	static uint32_t textureFromFile(const char* path, const std::string& directory);
+	
+	static void processNode(std::vector<MeshComponent *>& meshes, aiNode *node, const aiScene *scene, ShaderProgram *shaderProgram);
     static MeshComponent* processMesh(std::vector<MeshComponent *>& meshes, aiMesh *mesh, const aiScene *scene, ShaderProgram *shaderProgram);
 };
 

@@ -45,7 +45,9 @@ void Application::init() {
 
     createCameras();
     createGrid(62, 62, false);
-    createModel("./assets/models/ico-sphere.dae", glm::vec3(0, 0, 0), meshShaderProgram, false);
+//    createModel("./assets/models/ico-sphere.dae", glm::vec3(0, 0, 0), meshShaderProgram, false);
+	//createModel("./assets/models/plane.dae", glm::vec3(0, 0.2, 0), meshShaderProgram, false);
+	createModel("./assets/models/nanosuit.obj", glm::vec3(0, 0, 0), meshShaderProgram, false);
 }
 
 void Application::run() {

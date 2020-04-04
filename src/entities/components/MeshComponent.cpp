@@ -1,5 +1,7 @@
 #include <cg/entities/components/MeshComponent.h>
 #include <filesystem>
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
 
 
 MeshComponent::MeshComponent(std::vector<Vertex>& vertices, std::vector<uint32_t>& indices,
@@ -61,6 +63,65 @@ void MeshComponent::setupBuffers() {
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) offsetof(Vertex, textureCoord));
 }
 
+std::vector<MeshComponent::Texture> MeshComponent::loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName)
+{
+	auto directory = std::filesystem::absolute("./assets/textures/nanosuit").string();
+
+	std::vector<Texture> textures;
+	for (unsigned int i = 0; i < mat->GetTextureCount(type); i++) {
+		aiString str;
+		mat->GetTexture(type, i, &str);
+		Texture texture;
+		texture.id = textureFromFile(str.C_Str(), directory);
+		texture.type = typeName;
+		texture.path = str.C_Str();
+		textures.push_back(texture);
+	}
+
+	return textures;
+}
+
+uint32_t MeshComponent::textureFromFile(const char* path, const std::string& directory)
+{
+	std::string filename = std::string(path);
+	filename = directory + '/' + filename;
+
+	unsigned int textureID;
+	glGenTextures(1, &textureID);
+
+	int width, height, nrComponents;
+	unsigned char* data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
+	if (data)
+	{
+		GLenum format;
+		if (nrComponents == 1)
+			format = GL_RED;
+		else if (nrComponents == 3)
+			format = GL_RGB;
+		else if (nrComponents == 4)
+			format = GL_RGBA;
+
+		glBindTexture(GL_TEXTURE_2D, textureID);
+		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		stbi_image_free(data);
+	}
+	else
+	{
+		std::string message = "Texture failed to load at path: " + std::string(path);
+		throw std::runtime_error(message);
+		stbi_image_free(data);
+	}
+
+	return textureID;
+}
+
 MeshComponent* MeshComponent::processMesh(std::vector<MeshComponent *>& meshes, aiMesh *mesh, const aiScene *scene, ShaderProgram *shaderProgram) {
     std::vector<Vertex> vertices;
     std::vector<uint32_t> indices;
@@ -93,6 +154,14 @@ MeshComponent* MeshComponent::processMesh(std::vector<MeshComponent *>& meshes, 
             indices.push_back(face.mIndices[j]);
         }
     }
+
+	if (mesh->mMaterialIndex >= 0) {
+		aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+		auto diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
+		textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
+		auto specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
+		textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+	}
 
     shaderProgram = shaderProgram;
 
