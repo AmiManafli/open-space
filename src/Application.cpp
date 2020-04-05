@@ -78,7 +78,6 @@ void Application::init() {
     auto light = EntityBuilder::create()
         ->withMesh("./assets/models/ico-sphere.dae", meshTestLightShaderProgram)
         ->withTransform(-5, 15, 0)
-        ->withScale(0.2)
         ->withVelocity(glm::vec3(1, 0, 0))
         ->build(entityManager);
 
