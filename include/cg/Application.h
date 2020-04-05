@@ -29,6 +29,8 @@ private:
     RenderSystem *renderSystem;
     InputSystem *inputSystem;
 
+    std::vector<glm::vec3> instanceTransformations;
+
     void createCameras();
     Entity* createGrid(int width, int height, bool showYAxis);
 };

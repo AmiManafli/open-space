@@ -66,6 +66,13 @@ EntityBuilder *EntityBuilder::withMesh(std::vector<MeshComponent::Vertex> &verti
     return this;
 }
 
+EntityBuilder* EntityBuilder::withInstances(std::vector<glm::vec3> &transformations) {
+    printf("Meshes: %d\n", meshComponents.size());
+    for (auto mesh : meshComponents) {
+        mesh->createInstances(transformations);
+    }
+}
+
 EntityBuilder * EntityBuilder::withCamera(CameraComponent::Mode mode, CameraComponent::Type type, glm::vec3 target, glm::vec3 front, glm::vec3 up, float aspectRatio) {
     if (cameraComponent != nullptr) {
         throw std::runtime_error("entity already has a camera");

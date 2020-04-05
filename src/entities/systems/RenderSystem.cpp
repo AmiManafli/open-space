@@ -71,7 +71,6 @@ void RenderSystem::renderEntities() {
             glDisable(GL_DEPTH_TEST);
 
             auto highlightModel = highlight->getModel(transform->model);
-
             for (auto it = meshes.first; it != meshes.second; it++) {
                 renderMesh(it->second, highlight->shaderProgram, highlightModel);
             }
@@ -91,12 +90,18 @@ void RenderSystem::renderMesh(MeshComponent *mesh, ShaderProgram *shaderProgram,
     shaderProgram->setUniform("projection", context->getProjection());
     shaderProgram->setUniform("model", model);
 
-	renderTexture(mesh, shaderProgram);
+    if (mesh->textures.size() > 0) {
+        renderTexture(mesh, shaderProgram);
+    }
 
     glBindVertexArray(mesh->vao);
-    glDrawElements(mesh->mode, mesh->indices.size(), GL_UNSIGNED_INT, nullptr);
-	
-	//cleanup    
+    if (mesh->instances > 1) {
+        glDrawElementsInstanced(mesh->mode, mesh->indices.size(), GL_UNSIGNED_INT, nullptr, mesh->instances);
+    } else {
+        glDrawElements(mesh->mode, mesh->indices.size(), GL_UNSIGNED_INT, nullptr);
+    }
+
+	//cleanup
 	glBindVertexArray(0);
 	glActiveTexture(GL_TEXTURE0);
 }
@@ -129,5 +134,4 @@ void RenderSystem::renderTexture(MeshComponent *mesh, ShaderProgram *shaderProgr
 		// and finally bind the texture
 		glBindTexture(GL_TEXTURE_2D, mesh->textures[i].id);
 	}
-
 }

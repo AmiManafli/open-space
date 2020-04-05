@@ -7,12 +7,32 @@
 MeshComponent::MeshComponent(std::vector<Vertex>& vertices, std::vector<uint32_t>& indices,
                              std::vector<Texture>& textures, ShaderProgram *shaderProgram, GLenum mode)
                                 : vertices(vertices), indices(indices), textures(textures),
-                                  shaderProgram(shaderProgram), mode(mode) {
+                                  shaderProgram(shaderProgram), mode(mode), instances(1) {
     setupBuffers();
 }
 
 MeshComponent::~MeshComponent() {
     // TODO: Cleanup mesh buffers
+}
+
+void MeshComponent::createInstances(std::vector<glm::vec3>& transformations) {
+    if (instances > 1) {
+        throw std::runtime_error("instances already defined");
+    }
+    instances = transformations.size();
+
+    glGenBuffers(1, &instanceVbo);
+    glBindBuffer(GL_ARRAY_BUFFER, instanceVbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * instances, transformations.data(), GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    glEnableVertexAttribArray(3);
+    glBindBuffer(GL_ARRAY_BUFFER, instanceVbo);
+    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glVertexAttribDivisor(3, 1);
+
+    printf("%d instance(s) created!\n", instances);
 }
 
 std::vector<MeshComponent *> MeshComponent::createMeshComponentsFromFile(std::string filename, ShaderProgram *shaderProgram) {

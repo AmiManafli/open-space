@@ -1,7 +1,7 @@
 #include "cg/entities/components/CameraComponent.h"
 
 CameraComponent::CameraComponent(CameraComponent::Mode mode, CameraComponent::Type type, glm::vec3 target, glm::vec3 front, glm::vec3 up, TransformComponent *positionComponent)
-        : mode(mode), type(type), target(target), zoom(1.0f), mouseSensitivity(0.1f), movementSpeed(2.5f) {
+        : mode(mode), type(type), target(target), zoom(1.0f), mouseSensitivity(0.1f), movementSpeed(20.5f) {
     // Initialize vectors
     this->worldUp = glm::normalize(up);
     this->front = glm::normalize(front);
@@ -37,7 +37,7 @@ glm::mat4 CameraComponent::getProjection(float aspectRatio) {
         return glm::ortho(-aspectRatio * zoomOut, aspectRatio * zoomOut, -1.0f * zoomOut, 1.0f * zoomOut, -1000.0f, 100.0f);
     } else if (type == Perspective) {
         auto fov = 45.0f / zoom;
-        return glm::perspective(glm::radians(fov), aspectRatio, 0.1f, 100.0f);
+        return glm::perspective(glm::radians(fov), aspectRatio, 0.1f, 10000.0f);
     } else {
         throw std::runtime_error("failed to get projection: unknown projection mode");
     }

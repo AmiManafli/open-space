@@ -8,6 +8,19 @@ Application::Application(std::string title, int width, int height) {
 
     renderSystem = new RenderSystem(entityManager, context);
     inputSystem = new InputSystem(entityManager, context);
+
+    int instanceRows = 200;
+    int instanceCols = 200;
+
+    int startRow = -instanceRows / 2;
+    int startCol = -instanceCols / 2;
+
+    float offset = 2.5;
+    for (int r = startRow; r < instanceRows - 1; r++) {
+        for (int c = startCol; c < instanceCols - 1; c++) {
+            instanceTransformations.emplace_back(glm::vec3(offset * c, 15.0 * glm::sin(0.005 * r * c + ((double) rand() / (RAND_MAX)) + 1) + ((double) rand() / (RAND_MAX)) + 10, offset * r));
+        }
+    }
 }
 
 Application::~Application() {
@@ -50,12 +63,13 @@ void Application::init() {
     inputSystem->init();
 
     createCameras();
-    createGrid(62, 62, false);
+//    createGrid(62, 62, false);
 
     auto nano = EntityBuilder::create()
-        ->withMesh("./assets/models/nanosuit.obj", meshTextureShaderProgram)
+        ->withMesh("./assets/models/ico-sphere.dae", meshShaderProgram)
+        ->withInstances(instanceTransformations)
         ->withPosition(0, 0, 0)
-        ->withScale(0.1)
+        ->withScale(0.8)
         ->build(entityManager);
 }
 

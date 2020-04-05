@@ -28,16 +28,18 @@ public:
     MeshComponent(std::vector<Vertex>& vertices, std::vector<uint32_t>& indices, std::vector<Texture>& textures, ShaderProgram *shaderProgram, GLenum mode);
     ~MeshComponent() override;
 
-	//void addTexture(std::string filename);
     static std::vector<MeshComponent *> createMeshComponentsFromFile(std::string filename, ShaderProgram *shaderProgram);
 
-    uint32_t vao, vbo, ebo;
+    void createInstances(std::vector<glm::vec3>& transformations);
+
+    uint32_t vao, vbo, instanceVbo, ebo;
     ShaderProgram *shaderProgram;
     GLenum mode;
     std::vector<Vertex> vertices;
     std::vector<uint32_t> indices;
     std::vector<Texture> textures;
     bool highlighted;
+    uint32_t instances;
 
 private:
     void setupBuffers();
