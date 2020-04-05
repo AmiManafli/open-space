@@ -1,7 +1,7 @@
 #include "cg/entities/components/CameraComponent.h"
 
 CameraComponent::CameraComponent(CameraComponent::Mode mode, CameraComponent::Type type, glm::vec3 target, glm::vec3 front, glm::vec3 up, TransformComponent *positionComponent)
-        : mode(mode), type(type), target(target), zoom(1.0f), mouseSensitivity(0.1f), movementSpeed(20.5f) {
+        : mode(mode), type(type), target(target), zoom(1.0f), mouseSensitivity(0.1f), movementSpeed(2.5f) {
     // Initialize vectors
     this->worldUp = glm::normalize(up);
     this->front = glm::normalize(front);
