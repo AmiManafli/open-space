@@ -25,6 +25,8 @@ public:
     EntityBuilder* withHighlight(HighlightComponent *highlight) { highlightComponent = highlight; }
     EntityBuilder* withHighlight(float scaleFactor, ShaderProgram *shaderProgram);
 
+    EntityBuilder* withVelocity(glm::vec3 velocity);
+
     Entity* build(EntityManager *entityManager);
     void destroy();
 
@@ -33,6 +35,7 @@ private:
     TransformComponent *transformComponent = nullptr;
     CameraComponent *cameraComponent = nullptr;
     HighlightComponent *highlightComponent = nullptr;
+    VelocityComponent *velocityComponent = nullptr;
 };
 
 #endif //CG1_PROJECT_ENTITYBUILDER_H

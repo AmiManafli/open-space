@@ -5,7 +5,7 @@ Entity *EntityBuilder::build(EntityManager *entityManager) {
     auto entity = entityManager->createEntity();
 
     if (transformComponent != nullptr) {
-        entityManager->addPositionComponent(entity->id, transformComponent);
+        entityManager->addTransformComponent(entity->id, transformComponent);
     }
     if (cameraComponent != nullptr) {
         entityManager->addCameraComponent(entity->id, cameraComponent);
@@ -16,6 +16,10 @@ Entity *EntityBuilder::build(EntityManager *entityManager) {
 
     for (auto& mesh : meshComponents) {
         entityManager->addMeshComponent(entity->id, mesh);
+    }
+
+    if (velocityComponent != nullptr) {
+        entityManager->addVelocityComponent(entity->id, velocityComponent);
     }
 
     return entity;
@@ -89,5 +93,10 @@ EntityBuilder *EntityBuilder::withHighlight(float scaleFactor, ShaderProgram *sh
         throw std::runtime_error("entity already has a highlight");
     }
     highlightComponent = new HighlightComponent(scaleFactor, shaderProgram);
+    return this;
+}
+
+EntityBuilder *EntityBuilder::withVelocity(glm::vec3 velocity) {
+    velocityComponent = new VelocityComponent(velocity);
     return this;
 }

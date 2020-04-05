@@ -1,4 +1,4 @@
-#include "HighlightComponent.h"
+#include "cg/entities/components/HighlightComponent.h"
 
 HighlightComponent::HighlightComponent(float scaleFactor, ShaderProgram *shaderProgram)
         : scaleFactor(scaleFactor), shaderProgram(shaderProgram) {

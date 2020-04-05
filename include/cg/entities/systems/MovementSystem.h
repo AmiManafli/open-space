@@ -3,9 +3,16 @@
 
 #include <cg/entities/System.h>
 
-namespace cg::ecs {
-    class MovementSystem : public System {
-    };
-}
+class MovementSystem : public System {
+public:
+    MovementSystem(EntityManager *entityManager, GLContext *context);
+    ~MovementSystem() override;
+
+    void init() override;
+    void update() override;
+
+private:
+    GLContext *context;
+};
 
 #endif //CG1_PROJECT_MOVEMENTSYSTEM_H

@@ -110,7 +110,7 @@ void InputSystem::mousePositionCallback(GLFWwindow *window, double x, double y) 
 
 void InputSystem::moveCamera(Entity *camera, CameraComponent::Direction direction, float deltaTime) {
     auto cameraComponent = entityManager->getCameraComponent(camera->id);
-    auto positionComponent = entityManager->getPositionComponent(camera->id);
+    auto transformComponent = entityManager->getTransformComponent(camera->id);
 
-    cameraComponent->processKeyboard(direction, deltaTime, positionComponent);
+    cameraComponent->processKeyboard(direction, deltaTime, transformComponent);
 }

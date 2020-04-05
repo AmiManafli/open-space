@@ -8,6 +8,7 @@ Application::Application(std::string title, int width, int height) {
 
     renderSystem = new RenderSystem(entityManager, context);
     inputSystem = new InputSystem(entityManager, context);
+    movementSystem = new MovementSystem(entityManager, context);
 
     int instanceRows = 20;
     int instanceCols = 20;
@@ -26,6 +27,7 @@ Application::Application(std::string title, int width, int height) {
 Application::~Application() {
     delete inputSystem;
     delete renderSystem;
+    delete movementSystem;
 
     delete highlightShaderProgram;
     delete gridShaderProgram;
@@ -71,20 +73,28 @@ void Application::init() {
 
     renderSystem->init();
     inputSystem->init();
-
-    createCameras();
-    createGrid(62, 62, false);
-
-    auto sphere = EntityBuilder::create()
-        ->withMesh("./assets/models/ico-sphere.dae", meshWithLightShaderProgram)
-        ->withTransform(0, 0, 0)
-        ->withScale(1.0)
-        ->build(entityManager);
+    movementSystem->init();
 
     auto light = EntityBuilder::create()
         ->withMesh("./assets/models/ico-sphere.dae", meshTestLightShaderProgram)
-        ->withTransform(-5, 5, 0)
+        ->withTransform(-5, 15, 0)
         ->withScale(0.2)
+        ->withVelocity(glm::vec3(1, 0, 0))
+        ->build(entityManager);
+
+    createCameras();
+//    createGrid(62, 62, false);
+
+    auto sphere = EntityBuilder::create()
+        ->withMesh("./assets/models/ico-sphere.dae", meshWithLightShaderProgram)
+        ->withTransform(0, 1, 0)
+        ->withScale(1.0)
+        ->build(entityManager);
+
+    auto floor = EntityBuilder::create()
+        ->withMesh("./assets/models/plane.dae", meshWithLightShaderProgram)
+        ->withTransform(0, 0, 0)
+        ->withScale(50.0)
         ->build(entityManager);
 }
 
@@ -94,6 +104,7 @@ void Application::run() {
 
         // Process systems
         inputSystem->update();
+        movementSystem->update();
         renderSystem->update();
     }
 }
