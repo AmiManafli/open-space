@@ -59,16 +59,31 @@ void Application::init() {
     highlightShaderProgram->attachShader("./assets/shaders/highlight.frag", ShaderType::FragmentShader);
     highlightShaderProgram->link();
 
+    meshWithLightShaderProgram = new ShaderProgram();
+    meshWithLightShaderProgram->attachShader("./assets/shaders/mesh.vert", ShaderType::VertexShader);
+    meshWithLightShaderProgram->attachShader("./assets/shaders/meshWithLight.frag", ShaderType::FragmentShader);
+    meshWithLightShaderProgram->link();
+
+    meshTestLightShaderProgram = new ShaderProgram();
+    meshTestLightShaderProgram->attachShader("./assets/shaders/mesh.vert", ShaderType::VertexShader);
+    meshTestLightShaderProgram->attachShader("./assets/shaders/meshTestLight.frag", ShaderType::FragmentShader);
+    meshTestLightShaderProgram->link();
+
     renderSystem->init();
     inputSystem->init();
 
     createCameras();
     createGrid(62, 62, false);
 
-    auto nano = EntityBuilder::create()
-        ->withMesh("./assets/models/ico-sphere.dae", meshShaderProgram)
-        ->withInstances(instanceTransformations)
-        ->withPosition(0, 0, 0)
+    auto sphere = EntityBuilder::create()
+        ->withMesh("./assets/models/ico-sphere.dae", meshWithLightShaderProgram)
+        ->withTransform(0, 0, 0)
+        ->withScale(1.0)
+        ->build(entityManager);
+
+    auto light = EntityBuilder::create()
+        ->withMesh("./assets/models/ico-sphere.dae", meshTestLightShaderProgram)
+        ->withTransform(-5, 5, 0)
         ->withScale(0.2)
         ->build(entityManager);
 }
@@ -87,23 +102,23 @@ void Application::createCameras() {
     auto target = glm::vec3(0, 0, 0);
 
     /// Perspective camera
-    auto position = glm::vec3(4.35, 1.09, 3.54);
+    auto position = glm::vec3(2.3, 7.3, 11.4);
     context->perspectiveCamera = EntityBuilder::create()
-        ->withPosition(position)
+        ->withTransform(position)
         ->withCamera(CameraComponent::Mode::Free, CameraComponent::Type::Perspective, target, glm::normalize(-position), glm::vec3(0, 1, 0), context->getAspect())
         ->build(entityManager);
 
     /// Top camera
     position = glm::vec3(0, 5, 0);
     context->topCamera = EntityBuilder::create()
-        ->withPosition(position)
+        ->withTransform(position)
         ->withCamera(CameraComponent::Mode::Free, CameraComponent::Type::Orthographic, target, glm::normalize(-position), glm::vec3(0, 0, -1), context->getAspect())
         ->build(entityManager);
 
     /// Side camera
     position = glm::vec3(0, 0, 5);
     context->sideCamera = EntityBuilder::create()
-        ->withPosition(position)
+        ->withTransform(position)
         ->withCamera(CameraComponent::Mode::Free, CameraComponent::Type::Orthographic, target, glm::normalize(-position), glm::vec3(0, 1, 0), context->getAspect())
         ->build(entityManager);
 
@@ -146,7 +161,7 @@ Entity* Application::createGrid(int width, int height, bool showYAxis) {
     std::vector<MeshComponent::Texture> test;
 
     return EntityBuilder::create()
-        ->withPosition(0, 0, 0)
+        ->withTransform(0, 0, 0)
         ->withMesh(vertices, indices, textures, gridShaderProgram, GL_LINES)
         ->build(entityManager);
 }

@@ -24,6 +24,8 @@ private:
 	ShaderProgram* meshTextureShaderProgram;
     ShaderProgram *gridShaderProgram;
     ShaderProgram *highlightShaderProgram;
+    ShaderProgram *meshWithLightShaderProgram;
+    ShaderProgram *meshTestLightShaderProgram;
 
     // Systems
     RenderSystem *renderSystem;

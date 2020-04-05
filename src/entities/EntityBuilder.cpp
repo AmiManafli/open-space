@@ -32,11 +32,11 @@ void EntityBuilder::destroy() {
     delete this;
 }
 
-EntityBuilder *EntityBuilder::withPosition(float x, float y, float z) {
-    return withPosition(glm::vec3(x, y, z));
+EntityBuilder *EntityBuilder::withTransform(float x, float y, float z) {
+    return withTransform(glm::vec3(x, y, z));
 }
 
-EntityBuilder *EntityBuilder::withPosition(glm::vec3 position) {
+EntityBuilder *EntityBuilder::withTransform(glm::vec3 position) {
     if (transformComponent != nullptr) {
         throw std::runtime_error("entity already has a position");
     }

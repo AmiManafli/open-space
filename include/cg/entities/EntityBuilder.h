@@ -8,16 +8,21 @@ class EntityBuilder {
 public:
     static EntityBuilder* create() { return new EntityBuilder(); }
 
-    EntityBuilder* withPosition(float x, float y, float z);
-    EntityBuilder* withPosition(glm::vec3 position);
+    EntityBuilder* withTransform(TransformComponent *transform) { transformComponent = transform; }
+    EntityBuilder* withTransform(float x, float y, float z);
+    EntityBuilder* withTransform(glm::vec3 position);
     EntityBuilder* withScale(float scale);
 
+    EntityBuilder* withMesh(MeshComponent *mesh) { meshComponents.push_back(mesh); }
+    EntityBuilder* withMesh(std::vector<MeshComponent *> meshes) { meshComponents = meshes; }
     EntityBuilder* withMesh(std::string filename, ShaderProgram *shaderProgram);
     EntityBuilder* withMesh(std::vector<MeshComponent::Vertex>& vertices, std::vector<uint32_t>& indices, std::vector<MeshComponent::Texture>& textures, ShaderProgram *shaderProgram, GLenum mode);
     EntityBuilder* withInstances(std::vector<glm::vec3>& transformations);
 
+    EntityBuilder* withCamera(CameraComponent *camera) { cameraComponent = camera; }
     EntityBuilder* withCamera(CameraComponent::Mode mode, CameraComponent::Type type, glm::vec3 target, glm::vec3 front, glm::vec3 up, float aspectRatio);
 
+    EntityBuilder* withHighlight(HighlightComponent *highlight) { highlightComponent = highlight; }
     EntityBuilder* withHighlight(float scaleFactor, ShaderProgram *shaderProgram);
 
     Entity* build(EntityManager *entityManager);
