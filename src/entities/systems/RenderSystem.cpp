@@ -48,9 +48,9 @@ void RenderSystem::update() {
 void RenderSystem::renderEntities() {
     uint32_t triangleCount = 0;
 
-    for (auto& pair : entityManager->getPositionComponents()) {
+    for (auto& pair : entityManager->getTransformComponents()) {
         auto entityId = pair.first;
-        auto position = pair.second;
+        auto transform = pair.second;
         auto meshes = entityManager->getMeshComponents(entityId);
         auto highlight = entityManager->getHighlightComponent(entityId);
 
@@ -62,7 +62,7 @@ void RenderSystem::renderEntities() {
         // Render meshes
         for (auto it = meshes.first; it != meshes.second; it++) {
             triangleCount += (double) it->second->indices.size() / 3.0;
-            renderMesh(it->second, it->second->shaderProgram, position->model);
+            renderMesh(it->second, it->second->shaderProgram, transform->model);
         }
 
         if (highlight) {
@@ -70,7 +70,7 @@ void RenderSystem::renderEntities() {
             glStencilMask(0x00); // disable writing to the stencil buffer
             glDisable(GL_DEPTH_TEST);
 
-            auto highlightModel = highlight->getModel(position->model);
+            auto highlightModel = highlight->getModel(transform->model);
 
             for (auto it = meshes.first; it != meshes.second; it++) {
                 renderMesh(it->second, highlight->shaderProgram, highlightModel);

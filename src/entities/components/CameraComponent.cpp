@@ -1,6 +1,6 @@
 #include "cg/entities/components/CameraComponent.h"
 
-CameraComponent::CameraComponent(CameraComponent::Mode mode, CameraComponent::Type type, glm::vec3 target, glm::vec3 front, glm::vec3 up, PositionComponent *positionComponent)
+CameraComponent::CameraComponent(CameraComponent::Mode mode, CameraComponent::Type type, glm::vec3 target, glm::vec3 front, glm::vec3 up, TransformComponent *positionComponent)
         : mode(mode), type(type), target(target), zoom(1.0f), mouseSensitivity(0.1f), movementSpeed(2.5f) {
     // Initialize vectors
     this->worldUp = glm::normalize(up);
@@ -22,7 +22,7 @@ CameraComponent::CameraComponent(CameraComponent::Mode mode, CameraComponent::Ty
     }
 }
 
-glm::mat4 CameraComponent::getView(PositionComponent *positionComponent) {
+glm::mat4 CameraComponent::getView(TransformComponent *positionComponent) {
     auto position = positionComponent->position;
     if (mode == Free) {
         return glm::lookAt(position, position + front, up);
@@ -43,7 +43,7 @@ glm::mat4 CameraComponent::getProjection(float aspectRatio) {
     }
 }
 
-void CameraComponent::processKeyboard(CameraComponent::Direction direction, float deltaTime, PositionComponent *positionComponent) {
+void CameraComponent::processKeyboard(CameraComponent::Direction direction, float deltaTime, TransformComponent *positionComponent) {
     auto position = positionComponent->position;
     float velocity = movementSpeed * deltaTime;
     if (direction == Forward) {

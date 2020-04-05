@@ -24,7 +24,7 @@ public:
 
 private:
     std::vector<MeshComponent *> meshComponents;
-    PositionComponent *positionComponent = nullptr;
+    TransformComponent *transformComponent = nullptr;
     CameraComponent *cameraComponent = nullptr;
     HighlightComponent *highlightComponent = nullptr;
 };

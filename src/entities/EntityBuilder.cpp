@@ -4,8 +4,8 @@
 Entity *EntityBuilder::build(EntityManager *entityManager) {
     auto entity = entityManager->createEntity();
 
-    if (positionComponent != nullptr) {
-        entityManager->addPositionComponent(entity->id, positionComponent);
+    if (transformComponent != nullptr) {
+        entityManager->addPositionComponent(entity->id, transformComponent);
     }
     if (cameraComponent != nullptr) {
         entityManager->addCameraComponent(entity->id, cameraComponent);
@@ -28,7 +28,7 @@ void EntityBuilder::destroy() {
     for (auto mesh : meshComponents) {
         delete mesh;
     }
-    delete positionComponent;
+    delete transformComponent;
     delete this;
 }
 
@@ -37,18 +37,18 @@ EntityBuilder *EntityBuilder::withPosition(float x, float y, float z) {
 }
 
 EntityBuilder *EntityBuilder::withPosition(glm::vec3 position) {
-    if (positionComponent != nullptr) {
+    if (transformComponent != nullptr) {
         throw std::runtime_error("entity already has a position");
     }
-    positionComponent = new PositionComponent(position);
+    transformComponent = new TransformComponent(position);
     return this;
 }
 
 EntityBuilder* EntityBuilder::withScale(float scale) {
-    if (positionComponent == nullptr) {
+    if (transformComponent == nullptr) {
         throw std::runtime_error("need a position to scale");
     }
-    positionComponent->scale(scale);
+    transformComponent->scale(scale);
     return this;
 }
 
@@ -70,10 +70,10 @@ EntityBuilder * EntityBuilder::withCamera(CameraComponent::Mode mode, CameraComp
     if (cameraComponent != nullptr) {
         throw std::runtime_error("entity already has a camera");
     }
-    if (positionComponent == nullptr) {
-        throw std::runtime_error("need a PositionComponent to initialize the CameraComponent");
+    if (transformComponent == nullptr) {
+        throw std::runtime_error("need a TransformComponent to initialize the CameraComponent");
     }
-    cameraComponent = new CameraComponent(mode, type, target, front, up, positionComponent);
+    cameraComponent = new CameraComponent(mode, type, target, front, up, transformComponent);
     return this;
 }
 

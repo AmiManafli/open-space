@@ -20,11 +20,11 @@ std::pair<MeshComponentMultimap::iterator, MeshComponentMultimap::iterator> Enti
     return meshComponents.equal_range(entityId);
 }
 
-void EntityManager::addPositionComponent(uint32_t entityId, PositionComponent* component) {
+void EntityManager::addPositionComponent(uint32_t entityId, TransformComponent* component) {
     positionComponents.emplace(entityId, component);
 }
 
-PositionComponent* EntityManager::getPositionComponent(uint32_t entityId) {
+TransformComponent* EntityManager::getPositionComponent(uint32_t entityId) {
     return getComponent(positionComponents, entityId);
 }
 

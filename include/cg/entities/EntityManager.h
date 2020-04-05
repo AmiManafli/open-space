@@ -4,7 +4,7 @@
 #include <vector>
 #include <unordered_map>
 #include <cg/entities/components/MeshComponent.h>
-#include <cg/entities/components/PositionComponent.h>
+#include <cg/entities/components/TransformComponent.h>
 #include <cg/entities/components/CameraComponent.h>
 #include <cg/entities/components/HighlightComponent.h>
 #include "Component.h"
@@ -12,7 +12,7 @@
 
 typedef std::unordered_multimap<uint32_t, MeshComponent *> MeshComponentMultimap;
 typedef std::unordered_map<uint32_t, CameraComponent *> CameraComponentMap;
-typedef std::unordered_map<uint32_t, PositionComponent *> PositionComponentMap;
+typedef std::unordered_map<uint32_t, TransformComponent *> PositionComponentMap;
 typedef std::unordered_map<uint32_t, HighlightComponent *> HighlightComponentMap;
 
 
@@ -28,9 +28,9 @@ public:
     std::pair<MeshComponentMultimap::iterator, MeshComponentMultimap::iterator> getMeshComponents(uint32_t entityId);
 
     /// Position component
-    void addPositionComponent(uint32_t entityId, PositionComponent *component);
-    PositionComponentMap getPositionComponents() { return positionComponents; }
-    PositionComponent* getPositionComponent(uint32_t entityId);
+    void addPositionComponent(uint32_t entityId, TransformComponent *component);
+    PositionComponentMap getTransformComponents() { return positionComponents; }
+    TransformComponent* getPositionComponent(uint32_t entityId);
 
     /// Camera component
     void addCameraComponent(uint32_t entityId, CameraComponent *component);

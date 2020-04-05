@@ -65,8 +65,8 @@ add_executable(${CMAKE_PROJECT_NAME}
         include/cg/entities/systems/MovementSystem.h
         src/entities/systems/RenderSystem.cpp
         include/cg/entities/systems/RenderSystem.h
-        src/entities/components/PositionComponent.cpp
-        include/cg/entities/components/PositionComponent.h
+        src/entities/components/TransformComponent.cpp
+        include/cg/entities/components/TransformComponent.h
         include/cg/entities/components/MeshComponent.h
         src/entities/components/MeshComponent.cpp
         src/entities/EntityBuilder.cpp
