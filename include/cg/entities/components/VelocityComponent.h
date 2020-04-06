@@ -1,7 +1,7 @@
 #ifndef CG1_PROJECT_VELOCITYCOMPONENT_H
 #define CG1_PROJECT_VELOCITYCOMPONENT_H
 
-
+#include <functional>
 #include <cg/GLHeader.h>
 #include <cg/entities/Component.h>
 #include <optional>
