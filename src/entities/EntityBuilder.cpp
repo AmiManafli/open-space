@@ -71,7 +71,6 @@ EntityBuilder *EntityBuilder::withMesh(std::vector<MeshComponent::Vertex> &verti
 }
 
 EntityBuilder* EntityBuilder::withInstances(std::vector<glm::vec3> &transformations) {
-    printf("Meshes: %d\n", meshComponents.size());
     for (auto mesh : meshComponents) {
         mesh->createInstances(transformations);
     }

@@ -7,9 +7,16 @@
 
 class VelocityComponent : public Component {
 public:
-    VelocityComponent(glm::vec3 velocity);
+    VelocityComponent() = default;
+    explicit VelocityComponent(glm::vec3 velocity);
+    VelocityComponent(glm::vec3 rotation, glm::vec3 rotationPoint);
 
     glm::vec3 velocity;
+
+    glm::vec3 rotation;
+    glm::vec3 rotationPoint;
+
+    glm::vec3 scaling;
 };
 
 

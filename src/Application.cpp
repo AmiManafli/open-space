@@ -78,7 +78,7 @@ void Application::init() {
     auto light = EntityBuilder::create()
         ->withMesh("./assets/models/ico-sphere.dae", meshTestLightShaderProgram)
         ->withTransform(-5, 15, 0)
-        ->withVelocity(glm::vec3(1, 0, 0))
+        ->withVelocity(glm::vec3(7, 0, 0))
         ->build(entityManager);
 
     createCameras();
@@ -88,6 +88,7 @@ void Application::init() {
         ->withMesh("./assets/models/nanosuit.obj", meshWithLightShaderProgram)
         ->withTransform(0, 0, 0)
         ->withScale(0.3)
+//        ->withVelocity(new VelocityComponent(glm::vec3(0, 1, 0), glm::vec3(0, 0, 0)))
         ->build(entityManager);
 
     auto floor = EntityBuilder::create()

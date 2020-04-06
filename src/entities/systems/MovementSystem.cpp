@@ -16,15 +16,11 @@ void MovementSystem::update() {
         auto transformComponent = entityManager->getTransformComponent(entityId);
 
         if (component && transformComponent) {
-            if (transformComponent->position.x > 30) {
-                component->velocity = glm::vec3(-1, 0, 0);
-            }
-            if (transformComponent->position.x < -30) {
-                component->velocity = glm::vec3(1, 0, 0);
+            if (transformComponent->position.x > 30 || transformComponent->position.x < -30) {
+                component->velocity = -component->velocity;
             }
             auto translate = component->velocity * (float) context->getDeltaTime();
-            transformComponent->position += translate;
-            transformComponent->model = glm::translate(transformComponent->model, translate);
+            transformComponent->move(translate);
         }
     }
 }

@@ -6,12 +6,21 @@
 
 class TransformComponent : public Component {
 public:
-    TransformComponent(float x, float y, float z);
+    TransformComponent();
     TransformComponent(glm::vec3 position);
 
+    void move(float x, float y, float z);
+    void move(glm::vec3 position);
+
     void scale(float factor);
+    void scale(glm::vec3 scaling);
+
+    void rotate(float angle, glm::vec3 axis);
 
     glm::vec3 position;
+    glm::vec3 scaling;
+    glm::vec3 rotation;
+
     glm::mat4 model;
 };
 
