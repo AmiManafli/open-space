@@ -82,18 +82,18 @@ void Application::init() {
         ->build(entityManager);
 
     createCameras();
-//    createGrid(62, 62, false);
+    createGrid(62, 62, false);
 
     auto sphere = EntityBuilder::create()
-        ->withMesh("./assets/models/ico-sphere.dae", meshWithLightShaderProgram)
-        ->withTransform(0, 1, 0)
-        ->withScale(1.0)
+        ->withMesh("./assets/models/nanosuit.obj", meshWithLightShaderProgram)
+        ->withTransform(0, 0, 0)
+        ->withScale(0.3)
         ->build(entityManager);
 
     auto floor = EntityBuilder::create()
         ->withMesh("./assets/models/plane.dae", meshWithLightShaderProgram)
         ->withTransform(0, 0, 0)
-        ->withScale(50.0)
+        ->withScale(30.0)
         ->build(entityManager);
 }
 

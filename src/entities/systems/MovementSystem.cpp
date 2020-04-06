@@ -22,8 +22,8 @@ void MovementSystem::update() {
             if (transformComponent->position.x < -30) {
                 component->velocity = glm::vec3(1, 0, 0);
             }
-            auto translate = component->velocity * (float) context->getDeltaTime() * 7.0f;
-            transformComponent->position.x += translate.x;
+            auto translate = component->velocity * (float) context->getDeltaTime();
+            transformComponent->position += translate;
             transformComponent->model = glm::translate(transformComponent->model, translate);
         }
     }
