@@ -8,8 +8,8 @@ VelocityComponent::VelocityComponent(glm::vec3 rotation, glm::vec3 rotationPoint
         : rotation(rotation), rotationPoint(rotationPoint) {
 }
 
-void VelocityComponent::update() {
+void VelocityComponent::update(TransformComponent *transform) {
     if (customUpdate.has_value()) {
-        printf("Run custom update...\n");
+        customUpdate.value()(this, transform);
     }
 }

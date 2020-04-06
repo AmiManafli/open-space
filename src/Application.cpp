@@ -75,10 +75,15 @@ void Application::init() {
     inputSystem->init();
     movementSystem->init();
 
+    auto updateLightVelocity = [](VelocityComponent *velocity, TransformComponent *transform) {
+        if (transform->position.x > 30 || transform->position.x < -30) {
+            velocity->position = -velocity->position.value();
+        }
+    };
     auto light = EntityBuilder::create()
         ->withMesh("./assets/models/ico-sphere.dae", meshTestLightShaderProgram)
         ->withTransform(-5, 15, 0)
-        ->withVelocity(glm::vec3(7, 0, 0))
+        ->withVelocity(glm::vec3(7, 0, 0), updateLightVelocity)
         ->build(entityManager);
 
     createCameras();

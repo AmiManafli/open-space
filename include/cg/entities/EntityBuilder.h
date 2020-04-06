@@ -26,7 +26,7 @@ public:
     EntityBuilder* withHighlight(float scaleFactor, ShaderProgram *shaderProgram);
 
     EntityBuilder* withVelocity(VelocityComponent *velocity) { velocityComponent = velocity; return this; }
-    EntityBuilder* withVelocity(glm::vec3 velocity);
+    EntityBuilder* withVelocity(glm::vec3 velocity, std::function<void(VelocityComponent *, TransformComponent *)> customUpdate = nullptr);
 
     Entity* build(EntityManager *entityManager);
     void destroy();

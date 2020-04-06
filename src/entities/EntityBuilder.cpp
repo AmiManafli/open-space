@@ -95,7 +95,10 @@ EntityBuilder *EntityBuilder::withHighlight(float scaleFactor, ShaderProgram *sh
     return this;
 }
 
-EntityBuilder *EntityBuilder::withVelocity(glm::vec3 velocity) {
+EntityBuilder *EntityBuilder::withVelocity(glm::vec3 velocity, std::function<void(VelocityComponent *, TransformComponent *)> customUpdate) {
     velocityComponent = new VelocityComponent(velocity);
+    if (customUpdate != nullptr) {
+        velocityComponent->customUpdate = customUpdate;
+    }
     return this;
 }

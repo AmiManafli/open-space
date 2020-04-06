@@ -31,7 +31,7 @@ void MovementSystem::update() {
                 transform->scale(glm::normalize(scaling));
             }
 
-            velocity->update();
+            velocity->update(transform);
         }
     }
 }
