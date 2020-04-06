@@ -21,6 +21,9 @@ void MovementSystem::update() {
             }
             auto translate = component->velocity * (float) context->getDeltaTime();
             transformComponent->move(translate);
+
+            auto rotation = component->rotation * (float) context->getDeltaTime();
+            transformComponent->rotate(glm::length(rotation), glm::normalize(rotation));
         }
     }
 }

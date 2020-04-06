@@ -84,11 +84,11 @@ void Application::init() {
     createCameras();
     createGrid(62, 62, false);
 
-    auto sphere = EntityBuilder::create()
+    auto nanoSuit = EntityBuilder::create()
         ->withMesh("./assets/models/nanosuit.obj", meshWithLightShaderProgram)
         ->withTransform(0, 0, 0)
         ->withScale(0.3)
-//        ->withVelocity(new VelocityComponent(glm::vec3(0, 1, 0), glm::vec3(0, 0, 0)))
+        ->withVelocity(new VelocityComponent(glm::vec3(0, -1, 0), glm::vec3(0, 0, 0)))
         ->build(entityManager);
 
     auto floor = EntityBuilder::create()
