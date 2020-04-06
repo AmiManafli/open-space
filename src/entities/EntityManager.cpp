@@ -20,12 +20,12 @@ std::pair<MeshComponentMultimap::iterator, MeshComponentMultimap::iterator> Enti
     return meshComponents.equal_range(entityId);
 }
 
-void EntityManager::addPositionComponent(uint32_t entityId, TransformComponent* component) {
-    positionComponents.emplace(entityId, component);
+void EntityManager::addTransformComponent(uint32_t entityId, TransformComponent* component) {
+    transformComponents.emplace(entityId, component);
 }
 
-TransformComponent* EntityManager::getPositionComponent(uint32_t entityId) {
-    return getComponent(positionComponents, entityId);
+TransformComponent* EntityManager::getTransformComponent(uint32_t entityId) {
+    return getComponent(transformComponents, entityId);
 }
 
 void EntityManager::addCameraComponent(uint32_t entityId, CameraComponent* component) {
@@ -42,6 +42,14 @@ void EntityManager::addHighlightComponent(uint32_t entityId, HighlightComponent 
 
 HighlightComponent *EntityManager::getHighlightComponent(uint32_t entityId) {
     return getComponent(highlightComponents, entityId);
+}
+
+void EntityManager::addVelocityComponent(uint32_t entityId, VelocityComponent *component) {
+    velocityComponents.emplace(entityId, component);
+}
+
+VelocityComponent *EntityManager::getVelocityComponent(uint32_t entityId) {
+    return getComponent(velocityComponents, entityId);
 }
 
 template<class T>

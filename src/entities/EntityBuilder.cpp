@@ -5,7 +5,7 @@ Entity *EntityBuilder::build(EntityManager *entityManager) {
     auto entity = entityManager->createEntity();
 
     if (transformComponent != nullptr) {
-        entityManager->addPositionComponent(entity->id, transformComponent);
+        entityManager->addTransformComponent(entity->id, transformComponent);
     }
     if (cameraComponent != nullptr) {
         entityManager->addCameraComponent(entity->id, cameraComponent);
@@ -16,6 +16,10 @@ Entity *EntityBuilder::build(EntityManager *entityManager) {
 
     for (auto& mesh : meshComponents) {
         entityManager->addMeshComponent(entity->id, mesh);
+    }
+
+    if (velocityComponent != nullptr) {
+        entityManager->addVelocityComponent(entity->id, velocityComponent);
     }
 
     return entity;
@@ -32,11 +36,11 @@ void EntityBuilder::destroy() {
     delete this;
 }
 
-EntityBuilder *EntityBuilder::withPosition(float x, float y, float z) {
-    return withPosition(glm::vec3(x, y, z));
+EntityBuilder *EntityBuilder::withTransform(float x, float y, float z) {
+    return withTransform(glm::vec3(x, y, z));
 }
 
-EntityBuilder *EntityBuilder::withPosition(glm::vec3 position) {
+EntityBuilder *EntityBuilder::withTransform(glm::vec3 position) {
     if (transformComponent != nullptr) {
         throw std::runtime_error("entity already has a position");
     }
@@ -67,10 +71,10 @@ EntityBuilder *EntityBuilder::withMesh(std::vector<MeshComponent::Vertex> &verti
 }
 
 EntityBuilder* EntityBuilder::withInstances(std::vector<glm::vec3> &transformations) {
-    printf("Meshes: %d\n", meshComponents.size());
     for (auto mesh : meshComponents) {
         mesh->createInstances(transformations);
     }
+	return this;
 }
 
 EntityBuilder * EntityBuilder::withCamera(CameraComponent::Mode mode, CameraComponent::Type type, glm::vec3 target, glm::vec3 front, glm::vec3 up, float aspectRatio) {
@@ -89,5 +93,13 @@ EntityBuilder *EntityBuilder::withHighlight(float scaleFactor, ShaderProgram *sh
         throw std::runtime_error("entity already has a highlight");
     }
     highlightComponent = new HighlightComponent(scaleFactor, shaderProgram);
+    return this;
+}
+
+EntityBuilder *EntityBuilder::withVelocity(glm::vec3 velocity, std::function<void(VelocityComponent *, TransformComponent *)> customUpdate) {
+    velocityComponent = new VelocityComponent(velocity);
+    if (customUpdate != nullptr) {
+        velocityComponent->customUpdate = customUpdate;
+    }
     return this;
 }

@@ -15,8 +15,9 @@ public:
     void attachShader(const std::string filename, ShaderType type);
     void link();
 
-    void setUniform(const std::string name, glm::mat4 value);
 	void setUniform(const std::string name, int value);
+    void setUniform(const std::string name, glm::vec3 value);
+    void setUniform(const std::string name, glm::mat4 value);
 
     void use();
 

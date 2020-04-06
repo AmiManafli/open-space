@@ -11,8 +11,8 @@ GLContext::~GLContext() {
 glm::mat4 GLContext::getView() {
     auto cameraId = getCamera()->id;
     auto cameraComponent = entityManager->getCameraComponent(cameraId);
-    auto positionComponent = entityManager->getPositionComponent(cameraId);
-    return cameraComponent->getView(positionComponent);
+    auto transformComponent = entityManager->getTransformComponent(cameraId);
+    return cameraComponent->getView(transformComponent);
 }
 
 glm::mat4 GLContext::getProjection() {
@@ -27,6 +27,7 @@ void GLContext::init() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_SAMPLES, 4);
 #ifdef __APPLE__
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif

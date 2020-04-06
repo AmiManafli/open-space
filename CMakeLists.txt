@@ -75,13 +75,13 @@ add_executable(${CMAKE_PROJECT_NAME}
         include/cg/entities/systems/InputSystem.h
         src/entities/components/CameraComponent.cpp
         include/cg/entities/components/CameraComponent.h
-        include/cg/entities/components/HighlightComponent.cpp
+        src/entities/components/HighlightComponent.cpp
         include/cg/entities/components/HighlightComponent.h
         src/Application.cpp
         include/cg/Application.h
         src/ui/UserInterface.cpp
         include/cg/ui/UserInterface.h
-)
+        src/entities/components/VelocityComponent.cpp include/cg/entities/components/VelocityComponent.h)
 
 target_link_libraries(${CMAKE_PROJECT_NAME}
     glfw

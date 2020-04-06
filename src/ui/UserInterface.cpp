@@ -58,7 +58,7 @@ void UserInterface::renderSceneInfoWindow() {
 
 void UserInterface::renderCameraInfoWindow() {
     auto cameraEntity = context->getCamera();
-    auto position = entityManager->getPositionComponent(cameraEntity->id);
+    auto transform = entityManager->getTransformComponent(cameraEntity->id);
     auto camera = entityManager->getCameraComponent(cameraEntity->id);
 
     ImGui::SetNextWindowPos(ImVec2(context->getWidth() - 320, context->getHeight() - 160));
@@ -83,7 +83,7 @@ void UserInterface::renderCameraInfoWindow() {
         }
         ImGui::EndCombo();
     }
-    auto pos = position->position;
+    auto pos = transform->position;
     auto direction = camera->front;
     ImGui::Text("Position: (x=%.3f, y=%.3f, z=%.3f)", pos.x, pos.y, pos.z);
     ImGui::Text("Direction: (x=%.3f, y=%.3f, z=%.3f)", direction.x, direction.y, direction.z);
