@@ -4,18 +4,23 @@
 
 #include <cg/GLHeader.h>
 #include <cg/entities/Component.h>
+#include <optional>
 
 class VelocityComponent : public Component {
 public:
-    explicit VelocityComponent(glm::vec3 velocity);
+    explicit VelocityComponent(glm::vec3 position);
     VelocityComponent(glm::vec3 rotation, glm::vec3 rotationPoint);
 
-    glm::vec3 velocity {};
+    std::optional<glm::vec3> position;
 
-    glm::vec3 rotation;
-    glm::vec3 rotationPoint;
+    std::optional<glm::vec3> rotation;
+    std::optional<glm::vec3> rotationPoint;
 
-    glm::vec3 scaling;
+    std::optional<glm::vec3> scaling;
+
+    std::optional<std::function<void()>> customUpdate;
+
+    void update();
 };
 
 

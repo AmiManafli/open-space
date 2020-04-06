@@ -12,18 +12,26 @@ void MovementSystem::init() {
 void MovementSystem::update() {
     for (auto& pair : entityManager->getVelocityComponents()) {
         auto entityId = pair.first;
-        auto component = pair.second;
-        auto transformComponent = entityManager->getTransformComponent(entityId);
+        auto velocity = pair.second;
+        auto transform = entityManager->getTransformComponent(entityId);
 
-        if (component && transformComponent) {
-            if (transformComponent->position.x > 30 || transformComponent->position.x < -30) {
-                component->velocity = -component->velocity;
+        if (velocity && transform) {
+            if (velocity->position.has_value()) {
+                auto translate = velocity->position.value() * (float) context->getDeltaTime();
+                transform->move(translate);
             }
-            auto translate = component->velocity * (float) context->getDeltaTime();
-            transformComponent->move(translate);
 
-            auto rotation = component->rotation * (float) context->getDeltaTime();
-            transformComponent->rotate(glm::length(rotation), glm::normalize(rotation));
+            if (velocity->rotation.has_value()) {
+                auto rotation = velocity->rotation.value() * (float) context->getDeltaTime();
+                transform->rotate(glm::length(rotation), glm::normalize(rotation));
+            }
+
+            if (velocity->scaling.has_value()) {
+                auto scaling = velocity->scaling.value() * (float) context->getDeltaTime();
+                transform->scale(glm::normalize(scaling));
+            }
+
+            velocity->update();
         }
     }
 }
