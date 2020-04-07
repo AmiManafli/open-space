@@ -22,6 +22,10 @@ Entity *EntityBuilder::build(EntityManager *entityManager) {
         entityManager->addVelocityComponent(entity->id, velocityComponent);
     }
 
+    if (lightComponent != nullptr) {
+        entityManager->addLightComponent(entity->id, lightComponent);
+    }
+
     return entity;
 }
 
@@ -96,10 +100,18 @@ EntityBuilder *EntityBuilder::withHighlight(float scaleFactor, ShaderProgram *sh
     return this;
 }
 
-EntityBuilder *EntityBuilder::withVelocity(glm::vec3 velocity, std::function<void(VelocityComponent *, TransformComponent *)> customUpdate) {
+EntityBuilder *EntityBuilder::withVelocity(glm::vec3 velocity, std::function<void(EntityManager *, uint32_t)> customUpdate) {
     velocityComponent = new VelocityComponent(velocity);
     if (customUpdate != nullptr) {
         velocityComponent->customUpdate = customUpdate;
     }
+    return this;
+}
+
+EntityBuilder *EntityBuilder::withLight(LightComponent::Type type, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular) {
+    if (lightComponent != nullptr) {
+        throw std::runtime_error("entity already has a light component");
+    }
+    lightComponent = new LightComponent(type, ambient, diffuse, specular);
     return this;
 }

@@ -8,6 +8,7 @@
 #include <cg/entities/components/CameraComponent.h>
 #include <cg/entities/components/HighlightComponent.h>
 #include <cg/entities/components/VelocityComponent.h>
+#include <cg/entities/components/LightComponent.h>
 #include "Component.h"
 #include "Entity.h"
 
@@ -16,6 +17,7 @@ typedef std::unordered_map<uint32_t, CameraComponent *> CameraComponentMap;
 typedef std::unordered_map<uint32_t, TransformComponent *> TransformComponentMap;
 typedef std::unordered_map<uint32_t, HighlightComponent *> HighlightComponentMap;
 typedef std::unordered_map<uint32_t, VelocityComponent *> VelocityComponentMap;
+typedef std::unordered_map<uint32_t, LightComponent *> LightComponentMap;
 
 
 class EntityManager {
@@ -49,6 +51,11 @@ public:
     VelocityComponentMap getVelocityComponents() { return velocityComponents; }
     VelocityComponent* getVelocityComponent(uint32_t entityId);
 
+    /// Light component
+    void addLightComponent(uint32_t entityId, LightComponent *component);
+    LightComponentMap getLightComponents() { return lightComponents; }
+    LightComponent* getLightComponent(uint32_t entityId);
+
 private:
     /// Entities
     uint32_t getNextEntityId();
@@ -61,6 +68,7 @@ private:
     CameraComponentMap cameraComponents;
     HighlightComponentMap highlightComponents;
     VelocityComponentMap velocityComponents;
+    LightComponentMap lightComponents;
 
     template <class T> T* getComponent(std::unordered_map<uint32_t, T*> map, uint32_t entityId);
 };

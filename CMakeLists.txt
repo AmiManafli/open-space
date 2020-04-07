@@ -81,7 +81,7 @@ add_executable(${CMAKE_PROJECT_NAME}
         include/cg/Application.h
         src/ui/UserInterface.cpp
         include/cg/ui/UserInterface.h
-        src/entities/components/VelocityComponent.cpp include/cg/entities/components/VelocityComponent.h)
+        src/entities/components/VelocityComponent.cpp include/cg/entities/components/VelocityComponent.h src/entities/components/LightComponent.cpp include/cg/entities/components/LightComponent.h)
 
 target_link_libraries(${CMAKE_PROJECT_NAME}
     glfw

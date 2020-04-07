@@ -75,44 +75,43 @@ void Application::init() {
     inputSystem->init();
     movementSystem->init();
 
-    auto updateLightVelocity = [](VelocityComponent *velocity, TransformComponent *transform) {
-        if (transform->position.x > 30 || transform->position.x < -30) {
-            velocity->position = -velocity->position.value();
-        }
-    };
-    auto light = EntityBuilder::create()
+    light = EntityBuilder::create()
         ->withMesh("./assets/models/ico-sphere.dae", meshTestLightShaderProgram)
-        ->withTransform(-5, 15, 0)
-        ->withVelocity(glm::vec3(7, 0, 0), updateLightVelocity)
+        ->withTransform(10, 10, 0)
+        ->withLight(LightComponent::Type::Direction, {0.2f, 0.2f, 0.2f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f, 1.0f})
         ->build(entityManager);
 
     createCameras();
     createGrid(62, 62, false);
 
-	auto airplane = EntityBuilder::create()
-		->withMesh("./assets/models/airplaneUdemy.obj", meshTextureShaderProgram)
-		->withTransform(0, 5, 0)
-		->build(entityManager);
+//	auto airplane = EntityBuilder::create()
+//		->withMesh("./assets/models/airplaneUdemy.obj", meshTextureShaderProgram)
+//		->withTransform(0, 0, 0)
+//		->withVelocity(new VelocityComponent(glm::vec3(0, 0.5, 0), glm::vec3(0, 0, 0)))
+//		->build(entityManager);
 
-  /*  auto nanoSuit = EntityBuilder::create()
-        ->withMesh("./assets/models/nanosuit.obj", meshWithLightShaderProgram)
+    auto nanoSuit = EntityBuilder::create()
+        ->withMesh("./assets/models/nanosuit.obj", meshTextureShaderProgram)
         ->withTransform(0, 0, 0)
         ->withScale(0.3)
-        ->withVelocity(new VelocityComponent(glm::vec3(0, -1, 0), glm::vec3(0, 0, 0)))
-        ->build(entityManager);*/
+		->withVelocity(new VelocityComponent(glm::vec3(0, 0.5, 0), glm::vec3(0, 0, 0)))
+        ->build(entityManager);
 
     //auto floor = EntityBuilder::create()
     //    ->withMesh("./assets/models/plane.dae", meshWithLightShaderProgram)
     //    ->withTransform(0, 0, 0)
     //    ->withScale(30.0)
     //    ->build(entityManager);
-
-
 }
 
 void Application::run() {
     while (!context->shouldClose()) {
         context->update();
+
+        // Update shader with light info
+        auto lightComponent = entityManager->getLightComponent(light->id);
+        auto lightTransform = entityManager->getTransformComponent(light->id);
+        lightComponent->setUniforms(meshTextureShaderProgram, lightTransform);
 
         // Process systems
         inputSystem->update();
