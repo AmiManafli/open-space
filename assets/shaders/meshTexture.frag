@@ -37,7 +37,7 @@ void main() {
     // Specular
     vec3 viewDirection = normalize(viewPos - vFragPos);
     vec3 reflectDirection = reflect(-ligthDirection, normal);
-    float specularValue = pow(max(dot(viewDirection, reflectDirection), 0.0), 32);
+    float specularValue = pow(max(dot(viewDirection, reflectDirection), 0.0), 256);
     vec3 specular = light.specular * specularValue * vec3(texture(material.specular, vTextureCoord));
 
     fragColor = vec4(ambient + diffuse + specular, 1.0);
