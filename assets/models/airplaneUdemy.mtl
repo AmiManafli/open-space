@@ -10,7 +10,8 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.450000
 d 1.000000
 illum 2
-map_Kd propellerUV.png
+map_Kd C:\\Users\\amina\\Documents\\Projects\\Blender Projects\\Udemy Airplane\\propellerUV.png
+map_Ks C:\\Users\\amina\\Documents\\Projects\\Blender Projects\\Udemy Airplane\\specularPropeller.png
 
 newmtl Material.002
 Ns 225.000000
@@ -21,4 +22,5 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.450000
 d 1.000000
 illum 2
-map_Kd planeBodyUV.png
+map_Kd C:\\Users\\amina\\Documents\\Projects\\Blender Projects\\Udemy Airplane\\planeBodyUV.png
+map_Ks C:\\Users\\amina\\Documents\\Projects\\Blender Projects\\Udemy Airplane\\specularBody.png
