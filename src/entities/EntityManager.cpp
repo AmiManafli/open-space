@@ -52,6 +52,14 @@ VelocityComponent *EntityManager::getVelocityComponent(uint32_t entityId) {
     return getComponent(velocityComponents, entityId);
 }
 
+void EntityManager::addLightComponent(uint32_t entityId, LightComponent *component) {
+    lightComponents.emplace(entityId, component);
+}
+
+LightComponent *EntityManager::getLightComponent(uint32_t entityId) {
+    return getComponent(lightComponents, entityId);
+}
+
 template<class T>
 T *EntityManager::getComponent(std::unordered_map<uint32_t, T *> map, uint32_t entityId) {
     try {

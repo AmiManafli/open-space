@@ -14,6 +14,7 @@ void MovementSystem::update() {
         auto entityId = pair.first;
         auto velocity = pair.second;
         auto transform = entityManager->getTransformComponent(entityId);
+        auto light = entityManager->getLightComponent(entityId);
 
         if (velocity && transform) {
             if (velocity->position.has_value()) {
@@ -31,7 +32,7 @@ void MovementSystem::update() {
                 transform->scale(glm::normalize(scaling));
             }
 
-            velocity->update(transform);
+            velocity->update(entityManager, entityId);
         }
     }
 }

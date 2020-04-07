@@ -6,9 +6,14 @@
 #include <cg/entities/Component.h>
 #include <optional>
 #include "TransformComponent.h"
+#include "LightComponent.h"
+
+class Entity;
+class EntityManager;
 
 class VelocityComponent : public Component {
 public:
+    VelocityComponent() {}
     explicit VelocityComponent(glm::vec3 position);
     VelocityComponent(glm::vec3 rotation, glm::vec3 rotationPoint);
 
@@ -19,9 +24,9 @@ public:
 
     std::optional<glm::vec3> scaling;
 
-    std::optional<std::function<void(VelocityComponent *, TransformComponent *)>> customUpdate;
+    std::optional<std::function<void(EntityManager *, uint32_t)>> customUpdate;
 
-    void update(TransformComponent *transform);
+    void update(EntityManager *entityManager, uint32_t entityId);
 };
 
 

@@ -8,8 +8,8 @@ VelocityComponent::VelocityComponent(glm::vec3 rotation, glm::vec3 rotationPoint
         : rotation(rotation), rotationPoint(rotationPoint) {
 }
 
-void VelocityComponent::update(TransformComponent *transform) {
+void VelocityComponent::update(EntityManager *entityManager, uint32_t entityId) {
     if (customUpdate.has_value()) {
-        customUpdate.value()(this, transform);
+        customUpdate.value()(entityManager, entityId);
     }
 }

@@ -28,6 +28,9 @@ private:
     ShaderProgram *meshWithLightShaderProgram;
     ShaderProgram *meshTestLightShaderProgram;
 
+    // Lights
+    Entity *light;
+
     // Systems
     RenderSystem *renderSystem;
     InputSystem *inputSystem;

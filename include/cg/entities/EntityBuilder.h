@@ -2,6 +2,7 @@
 #define CG1_PROJECT_ENTITYBUILDER_H
 
 #include <cg/entities/components/CameraComponent.h>
+#include <cg/entities/components/LightComponent.h>
 #include "EntityManager.h"
 
 class EntityBuilder {
@@ -26,7 +27,9 @@ public:
     EntityBuilder* withHighlight(float scaleFactor, ShaderProgram *shaderProgram);
 
     EntityBuilder* withVelocity(VelocityComponent *velocity) { velocityComponent = velocity; return this; }
-    EntityBuilder* withVelocity(glm::vec3 velocity, std::function<void(VelocityComponent *, TransformComponent *)> customUpdate = nullptr);
+    EntityBuilder* withVelocity(glm::vec3 velocity, std::function<void(EntityManager *, uint32_t)> customUpdate = nullptr);
+
+    EntityBuilder* withLight(LightComponent::Type type, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular);
 
     Entity* build(EntityManager *entityManager);
     void destroy();
@@ -37,6 +40,7 @@ private:
     CameraComponent *cameraComponent = nullptr;
     HighlightComponent *highlightComponent = nullptr;
     VelocityComponent *velocityComponent = nullptr;
+    LightComponent *lightComponent = nullptr;
 };
 
 #endif //CG1_PROJECT_ENTITYBUILDER_H
