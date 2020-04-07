@@ -29,7 +29,8 @@ public:
     EntityBuilder* withVelocity(VelocityComponent *velocity) { velocityComponent = velocity; return this; }
     EntityBuilder* withVelocity(glm::vec3 velocity, std::function<void(EntityManager *, uint32_t)> customUpdate = nullptr);
 
-    EntityBuilder* withLight(LightComponent::Type type, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular);
+    EntityBuilder* withLight(LightComponent *light);
+    EntityBuilder* withDirectionalLight(glm::vec3 direction, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular);
 
     Entity* build(EntityManager *entityManager);
     void destroy();

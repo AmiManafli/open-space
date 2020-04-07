@@ -108,10 +108,18 @@ EntityBuilder *EntityBuilder::withVelocity(glm::vec3 velocity, std::function<voi
     return this;
 }
 
-EntityBuilder *EntityBuilder::withLight(LightComponent::Type type, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular) {
+EntityBuilder *EntityBuilder::withLight(LightComponent *light) {
     if (lightComponent != nullptr) {
         throw std::runtime_error("entity already has a light component");
     }
-    lightComponent = new LightComponent(type, ambient, diffuse, specular);
+    lightComponent = light;
+    return this;
+}
+
+EntityBuilder *EntityBuilder::withDirectionalLight(glm::vec3 direction, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular) {
+    if (lightComponent != nullptr) {
+        throw std::runtime_error("entity already has a light component");
+    }
+    lightComponent = LightComponent::createDirectionalLight(direction, ambient, diffuse, specular);
     return this;
 }

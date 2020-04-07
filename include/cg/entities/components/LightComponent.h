@@ -9,9 +9,14 @@ public:
     enum Type {
         Direction,
         Point,
+        Spot,
     };
 
-    LightComponent(Type type, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular);
+    static LightComponent* createDirectionalLight(glm::vec3 direction, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular);
+//    static LightComponent* createPointLight(glm::vec3 direction, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular);
+//    static LightComponent* createSpotLight(glm::vec3 direction, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular);
+
+    LightComponent();
 
     void setUniforms(ShaderProgram *shaderProgram, TransformComponent *transform);
 
@@ -19,6 +24,8 @@ public:
     glm::vec3 ambient;
     glm::vec3 diffuse;
     glm::vec3 specular;
+
+    glm::vec3 direction;
 };
 
 #endif //CG1_PROJECT_LIGHTCOMPONENT_H
