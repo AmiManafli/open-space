@@ -22,23 +22,32 @@ uniform Material material;
 uniform DirectionalLight directionalLight;
 uniform vec3 viewPos;
 
-void main() {
-    vec3 color = vec3(texture(material.diffuse, vTextureCoord));
-    vec3 normal = normalize(vNormal);
-
-    vec3 lightDirection = normalize(-directionalLight.direction);
+vec3 calculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDirection, vec3 materialDiffuse, vec3 materialSpecular) {
+    vec3 lightDirection = normalize(-light.direction);
 
     // Ambient
-    vec3 ambient = directionalLight.ambient * color;
+    vec3 ambient = light.ambient * materialDiffuse;
 
     // Diffuse
-    vec3 diffuse = directionalLight.diffuse * max(dot(normal, lightDirection), 0.0) * color;
+    vec3 diffuse = light.diffuse * max(dot(normal, lightDirection), 0.0) * materialDiffuse;
 
     // Specular
-    vec3 viewDirection = normalize(viewPos - vFragPos);
     vec3 reflectDirection = reflect(-lightDirection, normal);
     float specularValue = pow(max(dot(viewDirection, reflectDirection), 0.0), 64);
-    vec3 specular = directionalLight.specular * specularValue * vec3(texture(material.specular, vTextureCoord));
+    vec3 specular = light.specular * specularValue * materialSpecular;
 
-    fragColor = vec4(ambient + diffuse + specular, 1.0);
+    return ambient + diffuse + specular;
+}
+
+void main() {
+    vec3 normal = normalize(vNormal);
+
+    vec3 viewDirection = normalize(viewPos - vFragPos);
+
+    vec3 materialDiffuse = vec3(texture(material.diffuse, vTextureCoord));
+    vec3 materialSpecular = vec3(texture(material.specular, vTextureCoord));
+
+    vec3 result = calculateDirectionalLight(directionalLight, normal, viewDirection, materialDiffuse, materialSpecular);
+
+    fragColor = vec4(result, 1.0);
 }
