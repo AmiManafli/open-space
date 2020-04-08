@@ -15,7 +15,7 @@ Terrain *Terrain::generate(uint32_t width, uint32_t height, ShaderProgram *shade
     std::vector<uint32_t> indices;
     std::vector<MeshComponent::Texture> textures;
 
-    uint32_t subdivisionLevel = 0;
+    uint32_t subdivisionLevel = 24;
 
     build(vertices, indices, width, height, subdivisionLevel);
 
@@ -23,7 +23,7 @@ Terrain *Terrain::generate(uint32_t width, uint32_t height, ShaderProgram *shade
 }
 
 void Terrain::build(std::vector<MeshComponent::Vertex>& vertices, std::vector<uint32_t>& indices, uint32_t width, uint32_t height, uint32_t subdivisionLevel) {
-    uint32_t n = glm::pow(2, subdivisionLevel);
+    uint32_t n = subdivisionLevel;
     uint32_t vertexCount = (n + 1) * (n + 1);
 
     vertices.resize(vertexCount);

@@ -90,7 +90,7 @@ void Application::init() {
     terrainMesh->setupBuffers();
     auto terrain = EntityBuilder::create()
         ->withMesh(terrainMesh)
-        ->withTransform(0, 1.1, 0)
+        ->withTransform(0, 1.01, 0)
         ->build(entityManager);
 
 //	auto airplane = EntityBuilder::create()
