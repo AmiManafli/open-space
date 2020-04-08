@@ -32,8 +32,8 @@ include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/lib/glad")
 # stb image
 include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/lib/stb")
 
-# earcut
-include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/lib/earcut")
+# OpenSimplex noise
+include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/lib/opensimplex-noise")
 
 # GLM
 include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/lib/glm")
@@ -89,7 +89,7 @@ add_executable(${CMAKE_PROJECT_NAME}
         include/cg/entities/components/LightComponent.h
         src/terrain/Terrain.cpp
         include/cg/terrain/Terrain.h
-)
+        lib/opensimplex-noise/OpenSimplexNoise.h)
 
 target_link_libraries(${CMAKE_PROJECT_NAME}
     glfw

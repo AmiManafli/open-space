@@ -2,8 +2,8 @@
 
 
 UserInterface::UserInterface(EntityManager *entityManager, GLContext *context)
-        : entityManager(entityManager), context(context), terrainWidth(10), terrainHeight(10),
-          terrainSubdivisionsWidth(1), terrainSubdivisionsHeight(1) {
+        : entityManager(entityManager), context(context), terrainWidth(10), terrainHeight(10), terrainMaxHeight(0.1), terrainZoom(1.0),
+          terrainSubdivisionsWidth(10), terrainSubdivisionsHeight(10) {
     views = { "Perspective", "Top", "Side" };
     currentView = const_cast<char *>(views[0]);
 
@@ -108,13 +108,15 @@ void UserInterface::renderTerrainGeneratorWindow() {
 
     ImGui::InputInt("Width", &terrainWidth);
     ImGui::InputInt("Height", &terrainHeight);
+    ImGui::InputDouble("Max height", &terrainMaxHeight);
+    ImGui::InputDouble("Zoom", &terrainZoom);
     ImGui::InputInt("Subdivisions width", &terrainSubdivisionsWidth);
     ImGui::InputInt("Subdivisions height", &terrainSubdivisionsHeight);
 
     if (ImGui::Button(generateTerrainButtonText.c_str())) {
         generateTerrainButtonText = "Please wait...";
         if (updateTerrain) {
-            updateTerrain(terrain, terrainWidth, terrainHeight, terrainSubdivisionsWidth, terrainSubdivisionsHeight);
+            updateTerrain(terrain, terrainWidth, terrainHeight, terrainSubdivisionsWidth, terrainSubdivisionsHeight, terrainMaxHeight, terrainZoom);
             generateTerrainButtonText = "Generate";
         } else {
             generateTerrainButtonText = "Generate";
@@ -124,7 +126,7 @@ void UserInterface::renderTerrainGeneratorWindow() {
     ImGui::End();
 }
 
-void UserInterface::onUpdateTerrain(Terrain *terrain, std::function<bool(Terrain *, int, int, int, int)> updateTerrain) {
+void UserInterface::onUpdateTerrain(Terrain *terrain, std::function<bool(Terrain *, int, int, int, int, double, double)> updateTerrain) {
     this->terrain = terrain;
     this->updateTerrain = updateTerrain;
 }

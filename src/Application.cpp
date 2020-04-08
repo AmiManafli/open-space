@@ -3,6 +3,12 @@
 #include <cg/terrain/Terrain.h>
 #include "cg/Application.h"
 
+bool onUpdateTerrain(Terrain *terrain, uint32_t width, uint32_t height, uint32_t subdivisionsWidth, uint32_t subdivisionsHeight, double maxTerrainHeight, double zoom) {
+    bool success = terrain->update(width, height, subdivisionsWidth, subdivisionsHeight, maxTerrainHeight, zoom);
+
+    return success;
+}
+
 Application::Application(std::string title, int width, int height) {
     entityManager = new EntityManager();
     context = new GLContext(entityManager, title, width, height);
@@ -78,7 +84,6 @@ void Application::init() {
 
     auto lightPosition = glm::vec3(0, 20, 20);
     light = EntityBuilder::create()
-//        ->withMesh("./assets/models/ico-sphere.dae", meshTestLightShaderProgram)
         ->withTransform(lightPosition)
         ->withDirectionalLight(-lightPosition, {0.2f, 0.2f, 0.2f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f, 1.0f})
         ->build(entityManager);
@@ -90,10 +95,7 @@ void Application::init() {
     auto terrainMesh = Terrain::generate(ui->terrainWidth, ui->terrainHeight, meshShaderProgram, GL_TRIANGLES);
     terrainMesh->setupBuffers();
 
-    ui->onUpdateTerrain(terrainMesh, [](Terrain *terrain, uint32_t width, uint32_t height, uint32_t subdivisionsWidth, uint32_t subdivisionsHeight) {
-        printf("Updating terrain...\n");
-        return terrain->update(width, height, subdivisionsWidth, subdivisionsHeight);
-    });
+    ui->onUpdateTerrain(terrainMesh, onUpdateTerrain);
 
     auto terrain = EntityBuilder::create()
         ->withMesh(terrainMesh)

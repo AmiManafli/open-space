@@ -12,7 +12,8 @@ public:
     void render();
 
     int terrainWidth, terrainHeight, terrainSubdivisionsWidth, terrainSubdivisionsHeight;
-    void onUpdateTerrain(Terrain *terrain, std::function<bool(Terrain *, int, int, int, int)> updateTerrain);
+    double terrainMaxHeight, terrainZoom;
+    void onUpdateTerrain(Terrain *terrain, std::function<bool(Terrain *, int, int, int, int, double, double)> updateTerrain);
 
 private:
     EntityManager *entityManager;
@@ -27,7 +28,7 @@ private:
     ImVec2 cameraWindowSize;
 
     Terrain *terrain;
-    std::function<bool(Terrain *, int, int, int, int)> updateTerrain = nullptr;
+    std::function<bool(Terrain *, int, int, int, int, double, double)> updateTerrain = nullptr;
     std::string generateTerrainButtonText;
 
     void renderMainMenu();
