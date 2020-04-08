@@ -32,6 +32,9 @@ include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/lib/glad")
 # stb image
 include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/lib/stb")
 
+# earcut
+include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/lib/earcut")
+
 # GLM
 include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/lib/glm")
 
@@ -43,7 +46,6 @@ add_executable(${CMAKE_PROJECT_NAME}
         ${PROJECT_SRCS}
         src/main.cpp
         lib/glad/glad.c
-#        lib/stb/stb_image.h
         src/GLContext.cpp
         include/cg/GLContext.h
         include/cg/GLHeader.h
@@ -81,7 +83,13 @@ add_executable(${CMAKE_PROJECT_NAME}
         include/cg/Application.h
         src/ui/UserInterface.cpp
         include/cg/ui/UserInterface.h
-        src/entities/components/VelocityComponent.cpp include/cg/entities/components/VelocityComponent.h src/entities/components/LightComponent.cpp include/cg/entities/components/LightComponent.h)
+        src/entities/components/VelocityComponent.cpp
+        include/cg/entities/components/VelocityComponent.h
+        src/entities/components/LightComponent.cpp
+        include/cg/entities/components/LightComponent.h
+        src/terrain/Terrain.cpp
+        include/cg/terrain/Terrain.h
+)
 
 target_link_libraries(${CMAKE_PROJECT_NAME}
     glfw
