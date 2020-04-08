@@ -2,9 +2,9 @@
 #include <array>
 
 Terrain::Terrain(uint32_t width, uint32_t height, std::vector<Vertex> &vertices, std::vector<uint32_t> &indices,
-                 std::vector<Texture> &textures, ShaderProgram *shaderProgram, GLenum mode)
+                 std::vector<Texture> &textures, uint32_t subdivisionLevel, ShaderProgram *shaderProgram, GLenum mode)
         : MeshComponent(vertices, indices, textures, shaderProgram, mode),
-    width(width), height(height), subdivisionCount(1) {
+    width(width), height(height), subdivisionLevel(subdivisionLevel) {
 }
 
 Terrain::~Terrain() {
@@ -15,13 +15,15 @@ Terrain *Terrain::generate(uint32_t width, uint32_t height, ShaderProgram *shade
     std::vector<uint32_t> indices;
     std::vector<MeshComponent::Texture> textures;
 
-    build(vertices, indices, width, height, 8);
+    uint32_t subdivisionLevel = 0;
 
-    return new Terrain(width, height, vertices, indices, textures, shaderProgram, mode);
+    build(vertices, indices, width, height, subdivisionLevel);
+
+    return new Terrain(width, height, vertices, indices, textures, subdivisionLevel, shaderProgram, mode);
 }
 
-void Terrain::build(std::vector<MeshComponent::Vertex>& vertices, std::vector<uint32_t>& indices, uint32_t width, uint32_t height, uint32_t subdivision) {
-    uint32_t n = subdivision;
+void Terrain::build(std::vector<MeshComponent::Vertex>& vertices, std::vector<uint32_t>& indices, uint32_t width, uint32_t height, uint32_t subdivisionLevel) {
+    uint32_t n = glm::pow(2, subdivisionLevel);
     uint32_t vertexCount = (n + 1) * (n + 1);
 
     vertices.resize(vertexCount);
@@ -64,5 +66,9 @@ void Terrain::build(std::vector<MeshComponent::Vertex>& vertices, std::vector<ui
             indices.push_back(bottomRightIndex);
         }
     }
+}
+
+void Terrain::subdivide(uint32_t level) {
+    subdivisionLevel = level;
 }
 

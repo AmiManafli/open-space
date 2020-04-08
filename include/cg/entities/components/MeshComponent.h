@@ -42,9 +42,9 @@ public:
     uint32_t instances;
     bool indexed;
 
-protected:
     void setupBuffers();
 
+protected:
 	static std::vector<Texture> loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
 	static uint32_t textureFromFile(const char* path, const std::string& directory);
 	

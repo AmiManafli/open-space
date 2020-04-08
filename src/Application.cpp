@@ -87,6 +87,7 @@ void Application::init() {
     createGrid(62, 62, false);
 
     auto terrainMesh = Terrain::generate(10, 10, meshShaderProgram, GL_TRIANGLES);
+    terrainMesh->setupBuffers();
     auto terrain = EntityBuilder::create()
         ->withMesh(terrainMesh)
         ->withTransform(0, 1.1, 0)
