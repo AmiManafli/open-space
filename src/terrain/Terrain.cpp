@@ -15,7 +15,7 @@ Terrain *Terrain::generate(uint32_t width, uint32_t height, ShaderProgram *shade
     std::vector<uint32_t> indices;
     std::vector<MeshComponent::Texture> textures;
 
-    build(vertices, indices, width, height, 2);
+    build(vertices, indices, width, height, 8);
 
     return new Terrain(width, height, vertices, indices, textures, shaderProgram, mode);
 }
@@ -52,7 +52,7 @@ void Terrain::build(std::vector<MeshComponent::Vertex>& vertices, std::vector<ui
                 if (j == 0) {
                     vertices[topRightIndex] = { glm::vec3(x + tileSize, y, z) };
                 }
-                vertices[bottomLeftIndex] = { glm::vec3(x + tileSize, y, z + tileSize) };
+                vertices[bottomRightIndex] = { glm::vec3(x + tileSize, y, z + tileSize) };
             }
 
             indices.push_back(topLeftIndex);
@@ -63,15 +63,6 @@ void Terrain::build(std::vector<MeshComponent::Vertex>& vertices, std::vector<ui
             indices.push_back(bottomLeftIndex);
             indices.push_back(bottomRightIndex);
         }
-    }
-
-    printf("Vertices:\n");
-    for (auto vertex : vertices) {
-        printf("  %s\n", glm::to_string(vertex.position).c_str());
-    }
-    printf("\nIndices:\n");
-    for (auto index : indices) {
-        printf("  %lu\n", index);
     }
 }
 
