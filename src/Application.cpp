@@ -86,8 +86,15 @@ void Application::init() {
     createCameras();
     createGrid(62, 62, false);
 
-    auto terrainMesh = Terrain::generate(10, 10, meshShaderProgram, GL_TRIANGLES);
+    auto ui = renderSystem->getUserInterface();
+    auto terrainMesh = Terrain::generate(ui->terrainWidth, ui->terrainHeight, meshShaderProgram, GL_TRIANGLES);
     terrainMesh->setupBuffers();
+
+    ui->onUpdateTerrain(terrainMesh, [](Terrain *terrain, uint32_t width, uint32_t height, uint32_t subdivisionsWidth, uint32_t subdivisionsHeight) {
+        printf("Updating terrain...\n");
+        return terrain->update(width, height, subdivisionsWidth, subdivisionsHeight);
+    });
+
     auto terrain = EntityBuilder::create()
         ->withMesh(terrainMesh)
         ->withTransform(0, 1.01, 0)

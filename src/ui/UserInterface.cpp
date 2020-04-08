@@ -2,11 +2,14 @@
 
 
 UserInterface::UserInterface(EntityManager *entityManager, GLContext *context)
-        : entityManager(entityManager), context(context) {
+        : entityManager(entityManager), context(context), terrainWidth(10), terrainHeight(10),
+          terrainSubdivisionsWidth(1), terrainSubdivisionsHeight(1) {
     views = { "Perspective", "Top", "Side" };
     currentView = const_cast<char *>(views[0]);
 
     cameraWindowSize = ImVec2(0, 0);
+
+    generateTerrainButtonText = "Generate";
 }
 
 void UserInterface::render() {
@@ -27,6 +30,10 @@ void UserInterface::render() {
         ImGui::ShowDemoWindow();
     }
 
+    if (showTerrainGeneratorWindow) {
+        renderTerrainGeneratorWindow();
+    }
+
     ImGui::Render();
 }
 
@@ -39,6 +46,7 @@ void UserInterface::renderMainMenu() {
             ImGui::EndMenu();
         }
         if (ImGui::BeginMenu("Tools")) {
+            ImGui::MenuItem("Terrain Generator", nullptr, &showTerrainGeneratorWindow);
             ImGui::MenuItem("ImGui Demo", nullptr, &showDemoWindow);
             ImGui::EndMenu();
         }
@@ -93,4 +101,30 @@ void UserInterface::renderCameraInfoWindow() {
         camera->zoom = 1.0f;
 	}
     ImGui::End();
+}
+
+void UserInterface::renderTerrainGeneratorWindow() {
+    ImGui::Begin("Terrain Generator");
+
+    ImGui::InputInt("Width", &terrainWidth);
+    ImGui::InputInt("Height", &terrainHeight);
+    ImGui::InputInt("Subdivisions width", &terrainSubdivisionsWidth);
+    ImGui::InputInt("Subdivisions height", &terrainSubdivisionsHeight);
+
+    if (ImGui::Button(generateTerrainButtonText.c_str())) {
+        generateTerrainButtonText = "Please wait...";
+        if (updateTerrain) {
+            updateTerrain(terrain, terrainWidth, terrainHeight, terrainSubdivisionsWidth, terrainSubdivisionsHeight);
+            generateTerrainButtonText = "Generate";
+        } else {
+            generateTerrainButtonText = "Generate";
+        }
+    }
+
+    ImGui::End();
+}
+
+void UserInterface::onUpdateTerrain(Terrain *terrain, std::function<bool(Terrain *, int, int, int, int)> updateTerrain) {
+    this->terrain = terrain;
+    this->updateTerrain = updateTerrain;
 }
