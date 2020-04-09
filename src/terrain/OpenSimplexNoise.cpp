@@ -10,11 +10,11 @@ OpenSimplexNoise::OpenSimplexNoise(uint64_t seed) : Noise(seed), noise(new osn::
 }
 
 double OpenSimplexNoise::evaluate(float x, float y) {
-    return (1.0 + noise->Evaluate(x, y)) / 2.0;
+    return noise->Evaluate(x, y);
 }
 
 double OpenSimplexNoise::evaluate(float x, float y, float z) {
-    return (1.0 + noise->Evaluate(x, y, z)) / 2.0;
+    return noise->Evaluate(x, y, z);
 }
 
 glm::vec3 OpenSimplexNoise::normal(float x, float y, double zoom) {
