@@ -15,42 +15,43 @@ void InputSystem::init() {
 void InputSystem::update() {
     auto deltaTime = context->getDeltaTime();
     auto window = context->getWindow();
+    auto isDebug = context->displayGui || context->displayCursor;
 	
 	if (isKeyPressed(GLFW_KEY_Q)) {
 		glfwSetWindowShouldClose(context->getWindow(), GLFW_TRUE);
 	}
 
-    if (isKeyPressed(GLFW_KEY_UP)) {
+    if (!isDebug && isKeyPressed(GLFW_KEY_UP)) {
         printf("Camera view: Top\n");
         context->setActiveCamera(context->topCamera);
-    } else if (isKeyPressed(GLFW_KEY_LEFT)) {
+    } else if (!isDebug && isKeyPressed(GLFW_KEY_LEFT)) {
         printf("Camera view: Side\n");
         context->setActiveCamera(context->sideCamera);
-    } else if (isKeyPressed(GLFW_KEY_DOWN)) {
+    } else if (!isDebug && isKeyPressed(GLFW_KEY_DOWN)) {
         printf("Camera view: Perspective\n");
         context->setActiveCamera(context->perspectiveCamera);
     }
 
-    if (isKeyPressed(GLFW_KEY_1)) {
+    if (!isDebug && isKeyPressed(GLFW_KEY_1)) {
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    } else if (isKeyPressed(GLFW_KEY_2)) {
+    } else if (!isDebug && isKeyPressed(GLFW_KEY_2)) {
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     }
 
     auto camera = context->getCamera();
-    if (isKeyDown(GLFW_KEY_W)) {
+    if (!isDebug && isKeyDown(GLFW_KEY_W)) {
         moveCamera(camera, CameraComponent::Direction::Forward, deltaTime);
-    } else if (isKeyDown(GLFW_KEY_S)) {
+    } else if (!isDebug && isKeyDown(GLFW_KEY_S)) {
         moveCamera(camera, CameraComponent::Direction::Backward, deltaTime);
     }
 
-    if (isKeyDown(GLFW_KEY_A)) {
+    if (!isDebug && isKeyDown(GLFW_KEY_A)) {
         moveCamera(camera, CameraComponent::Direction::Left, deltaTime);
-    } else if (isKeyDown(GLFW_KEY_D)) {
+    } else if (!isDebug && isKeyDown(GLFW_KEY_D)) {
         moveCamera(camera, CameraComponent::Direction::Right, deltaTime);
     }
 
-    if (isKeyPressed(GLFW_KEY_G)) {
+    if (!isDebug && isKeyPressed(GLFW_KEY_G)) {
         context->displayGrid = !context->displayGrid;
     }
 
@@ -59,10 +60,10 @@ void InputSystem::update() {
     }
 
     auto cameraComponent = entityManager->getCameraComponent(camera->id);
-    if (isKeyDown(GLFW_KEY_EQUAL)) {
+    if (!isDebug && isKeyDown(GLFW_KEY_EQUAL)) {
         cameraComponent->movementSpeed += 0.1;
         printf("Camera movement speed: %.1f\n", cameraComponent->movementSpeed);
-    } else if (isKeyDown(GLFW_KEY_MINUS)) {
+    } else if (!isDebug && isKeyDown(GLFW_KEY_MINUS)) {
         cameraComponent->movementSpeed -= 0.1;
         printf("Camera movement speed: %.1f\n", cameraComponent->movementSpeed);
     }

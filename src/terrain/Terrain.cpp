@@ -68,11 +68,11 @@ void Terrain::build(std::vector<MeshComponent::Vertex>& vertices, std::vector<ui
     }
 }
 
-bool Terrain::update(uint32_t width, uint32_t height, uint32_t subdivisionsWidth, uint32_t subdivisionsHeight, double maxTerrainHeight, double zoom) {
-    this->width = width;
-    this->height = height;
-    this->subdivisionsWidth = subdivisionsWidth;
-    this->subdivisionsHeight = subdivisionsHeight;
+bool Terrain::update(TerrainSettings& settings) {
+    this->width = settings.width;
+    this->height = settings.height;
+    this->subdivisionsWidth = settings.subdivisionWidth;
+    this->subdivisionsHeight = settings.subdivisionHeight;
 
     std::vector<MeshComponent::Vertex> vertices;
     std::vector<uint32_t> indices;
@@ -83,7 +83,7 @@ bool Terrain::update(uint32_t width, uint32_t height, uint32_t subdivisionsWidth
     this->indices = indices;
 
     // Update y-values with noise function
-    updateHeights(maxTerrainHeight, zoom);
+    updateHeights(settings);
 
     setupBuffers();
 
@@ -92,25 +92,26 @@ bool Terrain::update(uint32_t width, uint32_t height, uint32_t subdivisionsWidth
     return true;
 }
 
-void Terrain::updateHeights(double maxTerrainHeight, double zoom) {
+void Terrain::updateHeights(TerrainSettings& settings) {
     for (uint32_t row = 0; row <= subdivisionsHeight; row++) {
         for (uint32_t col = 0; col <= subdivisionsWidth; col++) {
             auto index = row * subdivisionsWidth + col;
-            auto y = noise->evaluate(col / zoom, row / zoom) * maxTerrainHeight;
+            auto y = noise->evaluate(col, row);
             vertices[index].position.y = y;
-            vertices[index].normal = noise->normal(row, col, zoom);
+//            vertices[index].normal = noise->normal(row, col, zoom);
+            vertices[index].normal = glm::vec3(0, 1, 0);
         }
     }
 }
 
-glm::vec3 Terrain::calculateNormal(int row, int col, double zoom) {
-    auto dx = (noise->evaluate((col + 1) / zoom, row / zoom) - noise->evaluate(col / zoom, row / zoom)) / (1.0 / zoom);
-    auto dz = (noise->evaluate(col / zoom, (row + 1) / zoom) - noise->evaluate(col / zoom, row / zoom)) / (1.0 / zoom);
-
-    auto x = glm::vec3(1, dx, 0);
-    auto z = glm::vec3(0, dx, 1);
-
-    auto normal = glm::normalize(glm::cross(z, x));
-
-    return normal;
-}
+//glm::vec3 Terrain::calculateNormal(int row, int col, double zoom) {
+//    auto dx = (noise->evaluate((col + 1) / zoom, row / zoom) - noise->evaluate(col / zoom, row / zoom)) / (1.0 / zoom);
+//    auto dz = (noise->evaluate(col / zoom, (row + 1) / zoom) - noise->evaluate(col / zoom, row / zoom)) / (1.0 / zoom);
+//
+//    auto x = glm::vec3(1, dx, 0);
+//    auto z = glm::vec3(0, dx, 1);
+//
+//    auto normal = glm::normalize(glm::cross(z, x));
+//
+//    return normal;
+//}

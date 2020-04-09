@@ -5,8 +5,8 @@
 #include <cg/terrain/PerlinNoise.h>
 #include "cg/Application.h"
 
-bool onUpdateTerrain(Terrain *terrain, uint32_t width, uint32_t height, uint32_t subdivisionsWidth, uint32_t subdivisionsHeight, double maxTerrainHeight, double zoom) {
-    bool success = terrain->update(width, height, subdivisionsWidth, subdivisionsHeight, maxTerrainHeight, zoom);
+bool onUpdateTerrain(Terrain *terrain, TerrainSettings& settings) {
+    bool success = terrain->update(settings);
 
     return success;
 }
@@ -94,7 +94,7 @@ void Application::init() {
     createGrid(62, 62, false);
 
     auto ui = renderSystem->getUserInterface();
-    auto terrainMesh = Terrain::generate(ui->terrainWidth, ui->terrainHeight, meshWithLightShaderProgram, GL_TRIANGLES, new PerlinNoise(1));
+    auto terrainMesh = Terrain::generate(10, 10, meshWithLightShaderProgram, GL_TRIANGLES, new OpenSimplexNoise(1));
     terrainMesh->setupBuffers();
 
     ui->onUpdateTerrain(terrainMesh, onUpdateTerrain);

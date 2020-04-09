@@ -2,14 +2,22 @@
 
 
 UserInterface::UserInterface(EntityManager *entityManager, GLContext *context)
-        : entityManager(entityManager), context(context), terrainWidth(10), terrainHeight(10), terrainMaxHeight(0.1), terrainZoom(1.0),
-          terrainSubdivisionsWidth(10), terrainSubdivisionsHeight(10) {
+        : entityManager(entityManager), context(context) {
     views = { "Perspective", "Top", "Side" };
     currentView = const_cast<char *>(views[0]);
 
     cameraWindowSize = ImVec2(0, 0);
 
     generateTerrainButtonText = "Generate";
+
+    settings.width = 10;
+    settings.height = 10;
+    settings.subdivisionWidth = 1;
+    settings.subdivisionHeight = 1;
+    settings.maxHeight = 1.0;
+    settings.octaves = 1;
+    settings.frequency = 1.0;
+    settings.seed = 1;
 }
 
 void UserInterface::render() {
@@ -106,17 +114,39 @@ void UserInterface::renderCameraInfoWindow() {
 void UserInterface::renderTerrainGeneratorWindow() {
     ImGui::Begin("Terrain Generator");
 
-    ImGui::InputInt("Width", &terrainWidth);
-    ImGui::InputInt("Height", &terrainHeight);
-    ImGui::InputDouble("Max height", &terrainMaxHeight);
-    ImGui::InputDouble("Zoom", &terrainZoom);
-    ImGui::InputInt("Subdivisions width", &terrainSubdivisionsWidth);
-    ImGui::InputInt("Subdivisions height", &terrainSubdivisionsHeight);
+    int minSize = 0;
+    int maxSize = 200;
+
+    if (ImGui::SliderScalar("Size", ImGuiDataType_S32, &settings.width, &minSize, &maxSize,"%d")) {
+        settings.height = settings.width;
+        updateTerrain(terrain, settings);
+    }
+
+    int minSubdivisions = 1;
+    int maxSubdivisions = 400;
+
+    if (ImGui::SliderScalar("Subdivisions", ImGuiDataType_S32, &settings.subdivisionWidth, &minSubdivisions, &maxSubdivisions,"%d")) {
+        settings.subdivisionHeight = settings.subdivisionWidth;
+        updateTerrain(terrain, settings);
+    }
+
+    if (ImGui::InputInt("Seed", &settings.seed)) {
+        updateTerrain(terrain, settings);
+    }
+    if (ImGui::InputDouble("Frequency", &settings.frequency)) {
+        updateTerrain(terrain, settings);
+    }
+    if (ImGui::InputDouble("Max height", &settings.maxHeight)) {
+        updateTerrain(terrain, settings);
+    }
+
+//    ImGui::InputDouble("Max height", &settings.maxHeight);
+//    ImGui::InputDouble("Frequency", &settings.frequency);
 
     if (ImGui::Button(generateTerrainButtonText.c_str())) {
         generateTerrainButtonText = "Please wait...";
         if (updateTerrain) {
-            updateTerrain(terrain, terrainWidth, terrainHeight, terrainSubdivisionsWidth, terrainSubdivisionsHeight, terrainMaxHeight, terrainZoom);
+            updateTerrain(terrain, settings);
             generateTerrainButtonText = "Generate";
         } else {
             generateTerrainButtonText = "Generate";
@@ -126,7 +156,7 @@ void UserInterface::renderTerrainGeneratorWindow() {
     ImGui::End();
 }
 
-void UserInterface::onUpdateTerrain(Terrain *terrain, std::function<bool(Terrain *, int, int, int, int, double, double)> updateTerrain) {
+void UserInterface::onUpdateTerrain(Terrain *terrain, std::function<bool(Terrain *, TerrainSettings& settings)> updateTerrain) {
     this->terrain = terrain;
     this->updateTerrain = updateTerrain;
 }
