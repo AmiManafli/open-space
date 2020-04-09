@@ -14,6 +14,8 @@ public:
     OpenSimplexNoise();
     OpenSimplexNoise(uint64_t seed);
 
+    void reseed(uint64_t seed) override;
+
     double evaluate(float x, float y) override;
     double evaluate(float x, float y, float z) override;
 

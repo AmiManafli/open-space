@@ -9,6 +9,12 @@ OpenSimplexNoise::OpenSimplexNoise() : OpenSimplexNoise(1) {
 OpenSimplexNoise::OpenSimplexNoise(uint64_t seed) : Noise(seed), noise(new osn::OpenSimplexNoise(seed)) {
 }
 
+void OpenSimplexNoise::reseed(uint64_t seed) {
+    this->seed = seed;
+    delete noise;
+    noise = new osn::OpenSimplexNoise(seed);
+}
+
 double OpenSimplexNoise::evaluate(float x, float y) {
     return noise->Evaluate(x, y);
 }

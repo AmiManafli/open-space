@@ -7,6 +7,11 @@ PerlinNoise::PerlinNoise() : PerlinNoise(1) {
 PerlinNoise::PerlinNoise(uint64_t seed) : Noise(seed), noise(new siv::PerlinNoise(static_cast<uint32_t>(seed))) {
 }
 
+void PerlinNoise::reseed(uint64_t seed) {
+    this->seed = seed;
+    noise->reseed(static_cast<uint32_t>(seed));
+}
+
 double PerlinNoise::evaluate(float x, float y) {
     auto value = noise->accumulatedOctaveNoise2D(x / 1000.0, y / 1000.0, 8);
     return value;

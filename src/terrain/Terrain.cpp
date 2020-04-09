@@ -74,6 +74,10 @@ bool Terrain::update(TerrainSettings& settings) {
     this->subdivisionsWidth = settings.subdivisionWidth;
     this->subdivisionsHeight = settings.subdivisionHeight;
 
+    if (settings.seed != noise->getSeed()) {
+        noise->reseed(settings.seed);
+    }
+
     std::vector<MeshComponent::Vertex> vertices;
     std::vector<uint32_t> indices;
 

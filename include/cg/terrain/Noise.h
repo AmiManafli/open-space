@@ -10,6 +10,9 @@ public:
     Noise(uint64_t seed) : seed(seed) {}
     virtual ~Noise() {}
 
+    uint64_t getSeed() { return seed; }
+    virtual void reseed(uint64_t seed) = 0;
+
     virtual double evaluate(float x, float y) = 0;
     virtual double evaluate(float x, float y, float z) = 0;
 
