@@ -60,10 +60,10 @@ void InputSystem::update() {
 
     auto cameraComponent = entityManager->getCameraComponent(camera->id);
     if (isKeyDown(GLFW_KEY_EQUAL)) {
-        cameraComponent->movementSpeed += 0.5;
+        cameraComponent->movementSpeed += 0.1;
         printf("Camera movement speed: %.1f\n", cameraComponent->movementSpeed);
     } else if (isKeyDown(GLFW_KEY_MINUS)) {
-        cameraComponent->movementSpeed -= 0.5;
+        cameraComponent->movementSpeed -= 0.1;
         printf("Camera movement speed: %.1f\n", cameraComponent->movementSpeed);
     }
 

@@ -17,6 +17,8 @@ public:
     double evaluate(float x, float y) override;
     double evaluate(float x, float y, float z) override;
 
+    glm::vec3 normal(float x, float y, double zoom) override;
+
 private:
     uint64_t seed;
     osn::OpenSimplexNoise *noise;

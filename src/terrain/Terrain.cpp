@@ -96,9 +96,9 @@ void Terrain::updateHeights(double maxTerrainHeight, double zoom) {
     for (uint32_t row = 0; row <= subdivisionsHeight; row++) {
         for (uint32_t col = 0; col <= subdivisionsWidth; col++) {
             auto index = row * subdivisionsWidth + col;
-            auto y = noise->evaluate(width + col / zoom, height + row / zoom) * maxTerrainHeight;
+            auto y = noise->evaluate(col / zoom, row / zoom) * maxTerrainHeight;
             vertices[index].position.y = y;
-            vertices[index].normal = calculateNormal(row, col, zoom);
+            vertices[index].normal = noise->normal(row, col, zoom);
         }
     }
 }
