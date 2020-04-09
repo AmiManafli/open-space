@@ -15,7 +15,7 @@ UserInterface::UserInterface(EntityManager *entityManager, GLContext *context)
     settings.subdivisionWidth = 1;
     settings.subdivisionHeight = 1;
     settings.maxHeight = 1.0;
-    settings.octaves = 1;
+    settings.octaves = 0;
     settings.frequency = 1.0;
     settings.seed = 1;
 }
@@ -130,13 +130,28 @@ void UserInterface::renderTerrainGeneratorWindow() {
         updateTerrain(terrain, settings);
     }
 
-    if (ImGui::InputInt("Seed", &settings.seed)) {
+    int minOctaves = 0;
+    int maxOctaves = 32;
+
+    if (ImGui::SliderScalar("Octaves", ImGuiDataType_S32, &settings.octaves, &minOctaves, &maxOctaves,"%d")) {
         updateTerrain(terrain, settings);
     }
-    if (ImGui::InputDouble("Frequency", &settings.frequency)) {
+
+    int minSeed = 0;
+    int maxSeed = 100000;
+    if (ImGui::SliderScalar("Seed", ImGuiDataType_S32, &settings.seed, &minSeed, &maxSeed,"%d")) {
+        settings.subdivisionHeight = settings.subdivisionWidth;
         updateTerrain(terrain, settings);
     }
-    if (ImGui::InputDouble("Max height", &settings.maxHeight)) {
+    double minFrequency = 0.0;
+    double maxFrequency = 1.0;
+    if (ImGui::SliderScalar("Frequency", ImGuiDataType_Double, &settings.frequency, &minFrequency, &maxFrequency,"%f", 1.0f)) {
+        updateTerrain(terrain, settings);
+    }
+
+    double minMaxHeight = 0.0;
+    double maxMaxHeight = 30.0;
+    if (ImGui::SliderScalar("Max height", ImGuiDataType_Double, &settings.maxHeight, &minMaxHeight, &maxMaxHeight,"%f", 1.0f)) {
         updateTerrain(terrain, settings);
     }
 

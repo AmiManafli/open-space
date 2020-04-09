@@ -96,8 +96,12 @@ void Terrain::updateHeights(TerrainSettings& settings) {
     for (uint32_t row = 0; row <= subdivisionsHeight; row++) {
         for (uint32_t col = 0; col <= subdivisionsWidth; col++) {
             auto index = row * subdivisionsWidth + col;
-            auto y = noise->evaluate(settings.frequency * col, settings.frequency * row);
-            vertices[index].position.y = y;
+            double y = 0.0;
+            for (uint32_t n = 0; n <= settings.octaves; n++) {
+                auto coefficient = pow(2, n);
+                y += (1.0 / coefficient) * noise->evaluate(coefficient * settings.frequency * col, coefficient * settings.frequency * row);
+            }
+            vertices[index].position.y = y * settings.maxHeight;
 //            vertices[index].normal = noise->normal(row, col, zoom);
             vertices[index].normal = glm::vec3(0, 1, 0);
         }
