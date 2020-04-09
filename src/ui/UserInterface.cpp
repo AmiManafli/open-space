@@ -162,7 +162,7 @@ void UserInterface::renderTerrainGeneratorWindow() {
         updateTerrain(terrain, settings);
     }
     double minFrequency = 0.0;
-    double maxFrequency = 1.0;
+    double maxFrequency = 2.0;
     if (ImGui::SliderScalar("Frequency", ImGuiDataType_Double, &settings.frequency, &minFrequency, &maxFrequency,"%f", 1.0f)) {
         updateTerrain(terrain, settings);
     }

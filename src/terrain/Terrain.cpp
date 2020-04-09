@@ -107,6 +107,7 @@ bool Terrain::update(TerrainSettings& settings) {
 
     // Update y-values with noise function
     updateHeights(settings);
+    updateNormals(settings);
 
     setupBuffers();
 
@@ -116,6 +117,7 @@ bool Terrain::update(TerrainSettings& settings) {
 }
 
 void Terrain::updateHeights(TerrainSettings& settings) {
+    // Update vertices
     for (uint32_t row = 0; row <= subdivisionsHeight; row++) {
         for (uint32_t col = 0; col <= subdivisionsWidth; col++) {
             auto index = row * subdivisionsWidth + col;
@@ -125,8 +127,27 @@ void Terrain::updateHeights(TerrainSettings& settings) {
                 y += (1.0 / coefficient) * getNoise()->evaluate(coefficient * settings.frequency * col, coefficient * settings.frequency * row);
             }
             vertices[index].position.y = y * settings.maxHeight;
-//            vertices[index].normal = noise->normal(row, col, zoom);
-            vertices[index].normal = glm::vec3(0, 1, 0);
+        }
+    }
+}
+
+void Terrain::updateNormals(TerrainSettings &settings) {
+    for (uint32_t row = 0; row <= subdivisionsHeight; row++) {
+        for (uint32_t col = 0; col <= subdivisionsWidth; col++) {
+            auto index = row * subdivisionsWidth + col;
+            auto indexRight = row * subdivisionsWidth + col + 1;
+            auto indexDown = (row + 1) * subdivisionsWidth + col;
+
+            if (col > subdivisionsWidth || row > subdivisionsHeight) {
+                // TODO: use indexLeft and/or indexUp if either doesn't exist
+                vertices[index].normal = glm::vec3(0, -1, 0);
+                continue;
+            }
+
+            auto dx = (vertices[indexRight].position.y - vertices[index].position.y) / (width / static_cast<float>(subdivisionsWidth));
+            auto dz = (vertices[indexDown].position.y - vertices[index].position.y) / (height / static_cast<float>(subdivisionsHeight));
+
+            vertices[index].normal = glm::normalize(glm::cross(glm::vec3(0, dz, 1), glm::vec3(1, dx, 0)));
         }
     }
 }

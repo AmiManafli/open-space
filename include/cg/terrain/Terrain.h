@@ -39,6 +39,7 @@ private:
     Terrain(uint32_t width, uint32_t height, std::vector<Vertex>& vertices, std::vector<uint32_t>& indices, std::vector<Texture>& textures, ShaderProgram *shaderProgram, GLenum mode, NoiseType noiseType);
 
     void updateHeights(TerrainSettings& settings);
+    void updateNormals(TerrainSettings& settings);
 
     NoiseType noiseType;
     uint32_t width, height, subdivisionsWidth, subdivisionsHeight;
