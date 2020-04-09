@@ -25,6 +25,9 @@ private:
     char* currentView = nullptr;
     std::vector<const char *> views;
 
+    char* currentNoise = nullptr;
+    std::vector<const char *> noiseFunctions;
+
     ImVec2 cameraWindowSize;
 
     Terrain *terrain;

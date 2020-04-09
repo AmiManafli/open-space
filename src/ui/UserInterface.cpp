@@ -4,7 +4,10 @@
 UserInterface::UserInterface(EntityManager *entityManager, GLContext *context)
         : entityManager(entityManager), context(context) {
     views = { "Perspective", "Top", "Side" };
+    noiseFunctions = { "Open Simplex", "Perlin" };
+
     currentView = const_cast<char *>(views[0]);
+    currentNoise = const_cast<char *>(noiseFunctions[0]);
 
     cameraWindowSize = ImVec2(0, 0);
 
@@ -113,6 +116,21 @@ void UserInterface::renderCameraInfoWindow() {
 
 void UserInterface::renderTerrainGeneratorWindow() {
     ImGui::Begin("Terrain Generator");
+
+    if (ImGui::BeginCombo("Noise", currentNoise)) {
+        for (int n = 0; n < noiseFunctions.size(); n++) {
+            bool isSelected = currentNoise == noiseFunctions[n];
+            if (ImGui::Selectable(noiseFunctions[n], isSelected)) {
+                currentNoise = const_cast<char *>(noiseFunctions[n]);
+                settings.noiseType = static_cast<NoiseType>(n);
+                updateTerrain(terrain, settings);
+            }
+            if (isSelected) {
+                ImGui::SetItemDefaultFocus();
+            }
+        }
+        ImGui::EndCombo();
+    }
 
     int minSize = 0;
     int maxSize = 200;

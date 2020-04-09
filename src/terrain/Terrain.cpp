@@ -1,23 +1,40 @@
 #include "cg/terrain/Terrain.h"
 #include <array>
+#include <cg/terrain/PerlinNoise.h>
+#include <cg/terrain/OpenSimplexNoise.h>
 
 Terrain::Terrain(uint32_t width, uint32_t height, std::vector<Vertex> &vertices, std::vector<uint32_t> &indices,
-                 std::vector<Texture> &textures, ShaderProgram *shaderProgram, GLenum mode, Noise *noise)
+                 std::vector<Texture> &textures, ShaderProgram *shaderProgram, GLenum mode, NoiseType noiseType)
         : MeshComponent(vertices, indices, textures, shaderProgram, mode),
-    width(width), height(height), subdivisionsWidth(1), subdivisionsHeight(1), noise(noise) {
+          width(width), height(height), subdivisionsWidth(1), subdivisionsHeight(1), noiseType(noiseType) {
+    perlinNoise = new PerlinNoise(1);
+    openSimplexNoise = new OpenSimplexNoise(1);
 }
 
 Terrain::~Terrain() {
+    delete perlinNoise;
+    delete openSimplexNoise;
 }
 
-Terrain *Terrain::generate(uint32_t width, uint32_t height, ShaderProgram *shaderProgram, GLenum mode, Noise *noise) {
+Noise* Terrain::getNoise() {
+    switch (noiseType) {
+        case OpenSimplex:
+            return openSimplexNoise;
+        case Perlin:
+            return perlinNoise;
+        default:
+            throw std::runtime_error("Unknown noise type");
+    }
+}
+
+Terrain *Terrain::generate(uint32_t width, uint32_t height, ShaderProgram *shaderProgram, GLenum mode, NoiseType noiseType) {
     std::vector<MeshComponent::Vertex> vertices;
     std::vector<uint32_t> indices;
     std::vector<MeshComponent::Texture> textures;
 
     build(vertices, indices, width, height, 1, 1);
 
-    return new Terrain(width, height, vertices, indices, textures, shaderProgram, mode, noise);
+    return new Terrain(width, height, vertices, indices, textures, shaderProgram, mode, noiseType);
 }
 
 void Terrain::build(std::vector<MeshComponent::Vertex>& vertices, std::vector<uint32_t>& indices, uint32_t width, uint32_t height, uint32_t subdivisionsWidth, uint32_t subdivisionsHeight) {
@@ -74,8 +91,10 @@ bool Terrain::update(TerrainSettings& settings) {
     this->subdivisionsWidth = settings.subdivisionWidth;
     this->subdivisionsHeight = settings.subdivisionHeight;
 
-    if (settings.seed != noise->getSeed()) {
-        noise->reseed(settings.seed);
+    noiseType = settings.noiseType;
+
+    if (settings.seed != getNoise()->getSeed()) {
+        getNoise()->reseed(settings.seed);
     }
 
     std::vector<MeshComponent::Vertex> vertices;
@@ -103,7 +122,7 @@ void Terrain::updateHeights(TerrainSettings& settings) {
             double y = 0.0;
             for (uint32_t n = 0; n <= settings.octaves; n++) {
                 auto coefficient = pow(2, n);
-                y += (1.0 / coefficient) * noise->evaluate(coefficient * settings.frequency * col, coefficient * settings.frequency * row);
+                y += (1.0 / coefficient) * getNoise()->evaluate(coefficient * settings.frequency * col, coefficient * settings.frequency * row);
             }
             vertices[index].position.y = y * settings.maxHeight;
 //            vertices[index].normal = noise->normal(row, col, zoom);

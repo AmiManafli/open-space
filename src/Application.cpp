@@ -94,7 +94,7 @@ void Application::init() {
     createGrid(62, 62, false);
 
     auto ui = renderSystem->getUserInterface();
-    auto terrainMesh = Terrain::generate(10, 10, meshWithLightShaderProgram, GL_TRIANGLES, new OpenSimplexNoise(1));
+    auto terrainMesh = Terrain::generate(10, 10, meshWithLightShaderProgram, GL_TRIANGLES, NoiseType::OpenSimplex);
     terrainMesh->setupBuffers();
 
     ui->onUpdateTerrain(terrainMesh, onUpdateTerrain);
