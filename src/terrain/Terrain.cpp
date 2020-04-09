@@ -97,8 +97,22 @@ bool Terrain::update(uint32_t width, uint32_t height, uint32_t subdivisionsWidth
 void Terrain::updateHeights(OpenSimplexNoise &noise, double maxTerrainHeight, double zoom) {
     for (uint32_t row = 0; row <= subdivisionsHeight; row++) {
         for (uint32_t col = 0; col <= subdivisionsWidth; col++) {
-            auto height = (1 + noise.Evaluate(col / zoom, row / zoom) / 2.0) * maxTerrainHeight;
-            vertices[row * subdivisionsWidth + col].position.y = height;
+            auto index = row * subdivisionsWidth + col;
+            auto y = noise.Evaluate(width + col / zoom, height + row / zoom) * maxTerrainHeight;
+            vertices[index].position.y = y;
+            vertices[index].normal = calculateNormal(noise, row, col, zoom);
         }
     }
+}
+
+glm::vec3 Terrain::calculateNormal(OpenSimplexNoise &noise, int row, int col, double zoom) {
+    auto dx = (noise.Evaluate((col + 1) / zoom, row / zoom) - noise.Evaluate(col / zoom, row / zoom)) / (1.0 / zoom);
+    auto dz = (noise.Evaluate(col / zoom, (row + 1) / zoom) - noise.Evaluate(col / zoom, row / zoom)) / (1.0 / zoom);
+
+    auto x = glm::vec3(1, dx, 0);
+    auto z = glm::vec3(0, dx, 1);
+
+    auto normal = glm::normalize(glm::cross(z, x));
+
+    return normal;
 }

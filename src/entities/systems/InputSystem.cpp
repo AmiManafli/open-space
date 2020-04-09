@@ -58,6 +58,15 @@ void InputSystem::update() {
         context->displayGui = !context->displayGui;
     }
 
+    auto cameraComponent = entityManager->getCameraComponent(camera->id);
+    if (isKeyDown(GLFW_KEY_EQUAL)) {
+        cameraComponent->movementSpeed += 0.5;
+        printf("Camera movement speed: %.1f\n", cameraComponent->movementSpeed);
+    } else if (isKeyDown(GLFW_KEY_MINUS)) {
+        cameraComponent->movementSpeed -= 0.5;
+        printf("Camera movement speed: %.1f\n", cameraComponent->movementSpeed);
+    }
+
     if (isKeyPressed(GLFW_KEY_GRAVE_ACCENT)) {
         context->displayCursor = !context->displayCursor;
         if (context->displayCursor) {

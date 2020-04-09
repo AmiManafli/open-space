@@ -20,6 +20,7 @@ private:
     Terrain(uint32_t width, uint32_t height, std::vector<Vertex>& vertices, std::vector<uint32_t>& indices, std::vector<Texture>& textures, ShaderProgram *shaderProgram, GLenum mode);
 
     void updateHeights(OpenSimplexNoise& noise, double maxTerrainHeight, double zoom);
+    glm::vec3 calculateNormal(OpenSimplexNoise& noise, int row, int col, double zoom);
 
     uint32_t width, height, subdivisionsWidth, subdivisionsHeight;
 };
