@@ -155,19 +155,6 @@ void UserInterface::renderTerrainGeneratorWindow() {
         updateTerrain(terrain, settings);
     }
 
-//    ImGui::InputDouble("Max height", &settings.maxHeight);
-//    ImGui::InputDouble("Frequency", &settings.frequency);
-
-    if (ImGui::Button(generateTerrainButtonText.c_str())) {
-        generateTerrainButtonText = "Please wait...";
-        if (updateTerrain) {
-            updateTerrain(terrain, settings);
-            generateTerrainButtonText = "Generate";
-        } else {
-            generateTerrainButtonText = "Generate";
-        }
-    }
-
     ImGui::End();
 }
 
