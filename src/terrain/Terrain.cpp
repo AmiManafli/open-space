@@ -1,24 +1,23 @@
 #include "cg/terrain/Terrain.h"
 #include <array>
-#include <OpenSimplexNoise.h>
 
 Terrain::Terrain(uint32_t width, uint32_t height, std::vector<Vertex> &vertices, std::vector<uint32_t> &indices,
-                 std::vector<Texture> &textures, ShaderProgram *shaderProgram, GLenum mode)
+                 std::vector<Texture> &textures, ShaderProgram *shaderProgram, GLenum mode, Noise *noise)
         : MeshComponent(vertices, indices, textures, shaderProgram, mode),
-    width(width), height(height), subdivisionsWidth(1), subdivisionsHeight(1) {
+    width(width), height(height), subdivisionsWidth(1), subdivisionsHeight(1), noise(noise) {
 }
 
 Terrain::~Terrain() {
 }
 
-Terrain *Terrain::generate(uint32_t width, uint32_t height, ShaderProgram *shaderProgram, GLenum mode) {
+Terrain *Terrain::generate(uint32_t width, uint32_t height, ShaderProgram *shaderProgram, GLenum mode, Noise *noise) {
     std::vector<MeshComponent::Vertex> vertices;
     std::vector<uint32_t> indices;
     std::vector<MeshComponent::Texture> textures;
 
     build(vertices, indices, width, height, 1, 1);
 
-    return new Terrain(width, height, vertices, indices, textures, shaderProgram, mode);
+    return new Terrain(width, height, vertices, indices, textures, shaderProgram, mode, noise);
 }
 
 void Terrain::build(std::vector<MeshComponent::Vertex>& vertices, std::vector<uint32_t>& indices, uint32_t width, uint32_t height, uint32_t subdivisionsWidth, uint32_t subdivisionsHeight) {
@@ -84,8 +83,7 @@ bool Terrain::update(uint32_t width, uint32_t height, uint32_t subdivisionsWidth
     this->indices = indices;
 
     // Update y-values with noise function
-    auto noise = OpenSimplexNoise(1);
-    updateHeights(noise, maxTerrainHeight, zoom);
+    updateHeights(maxTerrainHeight, zoom);
 
     setupBuffers();
 
@@ -94,20 +92,20 @@ bool Terrain::update(uint32_t width, uint32_t height, uint32_t subdivisionsWidth
     return true;
 }
 
-void Terrain::updateHeights(OpenSimplexNoise &noise, double maxTerrainHeight, double zoom) {
+void Terrain::updateHeights(double maxTerrainHeight, double zoom) {
     for (uint32_t row = 0; row <= subdivisionsHeight; row++) {
         for (uint32_t col = 0; col <= subdivisionsWidth; col++) {
             auto index = row * subdivisionsWidth + col;
-            auto y = noise.Evaluate(width + col / zoom, height + row / zoom) * maxTerrainHeight;
+            auto y = noise->evaluate(width + col / zoom, height + row / zoom) * maxTerrainHeight;
             vertices[index].position.y = y;
-            vertices[index].normal = calculateNormal(noise, row, col, zoom);
+            vertices[index].normal = calculateNormal(row, col, zoom);
         }
     }
 }
 
-glm::vec3 Terrain::calculateNormal(OpenSimplexNoise &noise, int row, int col, double zoom) {
-    auto dx = (noise.Evaluate((col + 1) / zoom, row / zoom) - noise.Evaluate(col / zoom, row / zoom)) / (1.0 / zoom);
-    auto dz = (noise.Evaluate(col / zoom, (row + 1) / zoom) - noise.Evaluate(col / zoom, row / zoom)) / (1.0 / zoom);
+glm::vec3 Terrain::calculateNormal(int row, int col, double zoom) {
+    auto dx = (noise->evaluate((col + 1) / zoom, row / zoom) - noise->evaluate(col / zoom, row / zoom)) / (1.0 / zoom);
+    auto dz = (noise->evaluate(col / zoom, (row + 1) / zoom) - noise->evaluate(col / zoom, row / zoom)) / (1.0 / zoom);
 
     auto x = glm::vec3(1, dx, 0);
     auto z = glm::vec3(0, dx, 1);

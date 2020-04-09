@@ -1,6 +1,7 @@
 #include <cg/GLContext.h>
 #include <cg/entities/EntityBuilder.h>
 #include <cg/terrain/Terrain.h>
+#include <cg/terrain/OpenSimplexNoise.h>
 #include "cg/Application.h"
 
 bool onUpdateTerrain(Terrain *terrain, uint32_t width, uint32_t height, uint32_t subdivisionsWidth, uint32_t subdivisionsHeight, double maxTerrainHeight, double zoom) {
@@ -92,7 +93,7 @@ void Application::init() {
     createGrid(62, 62, false);
 
     auto ui = renderSystem->getUserInterface();
-    auto terrainMesh = Terrain::generate(ui->terrainWidth, ui->terrainHeight, meshWithLightShaderProgram, GL_TRIANGLES);
+    auto terrainMesh = Terrain::generate(ui->terrainWidth, ui->terrainHeight, meshWithLightShaderProgram, GL_TRIANGLES, new OpenSimplexNoise(1));
     terrainMesh->setupBuffers();
 
     ui->onUpdateTerrain(terrainMesh, onUpdateTerrain);
