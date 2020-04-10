@@ -23,7 +23,7 @@ Noise* Terrain::getNoise() {
         case Perlin:
             return perlinNoise;
         default:
-            throw std::runtime_error("Unknown noise type");
+            return openSimplexNoise;
     }
 }
 
