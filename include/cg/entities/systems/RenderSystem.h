@@ -9,6 +9,8 @@ public:
     RenderSystem(EntityManager *entityManager, GLContext *context);
     ~RenderSystem();
 
+    UserInterface* getUserInterface() { return userInterface; }
+
     void init() override;
     void update() override;
 

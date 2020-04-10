@@ -100,9 +100,17 @@ void RenderSystem::renderMesh(MeshComponent *mesh, ShaderProgram *shaderProgram,
 
     glBindVertexArray(mesh->vao);
     if (mesh->instances > 1) {
-        glDrawElementsInstanced(mesh->mode, mesh->indices.size(), GL_UNSIGNED_INT, nullptr, mesh->instances);
+        if (mesh->indexed) {
+            glDrawElementsInstanced(mesh->mode, mesh->indices.size(), GL_UNSIGNED_INT, nullptr, mesh->instances);
+        } else {
+            glDrawArraysInstanced(mesh->mode, 0, mesh->vertices.size(), mesh->instances);
+        }
     } else {
-        glDrawElements(mesh->mode, mesh->indices.size(), GL_UNSIGNED_INT, nullptr);
+        if (mesh->indexed) {
+            glDrawElements(mesh->mode, mesh->indices.size(), GL_UNSIGNED_INT, nullptr);
+        } else {
+            glDrawArrays(mesh->mode, 0, mesh->vertices.size());
+        }
     }
 
 	//cleanup

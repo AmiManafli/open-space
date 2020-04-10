@@ -1,6 +1,15 @@
 #include <cg/GLContext.h>
 #include <cg/entities/EntityBuilder.h>
+#include <cg/terrain/Terrain.h>
+#include <cg/terrain/OpenSimplexNoise.h>
+#include <cg/terrain/PerlinNoise.h>
 #include "cg/Application.h"
+
+bool onUpdateTerrain(Terrain *terrain, TerrainSettings& settings) {
+    bool success = terrain->update(settings);
+
+    return success;
+}
 
 Application::Application(std::string title, int width, int height) {
     entityManager = new EntityManager();
@@ -62,7 +71,7 @@ void Application::init() {
     highlightShaderProgram->link();
 
     meshWithLightShaderProgram = new ShaderProgram();
-    meshWithLightShaderProgram->attachShader("./assets/shaders/mesh.vert", ShaderType::VertexShader);
+    meshWithLightShaderProgram->attachShader("./assets/shaders/meshWithLight.vert", ShaderType::VertexShader);
     meshWithLightShaderProgram->attachShader("./assets/shaders/meshWithLight.frag", ShaderType::FragmentShader);
     meshWithLightShaderProgram->link();
 
@@ -77,7 +86,6 @@ void Application::init() {
 
     auto lightPosition = glm::vec3(0, 20, 20);
     light = EntityBuilder::create()
-        ->withMesh("./assets/models/ico-sphere.dae", meshTestLightShaderProgram)
         ->withTransform(lightPosition)
         ->withDirectionalLight(-lightPosition, {0.2f, 0.2f, 0.2f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f, 1.0f})
         ->build(entityManager);
@@ -85,11 +93,29 @@ void Application::init() {
     createCameras();
     createGrid(62, 62, false);
 
-    auto airplane = EntityBuilder::create()
-        ->withMesh("./assets/models/airplaneUdemy.obj", meshTextureShaderProgram)
-        ->withTransform(0, 0, 0)
-        ->withVelocity(new VelocityComponent(glm::vec3(0, 0.5, 0), glm::vec3(0, 0, 0)))
+    auto ui = renderSystem->getUserInterface();
+    auto terrainMesh = Terrain::generate(10, 10, meshWithLightShaderProgram, GL_TRIANGLES, NoiseType::OpenSimplex);
+    terrainMesh->setupBuffers();
+
+    ui->onUpdateTerrain(terrainMesh, onUpdateTerrain);
+
+    auto terrain = EntityBuilder::create()
+        ->withMesh(terrainMesh)
+        ->withTransform(0, 1.01, 0)
         ->build(entityManager);
+
+//	auto airplane = EntityBuilder::create()
+//		->withMesh("./assets/models/airplaneUdemy.obj", meshTextureShaderProgram)
+//		->withTransform(0, 0, 0)
+//		->withVelocity(new VelocityComponent(glm::vec3(0, 0.5, 0), glm::vec3(0, 0, 0)))
+//		->build(entityManager);
+
+//    auto nanoSuit = EntityBuilder::create()
+//        ->withMesh("./assets/models/nanosuit.obj", meshTextureShaderProgram)
+//        ->withTransform(0, 0, 0)
+//        ->withScale(0.3)
+//		->withVelocity(new VelocityComponent(glm::vec3(0, 0.5, 0), glm::vec3(0, 0, 0)))
+//        ->build(entityManager);
 
   //  auto nanoSuit = EntityBuilder::create()
   //      ->withMesh("./assets/models/nanosuit.obj", meshTextureShaderProgram)
@@ -181,10 +207,8 @@ Entity* Application::createGrid(int width, int height, bool showYAxis) {
         indices.push_back(index++);
     }
 
-    std::vector<MeshComponent::Texture> test;
-
     return EntityBuilder::create()
-        ->withTransform(0, 0, 0)
+        ->withTransform(0, 1, 0)
         ->withMesh(vertices, indices, textures, gridShaderProgram, GL_LINES)
         ->build(entityManager);
 }

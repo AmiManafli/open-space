@@ -7,7 +7,7 @@
 MeshComponent::MeshComponent(std::vector<Vertex>& vertices, std::vector<uint32_t>& indices,
                              std::vector<Texture>& textures, ShaderProgram *shaderProgram, GLenum mode)
                                 : vertices(vertices), indices(indices), textures(textures),
-                                  shaderProgram(shaderProgram), mode(mode), instances(1) {
+                                  shaderProgram(shaderProgram), mode(mode), instances(1), indexed(!indices.empty()) {
     setupBuffers();
 }
 
@@ -63,15 +63,19 @@ void MeshComponent::processNode(std::vector<MeshComponent *>& meshes, aiNode *no
 void MeshComponent::setupBuffers() {
     glGenVertexArrays(1, &vao);
     glGenBuffers(1, &vbo);
-    glGenBuffers(1, &ebo);
+    if (indexed) {
+        glGenBuffers(1, &ebo);
+    }
 
     glBindVertexArray(vao);
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint32_t), &indices[0], GL_STATIC_DRAW);
+    if (indexed) {
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint32_t), &indices[0], GL_STATIC_DRAW);
+    }
 
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), nullptr);
