@@ -22,6 +22,7 @@ UserInterface::UserInterface(EntityManager *entityManager, GLContext *context)
     settings.frequency = 1.0;
     settings.persistence = 1.0;
     settings.seed = 1;
+    settings.redistribution = 1.0;
 }
 
 void UserInterface::render() {
@@ -170,6 +171,15 @@ void UserInterface::renderTerrainGeneratorWindow() {
     double minPersistence = 0.0;
     double maxPersistence = 2.0;
     if (ImGui::SliderScalar("Persistence", ImGuiDataType_Double, &settings.persistence, &minPersistence, &maxPersistence,"%f", 1.0f)) {
+        updateTerrain(terrain, settings);
+    }
+
+    double minRedistribution = 0.0;
+    double maxRedistribution = 10.0;
+//    if (ImGui::SliderScalar("Redistribution", ImGuiDataType_Double, &settings.redistribution, &minRedistribution, &maxRedistribution,"%f", 1.0f)) {
+//        updateTerrain(terrain, settings);
+//    }
+    if (ImGui::InputDouble("Redistribution", &settings.redistribution, 0.1, 0.5)) {
         updateTerrain(terrain, settings);
     }
 

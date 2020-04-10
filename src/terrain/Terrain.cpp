@@ -118,6 +118,7 @@ bool Terrain::update(TerrainSettings& settings) {
 
 void Terrain::updateHeights(TerrainSettings& settings) {
     // Update vertices
+    printf("Redistribution: %.6f\n", settings.redistribution);
     for (uint32_t row = 0; row <= subdivisionsHeight; row++) {
         for (uint32_t col = 0; col <= subdivisionsWidth; col++) {
             auto index = row * subdivisionsWidth + col;
@@ -127,7 +128,7 @@ void Terrain::updateHeights(TerrainSettings& settings) {
                 auto amplitude = pow(settings.persistence, n);
                 y += amplitude * getNoise()->evaluate(frequency * col, frequency * row);
             }
-            vertices[index].position.y = y * settings.maxAmplitude;
+            vertices[index].position.y = pow(y * settings.maxAmplitude, settings.redistribution);
         }
     }
 }

@@ -22,6 +22,7 @@ struct TerrainSettings {
     double persistence;
     int seed;
     NoiseType noiseType;
+    double redistribution;
 };
 
 
