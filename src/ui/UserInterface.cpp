@@ -52,7 +52,6 @@ void UserInterface::renderSceneInfoWindow() {
 
     ImGui::Text("Frame time: %.3f ms", context->getFrameTime());
     ImGui::Text("Triangles: %d\n", context->triangleCount);
-
     ImGui::End();
 }
 
@@ -89,6 +88,9 @@ void UserInterface::renderCameraInfoWindow() {
     ImGui::Text("Direction: (x=%.3f, y=%.3f, z=%.3f)", direction.x, direction.y, direction.z);
     ImGui::Text("Yaw: %.3f deg.", camera->yaw);
     ImGui::Text("Pitch: %.3f deg.", camera->pitch);
-
+    ImGui::Text("Zoom: %.2f x", camera->zoom); ImGui::SameLine();
+    if (ImGui::Button("Reset")) {
+        camera->zoom = 1.0f;
+	}
     ImGui::End();
 }
