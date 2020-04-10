@@ -8,7 +8,7 @@ void InputSystem::init() {
     auto window = context->getWindow();
     glfwSetWindowUserPointer(window, this);
     glfwSetCursorPosCallback(window, mousePositionCallback);
-	glfwSetScrollCallback(window, processMouseScroll);
+    glfwSetScrollCallback(window, processMouseScroll);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
@@ -111,14 +111,14 @@ void InputSystem::mousePositionCallback(GLFWwindow *window, double x, double y) 
 
 void InputSystem::processMouseScroll(GLFWwindow* window, double xoffset, double yoffset)
 {
-	auto inputManager = (InputSystem*)glfwGetWindowUserPointer(window);
-	auto context = inputManager->context;
-	if (context->displayCursor) return;
+    auto inputManager = (InputSystem*)glfwGetWindowUserPointer(window);
+    auto context = inputManager->context;
+    if (context->displayCursor) return;
 
-	auto camera = context->getCamera();
-	auto cameraComponent = inputManager->entityManager->getCameraComponent(camera->id);
-	cameraComponent->zoom = glm::clamp(cameraComponent->zoom + (yoffset * (cameraComponent->zoom)) * 0.1, 0.5, 45.0);
-	printf("Zoom %.2f % \n", cameraComponent->zoom);
+    auto camera = context->getCamera();
+    auto cameraComponent = inputManager->entityManager->getCameraComponent(camera->id);
+    cameraComponent->zoom = glm::clamp(cameraComponent->zoom + (yoffset * (cameraComponent->zoom)) * 0.1, 0.5, 45.0);
+    printf("Zoom %.2f % \n", cameraComponent->zoom);
 }
 
 void InputSystem::moveCamera(Entity *camera, CameraComponent::Direction direction, float deltaTime) {

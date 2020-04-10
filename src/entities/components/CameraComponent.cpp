@@ -68,8 +68,6 @@ void CameraComponent::processMouseMovement(float offsetX, float offsetY) {
     updateVectors();
 }
 
-
-
 void CameraComponent::updateVectors() {
     auto yawRad = glm::radians(yaw);
     auto pitchRad = glm::radians(pitch);
