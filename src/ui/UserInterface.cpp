@@ -17,9 +17,10 @@ UserInterface::UserInterface(EntityManager *entityManager, GLContext *context)
     settings.height = 10;
     settings.subdivisionWidth = 1;
     settings.subdivisionHeight = 1;
-    settings.maxHeight = 1.0;
+    settings.maxAmplitude = 1.0;
     settings.octaves = 0;
     settings.frequency = 1.0;
+    settings.persistence = 1.0;
     settings.seed = 1;
 }
 
@@ -166,10 +167,15 @@ void UserInterface::renderTerrainGeneratorWindow() {
     if (ImGui::SliderScalar("Frequency", ImGuiDataType_Double, &settings.frequency, &minFrequency, &maxFrequency,"%f", 1.0f)) {
         updateTerrain(terrain, settings);
     }
+    double minPersistence = 0.0;
+    double maxPersistence = 2.0;
+    if (ImGui::SliderScalar("Persistence", ImGuiDataType_Double, &settings.persistence, &minPersistence, &maxPersistence,"%f", 1.0f)) {
+        updateTerrain(terrain, settings);
+    }
 
     double minMaxHeight = 0.0;
     double maxMaxHeight = 30.0;
-    if (ImGui::SliderScalar("Max height", ImGuiDataType_Double, &settings.maxHeight, &minMaxHeight, &maxMaxHeight,"%f", 1.0f)) {
+    if (ImGui::SliderScalar("Max height", ImGuiDataType_Double, &settings.maxAmplitude, &minMaxHeight, &maxMaxHeight, "%f", 1.0f)) {
         updateTerrain(terrain, settings);
     }
 

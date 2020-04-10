@@ -123,10 +123,12 @@ void Terrain::updateHeights(TerrainSettings& settings) {
             auto index = row * subdivisionsWidth + col;
             double y = 0.0;
             for (uint32_t n = 0; n <= settings.octaves; n++) {
-                auto coefficient = pow(2, n);
-                y += (1.0 / coefficient) * getNoise()->evaluate(coefficient * settings.frequency * col, coefficient * settings.frequency * row);
+                auto frequency = settings.frequency * pow(2, n);
+                auto amplitude = pow(settings.persistence, n);
+                y += amplitude * getNoise()->evaluate(frequency * col, frequency * row);
             }
-            vertices[index].position.y = y * settings.maxHeight;
+            vertices[index].position.y = y * settings.maxAmplitude;
+            printf("(%2d,%2d): %f\n", col, row, getNoise()->evaluate(settings.frequency * col, settings.frequency * row));
         }
     }
 }
@@ -151,15 +153,3 @@ void Terrain::updateNormals(TerrainSettings &settings) {
         }
     }
 }
-
-//glm::vec3 Terrain::calculateNormal(int row, int col, double zoom) {
-//    auto dx = (noise->evaluate((col + 1) / zoom, row / zoom) - noise->evaluate(col / zoom, row / zoom)) / (1.0 / zoom);
-//    auto dz = (noise->evaluate(col / zoom, (row + 1) / zoom) - noise->evaluate(col / zoom, row / zoom)) / (1.0 / zoom);
-//
-//    auto x = glm::vec3(1, dx, 0);
-//    auto z = glm::vec3(0, dx, 1);
-//
-//    auto normal = glm::normalize(glm::cross(z, x));
-//
-//    return normal;
-//}

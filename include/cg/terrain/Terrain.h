@@ -16,9 +16,10 @@ struct TerrainSettings {
     int height;
     int subdivisionWidth;
     int subdivisionHeight;
-    double maxHeight;
+    double maxAmplitude;
     double frequency;
     int octaves;
+    double persistence;
     int seed;
     NoiseType noiseType;
 };
