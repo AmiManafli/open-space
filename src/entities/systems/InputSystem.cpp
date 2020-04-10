@@ -124,6 +124,5 @@ void InputSystem::processMouseScroll(GLFWwindow* window, double xoffset, double 
 void InputSystem::moveCamera(Entity *camera, CameraComponent::Direction direction, float deltaTime) {
     auto cameraComponent = entityManager->getCameraComponent(camera->id);
     auto transformComponent = entityManager->getTransformComponent(camera->id);
-	
     cameraComponent->processKeyboard(direction, deltaTime, transformComponent);
 }
