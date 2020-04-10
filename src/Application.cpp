@@ -94,21 +94,21 @@ void Application::init() {
     createGrid(62, 62, false);
 
     auto ui = renderSystem->getUserInterface();
-//    auto terrainMesh = Terrain::generate(10, 10, meshWithLightShaderProgram, GL_TRIANGLES, NoiseType::OpenSimplex);
-//    terrainMesh->setupBuffers();
-//
-//    ui->onUpdateTerrain(terrainMesh, onUpdateTerrain);
-//
-//    auto terrain = EntityBuilder::create()
-//        ->withMesh(terrainMesh)
-//        ->withTransform(0, 1.01, 0)
-//        ->build(entityManager);
+    auto terrainMesh = Terrain::generate(10, 10, meshWithLightShaderProgram, GL_TRIANGLES, NoiseType::OpenSimplex);
+    terrainMesh->setupBuffers();
 
-	auto airplane = EntityBuilder::create()
-		->withMesh("./assets/models/airplaneUdemy.obj", meshTextureShaderProgram)
-		->withTransform(0, 0, 0)
-		->withVelocity(new VelocityComponent(glm::vec3(0, 0.5, 0), glm::vec3(0, 0, 0)))
-		->build(entityManager);
+    ui->onUpdateTerrain(terrainMesh, onUpdateTerrain);
+
+    auto terrain = EntityBuilder::create()
+        ->withMesh(terrainMesh)
+        ->withTransform(0, 1.01, 0)
+        ->build(entityManager);
+
+//	auto airplane = EntityBuilder::create()
+//		->withMesh("./assets/models/airplaneUdemy.obj", meshTextureShaderProgram)
+//		->withTransform(0, 0, 0)
+//		->withVelocity(new VelocityComponent(glm::vec3(0, 0.5, 0), glm::vec3(0, 0, 0)))
+//		->build(entityManager);
 
 //    auto nanoSuit = EntityBuilder::create()
 //        ->withMesh("./assets/models/nanosuit.obj", meshTextureShaderProgram)

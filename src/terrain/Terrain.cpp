@@ -128,7 +128,6 @@ void Terrain::updateHeights(TerrainSettings& settings) {
                 y += amplitude * getNoise()->evaluate(frequency * col, frequency * row);
             }
             vertices[index].position.y = y * settings.maxAmplitude;
-            printf("(%2d,%2d): %f\n", col, row, getNoise()->evaluate(settings.frequency * col, settings.frequency * row));
         }
     }
 }
