@@ -30,6 +30,8 @@ public:
     void processKeyboard(CameraComponent::Direction direction, float deltaTime, TransformComponent *positionComponent);
     void processMouseMovement(float offsetX, float offsetY);
 
+	void processMouseScroll(double yoffset);
+
     Mode mode;
     Type type;
     float zoom;

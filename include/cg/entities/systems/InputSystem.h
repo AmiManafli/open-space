@@ -26,6 +26,8 @@ private:
     void moveCamera(Entity *camera, CameraComponent::Direction direction, float deltaTime);
 
     static void mousePositionCallback(GLFWwindow* window, double x, double y);
+	static void processMouseScroll(GLFWwindow* window, double xoffset, double yoffset);
+
 };
 
 #endif //CG1_PROJECT_INPUTSYSTEM_H

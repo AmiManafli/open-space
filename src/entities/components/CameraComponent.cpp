@@ -36,7 +36,7 @@ glm::mat4 CameraComponent::getProjection(float aspectRatio) {
         auto zoomOut = 1.0f;
         return glm::ortho(-aspectRatio * zoomOut, aspectRatio * zoomOut, -1.0f * zoomOut, 1.0f * zoomOut, -1000.0f, 100.0f);
     } else if (type == Perspective) {
-        auto fov = 45.0f / zoom;
+		auto fov = 45.0f / zoom;	
         return glm::perspective(glm::radians(fov), aspectRatio, 0.1f, 10000.0f);
     } else {
         throw std::runtime_error("failed to get projection: unknown projection mode");
@@ -67,6 +67,8 @@ void CameraComponent::processMouseMovement(float offsetX, float offsetY) {
 
     updateVectors();
 }
+
+
 
 void CameraComponent::updateVectors() {
     auto yawRad = glm::radians(yaw);
