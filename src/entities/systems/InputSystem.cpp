@@ -128,7 +128,6 @@ void InputSystem::processMouseScroll(GLFWwindow* window, double xoffset, double 
     auto camera = context->getCamera();
     auto cameraComponent = inputManager->entityManager->getCameraComponent(camera->id);
     cameraComponent->zoom = glm::clamp(cameraComponent->zoom + (yoffset * (cameraComponent->zoom)) * 0.1, 0.5, 45.0);
-    printf("Zoom %.2f % \n", cameraComponent->zoom);
 }
 
 void InputSystem::moveCamera(Entity *camera, CameraComponent::Direction direction, float deltaTime) {
