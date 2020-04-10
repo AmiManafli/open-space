@@ -24,9 +24,8 @@ private:
     std::unordered_map<uint32_t, uint32_t> keysDown;
 
     void moveCamera(Entity *camera, CameraComponent::Direction direction, float deltaTime);
-
     static void mousePositionCallback(GLFWwindow* window, double x, double y);
-	static void processMouseScroll(GLFWwindow* window, double xoffset, double yoffset);
+    static void processMouseScroll(GLFWwindow* window, double xoffset, double yoffset);
 
 };
 

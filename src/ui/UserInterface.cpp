@@ -47,7 +47,7 @@ void UserInterface::renderMainMenu() {
 }
 
 void UserInterface::renderSceneInfoWindow() {
-	ImGui::SetNextWindowPos(ImVec2(context->getWidth() - 170, 25));
+    ImGui::SetNextWindowPos(ImVec2(context->getWidth() - 170, 25));
     ImGui::Begin("Scene Information", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize);
 
     ImGui::Text("Frame time: %.3f ms", context->getFrameTime());
@@ -88,11 +88,9 @@ void UserInterface::renderCameraInfoWindow() {
     ImGui::Text("Direction: (x=%.3f, y=%.3f, z=%.3f)", direction.x, direction.y, direction.z);
     ImGui::Text("Yaw: %.3f deg.", camera->yaw);
     ImGui::Text("Pitch: %.3f deg.", camera->pitch);
-	ImGui::Text("Zoom: %.2f x", camera->zoom); ImGui::SameLine();
-	if (ImGui::Button("Reset"))
-	{
-		camera->zoom = 1.0f;
+    ImGui::Text("Zoom: %.2f x", camera->zoom); ImGui::SameLine();
+    if (ImGui::Button("Reset")) {
+        camera->zoom = 1.0f;
 	}
-
     ImGui::End();
 }

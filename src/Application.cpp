@@ -85,11 +85,11 @@ void Application::init() {
     createCameras();
     createGrid(62, 62, false);
 
-	auto airplane = EntityBuilder::create()
-		->withMesh("./assets/models/airplaneUdemy.obj", meshTextureShaderProgram)
-		->withTransform(0, 0, 0)
-		->withVelocity(new VelocityComponent(glm::vec3(0, 0.5, 0), glm::vec3(0, 0, 0)))
-		->build(entityManager);
+    auto airplane = EntityBuilder::create()
+        ->withMesh("./assets/models/airplaneUdemy.obj", meshTextureShaderProgram)
+        ->withTransform(0, 0, 0)
+        ->withVelocity(new VelocityComponent(glm::vec3(0, 0.5, 0), glm::vec3(0, 0, 0)))
+        ->build(entityManager);
 
   //  auto nanoSuit = EntityBuilder::create()
   //      ->withMesh("./assets/models/nanosuit.obj", meshTextureShaderProgram)
