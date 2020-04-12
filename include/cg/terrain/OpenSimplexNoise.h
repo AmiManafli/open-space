@@ -16,10 +16,10 @@ public:
 
     void reseed(uint64_t seed) override;
 
-    double evaluate(float x, float y) override;
-    double evaluate(float x, float y, float z) override;
+    double evaluate(double x, double y) override;
+    double evaluate(double x, double y, double z) override;
 
-    glm::vec3 normal(float x, float y, double zoom) override;
+    glm::vec3 normal(double x, double y, double zoom) override;
 
 private:
     uint64_t seed;

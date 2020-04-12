@@ -13,10 +13,10 @@ public:
     uint64_t getSeed() { return seed; }
     virtual void reseed(uint64_t seed) = 0;
 
-    virtual double evaluate(float x, float y) = 0;
-    virtual double evaluate(float x, float y, float z) = 0;
+    virtual double evaluate(double x, double y) = 0;
+    virtual double evaluate(double x, double y, double z) = 0;
 
-    virtual glm::vec3 normal(float x, float y, double zoom) = 0;
+    virtual glm::vec3 normal(double x, double y, double zoom) = 0;
 
 protected:
     uint64_t seed;

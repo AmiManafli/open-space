@@ -119,16 +119,17 @@ bool Terrain::update(TerrainSettings& settings) {
 void Terrain::updateHeights(TerrainSettings& settings) {
     // Update vertices
     printf("Redistribution: %.6f\n", settings.redistribution);
-    for (uint32_t row = 0; row <= subdivisionsHeight; row++) {
-        for (uint32_t col = 0; col <= subdivisionsWidth; col++) {
+    for (uint64_t row = 0; row <= subdivisionsHeight; row++) {
+        for (uint64_t col = 0; col <= subdivisionsWidth; col++) {
             auto index = row * subdivisionsWidth + col;
             double y = 0.0;
-            for (uint32_t n = 0; n <= settings.octaves; n++) {
+            for (uint64_t n = 0; n <= settings.octaves; n++) {
                 auto frequency = settings.frequency * pow(2, n);
                 auto amplitude = pow(settings.persistence, n);
                 y += amplitude * getNoise()->evaluate(frequency * col, frequency * row);
             }
             vertices[index].position.y = pow(y * settings.maxAmplitude, settings.redistribution);
+//            printf("pow(%.6f * %.6f, %.6f)  ===>  y = %.6f\n", y, settings.maxAmplitude, settings.redistribution, vertices[index].position.y);
         }
     }
 }
