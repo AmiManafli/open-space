@@ -7,6 +7,8 @@
 
 class UserInterface {
 public:
+    static const uint16_t MAX_PROFILE_LENGTH = 32;
+
     explicit UserInterface(EntityManager *entityManager, GLContext *context);
 
     void render();
@@ -25,6 +27,9 @@ private:
     char* currentView = nullptr;
     std::vector<const char *> views;
 
+    char currentProfile[MAX_PROFILE_LENGTH];
+    std::vector<std::string> availableProfiles;
+
     char* currentNoise = nullptr;
     std::vector<const char *> noiseFunctions;
 
@@ -40,8 +45,9 @@ private:
     void renderTerrainGeneratorWindow();
 
     std::string settingsFilename;
-    char terrainProfileName[32];
+    char terrainProfileName[MAX_PROFILE_LENGTH];
 
+    void loadTerrainProfiles();
     void loadTerrainSettings();
     void saveTerrainSettings();
 };

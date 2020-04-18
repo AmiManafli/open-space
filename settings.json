@@ -1,0 +1,19 @@
+{
+    "terrain": {
+        "profiles": {
+            "Error": {
+                "frequency": 1.0,
+                "height": 10,
+                "maxAmplitude": 1.0,
+                "noiseType": 1,
+                "octaves": 0,
+                "persistence": 1.0,
+                "redistribution": 1.0,
+                "seed": 1,
+                "subdivisionHeight": 39,
+                "subdivisionWidth": 39,
+                "width": 10
+            }
+        }
+    }
+}

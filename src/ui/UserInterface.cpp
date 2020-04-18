@@ -10,6 +10,8 @@ UserInterface::UserInterface(EntityManager *entityManager, GLContext *context)
     views = { "Perspective", "Top", "Side" };
     noiseFunctions = { "Open Simplex", "Perlin" };
 
+    loadTerrainProfiles();
+
     currentView = const_cast<char *>(views[0]);
     currentNoise = const_cast<char *>(noiseFunctions[0]);
 
@@ -125,6 +127,22 @@ void UserInterface::renderTerrainGeneratorWindow() {
 
     ImGui::InputText("Profile name", terrainProfileName, IM_ARRAYSIZE(terrainProfileName));
 
+    if (ImGui::BeginCombo("Profiles", currentProfile)) {
+        for (auto& profile : availableProfiles) {
+            auto profileStr = profile.c_str();
+            bool isSelected = currentProfile == profileStr;
+            if (ImGui::Selectable(profileStr, isSelected)) {
+                strcpy(currentProfile, profileStr);
+                strcpy(terrainProfileName, currentProfile);
+                loadTerrainSettings();
+            }
+            if (isSelected) {
+                ImGui::SetItemDefaultFocus();
+            }
+        }
+        ImGui::EndCombo();
+    }
+
     ImGui::Separator();
 
     if (ImGui::BeginCombo("Noise", currentNoise)) {
@@ -194,10 +212,6 @@ void UserInterface::renderTerrainGeneratorWindow() {
         updateTerrain(terrain, settings);
     }
 
-    if (ImGui::Button("Load settings")) {
-        loadTerrainSettings();
-    }
-    ImGui::SameLine();
     if (ImGui::Button("Save settings")) {
         saveTerrainSettings();
     }
@@ -261,7 +275,7 @@ void UserInterface::saveTerrainSettings() {
         };
     }
 
-    auto profile = jsonSettings["terrain"]["profiles"][terrainProfileName];
+    auto profile = json::object();
     profile["width"] = settings.width;
     profile["height"] = settings.height;
     profile["subdivisionWidth"] = settings.subdivisionWidth;
@@ -280,4 +294,22 @@ void UserInterface::saveTerrainSettings() {
     outFile << std::setw(4) << jsonSettings << std::endl;
 
     printf("Saved terrain settings to \"%s\"\n", settingsFilename.c_str());
+
+    availableProfiles.emplace_back(terrainProfileName);
+    strcpy(currentProfile, terrainProfileName);
+}
+
+void UserInterface::loadTerrainProfiles() {
+    availableProfiles.clear();
+
+    json jsonSettings;
+
+    std::ifstream settingsFile(settingsFilename.c_str());
+    if (settingsFile.is_open()) {
+        settingsFile >> jsonSettings;
+        settingsFile.close();
+        for (auto& profile : jsonSettings["terrain"]["profiles"].items()) {
+            availableProfiles.push_back(profile.key());
+        }
+    }
 }
