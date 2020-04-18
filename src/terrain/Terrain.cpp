@@ -156,14 +156,8 @@ void Terrain::updateNormals(TerrainSettings &settings) {
             auto indexRight = row * subWidth + col + 1;
             auto indexDown = (row + 1) * subWidth + col;
 
-            if (col > subWidth || row > subHeight) {
-                // TODO: use indexLeft and/or indexUp if either doesn't exist
-                vertices[index].normal = glm::vec3(0, -1, 0);
-                continue;
-            }
-
-            auto dx = (vertices[indexRight].position.y - vertices[index].position.y) / (width / static_cast<float>(subWidth));
-            auto dz = (vertices[indexDown].position.y - vertices[index].position.y) / (height / static_cast<float>(subHeight));
+            float dx = (vertices[indexRight].position.y - vertices[index].position.y) / (width / static_cast<float>(subWidth));
+            float dz = (vertices[indexDown].position.y - vertices[index].position.y) / (height / static_cast<float>(subHeight));
 
             vertices[index].normal = glm::normalize(glm::cross(glm::vec3(0, dz, 1), glm::vec3(1, dx, 0)));
         }

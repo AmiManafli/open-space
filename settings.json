@@ -1,83 +1,44 @@
 {
     "terrain": {
         "profiles": {
-            "Error": {
-                "frequency": 1.0,
-                "height": 10,
+            "Hello": {
+                "frequency": 0.518797,
+                "height": 12,
                 "maxAmplitude": 1.0,
                 "noiseType": 0,
-                "octaves": 0,
-                "persistence": 1.0,
+                "octaves": 3,
+                "persistence": 0.263158,
                 "redistribution": 1.0,
                 "seed": 1,
-                "subdivisionHeight": 39,
-                "subdivisionWidth": 39,
-                "width": 10
+                "subdivisionHeight": 10,
+                "subdivisionWidth": 10,
+                "width": 12
             },
-            "Error smooth": {
-                "frequency": 0.052632,
-                "height": 10,
+            "Hello New": {
+                "frequency": 0.518797,
+                "height": 12,
                 "maxAmplitude": 1.0,
                 "noiseType": 0,
-                "octaves": 0,
-                "persistence": 1.0,
-                "redistribution": 1.0,
+                "octaves": 8,
+                "persistence": 0.293233,
+                "redistribution": 5.899999999999996,
                 "seed": 1,
-                "subdivisionHeight": 168,
-                "subdivisionWidth": 168,
-                "width": 10
+                "subdivisionHeight": 198,
+                "subdivisionWidth": 198,
+                "width": 12
             },
-            "Error smooth new": {
-                "frequency": 0.030075,
-                "height": 10,
-                "maxAmplitude": 1.0,
+            "Large Test Map": {
+                "frequency": 0.278196,
+                "height": 66,
+                "maxAmplitude": 1.015038,
                 "noiseType": 0,
-                "octaves": 2,
-                "persistence": 0.300752,
-                "redistribution": 1.0,
+                "octaves": 8,
+                "persistence": 0.293233,
+                "redistribution": 4.6000000000000005,
                 "seed": 0,
-                "subdivisionHeight": 168,
-                "subdivisionWidth": 168,
-                "width": 10
-            },
-            "Error smooth new 2": {
-                "frequency": 0.030075,
-                "height": 10,
-                "maxAmplitude": 1.0,
-                "noiseType": 0,
-                "octaves": 2,
-                "persistence": 0.300752,
-                "redistribution": 1.0,
-                "seed": 50752,
-                "subdivisionHeight": 168,
-                "subdivisionWidth": 168,
-                "width": 10
-            },
-            "Error smooth new 3": {
-                "frequency": 0.030075,
-                "height": 10,
-                "maxAmplitude": 1.0,
-                "noiseType": 0,
-                "octaves": 2,
-                "persistence": 0.300752,
-                "redistribution": 1.0,
-                "seed": 50752,
-                "subdivisionHeight": 20,
-                "subdivisionWidth": 20,
-                "width": 10
-            },
-            "Perlin test": {
-                "frequency": 0.466165,
-                "height": 10,
-                "maxAmplitude": 1.466165,
-                "noiseType": 1,
-                "octaves": 7,
-                "persistence": 0.691729,
-                "redistribution": 1.0,
-                "seed": 1,
-                "subdivisionHeight": 103,
-                "subdivisionWidth": 103,
-                "width": 10
+                "subdivisionHeight": 279,
+                "subdivisionWidth": 279,
+                "width": 66
             }
         }
     }
