@@ -107,8 +107,15 @@ bool Terrain::update(TerrainSettings& settings) {
 
     build(vertices, indices, width, height, subdivisionsWidth, subdivisionsHeight);
 
-    this->vertices = vertices;
-    this->indices = indices;
+    // TODO: make more efficient
+    this->vertices.clear();
+    for (auto &v : vertices) {
+        this->vertices.emplace_back(v);
+    }
+    this->indices.clear();
+    for (auto &i : indices) {
+        this->indices.emplace_back(i);
+    }
 
     // Update y-values with noise function
     updateHeights(settings);
@@ -128,15 +135,14 @@ void Terrain::updateHeights(TerrainSettings& settings) {
     for (int row = 0; row < subHeight; row++) {
         for (int col = 0; col < subWidth; col++) {
             auto index = row * subWidth + col;
-            double y = 0.0;
+            double altitude = 0.0;
             auto vertex = vertices[index];
-//            for (uint64_t n = 0; n <= settings.octaves; n++) {
-//                auto frequency = settings.frequency * pow(2, n);
-//                auto amplitude = pow(settings.persistence, n);
-//                y += amplitude * getNoise()->evaluate(frequency * vertex.position.x, frequency * vertex.position.z);
-//            }
-//            vertices[index].position.y = pow(y * settings.maxAmplitude, settings.redistribution);
-            vertices[index].position.y = getNoise()->evaluate(settings.frequency * vertex.position.x, settings.frequency * vertex.position.z);
+            for (uint64_t n = 0; n <= settings.octaves; n++) {
+                auto frequency = settings.frequency * pow(2, n);
+                auto amplitude = pow(settings.persistence, n);
+                altitude += amplitude * getNoise()->evaluate(frequency * vertex.position.x, frequency * vertex.position.z);
+            }
+            vertices[index].position.y = pow(altitude * settings.maxAmplitude, settings.redistribution);
         }
     }
 }

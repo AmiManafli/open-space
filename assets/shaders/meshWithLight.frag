@@ -1,7 +1,7 @@
 #version 330 core
 
 out vec4 fragColor;
-flat in vec3 vNormal;
+in vec3 vNormal;
 in vec3 vFragPos;
 
 uniform vec3 objectColor;
