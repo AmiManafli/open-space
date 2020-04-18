@@ -2,6 +2,7 @@
 #include <array>
 #include <cg/terrain/PerlinNoise.h>
 #include <cg/terrain/OpenSimplexNoise.h>
+#include <cg/terrain/TestNoise.h>
 
 Terrain::Terrain(uint32_t width, uint32_t height, std::vector<Vertex> &vertices, std::vector<uint32_t> &indices,
                  std::vector<Texture> &textures, ShaderProgram *shaderProgram, GLenum mode, NoiseType noiseType)
@@ -9,11 +10,13 @@ Terrain::Terrain(uint32_t width, uint32_t height, std::vector<Vertex> &vertices,
           width(width), height(height), subdivisionsWidth(1), subdivisionsHeight(1), noiseType(noiseType) {
     perlinNoise = new PerlinNoise(1);
     openSimplexNoise = new OpenSimplexNoise(1);
+    testNoise = new TestNoise(1);
 }
 
 Terrain::~Terrain() {
     delete perlinNoise;
     delete openSimplexNoise;
+    delete testNoise;
 }
 
 Noise* Terrain::getNoise() {
@@ -22,6 +25,8 @@ Noise* Terrain::getNoise() {
             return openSimplexNoise;
         case Perlin:
             return perlinNoise;
+        case Test:
+            return testNoise;
         default:
             return openSimplexNoise;
     }
@@ -118,37 +123,41 @@ bool Terrain::update(TerrainSettings& settings) {
 
 void Terrain::updateHeights(TerrainSettings& settings) {
     // Update vertices
-    printf("Redistribution: %.6f\n", settings.redistribution);
-    for (uint64_t row = 0; row <= subdivisionsHeight; row++) {
-        for (uint64_t col = 0; col <= subdivisionsWidth; col++) {
-            auto index = row * subdivisionsWidth + col;
+    auto subWidth = subdivisionsWidth + 2;
+    auto subHeight = subdivisionsHeight + 2;
+    for (int row = 0; row < subHeight; row++) {
+        for (int col = 0; col < subWidth; col++) {
+            auto index = row * subWidth + col;
             double y = 0.0;
-            for (uint64_t n = 0; n <= settings.octaves; n++) {
-                auto frequency = settings.frequency * pow(2, n);
-                auto amplitude = pow(settings.persistence, n);
-                y += amplitude * getNoise()->evaluate(frequency * col, frequency * row);
-            }
-            vertices[index].position.y = pow(y * settings.maxAmplitude, settings.redistribution);
-//            printf("pow(%.6f * %.6f, %.6f)  ===>  y = %.6f\n", y, settings.maxAmplitude, settings.redistribution, vertices[index].position.y);
+            auto vertex = vertices[index];
+//            for (uint64_t n = 0; n <= settings.octaves; n++) {
+//                auto frequency = settings.frequency * pow(2, n);
+//                auto amplitude = pow(settings.persistence, n);
+//                y += amplitude * getNoise()->evaluate(frequency * vertex.position.x, frequency * vertex.position.z);
+//            }
+//            vertices[index].position.y = pow(y * settings.maxAmplitude, settings.redistribution);
+            vertices[index].position.y = getNoise()->evaluate(settings.frequency * vertex.position.x, settings.frequency * vertex.position.z);
         }
     }
 }
 
 void Terrain::updateNormals(TerrainSettings &settings) {
-    for (uint32_t row = 0; row <= subdivisionsHeight; row++) {
-        for (uint32_t col = 0; col <= subdivisionsWidth; col++) {
-            auto index = row * subdivisionsWidth + col;
-            auto indexRight = row * subdivisionsWidth + col + 1;
-            auto indexDown = (row + 1) * subdivisionsWidth + col;
+    auto subWidth = subdivisionsWidth + 2;
+    auto subHeight = subdivisionsHeight + 2;
+    for (int row = 0; row < subHeight; row++) {
+        for (int col = 0; col < subWidth; col++) {
+            auto index = row * subWidth + col;
+            auto indexRight = row * subWidth + col + 1;
+            auto indexDown = (row + 1) * subWidth + col;
 
-            if (col > subdivisionsWidth || row > subdivisionsHeight) {
+            if (col > subWidth || row > subHeight) {
                 // TODO: use indexLeft and/or indexUp if either doesn't exist
                 vertices[index].normal = glm::vec3(0, -1, 0);
                 continue;
             }
 
-            auto dx = (vertices[indexRight].position.y - vertices[index].position.y) / (width / static_cast<float>(subdivisionsWidth));
-            auto dz = (vertices[indexDown].position.y - vertices[index].position.y) / (height / static_cast<float>(subdivisionsHeight));
+            auto dx = (vertices[indexRight].position.y - vertices[index].position.y) / (width / static_cast<float>(subWidth));
+            auto dz = (vertices[indexDown].position.y - vertices[index].position.y) / (height / static_cast<float>(subHeight));
 
             vertices[index].normal = glm::normalize(glm::cross(glm::vec3(0, dz, 1), glm::vec3(1, dx, 0)));
         }

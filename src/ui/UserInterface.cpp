@@ -8,7 +8,7 @@ using json = nlohmann::json;
 UserInterface::UserInterface(EntityManager *entityManager, GLContext *context)
         : entityManager(entityManager), context(context), settingsFilename("settings.json"), terrainProfileName("") {
     views = { "Perspective", "Top", "Side" };
-    noiseFunctions = { "Open Simplex", "Perlin" };
+    noiseFunctions = { "Open Simplex", "Perlin", "Test" };
 
     loadTerrainProfiles();
 
@@ -253,8 +253,10 @@ void UserInterface::loadTerrainSettings() {
     settings.octaves = profile["octaves"];
     settings.persistence = profile["persistence"];
     settings.seed = profile["seed"];
-    settings.noiseType = profile["noiseType"];
     settings.redistribution = profile["redistribution"];
+
+    settings.noiseType = profile["noiseType"].get<NoiseType>();
+    currentNoise = const_cast<char *>(noiseFunctions[static_cast<int>(settings.noiseType)]);
 
     updateTerrain(terrain, settings);
 

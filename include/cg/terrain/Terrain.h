@@ -9,6 +9,7 @@
 enum NoiseType {
     OpenSimplex,
     Perlin,
+    Test,
 };
 
 struct TerrainSettings {
@@ -48,6 +49,7 @@ private:
 
     Noise *openSimplexNoise;
     Noise *perlinNoise;
+    Noise *testNoise;
 };
 
 

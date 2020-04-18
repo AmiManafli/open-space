@@ -16,7 +16,8 @@ void OpenSimplexNoise::reseed(uint64_t seed) {
 }
 
 double OpenSimplexNoise::evaluate(double x, double y) {
-    return (1.0 + noise->Evaluate(x, y)) / 2.0;
+    auto offset = 2000.0;
+    return noise->Evaluate(x + offset, y + offset);
 }
 
 double OpenSimplexNoise::evaluate(double x, double y, double z) {
