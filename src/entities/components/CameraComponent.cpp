@@ -33,8 +33,8 @@ glm::mat4 CameraComponent::getView(TransformComponent *positionComponent) {
 
 glm::mat4 CameraComponent::getProjection(float aspectRatio) {
     if (type == Orthographic) {
-        auto zoomOut = 1.0f;
-        return glm::ortho(-aspectRatio * zoomOut, aspectRatio * zoomOut, -1.0f * zoomOut, 1.0f * zoomOut, -1000.0f, 100.0f);
+        auto orthoZoom = zoom;
+        return glm::ortho(-aspectRatio * orthoZoom, aspectRatio * orthoZoom, -1.0f * orthoZoom, 1.0f * orthoZoom, -1000.0f, 100.0f);
     } else if (type == Perspective) {
         auto fov = 45.0f / zoom;	
         return glm::perspective(glm::radians(fov), aspectRatio, 0.1f, 10000.0f);
@@ -59,6 +59,8 @@ void CameraComponent::processKeyboard(CameraComponent::Direction direction, floa
 }
 
 void CameraComponent::processMouseMovement(float offsetX, float offsetY) {
+    if (type == Orthographic) return;
+
     offsetX *= mouseSensitivity;
     offsetY *= mouseSensitivity;
 
@@ -81,4 +83,3 @@ void CameraComponent::updateVectors() {
     right = glm::normalize(glm::cross(front, worldUp));
     up = glm::normalize(glm::cross(right, front));
 }
-
