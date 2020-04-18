@@ -38,6 +38,12 @@ private:
     void renderSceneInfoWindow();
     void renderCameraInfoWindow();
     void renderTerrainGeneratorWindow();
+
+    std::string settingsFilename;
+    char terrainProfileName[32];
+
+    void loadTerrainSettings();
+    void saveTerrainSettings();
 };
 
 #endif //CG1_PROJECT_USERINTERFACE_H

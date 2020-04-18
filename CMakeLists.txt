@@ -35,6 +35,9 @@ include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/lib/stb")
 # Noise libraries
 include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/lib/noise")
 
+# JSON library
+include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/lib/json")
+
 # GLM
 include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/lib/glm")
 
@@ -89,7 +92,7 @@ add_executable(${CMAKE_PROJECT_NAME}
         include/cg/entities/components/LightComponent.h
         src/terrain/Terrain.cpp
         include/cg/terrain/Terrain.h
-        lib/noise/OpenSimplexNoise.h lib/noise/PerlinNoise.hpp src/terrain/Noise.cpp include/cg/terrain/Noise.h src/terrain/OpenSimplexNoise.cpp include/cg/terrain/OpenSimplexNoise.h src/terrain/PerlinNoise.cpp include/cg/terrain/PerlinNoise.h)
+        lib/noise/OpenSimplexNoise.h lib/noise/PerlinNoise.hpp src/terrain/Noise.cpp include/cg/terrain/Noise.h src/terrain/OpenSimplexNoise.cpp include/cg/terrain/OpenSimplexNoise.h src/terrain/PerlinNoise.cpp include/cg/terrain/PerlinNoise.h lib/json/json.hpp)
 
 target_link_libraries(${CMAKE_PROJECT_NAME}
     glfw

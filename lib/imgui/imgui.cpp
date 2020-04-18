@@ -809,7 +809,7 @@ CODE
 // Debug options
 #define IMGUI_DEBUG_NAV_SCORING     0   // Display navigation scoring preview when hovering items. Display last moving direction matches when holding CTRL
 #define IMGUI_DEBUG_NAV_RECTS       0   // Display the reference navigation rectangle for each window
-#define IMGUI_DEBUG_INI_SETTINGS    0   // Save additional comments in .ini file (particularly helps for Docking, but makes saving slower)
+#define IMGUI_DEBUG_INI_SETTINGS    0   // Save additional comments in .json file (particularly helps for Docking, but makes saving slower)
 
 // Visual Studio warnings
 #ifdef _MSC_VER
@@ -1035,7 +1035,7 @@ ImGuiIO::ImGuiIO()
     DisplaySize = ImVec2(-1.0f, -1.0f);
     DeltaTime = 1.0f/60.0f;
     IniSavingRate = 5.0f;
-    IniFilename = "imgui.ini";
+    IniFilename = "imgui.json";
     LogFilename = "imgui_log.txt";
     MouseDoubleClickTime = 0.30f;
     MouseDoubleClickMaxDist = 6.0f;
@@ -3829,7 +3829,7 @@ void ImGui::Initialize(ImGuiContext* context)
     ImGuiContext& g = *context;
     IM_ASSERT(!g.Initialized && !g.SettingsLoaded);
 
-    // Add .ini handle for ImGuiWindow type
+    // Add .json handle for ImGuiWindow type
     {
         ImGuiSettingsHandler ini_handler;
         ini_handler.TypeName = "Window";
@@ -3841,7 +3841,7 @@ void ImGui::Initialize(ImGuiContext* context)
     }
 
 #ifdef IMGUI_HAS_TABLE
-    // Add .ini handle for ImGuiTable type
+    // Add .json handle for ImGuiTable type
     {
         ImGuiSettingsHandler ini_handler;
         ini_handler.TypeName = "Table";
@@ -4781,7 +4781,7 @@ static ImGuiWindow* CreateNewWindow(const char* name, ImVec2 size, ImGuiWindowFl
     if (!(flags & ImGuiWindowFlags_NoSavedSettings))
         if (ImGuiWindowSettings* settings = ImGui::FindWindowSettings(window->ID))
         {
-            // Retrieve settings from .ini file
+            // Retrieve settings from .json file
             window->SettingsOffset = g.SettingsWindows.offset_from_ptr(settings);
             SetWindowConditionAllowFlags(window, ImGuiCond_FirstUseEver, false);
             window->Pos = ImVec2(settings->Pos.x, settings->Pos.y);
@@ -5320,7 +5320,7 @@ void ImGui::UpdateWindowParentAndRootLinks(ImGuiWindow* window, ImGuiWindowFlags
 // Push a new Dear ImGui window to add widgets to.
 // - A default window called "Debug" is automatically stacked at the beginning of every frame so you can use widgets without explicitly calling a Begin/End pair.
 // - Begin/End can be called multiple times during the frame with the same window name to append content.
-// - The window name is used as a unique identifier to preserve window information across frames (and save rudimentary information to the .ini file).
+// - The window name is used as a unique identifier to preserve window information across frames (and save rudimentary information to the .json file).
 //   You can use the "##" or "###" markers to use the same label with different id, or same id with different label. See documentation at the top of this file.
 // - Return false when window is collapsed, so you can early out in your code. You always need to call ImGui::End() even if false is returned.
 // - Passing 'bool* p_open' displays a Close button on the upper-right corner of the window, the pointed value will be set to false when the button is pressed.
@@ -9459,7 +9459,7 @@ ImGuiWindowSettings* ImGui::CreateNewWindowSettings(const char* name)
 
 #if !IMGUI_DEBUG_INI_SETTINGS
     // Skip to the "###" marker if any. We don't skip past to match the behavior of GetID()
-    // Preserve the full string when IMGUI_DEBUG_INI_SETTINGS is set to make .ini inspection easier.
+    // Preserve the full string when IMGUI_DEBUG_INI_SETTINGS is set to make .json inspection easier.
     if (const char* p = strstr(name, "###"))
         name = p;
 #endif
@@ -9511,7 +9511,7 @@ ImGuiSettingsHandler* ImGui::FindSettingsHandler(const char* type_name)
     return NULL;
 }
 
-// Zero-tolerance, no error reporting, cheap .ini parsing
+// Zero-tolerance, no error reporting, cheap .json parsing
 void ImGui::LoadIniSettingsFromMemory(const char* ini_data, size_t ini_size)
 {
     ImGuiContext& g = *GImGui;

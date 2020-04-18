@@ -1,8 +1,12 @@
 #include "cg/ui/UserInterface.h"
+#include <json.hpp>
+#include <fstream>
+
+using json = nlohmann::json;
 
 
 UserInterface::UserInterface(EntityManager *entityManager, GLContext *context)
-        : entityManager(entityManager), context(context) {
+        : entityManager(entityManager), context(context), settingsFilename("settings.json"), terrainProfileName("") {
     views = { "Perspective", "Top", "Side" };
     noiseFunctions = { "Open Simplex", "Perlin" };
 
@@ -119,6 +123,10 @@ void UserInterface::renderCameraInfoWindow() {
 void UserInterface::renderTerrainGeneratorWindow() {
     ImGui::Begin("Terrain Generator");
 
+    ImGui::InputText("Profile name", terrainProfileName, IM_ARRAYSIZE(terrainProfileName));
+
+    ImGui::Separator();
+
     if (ImGui::BeginCombo("Noise", currentNoise)) {
         for (int n = 0; n < noiseFunctions.size(); n++) {
             bool isSelected = currentNoise == noiseFunctions[n];
@@ -176,9 +184,6 @@ void UserInterface::renderTerrainGeneratorWindow() {
 
     double minRedistribution = 0.0;
     double maxRedistribution = 10.0;
-//    if (ImGui::SliderScalar("Redistribution", ImGuiDataType_Double, &settings.redistribution, &minRedistribution, &maxRedistribution,"%f", 1.0f)) {
-//        updateTerrain(terrain, settings);
-//    }
     if (ImGui::InputDouble("Redistribution", &settings.redistribution, 0.1, 0.5)) {
         updateTerrain(terrain, settings);
     }
@@ -189,10 +194,90 @@ void UserInterface::renderTerrainGeneratorWindow() {
         updateTerrain(terrain, settings);
     }
 
+    if (ImGui::Button("Load settings")) {
+        loadTerrainSettings();
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("Save settings")) {
+        saveTerrainSettings();
+    }
+
     ImGui::End();
 }
 
 void UserInterface::onUpdateTerrain(Terrain *terrain, std::function<bool(Terrain *, TerrainSettings& settings)> updateTerrain) {
     this->terrain = terrain;
     this->updateTerrain = updateTerrain;
+}
+
+void UserInterface::loadTerrainSettings() {
+    json jsonSettings;
+
+    std::ifstream settingsFile(settingsFilename.c_str());
+    if (settingsFile.is_open()) {
+        settingsFile >> jsonSettings;
+        settingsFile.close();
+    } else {
+        printf("Error: Failed to load \"%s\"\n", settingsFilename.c_str());
+        return;
+    }
+
+    if (!(jsonSettings.contains("terrain") && \
+            jsonSettings["terrain"].contains("profiles") && \
+            jsonSettings["terrain"]["profiles"].contains(terrainProfileName))) {
+        printf("No terrain profile with name: %s\n", terrainProfileName);
+        return;
+    }
+
+    auto profile = jsonSettings["terrain"]["profiles"][terrainProfileName];
+    settings.width = profile["width"];
+    settings.height = profile["height"];
+    settings.subdivisionWidth = profile["subdivisionWidth"];
+    settings.subdivisionHeight = profile["subdivisionHeight"];
+    settings.maxAmplitude = profile["maxAmplitude"];
+    settings.frequency = profile["frequency"];
+    settings.octaves = profile["octaves"];
+    settings.persistence = profile["persistence"];
+    settings.seed = profile["seed"];
+    settings.noiseType = profile["noiseType"];
+    settings.redistribution = profile["redistribution"];
+
+    updateTerrain(terrain, settings);
+
+    printf("Loaded terrain settings for profile \"%s\"\n", terrainProfileName);
+}
+
+void UserInterface::saveTerrainSettings() {
+    json jsonSettings;
+
+    std::ifstream settingsFile(settingsFilename.c_str());
+
+    if (settingsFile.is_open()) {
+        settingsFile >> jsonSettings;
+        settingsFile.close();
+    } else {
+        jsonSettings["terrain"] = {
+            {"profiles", {}}
+        };
+    }
+
+    auto profile = jsonSettings["terrain"]["profiles"][terrainProfileName];
+    profile["width"] = settings.width;
+    profile["height"] = settings.height;
+    profile["subdivisionWidth"] = settings.subdivisionWidth;
+    profile["subdivisionHeight"] = settings.subdivisionHeight;
+    profile["maxAmplitude"] = settings.maxAmplitude;
+    profile["frequency"] = settings.frequency;
+    profile["octaves"] = settings.octaves;
+    profile["persistence"] = settings.persistence;
+    profile["seed"] = settings.seed;
+    profile["noiseType"] = settings.noiseType;
+    profile["redistribution"] = settings.redistribution;
+
+    jsonSettings["terrain"]["profiles"][terrainProfileName] = profile;
+
+    std::ofstream outFile(settingsFilename);
+    outFile << std::setw(4) << jsonSettings << std::endl;
+
+    printf("Saved terrain settings to \"%s\"\n", settingsFilename.c_str());
 }
