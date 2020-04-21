@@ -1,6 +1,9 @@
 #include "cg/ui/UserInterface.h"
 #include <json.hpp>
 #include <fstream>
+#include <string>
+#include <iomanip>
+#include <filesystem>
 
 using json = nlohmann::json;
 
@@ -303,15 +306,23 @@ void UserInterface::saveTerrainSettings() {
 
 void UserInterface::loadTerrainProfiles() {
     availableProfiles.clear();
+    bool selectedProfile = false;
 
     json jsonSettings;
 
-    std::ifstream settingsFile(settingsFilename.c_str());
+    auto path = std::filesystem::absolute(settingsFilename);
+    std::ifstream settingsFile(path);
     if (settingsFile.is_open()) {
         settingsFile >> jsonSettings;
         settingsFile.close();
         for (auto& profile : jsonSettings["terrain"]["profiles"].items()) {
-            availableProfiles.push_back(profile.key());
+            std::string name = profile.key();
+            availableProfiles.push_back(name);
+            if (!selectedProfile) {
+                const char *nameStr = static_cast<const char *>(name.c_str());
+                strcpy(currentProfile, nameStr);
+                selectedProfile = true;
+            }
         }
     }
 }

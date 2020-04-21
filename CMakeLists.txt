@@ -26,6 +26,10 @@ if (NOT ${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     include_directories(${ASSIMP_INCLUDE_DIRS})
 endif()
 
+find_package(assimp CONFIG REQUIRED)
+#target_link_libraries(main PRIVATE assimp::assimp)
+include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/lib/assimp")
+
 # GLAD
 include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/lib/glad")
 
@@ -94,8 +98,9 @@ add_executable(${CMAKE_PROJECT_NAME}
         include/cg/terrain/Terrain.h
         lib/noise/OpenSimplexNoise.h lib/noise/PerlinNoise.hpp src/terrain/Noise.cpp include/cg/terrain/Noise.h src/terrain/OpenSimplexNoise.cpp include/cg/terrain/OpenSimplexNoise.h src/terrain/PerlinNoise.cpp include/cg/terrain/PerlinNoise.h lib/json/json.hpp include/cg/terrain/TestNoise.h)
 
-target_link_libraries(${CMAKE_PROJECT_NAME}
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     glfw
+    assimp::assimp
     ${PROJECT_LIBRARIES}
     ${GLFW_LIBRARIES}
     ${ASSIMP_LIBRARIES}

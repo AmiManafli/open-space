@@ -109,12 +109,19 @@ bool Terrain::update(TerrainSettings& settings) {
 
     // TODO: make more efficient
     this->vertices.clear();
-    for (auto &v : vertices) {
-        this->vertices.emplace_back(v);
+    this->vertices.resize(vertices.size());
+
+    for (int i = 0; i < vertices.size(); i++) {
+        this->vertices[i] = vertices[i];
     }
+
     this->indices.clear();
-    for (auto &i : indices) {
-        this->indices.emplace_back(i);
+    this->indices.resize(indices.size());
+//    for (auto i : indices) {
+//        this->indices.push_back(i);
+//    }
+    for (int i = 0; i < indices.size(); i++) {
+        this->indices[i] = indices[i];
     }
 
     // Update y-values with noise function
@@ -123,15 +130,15 @@ bool Terrain::update(TerrainSettings& settings) {
 
     setupBuffers();
 
-    printf("Terrain is now size %dx%d with %dx%d subdivisions.\n", width, height, subdivisionsWidth, subdivisionsHeight);
+    printf("Terrain is now size %dx%d with %dx%d subdivisions and %llu vertices.\n", width, height, subdivisionsWidth, subdivisionsHeight, this->vertices.size());
 
     return true;
 }
 
 void Terrain::updateHeights(TerrainSettings& settings) {
     // Update vertices
-    auto subWidth = subdivisionsWidth + 2;
-    auto subHeight = subdivisionsHeight + 2;
+    auto subWidth = subdivisionsWidth + 1;
+    auto subHeight = subdivisionsHeight + 1;
     for (int row = 0; row < subHeight; row++) {
         for (int col = 0; col < subWidth; col++) {
             auto index = row * subWidth + col;
@@ -148,14 +155,21 @@ void Terrain::updateHeights(TerrainSettings& settings) {
 }
 
 void Terrain::updateNormals(TerrainSettings &settings) {
-    auto subWidth = subdivisionsWidth + 2;
-    auto subHeight = subdivisionsHeight + 2;
+    auto subWidth = subdivisionsWidth + 1;
+    auto subHeight = subdivisionsHeight + 1;
     for (int row = 0; row < subHeight; row++) {
         for (int col = 0; col < subWidth; col++) {
             auto index = row * subWidth + col;
             auto indexRight = row * subWidth + col + 1;
             auto indexDown = (row + 1) * subWidth + col;
 
+            if (indexDown >= subWidth * subHeight) {
+                vertices[index].normal = glm::vec3(0, 1, 0);
+                continue;
+            } else if (indexDown >= subWidth * subHeight) {
+                vertices[index].normal = glm::vec3(0, 1, 0);
+                continue;
+            }
             float dx = (vertices[indexRight].position.y - vertices[index].position.y) / (width / static_cast<float>(subWidth));
             float dz = (vertices[indexDown].position.y - vertices[index].position.y) / (height / static_cast<float>(subHeight));
 
