@@ -1,6 +1,6 @@
 #include "IcoSphere.h"
 
-IcoSphere::IcoSphere(double radius, ShaderProgram *shaderProgram) : radius(radius) {
+IcoSphere::IcoSphere(double radius, int subdivisions, ShaderProgram *shaderProgram) : radius(radius), subdivisions(subdivisions) {
     this->shaderProgram = shaderProgram;
     this->mode = GL_TRIANGLES;
     this->indexed = true;
@@ -33,9 +33,12 @@ void IcoSphere::generateMesh() {
         double y = radius * sin(azimuth);
         double xz = radius * cos(azimuth);
 
+        printf("y = %f\n", y);
+
         Vertex upper{};
-        Vertex lower{};
         upper.position = glm::vec3(xz * cos(inclinationUpper), y, xz * sin(inclinationUpper));
+
+        Vertex lower{};
         lower.position = glm::vec3(xz * cos(inclinationLower), -y, xz * sin(inclinationLower));
 
         vertices[iUpper] = upper;
@@ -67,4 +70,7 @@ void IcoSphere::generateMesh() {
 
     // Bottom vertex
     vertices[11] = Vertex { {0.0f, -radius, 0.0f} };
+
+    // Update normals
+    
 }

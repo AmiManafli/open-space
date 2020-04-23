@@ -7,10 +7,11 @@
 
 class IcoSphere : public MeshComponent {
 public:
-    IcoSphere(double radius, ShaderProgram *shaderProgram);
+    IcoSphere(double radius, int subdivisions, ShaderProgram *shaderProgram);
 
 private:
     double radius;
+    int subdivisions;
 
     void generateMesh();
 };
