@@ -3,6 +3,7 @@
 #include <cg/terrain/Terrain.h>
 #include <cg/terrain/OpenSimplexNoise.h>
 #include <cg/terrain/PerlinNoise.h>
+#include <cg/IcoSphere.h>
 #include "cg/Application.h"
 
 bool onUpdateTerrain(Terrain *terrain, TerrainSettings& settings) {
@@ -94,15 +95,21 @@ void Application::init() {
     createGrid(62, 62, false);
 
     auto ui = renderSystem->getUserInterface();
-    auto terrainMesh = Terrain::generate(10, 10, meshWithLightShaderProgram, GL_TRIANGLES, NoiseType::OpenSimplex);
-    terrainMesh->setupBuffers();
 
-    ui->onUpdateTerrain(terrainMesh, onUpdateTerrain);
-
-    auto terrain = EntityBuilder::create()
-        ->withMesh(terrainMesh)
-        ->withTransform(0, 1.01, 0)
+    auto sphere = EntityBuilder::create()
+        ->withMesh(new IcoSphere(1.0, meshShaderProgram))
+        ->withTransform(0, 0, 0)
         ->build(entityManager);
+
+//    auto terrainMesh = Terrain::generate(10, 10, meshWithLightShaderProgram, GL_TRIANGLES, NoiseType::OpenSimplex);
+//    terrainMesh->setupBuffers();
+//
+//    ui->onUpdateTerrain(terrainMesh, onUpdateTerrain);
+//
+//    auto terrain = EntityBuilder::create()
+//        ->withMesh(terrainMesh)
+//        ->withTransform(0, 1.01, 0)
+//        ->build(entityManager);
 
 //	auto airplane = EntityBuilder::create()
 //		->withMesh("./assets/models/airplaneUdemy.obj", meshTextureShaderProgram)
