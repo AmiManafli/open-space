@@ -97,7 +97,7 @@ void Application::init() {
     auto ui = renderSystem->getUserInterface();
 
     auto sphere = EntityBuilder::create()
-        ->withMesh(new IcoSphere(1.0, meshShaderProgram))
+        ->withMesh(new IcoSphere(2.0, meshShaderProgram))
         ->withTransform(0, 0, 0)
         ->build(entityManager);
 

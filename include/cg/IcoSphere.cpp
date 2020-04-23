@@ -46,7 +46,15 @@ void IcoSphere::generateMesh() {
         indices.emplace_back(iUpper);
         indices.emplace_back(iUpperNext);
 
-        // Middle row
+        // Upper mid row
+        indices.emplace_back(iUpper);
+        indices.emplace_back(iUpperNext);
+        indices.emplace_back(iLower);
+
+        // Lower mid row
+        indices.emplace_back(iLower);
+        indices.emplace_back(iLowerNext);
+        indices.emplace_back(iUpperNext);
 
         // Lower row
         indices.emplace_back(11);
