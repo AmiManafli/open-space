@@ -104,12 +104,15 @@ void Application::init() {
 		->withMass(10)
 		->build(entityManager);
 
+	auto planetVelocity = new VelocityComponent();
+//	planetVelocity->position = glm::vec3(0, 0, -0.5);
+//	planetVelocity->rotation = glm::vec3(0, -0.5, 0);
     auto planet = EntityBuilder::create()
         ->withMesh("./assets/models/ico-sphere.dae", meshShaderProgram)
-        ->withTransform(-4, 2, 0)
+        ->withTransform(-7, 2, 0)
 //        ->withScale(0.2)
         ->withMass(1.0)
-        ->withVelocity(new VelocityComponent())
+        ->withVelocity(planetVelocity)
         ->build(entityManager);
 
 //    auto sphere = EntityBuilder::create()
