@@ -1,5 +1,8 @@
 #include "IcoSphere.h"
 
+const double PI = 3.14159265358979323846;
+
+
 IcoSphere::IcoSphere(double radius, int subdivisions, ShaderProgram *shaderProgram) : radius(radius), subdivisions(subdivisions) {
     this->shaderProgram = shaderProgram;
     this->mode = GL_TRIANGLES;
@@ -11,7 +14,7 @@ IcoSphere::IcoSphere(double radius, int subdivisions, ShaderProgram *shaderProgr
 }
 
 void IcoSphere::generateMesh() {
-    const double inclination = M_PI / 180.0 * 72.0;
+    const double inclination = PI / 180.0 * 72.0;
     const double azimuth = atan(0.5);
     const int vertexCount = 12;
 
@@ -21,8 +24,8 @@ void IcoSphere::generateMesh() {
     vertices[0] = Vertex { {0.0f, radius, 0.0f} };
 
     // Middle vertices
-    double inclinationUpper = -M_PI / 2.0 - inclination / 2.0;  // -126 degrees
-    double inclinationLower = -M_PI / 2.0;                      // -90 degrees
+    double inclinationUpper = -PI / 2.0 - inclination / 2.0;  // -126 degrees
+    double inclinationLower = -PI / 2.0;                      // -90 degrees
 
     for (int i = 1; i <= 5; i++) {
         int iUpper = i;
