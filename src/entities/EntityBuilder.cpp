@@ -26,6 +26,10 @@ Entity *EntityBuilder::build(EntityManager *entityManager) {
         entityManager->addLightComponent(entity->id, lightComponent);
     }
 
+    if (massComponent != nullptr) {
+        entityManager->addMassComponent(entity->id, massComponent);
+    }
+
     return entity;
 }
 
@@ -121,5 +125,17 @@ EntityBuilder *EntityBuilder::withDirectionalLight(glm::vec3 direction, glm::vec
         throw std::runtime_error("entity already has a light component");
     }
     lightComponent = LightComponent::createDirectionalLight(direction, ambient, diffuse, specular);
+    return this;
+}
+
+EntityBuilder* EntityBuilder::withMass(double mass) {
+    return withMass(new MassComponent(mass));
+}
+
+EntityBuilder* EntityBuilder::withMass(MassComponent *component) {
+    if (massComponent != nullptr) {
+        throw std::runtime_error("entity already has a mass");
+    }
+    massComponent = component;
     return this;
 }

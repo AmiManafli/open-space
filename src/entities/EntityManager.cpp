@@ -60,6 +60,14 @@ LightComponent *EntityManager::getLightComponent(uint32_t entityId) {
     return getComponent(lightComponents, entityId);
 }
 
+void EntityManager::addMassComponent(uint32_t entityId, MassComponent *component) {
+    massComponents.emplace(entityId, component);
+}
+
+MassComponent *EntityManager::getMassComponent(uint32_t entityId) {
+    return getComponent(massComponents, entityId);
+}
+
 template<class T>
 T *EntityManager::getComponent(std::unordered_map<uint32_t, T *> map, uint32_t entityId) {
     try {

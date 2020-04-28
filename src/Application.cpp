@@ -96,10 +96,23 @@ void Application::init() {
 
     auto ui = renderSystem->getUserInterface();
 
-    auto sphere = EntityBuilder::create()
-        ->withMesh(new IcoSphere(1.0, 0, meshShaderProgram))
-        ->withTransform(0, 0, 0)
+	auto sun = EntityBuilder::create()
+		->withMesh("./assets/models/ico-sphere.dae", meshShaderProgram)
+		->withTransform(0, 2, 0)
+		->withMass(10)
+		->build(entityManager);
+
+    auto planet = EntityBuilder::create()
+        ->withMesh("./assets/models/ico-sphere.dae", meshShaderProgram)
+        ->withTransform(-4, 2, 0)
+        ->withScale(0.2)
+        ->withMass(1.0)
         ->build(entityManager);
+
+//    auto sphere = EntityBuilder::create()
+//        ->withMesh(new IcoSphere(1.0, 0, meshShaderProgram))
+//        ->withTransform(0, 0, 0)
+//        ->build(entityManager);
 
 //    auto terrainMesh = Terrain::generate(10, 10, meshWithLightShaderProgram, GL_TRIANGLES, NoiseType::OpenSimplex);
 //    terrainMesh->setupBuffers();
