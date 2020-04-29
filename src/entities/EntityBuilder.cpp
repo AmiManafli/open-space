@@ -144,8 +144,8 @@ EntityBuilder* EntityBuilder::withMass(MassComponent *component) {
     return this;
 }
 
-EntityBuilder* EntityBuilder::withOrbit(Entity* parent, double semiMajorAxis, double semiMinorAxis) {
-    return withOrbit(new OrbitComponent(parent, semiMajorAxis, semiMinorAxis));
+EntityBuilder* EntityBuilder::withOrbit(glm::vec3 parentPosition, double semiMajorAxis, double semiMinorAxis, double speed, double startTheta) {
+    return withOrbit(new OrbitComponent(parentPosition, semiMajorAxis, semiMinorAxis, speed, startTheta));
 }
 
 EntityBuilder* EntityBuilder::withOrbit(OrbitComponent *component) {
@@ -153,5 +153,10 @@ EntityBuilder* EntityBuilder::withOrbit(OrbitComponent *component) {
         throw std::runtime_error("entity already has an orbit");
     }
     orbitComponent = component;
+
+//    transformComponent->position += orbitComponent->startPosition;
+//
+//    printf("Start position: %s\n", glm::to_string(transformComponent->position).c_str());
+
     return this;
 }

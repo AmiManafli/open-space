@@ -1,7 +1,5 @@
 #include "IcoSphere.h"
 
-const double PI = 3.14159265358979323846;
-
 
 IcoSphere::IcoSphere(double radius, int subdivisions, ShaderProgram *shaderProgram) : radius(radius), subdivisions(subdivisions) {
     this->shaderProgram = shaderProgram;

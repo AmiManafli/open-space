@@ -1,0 +1,6 @@
+#ifndef CG1_PROJECT_MATH_H
+#define CG1_PROJECT_MATH_H
+
+const double PI = 3.14159265358979323846;
+
+#endif //CG1_PROJECT_MATH_H

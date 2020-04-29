@@ -101,24 +101,47 @@ void Application::init() {
 
     auto ui = renderSystem->getUserInterface();
 
+    auto sunPosition = glm::vec3(0, 0, 0);
     auto sunVelocity = new VelocityComponent();
     sunVelocity->rotation = glm::vec3(0, -0.4, 0);
 	auto sun = EntityBuilder::create()
 		->withMesh("./assets/models/ico-sphere.dae", meshShaderProgram)
-		->withTransform(0, 0, 0)
+		->withTransform(sunPosition)
 		->withVelocity(sunVelocity)
 		->build(entityManager);
 
-	auto planetScale = 0.4;
+	auto planetScale = 0.3;
 	auto planetVelocity = new VelocityComponent();
-	planetVelocity->rotation = glm::vec3(0, -3.0, 0);
-    auto planet = EntityBuilder::create()
+	planetVelocity->rotation = glm::vec3(0, -2.5, 0);
+    auto planet1 = EntityBuilder::create()
         ->withMesh("./assets/models/ico-sphere.dae", meshShaderProgram)
-        ->withTransform(3, 0, 0)
+        ->withTransform(0, 0, 0)
         ->withScale(planetScale)
-        ->withOrbit(sun, 3, 3)
+        ->withOrbit(sunPosition, 1.5, 1.5, 1.2, 0.0)
         ->withVelocity(planetVelocity)
         ->build(entityManager);
+
+    planetScale = 0.7;
+    planetVelocity = new VelocityComponent();
+    planetVelocity->rotation = glm::vec3(0, -1.8, 0);
+    auto planet2 = EntityBuilder::create()
+            ->withMesh("./assets/models/ico-sphere.dae", meshShaderProgram)
+            ->withTransform(0, 0, 0)
+            ->withScale(planetScale)
+            ->withOrbit(sunPosition, 4.0, 4.0, 0.8, PI / 3.0)
+            ->withVelocity(planetVelocity)
+            ->build(entityManager);
+
+    planetScale = 0.4;
+    planetVelocity = new VelocityComponent();
+    planetVelocity->rotation = glm::vec3(0, -1.2, 0);
+    auto planet3 = EntityBuilder::create()
+            ->withMesh("./assets/models/ico-sphere.dae", meshShaderProgram)
+            ->withTransform(0, 0, 0)
+            ->withScale(planetScale)
+            ->withOrbit(sunPosition, 7.0, 7.0, 1.0, 3 * PI / 4.0)
+            ->withVelocity(planetVelocity)
+            ->build(entityManager);
 
 //    auto sphere = EntityBuilder::create()
 //        ->withMesh(new IcoSphere(1.0, 0, meshShaderProgram))

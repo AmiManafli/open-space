@@ -24,12 +24,12 @@ void MovementSystem::update() {
             transform->move(translation * static_cast<float>(context->getDeltaTime()));
 
             if (velocity->rotation.has_value()) {
-                auto rotation = velocity->rotation.value() * (float) context->getDeltaTime();
+                auto rotation = velocity->rotation.value() * static_cast<float>(context->getDeltaTime());
                 transform->rotate(rotation);
             }
 
             if (velocity->scaling.has_value()) {
-                auto scaling = velocity->scaling.value() * (float) context->getDeltaTime();
+                auto scaling = velocity->scaling.value() * static_cast<float>(context->getDeltaTime());
                 transform->scale(glm::normalize(scaling));
             }
 

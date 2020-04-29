@@ -5,22 +5,27 @@
 
 class OrbitComponent {
 public:
-    OrbitComponent(Entity *parent, double semiMajorAxis, double semiMinorAxis);
+    OrbitComponent(glm::vec3 parentPosition, double semiMajorAxis, double semiMinorAxis, double speed, double startTheta);
 
     double semiMajorAxis;
     double semiMinorAxis;
 
+    double startTheta;
     double theta;
+
+    double speed;
 
     double eccentricity;
     double focusCord;
     double width;
     double height;
 
+    glm::vec2 startPosition;
+
     double calculateRadius(double theta);
     glm::vec2 getPosition();
 
-    void update(double semiMajorAxis, double semiMinorAxis);
+    void update(glm::vec3 parentPosition, double semiMajorAxis, double semiMinorAxis, double speed);
 };
 
 #endif //CG1_PROJECT_ORBITCOMPONENT_H

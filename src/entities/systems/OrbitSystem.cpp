@@ -17,12 +17,12 @@ void OrbitSystem::update() {
         auto transform = entityManager->getTransformComponent(entityId);
 
         auto orbitPosition = orbit->getPosition();
-        printf("Orbit pos: %s\n", glm::to_string(orbitPosition).c_str());
-        auto position = glm::vec3(orbitPosition.x, transform->position.y, orbitPosition.y);
+//        printf("Orbit pos: %s\n", glm::to_string(orbitPosition).c_str());
+        auto position = glm::vec3(orbitPosition.x, 0, orbitPosition.y);
 
         auto diff = position - transform->position;
         transform->move(diff);
 
-        orbit->theta += 0.5 * context->getDeltaTime();
+        orbit->theta += orbit->speed * context->getDeltaTime();
     }
 }
