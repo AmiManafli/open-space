@@ -102,21 +102,22 @@ void Application::init() {
     auto ui = renderSystem->getUserInterface();
 
     auto sunVelocity = new VelocityComponent();
-    sunVelocity->rotation = glm::vec3(0, -0.5, 0);
+    sunVelocity->rotation = glm::vec3(0, -0.4, 0);
 	auto sun = EntityBuilder::create()
 		->withMesh("./assets/models/ico-sphere.dae", meshShaderProgram)
 		->withTransform(0, 0, 0)
 		->withVelocity(sunVelocity)
 		->build(entityManager);
 
+	auto planetScale = 0.4;
 	auto planetVelocity = new VelocityComponent();
-	planetVelocity->rotation = glm::vec3(0, -0.5, 0);
+	planetVelocity->rotation = glm::vec3(0, -3.0, 0);
     auto planet = EntityBuilder::create()
         ->withMesh("./assets/models/ico-sphere.dae", meshShaderProgram)
         ->withTransform(3, 0, 0)
-//        ->withScale(0.2)
+        ->withScale(planetScale)
         ->withOrbit(sun, 3, 3)
-//        ->withVelocity(planetVelocity)
+        ->withVelocity(planetVelocity)
         ->build(entityManager);
 
 //    auto sphere = EntityBuilder::create()

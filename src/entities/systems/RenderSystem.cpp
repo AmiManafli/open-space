@@ -60,9 +60,12 @@ void RenderSystem::renderEntities() {
         }
 
         // Render meshes
+        if (entityId == 6) {
+            printf("%d, Position: %s\n", entityId, glm::to_string(transform->position).c_str());
+        }
         for (auto it = meshes.first; it != meshes.second; it++) {
             triangleCount += (double) it->second->indices.size() / 3.0;
-            renderMesh(it->second, it->second->shaderProgram, transform->model);
+            renderMesh(it->second, it->second->shaderProgram, transform->getModel());
         }
 
         if (highlight) {
@@ -70,7 +73,7 @@ void RenderSystem::renderEntities() {
             glStencilMask(0x00); // disable writing to the stencil buffer
             glDisable(GL_DEPTH_TEST);
 
-            auto highlightModel = highlight->getModel(transform->model);
+            auto highlightModel = highlight->getModel(transform->getModel());
             for (auto it = meshes.first; it != meshes.second; it++) {
                 renderMesh(it->second, highlight->shaderProgram, highlightModel);
             }

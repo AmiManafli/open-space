@@ -1,12 +1,12 @@
 #include <cg/entities/components/TransformComponent.h>
 
 TransformComponent::TransformComponent()
-        : model(glm::mat4(1.0f)), position(glm::vec3(0, 0, 0)), scaling(glm::vec3(0, 0, 0)), rotation(glm::vec3(0, 0, 0)) {
+        : position(glm::vec3(0, 0, 0)), scaling(glm::vec3(1, 1, 1)),
+          rotation(glm::vec3(0, 0, 0)) {
 }
 
 TransformComponent::TransformComponent(glm::vec3 position) : TransformComponent() {
     this->position = position;
-    model = glm::translate(glm::mat4(1.0f), position);
 }
 
 void TransformComponent::scale(float factor) {
@@ -15,8 +15,7 @@ void TransformComponent::scale(float factor) {
 }
 
 void TransformComponent::scale(glm::vec3 scaling) {
-    this->scaling += scaling;
-    model = glm::scale(model, scaling);
+    this->scaling *= scaling;
 }
 
 void TransformComponent::move(float x, float y, float z) {
@@ -25,11 +24,26 @@ void TransformComponent::move(float x, float y, float z) {
 
 void TransformComponent::move(glm::vec3 diff) {
     position += diff;
-    model = glm::translate(model, diff);
 }
 
-void TransformComponent::rotate(float angle, glm::vec3 axis) {
-    rotation += axis * angle;
-    model = glm::rotate(model, angle, axis);
+void TransformComponent::rotate(glm::vec3 angles) {
+    rotation += angles;
 }
 
+glm::mat4 TransformComponent::getModel() {
+    auto model = glm::translate(glm::mat4(1.0), position);
+
+    if (rotation.x != 0.0f) {
+        model = glm::rotate(model, rotation.x, glm::vec3(1, 0, 0));
+    }
+    if (rotation.y != 0.0f) {
+        model = glm::rotate(model, rotation.y, glm::vec3(0, 1, 0));
+    }
+    if (rotation.z != 0.0f) {
+        model = glm::rotate(model, rotation.z, glm::vec3(0, 0, 1));
+    }
+
+    model = glm::scale(model, scaling);
+
+    return model;
+}

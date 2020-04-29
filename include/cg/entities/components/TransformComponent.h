@@ -15,13 +15,13 @@ public:
     void scale(float factor);
     void scale(glm::vec3 scaling);
 
-    void rotate(float angle, glm::vec3 axis);
+    void rotate(glm::vec3 angles);
 
     glm::vec3 position;
     glm::vec3 scaling;
     glm::vec3 rotation;
 
-    glm::mat4 model;
+    glm::mat4 getModel();
 };
 
 #endif //CG1_PROJECT_TRANSFORMCOMPONENT_H

@@ -19,14 +19,13 @@ void MovementSystem::update() {
         if (velocity && transform) {
             auto translation = velocity->position.has_value() ? velocity->position.value() : glm::vec3(0);
             if (velocity->gravity.has_value()) {
-                printf("Gravity (movement): %s\n", glm::to_string(velocity->gravity.value()).c_str());
                 translation -= velocity->gravity.value();
             }
             transform->move(translation * static_cast<float>(context->getDeltaTime()));
 
             if (velocity->rotation.has_value()) {
                 auto rotation = velocity->rotation.value() * (float) context->getDeltaTime();
-                transform->rotate(glm::length(rotation), glm::normalize(rotation));
+                transform->rotate(rotation);
             }
 
             if (velocity->scaling.has_value()) {
