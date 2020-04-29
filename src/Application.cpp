@@ -4,6 +4,7 @@
 #include <cg/terrain/OpenSimplexNoise.h>
 #include <cg/terrain/PerlinNoise.h>
 #include <cg/IcoSphere.h>
+#include <cg/entities/components/OrbitComponent.h>
 #include "cg/Application.h"
 
 bool onUpdateTerrain(Terrain *terrain, TerrainSettings& settings) {
@@ -98,20 +99,22 @@ void Application::init() {
 
     auto ui = renderSystem->getUserInterface();
 
+    auto sunVelocity = new VelocityComponent();
+    sunVelocity->rotation = glm::vec3(0, -0.5, 0);
 	auto sun = EntityBuilder::create()
 		->withMesh("./assets/models/ico-sphere.dae", meshShaderProgram)
 		->withTransform(0, 2, 0)
-		->withMass(10)
+		->withVelocity(sunVelocity)
 		->build(entityManager);
 
+	auto orbit = new OrbitComponent(sun, 3, 3);
+
 	auto planetVelocity = new VelocityComponent();
-//	planetVelocity->position = glm::vec3(0, 0, -0.5);
-//	planetVelocity->rotation = glm::vec3(0, -0.5, 0);
+	planetVelocity->rotation = glm::vec3(0, -0.5, 0);
     auto planet = EntityBuilder::create()
         ->withMesh("./assets/models/ico-sphere.dae", meshShaderProgram)
-        ->withTransform(-7, 2, 0)
-//        ->withScale(0.2)
-        ->withMass(1.0)
+        ->withTransform(2, 2, 0)
+        ->withScale(0.2)
         ->withVelocity(planetVelocity)
         ->build(entityManager);
 
@@ -235,7 +238,7 @@ Entity* Application::createGrid(int width, int height, bool showYAxis) {
     }
 
     return EntityBuilder::create()
-        ->withTransform(0, 1, 0)
+        ->withTransform(0, 0, 0)
         ->withMesh(vertices, indices, textures, gridShaderProgram, GL_LINES)
         ->build(entityManager);
 }

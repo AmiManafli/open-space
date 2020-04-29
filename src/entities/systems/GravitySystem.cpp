@@ -1,4 +1,4 @@
-#include "GravitySystem.h"
+#include "cg/entities/systems/GravitySystem.h"
 
 GravitySystem::GravitySystem(EntityManager *entityManager) : System(entityManager) {
 }
@@ -30,12 +30,16 @@ void GravitySystem::update() {
             auto length = glm::length(distance);
             auto unit = glm::normalize(distance);
 
-            auto radius = 1.8;
+            printf("Length: %f\n", length);
+
+            auto radius = 0.0001;
             if (length < radius) {
                 velocity->gravity = glm::vec3(0, 0, 0);
             } else {
-                const double gravitationalConstant = 1.0;
+                const double gravitationalConstant = 0.1;
                 auto force = static_cast<float>(gravitationalConstant * mass->mass * sunMass->mass) * unit / glm::pow(length, 2);
+                printf("Position (m: %f): %s\n", mass->mass, glm::to_string(transform->position).c_str());
+                printf("Force: %s\n", glm::to_string(force).c_str());
                 velocity->gravity = force;
             }
         }
