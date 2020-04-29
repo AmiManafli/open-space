@@ -20,10 +20,11 @@ public:
     double width;
     double height;
 
+    glm::vec3 parentPosition;
     glm::vec2 startPosition;
 
     double calculateRadius(double theta);
-    glm::vec2 getPosition();
+    glm::vec3 getPosition();
 
     void update(glm::vec3 parentPosition, double semiMajorAxis, double semiMinorAxis, double speed);
 };

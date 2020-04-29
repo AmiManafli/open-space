@@ -101,7 +101,7 @@ void Application::init() {
 
     auto ui = renderSystem->getUserInterface();
 
-    auto sunPosition = glm::vec3(0, 0, 0);
+    auto sunPosition = glm::vec3(0, 2, 0);
     auto sunVelocity = new VelocityComponent();
     sunVelocity->rotation = glm::vec3(0, -0.4, 0);
 	auto sun = EntityBuilder::create()

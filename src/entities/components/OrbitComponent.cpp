@@ -3,7 +3,7 @@
 #include "cg/entities/components/OrbitComponent.h"
 
 OrbitComponent::OrbitComponent(glm::vec3 parentPosition, double semiMajorAxis, double semiMinorAxis, double speed, double startTheta)
-        : startTheta(startTheta) {
+        : parentPosition(parentPosition), startTheta(startTheta) {
     update(parentPosition, semiMajorAxis, semiMinorAxis, speed);
 }
 
@@ -25,10 +25,12 @@ void OrbitComponent::update(glm::vec3 parentPosition, double semiMajorAxis, doub
     printf("Orbit:\n  width: %f\n  height: %f\n  eccentricity: %f\n\n", width, height, eccentricity);
 }
 
-glm::vec2 OrbitComponent::getPosition() {
+glm::vec3 OrbitComponent::getPosition() {
     auto radius = calculateRadius(theta);
 
-    return startPosition + glm::vec2(radius * cos(theta), radius * sin(theta));
+    auto position = startPosition + glm::vec2(radius * cos(theta), radius * sin(theta));
+
+    return glm::vec3(position.x, parentPosition.y, position.y);
 }
 
 double OrbitComponent::calculateRadius(double theta) {
