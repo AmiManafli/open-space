@@ -43,6 +43,8 @@ public:
     Entity *topCamera = nullptr;
     Entity *sideCamera = nullptr;
 
+    double startTime;
+
 private:
     EntityManager *entityManager;
     const std::string title;

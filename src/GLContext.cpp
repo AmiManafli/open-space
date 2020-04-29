@@ -44,7 +44,8 @@ void GLContext::init() {
         throw std::runtime_error("failed to initialize GLAD");
     }
 
-    lastTime = glfwGetTime();
+    startTime = glfwGetTime();
+    lastTime = startTime;
     lastFrameTime = lastTime;
     frameCount = 0;
     deltaTime = 0;

@@ -36,6 +36,9 @@ public:
     EntityBuilder* withMass(double mass);
     EntityBuilder* withMass(MassComponent *component);
 
+    EntityBuilder* withOrbit(Entity* parent, double semiMajorAxis, double semiMinorAxis);
+    EntityBuilder* withOrbit(OrbitComponent *component);
+
     Entity* build(EntityManager *entityManager);
     void destroy();
 
@@ -47,6 +50,7 @@ private:
     VelocityComponent *velocityComponent = nullptr;
     LightComponent *lightComponent = nullptr;
     MassComponent *massComponent = nullptr;
+    OrbitComponent *orbitComponent = nullptr;
 };
 
 #endif //CG1_PROJECT_ENTITYBUILDER_H

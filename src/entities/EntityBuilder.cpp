@@ -30,6 +30,10 @@ Entity *EntityBuilder::build(EntityManager *entityManager) {
         entityManager->addMassComponent(entity->id, massComponent);
     }
 
+    if (orbitComponent != nullptr) {
+        entityManager->addOrbitComponent(entity->id, orbitComponent);
+    }
+
     return entity;
 }
 
@@ -137,5 +141,17 @@ EntityBuilder* EntityBuilder::withMass(MassComponent *component) {
         throw std::runtime_error("entity already has a mass");
     }
     massComponent = component;
+    return this;
+}
+
+EntityBuilder* EntityBuilder::withOrbit(Entity* parent, double semiMajorAxis, double semiMinorAxis) {
+    return withOrbit(new OrbitComponent(parent, semiMajorAxis, semiMinorAxis));
+}
+
+EntityBuilder* EntityBuilder::withOrbit(OrbitComponent *component) {
+    if (orbitComponent != nullptr) {
+        throw std::runtime_error("entity already has an orbit");
+    }
+    orbitComponent = component;
     return this;
 }

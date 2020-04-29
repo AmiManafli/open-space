@@ -10,13 +10,15 @@ public:
     double semiMajorAxis;
     double semiMinorAxis;
 
+    double theta;
+
     double eccentricity;
     double focusCord;
     double width;
     double height;
 
     double calculateRadius(double theta);
-    glm::vec2 position(double theta);
+    glm::vec2 getPosition();
 
     void update(double semiMajorAxis, double semiMinorAxis);
 };

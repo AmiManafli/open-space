@@ -21,6 +21,7 @@ Application::Application(std::string title, int width, int height) {
     inputSystem = new InputSystem(entityManager, context);
     movementSystem = new MovementSystem(entityManager, context);
     gravitySystem = new GravitySystem(entityManager);
+    orbitSystem = new OrbitSystem(entityManager, context);
 
     int instanceRows = 20;
     int instanceCols = 20;
@@ -87,6 +88,7 @@ void Application::init() {
     inputSystem->init();
     movementSystem->init();
     gravitySystem->init();
+    orbitSystem->init();
 
     auto lightPosition = glm::vec3(0, 20, 20);
     light = EntityBuilder::create()
@@ -103,19 +105,18 @@ void Application::init() {
     sunVelocity->rotation = glm::vec3(0, -0.5, 0);
 	auto sun = EntityBuilder::create()
 		->withMesh("./assets/models/ico-sphere.dae", meshShaderProgram)
-		->withTransform(0, 2, 0)
-		->withVelocity(sunVelocity)
+		->withTransform(0, 0, 0)
+//		->withVelocity(sunVelocity)
 		->build(entityManager);
-
-	auto orbit = new OrbitComponent(sun, 3, 3);
 
 	auto planetVelocity = new VelocityComponent();
 	planetVelocity->rotation = glm::vec3(0, -0.5, 0);
     auto planet = EntityBuilder::create()
         ->withMesh("./assets/models/ico-sphere.dae", meshShaderProgram)
-        ->withTransform(2, 2, 0)
-        ->withScale(0.2)
-        ->withVelocity(planetVelocity)
+        ->withTransform(3, 0, 0)
+//        ->withScale(0.2)
+        ->withOrbit(sun, 3, 3)
+//        ->withVelocity(planetVelocity)
         ->build(entityManager);
 
 //    auto sphere = EntityBuilder::create()
@@ -171,6 +172,7 @@ void Application::run() {
 
         // Process systems
         gravitySystem->update();
+        orbitSystem->update();
         inputSystem->update();
         movementSystem->update();
         renderSystem->update();

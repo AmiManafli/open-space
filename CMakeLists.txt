@@ -98,7 +98,7 @@ add_executable(${CMAKE_PROJECT_NAME}
         include/cg/entities/components/LightComponent.h
         src/terrain/Terrain.cpp
         include/cg/terrain/Terrain.h
-        lib/noise/OpenSimplexNoise.h lib/noise/PerlinNoise.hpp src/terrain/Noise.cpp include/cg/terrain/Noise.h src/terrain/OpenSimplexNoise.cpp include/cg/terrain/OpenSimplexNoise.h src/terrain/PerlinNoise.cpp include/cg/terrain/PerlinNoise.h lib/json/json.hpp include/cg/terrain/TestNoise.h include/cg/IcoSphere.cpp include/cg/IcoSphere.h src/entities/components/MassComponent.cpp include/cg/entities/components/MassComponent.h src/entities/systems/GravitySystem.cpp include/cg/entities/systems/GravitySystem.h src/entities/components/OrbitComponent.cpp include/cg/entities/components/OrbitComponent.h)
+        lib/noise/OpenSimplexNoise.h lib/noise/PerlinNoise.hpp src/terrain/Noise.cpp include/cg/terrain/Noise.h src/terrain/OpenSimplexNoise.cpp include/cg/terrain/OpenSimplexNoise.h src/terrain/PerlinNoise.cpp include/cg/terrain/PerlinNoise.h lib/json/json.hpp include/cg/terrain/TestNoise.h include/cg/IcoSphere.cpp include/cg/IcoSphere.h src/entities/components/MassComponent.cpp include/cg/entities/components/MassComponent.h src/entities/systems/GravitySystem.cpp include/cg/entities/systems/GravitySystem.h src/entities/components/OrbitComponent.cpp include/cg/entities/components/OrbitComponent.h src/entities/systems/OrbitSystem.cpp include/cg/entities/systems/OrbitSystem.h)
 
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     glfw
