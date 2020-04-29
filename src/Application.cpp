@@ -106,7 +106,7 @@ void Application::init() {
 	auto sun = EntityBuilder::create()
 		->withMesh("./assets/models/ico-sphere.dae", meshShaderProgram)
 		->withTransform(0, 0, 0)
-//		->withVelocity(sunVelocity)
+		->withVelocity(sunVelocity)
 		->build(entityManager);
 
 	auto planetVelocity = new VelocityComponent();

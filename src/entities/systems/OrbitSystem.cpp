@@ -22,6 +22,6 @@ void OrbitSystem::update() {
         auto diff = position - transform->position;
         transform->move(diff);
 
-        orbit->theta += 2.0 * context->getDeltaTime();
+        orbit->theta += 0.5 * context->getDeltaTime();
     }
 }
