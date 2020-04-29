@@ -22,7 +22,7 @@ private:
     GLContext *context;
 
     bool showDemoWindow = false;
-    bool showTerrainGeneratorWindow = true;
+    bool showTerrainGeneratorWindow = false;
 
     char* currentView = nullptr;
     std::vector<const char *> views;
@@ -36,8 +36,10 @@ private:
     ImVec2 cameraWindowSize;
 
     Terrain *terrain;
-    std::function<bool(Terrain *, TerrainSettings& settings)> updateTerrain = nullptr;
+    std::function<bool(Terrain *, TerrainSettings& settings)> updateTerrainFunc = nullptr;
     std::string generateTerrainButtonText;
+
+    void updateTerrain(Terrain *terrain, TerrainSettings& settings);
 
     void renderMainMenu();
     void renderSceneInfoWindow();

@@ -222,9 +222,9 @@ void UserInterface::renderTerrainGeneratorWindow() {
     ImGui::End();
 }
 
-void UserInterface::onUpdateTerrain(Terrain *terrain, std::function<bool(Terrain *, TerrainSettings& settings)> updateTerrain) {
+void UserInterface::onUpdateTerrain(Terrain *terrain, std::function<bool(Terrain *, TerrainSettings& settings)> updateTerrainFunc) {
     this->terrain = terrain;
-    this->updateTerrain = updateTerrain;
+    this->updateTerrainFunc = updateTerrainFunc;
 }
 
 void UserInterface::loadTerrainSettings() {
@@ -324,5 +324,11 @@ void UserInterface::loadTerrainProfiles() {
                 selectedProfile = true;
             }
         }
+    }
+}
+
+void UserInterface::updateTerrain(Terrain *terrain, TerrainSettings& settings) {
+    if (updateTerrainFunc) {
+        updateTerrainFunc(terrain, settings);
     }
 }
