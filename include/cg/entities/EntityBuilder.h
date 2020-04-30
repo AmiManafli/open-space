@@ -3,6 +3,7 @@
 
 #include <cg/entities/components/CameraComponent.h>
 #include <cg/entities/components/LightComponent.h>
+#include <cg/entities/components/MassComponent.h>
 #include "EntityManager.h"
 
 class EntityBuilder {
@@ -32,6 +33,12 @@ public:
     EntityBuilder* withLight(LightComponent *light);
     EntityBuilder* withDirectionalLight(glm::vec3 direction, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular);
 
+    EntityBuilder* withMass(double mass);
+    EntityBuilder* withMass(MassComponent *component);
+
+    EntityBuilder* withOrbit(glm::vec3 parentPosition, double semiMajorAxis, double semiMinorAxis, double speed, double startTheta);
+    EntityBuilder* withOrbit(OrbitComponent *component);
+
     Entity* build(EntityManager *entityManager);
     void destroy();
 
@@ -42,6 +49,8 @@ private:
     HighlightComponent *highlightComponent = nullptr;
     VelocityComponent *velocityComponent = nullptr;
     LightComponent *lightComponent = nullptr;
+    MassComponent *massComponent = nullptr;
+    OrbitComponent *orbitComponent = nullptr;
 };
 
 #endif //CG1_PROJECT_ENTITYBUILDER_H

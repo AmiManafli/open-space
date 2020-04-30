@@ -19,4 +19,6 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
+#include <cg/Math.h>
+
 #endif //CG1_PROJECT_GLHEADER_H

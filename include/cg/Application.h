@@ -6,6 +6,8 @@
 #include <cg/entities/systems/RenderSystem.h>
 #include <cg/entities/systems/InputSystem.h>
 #include <cg/entities/systems/MovementSystem.h>
+#include <cg/entities/systems/GravitySystem.h>
+#include <cg/entities/systems/OrbitSystem.h>
 
 
 class Application {
@@ -35,6 +37,8 @@ private:
     RenderSystem *renderSystem;
     InputSystem *inputSystem;
     MovementSystem *movementSystem;
+    GravitySystem *gravitySystem;
+    OrbitSystem *orbitSystem;
 
     std::vector<glm::vec3> instanceTransformations;
 

@@ -19,6 +19,8 @@ public:
 
     std::optional<glm::vec3> position;
 
+    std::optional<glm::vec3> gravity;
+
     std::optional<glm::vec3> rotation;
     std::optional<glm::vec3> rotationPoint;
 

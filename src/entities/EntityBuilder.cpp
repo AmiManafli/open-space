@@ -26,6 +26,14 @@ Entity *EntityBuilder::build(EntityManager *entityManager) {
         entityManager->addLightComponent(entity->id, lightComponent);
     }
 
+    if (massComponent != nullptr) {
+        entityManager->addMassComponent(entity->id, massComponent);
+    }
+
+    if (orbitComponent != nullptr) {
+        entityManager->addOrbitComponent(entity->id, orbitComponent);
+    }
+
     return entity;
 }
 
@@ -121,5 +129,34 @@ EntityBuilder *EntityBuilder::withDirectionalLight(glm::vec3 direction, glm::vec
         throw std::runtime_error("entity already has a light component");
     }
     lightComponent = LightComponent::createDirectionalLight(direction, ambient, diffuse, specular);
+    return this;
+}
+
+EntityBuilder* EntityBuilder::withMass(double mass) {
+    return withMass(new MassComponent(mass));
+}
+
+EntityBuilder* EntityBuilder::withMass(MassComponent *component) {
+    if (massComponent != nullptr) {
+        throw std::runtime_error("entity already has a mass");
+    }
+    massComponent = component;
+    return this;
+}
+
+EntityBuilder* EntityBuilder::withOrbit(glm::vec3 parentPosition, double semiMajorAxis, double semiMinorAxis, double speed, double startTheta) {
+    return withOrbit(new OrbitComponent(parentPosition, semiMajorAxis, semiMinorAxis, speed, startTheta));
+}
+
+EntityBuilder* EntityBuilder::withOrbit(OrbitComponent *component) {
+    if (orbitComponent != nullptr) {
+        throw std::runtime_error("entity already has an orbit");
+    }
+    orbitComponent = component;
+
+//    transformComponent->position += orbitComponent->startPosition;
+//
+//    printf("Start position: %s\n", glm::to_string(transformComponent->position).c_str());
+
     return this;
 }
