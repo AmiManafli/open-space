@@ -1,7 +1,12 @@
 #include "cg/entities/systems/InputSystem.h"
+#include "../../../SpaceshipControl.h"
 
 InputSystem::InputSystem(EntityManager *entityManager, GLContext *context)
         : System(entityManager), context(context), lastMouseX(-1), lastMouseY(-1) {
+}
+
+void InputSystem::createSpaceshipControl(Entity* spaceship, Entity* camera) {
+    spaceshipControl = new SpaceshipControl(spaceship, camera, entityManager);
 }
 
 void InputSystem::init() {
@@ -32,23 +37,51 @@ void InputSystem::update() {
         context->setActiveCamera(context->perspectiveCamera);
     }
 
-    if (!isDebug && isKeyPressed(GLFW_KEY_1)) {
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    } else if (!isDebug && isKeyPressed(GLFW_KEY_2)) {
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    }
+    //if (!isDebug && isKeyPressed(GLFW_KEY_1)) {
+    //    
+    //} else if (!isDebug && isKeyPressed(GLFW_KEY_2)) {
+    //    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    //}
 
     auto camera = context->getCamera();
+    CameraComponent* cameraComponent = entityManager->getCameraComponent(camera->id);
     if (!isDebug && isKeyDown(GLFW_KEY_W)) {
-        moveCamera(camera, CameraComponent::Direction::Forward, deltaTime);
+        if (cameraComponent->mode == CameraComponent::FirstPersonShip) {
+            moveCamera(camera, CameraComponent::Direction::Forward, deltaTime);
+        }
+        else {
+            moveCamera(camera, CameraComponent::Direction::Forward, deltaTime);
+        }
     } else if (!isDebug && isKeyDown(GLFW_KEY_S)) {
-        moveCamera(camera, CameraComponent::Direction::Backward, deltaTime);
+        if (cameraComponent->mode == CameraComponent::FirstPersonShip) {
+            moveCamera(camera, CameraComponent::Direction::Backward, deltaTime);
+        }
+        else {
+            moveCamera(camera, CameraComponent::Direction::Backward, deltaTime);
+        }
+    }
+
+    if (!isDebug && isKeyDown(GLFW_KEY_Z)) {
+        spaceshipControl->processKeyboard(camera, CameraComponent::Direction::RollLeft, deltaTime);
+    }
+    else if (!isDebug && isKeyDown(GLFW_KEY_X)) {
+        spaceshipControl->processKeyboard(camera, CameraComponent::Direction::RollRight, deltaTime);
     }
 
     if (!isDebug && isKeyDown(GLFW_KEY_A)) {
-        moveCamera(camera, CameraComponent::Direction::Left, deltaTime);
+        if (cameraComponent->mode == CameraComponent::FirstPersonShip) {
+            moveCamera(camera, CameraComponent::Direction::Left, deltaTime);
+        }
+        else {
+            moveCamera(camera, CameraComponent::Direction::Left, deltaTime);
+        }
     } else if (!isDebug && isKeyDown(GLFW_KEY_D)) {
-        moveCamera(camera, CameraComponent::Direction::Right, deltaTime);
+        if (cameraComponent->mode == CameraComponent::FirstPersonShip) {
+            moveCamera(camera, CameraComponent::Direction::Right, deltaTime);
+        }
+        else {
+            moveCamera(camera, CameraComponent::Direction::Right, deltaTime);
+        }
     }
 
     if (!isDebug && isKeyPressed(GLFW_KEY_G)) {
@@ -59,7 +92,7 @@ void InputSystem::update() {
         context->displayGui = !context->displayGui;
     }
 
-    auto cameraComponent = entityManager->getCameraComponent(camera->id);
+    //CameraComponent* cameraComponent = entityManager->getCameraComponent(camera->id);
     if (!isDebug && isKeyDown(GLFW_KEY_EQUAL)) {
         cameraComponent->movementSpeed += 0.1;
         printf("Camera movement speed: %.1f\n", cameraComponent->movementSpeed);
@@ -67,6 +100,17 @@ void InputSystem::update() {
         cameraComponent->movementSpeed -= 0.1;
         printf("Camera movement speed: %.1f\n", cameraComponent->movementSpeed);
     }
+
+    if (!isDebug && isKeyDown(GLFW_KEY_1)) {
+        context->setActiveCamera(context->spaceshipCamera);
+    } else if (!isDebug && isKeyDown(GLFW_KEY_2)) {
+        context->setActiveCamera(context->perspectiveCamera);
+    } else if (!isDebug && isKeyDown(GLFW_KEY_3)) {
+        context->setActiveCamera(context->topCamera);
+    } else if (!isDebug && isKeyDown(GLFW_KEY_4)) {
+        context->setActiveCamera(context->sideCamera);
+    }
+
 
     if (isKeyPressed(GLFW_KEY_GRAVE_ACCENT)) {
         context->displayCursor = !context->displayCursor;
@@ -76,6 +120,8 @@ void InputSystem::update() {
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         }
     }
+
+    spaceshipControl->processInput();
 }
 
 bool InputSystem::isKeyDown(int key) {
@@ -113,7 +159,13 @@ void InputSystem::mousePositionCallback(GLFWwindow *window, double x, double y) 
     auto offsetX = x - inputManager->lastMouseX;
     auto offsetY = inputManager->lastMouseY - y;
 
-    cameraComponent->processMouseMovement(offsetX, offsetY);
+
+    if (cameraComponent->mode == CameraComponent::FirstPersonShip) {
+        inputManager->spaceshipControl->processMouseMovement(offsetX, offsetY);
+    }
+    else {
+        cameraComponent->processMouseMovement(offsetX, offsetY);
+    }
 
     inputManager->lastMouseX = x;
     inputManager->lastMouseY = y;

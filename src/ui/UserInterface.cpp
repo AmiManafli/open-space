@@ -10,7 +10,7 @@ using json = nlohmann::json;
 
 UserInterface::UserInterface(EntityManager *entityManager, GLContext *context)
         : entityManager(entityManager), context(context), settingsFilename("settings.json"), terrainProfileName("") {
-    views = { "Perspective", "Top", "Side" };
+    views = { "Spaceship", "Perspective", "Top", "Side" };
     noiseFunctions = { "Open Simplex", "Perlin", "Test" };
 
     loadTerrainProfiles();
@@ -70,6 +70,16 @@ void UserInterface::renderMainMenu() {
         if (ImGui::BeginMenu("Tools")) {
             ImGui::MenuItem("Terrain Generator", nullptr, &showTerrainGeneratorWindow);
             ImGui::MenuItem("ImGui Demo", nullptr, &showDemoWindow);
+            if (ImGui::MenuItem("Turn on/offc wireframe mode")) {
+                showWireframe = !showWireframe;
+                if(showWireframe) {
+                    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+                } else { 
+                    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); 
+                }
+            } 
+
+
             ImGui::EndMenu();
         }
         ImGui::EndMainMenuBar();
@@ -99,10 +109,13 @@ void UserInterface::renderCameraInfoWindow() {
             if (ImGui::Selectable(views[n], isSelected)) {
                 currentView = const_cast<char *>(views[n]);
                 if (n == 0) {
-                    context->setActiveCamera(context->perspectiveCamera);
+                    context->setActiveCamera(context->spaceshipCamera);
                 } else if (n == 1) {
+                    context->setActiveCamera(context->perspectiveCamera);
+                }
+                else if (n == 2) {
                     context->setActiveCamera(context->topCamera);
-                } else if (n == 2) {
+                } else if (n == 3) {
                     context->setActiveCamera(context->sideCamera);
                 }
             }
