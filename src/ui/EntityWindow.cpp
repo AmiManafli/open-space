@@ -15,12 +15,18 @@ void EntityWindow::render() {
     renderInfo(entity);
 
     // Components
+    std::vector<MeshComponent *> meshComponents;
+    auto meshes = entityManager->getMeshComponents(entity->id);
+    for (auto i = meshes.first; i != meshes.second; i++) {
+        meshComponents.emplace_back(i->second);
+    }
+
     renderTransformComponent(entityManager->getTransformComponent(entity));
     renderMassComponent(entityManager->getMassComponent(entity));
     renderOrbitComponent(entityManager->getOrbitComponent(entity));
     renderVelocityComponent(entityManager->getVelocityComponent(entity));
     renderCameraComponent(entityManager->getCameraComponent(entity));
-//    renderMeshComponents(entityManager->getMeshComponents(entity));
+    renderMeshComponents(meshComponents);
     renderHighlightComponent(entityManager->getHighlightComponent(entity));
 
     ImGui::End();
@@ -43,9 +49,9 @@ void EntityWindow::renderTransformComponent(TransformComponent *component) {
     if (!component) return;
 
     if (ImGui::CollapsingHeader("Transform Component")) {
-        ImGui::DragFloat3("Position", glm::value_ptr(component->position), 0.1f, -10000, 10000);
-        ImGui::DragFloat3("Rotation", glm::value_ptr(component->rotation), 0.1f, -10000, 10000);
-        ImGui::DragFloat3("Scaling", glm::value_ptr(component->scaling), 0.1f, -10000, 10000);
+        ImGui::DragFloat3("Position", glm::value_ptr(component->position), 0.1, -10000, 10000);
+        ImGui::DragFloat3("Rotation", glm::value_ptr(component->rotation), 0.1, -10000, 10000);
+        ImGui::DragFloat3("Scaling", glm::value_ptr(component->scaling), 0.1, -10000, 10000);
     }
 }
 
@@ -53,7 +59,7 @@ void EntityWindow::renderMassComponent(MassComponent *component) {
     if (!component) return;
 
     if (ImGui::CollapsingHeader("Mass Component")) {
-        ImGui::DragFloat("Mass (kg)", reinterpret_cast<float *>(&component->mass), 0.1f, 0, 10000);
+        ImGui::DragFloat("Mass (kg)", reinterpret_cast<float *>(&component->mass), 0.1, 0, 10000);
     }
 }
 
@@ -65,15 +71,15 @@ void EntityWindow::renderOrbitComponent(OrbitComponent *component) {
         ImGui::Text("Width: %f\n", component->width);
         ImGui::Text("Height: %f\n", component->height);
 
-        if (ImGui::DragFloat("Semi-Major Axis", &component->semiMajorAxis, 0.1f, 0, 10000)) {
+        if (ImGui::DragFloat("Semi-Major Axis", &component->semiMajorAxis, 0.1, 0, 10000)) {
             component->update(component->parentPosition, component->semiMajorAxis, component->semiMinorAxis, component->speed);
         }
-        if (ImGui::DragFloat("Semi-Minor Axis", &component->semiMinorAxis, 0.1f, 0, 10000)) {
+        if (ImGui::DragFloat("Semi-Minor Axis", &component->semiMinorAxis, 0.1, 0, 10000)) {
             component->update(component->parentPosition, component->semiMajorAxis, component->semiMinorAxis, component->speed);
         }
 
-        ImGui::DragFloat("Orbit Speed", &component->speed, 0.1f, 0, 10000);
-        ImGui::DragFloat("Angle (radians)", &component->theta, 0.1f, 0, 10000);
+        ImGui::DragFloat("Orbit Speed", &component->speed, 0.1, 0, 10000);
+        ImGui::DragFloat("Angle (radians)", &component->theta, 0.1, 0, 10000);
     }
 }
 
@@ -81,6 +87,11 @@ void EntityWindow::renderVelocityComponent(VelocityComponent *component) {
     if (!component) return;
 
     if (ImGui::CollapsingHeader("Velocity Component")) {
+        ImGui::DragFloat3("Position", glm::value_ptr(component->position), 0.1, -10000, 10000);
+        ImGui::DragFloat3("Gravity", glm::value_ptr(component->gravity), 0.1, -10000, 10000);
+        ImGui::DragFloat3("Rotation", glm::value_ptr(component->rotation), 0.1, -10000, 10000);
+        ImGui::DragFloat3("Rotation Point", glm::value_ptr(component->rotationPoint), 0.1, -10000, 10000);
+        ImGui::DragFloat3("Scaling", glm::value_ptr(component->scaling), 0.1, 0, 10000);
     }
 }
 
@@ -88,13 +99,68 @@ void EntityWindow::renderCameraComponent(CameraComponent *component) {
     if (!component) return;
 
     if (ImGui::CollapsingHeader("Camera Component")) {
+        std::string mode;
+        if (component->mode == CameraComponent::Free) {
+            mode = "Free";
+        } else {
+            mode = "Unknown";
+        }
+        ImGui::Text("Mode: %s", mode.c_str());
+
+        std::string type;
+        if (component->type == CameraComponent::Orthographic) {
+            type = "Orthographic";
+        } else if (component->type == CameraComponent::Perspective) {
+            type = "Perspective";
+        } else {
+            type = "Unknown";
+        }
+        ImGui::Text("Type: %s", type.c_str());
+
+        ImGui::DragFloat("Zoom", &component->zoom, 0.1, 0, 100);
+        ImGui::DragFloat3("Target", glm::value_ptr(component->target), 0.1, -10000, 10000);
+
+        ImGui::Text("Front: %s", glm::to_string(component->front).c_str());
+        ImGui::Text("Up: %s", glm::to_string(component->up).c_str());
+        ImGui::Text("Right: %s", glm::to_string(component->right).c_str());
+
+        ImGui::DragFloat("Yaw", &component->yaw, 0.1, -10000, 10000);
+        ImGui::DragFloat("Pitch", &component->pitch, 0.1, -10000, 10000);
+        ImGui::DragFloat("Roll", &component->roll, 0.1, -10000, 10000);
+
+        ImGui::DragFloat("Mouse sensitivity", &component->mouseSensitivity, 0.1, -10000, 10000);
+        ImGui::DragFloat("Movement speed", &component->movementSpeed, 0.1, -10000, 10000);
     }
 }
 
-void EntityWindow::renderMeshComponents(MeshComponent *component) {
-    if (!component) return;
+void EntityWindow::renderMeshComponents(std::vector<MeshComponent *> components) {
+    if (components.empty()) return;
 
     if (ImGui::CollapsingHeader("Mesh Components")) {
+        int index = 0;
+        for (MeshComponent *mesh : components) {
+            std::string name = "Mesh " + std::to_string(index++);
+            if (ImGui::TreeNode(name.c_str())) {
+                std::string mode;
+                if (mesh->mode == GL_TRIANGLES) {
+                    mode = "Triangles";
+                } else if (mesh->mode == GL_LINES) {
+                    mode = "Lines";
+                } else {
+                    mode = "Unknown";
+                }
+                ImGui::Text("Mode: %s", mode.c_str());
+                ImGui::Text("Instance count: %d", mesh->instances);
+                ImGui::Text("Vertices: %llu", mesh->vertices.size());
+                ImGui::Text("Indices: %llu", mesh->indices.size());
+                ImGui::Text("Textures: %llu", mesh->textures.size());
+
+                ImGui::TreePop();
+                if (components.size() != index) {
+                    ImGui::Separator();
+                }
+            }
+        }
     }
 }
 
@@ -102,6 +168,7 @@ void EntityWindow::renderHighlightComponent(HighlightComponent *component) {
     if (!component) return;
 
     if (ImGui::CollapsingHeader("Highlight Component")) {
+        ImGui::DragFloat("Scale factor", &component->scaleFactor, 0.1, 0, 100);
     }
 }
 

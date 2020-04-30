@@ -17,19 +17,15 @@ void MovementSystem::update() {
         auto light = entityManager->getLightComponent(entityId);
 
         if (velocity && transform) {
-            auto translation = velocity->position.has_value() ? velocity->position.value() : glm::vec3(0);
-            if (velocity->gravity.has_value()) {
-                translation -= velocity->gravity.value();
-            }
+            auto translation = velocity->position;
+            translation -= velocity->gravity;
             transform->move(translation * static_cast<float>(context->getDeltaTime()));
 
-            if (velocity->rotation.has_value()) {
-                auto rotation = velocity->rotation.value() * static_cast<float>(context->getDeltaTime());
-                transform->rotate(rotation);
-            }
+            auto rotation = velocity->rotation * static_cast<float>(context->getDeltaTime());
+            transform->rotate(rotation);
 
-            if (velocity->scaling.has_value()) {
-                auto scaling = velocity->scaling.value() * static_cast<float>(context->getDeltaTime());
+            if (glm::length(velocity->scaling) > 0) {
+                auto scaling = velocity->scaling * static_cast<float>(context->getDeltaTime());
                 transform->scale(glm::normalize(scaling));
             }
 
