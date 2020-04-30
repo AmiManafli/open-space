@@ -141,6 +141,13 @@ bool InputSystem::isKeyPressed(int key) {
 void InputSystem::mousePositionCallback(GLFWwindow *window, double x, double y) {
     auto inputManager = (InputSystem *) glfwGetWindowUserPointer(window);
     auto context = inputManager->context;
+
+    auto offsetX = x - inputManager->lastMouseX;
+    auto offsetY = inputManager->lastMouseY - y;
+
+    inputManager->lastMouseX = x;
+    inputManager->lastMouseY = y;
+
     if (context->displayCursor) return;
 
     auto camera = context->getCamera();
@@ -152,18 +159,11 @@ void InputSystem::mousePositionCallback(GLFWwindow *window, double x, double y) 
         inputManager->processedMouse = true;
     }
 
-    auto offsetX = x - inputManager->lastMouseX;
-    auto offsetY = inputManager->lastMouseY - y;
-
-
     if (cameraComponent->mode == CameraComponent::FirstPersonShip) {
         inputManager->spaceshipControl->processMouseMovement(offsetX, offsetY);
     } else {
         cameraComponent->processMouseMovement(offsetX, offsetY);
     }
-
-    inputManager->lastMouseX = x;
-    inputManager->lastMouseY = y;
 }
 
 void InputSystem::processMouseScroll(GLFWwindow *window, double xoffset, double yoffset) {
@@ -201,8 +201,7 @@ void InputSystem::processMouseButton(GLFWwindow *window, int button, int action,
     }
 }
 
-bool InputSystem::isRayInSphere(Entity *entity, glm::vec3 origin, glm::vec3 ray) {
-    auto transform = entityManager->getTransformComponent(entity);
+bool InputSystem::isRayInSphere(TransformComponent *transform, glm::vec3 origin, glm::vec3 ray) {
     double radius = transform->scaling.x;
     auto center = transform->position;
 
@@ -237,13 +236,20 @@ Entity *InputSystem::getClickedEntity(double mouseX, double mouseY) {
 
     auto origin = cameraTransform->position;
 
-    auto sun = entityManager->getEntity(5);
-    auto planet = entityManager->getEntity(6);
+    double entityDistance = DBL_MAX;
+    for (auto& pair : entityManager->getTransformComponents()) {
+        auto entityId = pair.first;
+        auto transform = pair.second;
 
-    if (isRayInSphere(sun, origin, rayWorld)) {
-        foundEntity = sun;
-    } else if (isRayInSphere(planet, origin, rayWorld)) {
-        foundEntity = planet;
+        if (entityId == context->getCamera()->id) continue;
+
+        if (isRayInSphere(transform, origin, rayWorld)) {
+            auto distance = glm::length(transform->position - origin);
+            if (distance < entityDistance) {
+                entityDistance = distance;
+                foundEntity = entityManager->getEntity(entityId);
+            }
+        }
     }
 
     return foundEntity;
@@ -252,17 +258,27 @@ Entity *InputSystem::getClickedEntity(double mouseX, double mouseY) {
 void InputSystem::selectEntity(Entity *entity) {
     auto previousEntity = context->selectedEntity;
 
+    double highlightSize = 0.2;
+    double highlightScale;
+    if (entity) {
+        auto transform = entityManager->getTransformComponent(entity);
+        auto radius = transform->scaling.x / 2.0;
+        highlightScale = (radius + highlightSize) / radius;
+    } else {
+        highlightScale = 1.1;
+    }
+
     if (previousEntity) {
         entityManager->removeHighlightComponent(previousEntity);
         context->selectedEntity = entity;
         if (entity) {
-            entityManager->addHighlightComponent(entity->id, new HighlightComponent(1.1, context->highlightProgram));
+            entityManager->addHighlightComponent(entity->id, new HighlightComponent(highlightScale, context->highlightProgram));
         }
     } else if (entity) {
         auto highlight = entityManager->getHighlightComponent(entity);
 
         if (!highlight) {
-            entityManager->addHighlightComponent(entity->id, new HighlightComponent(1.1, context->highlightProgram));
+            entityManager->addHighlightComponent(entity->id, new HighlightComponent(highlightScale, context->highlightProgram));
         }
     }
 
