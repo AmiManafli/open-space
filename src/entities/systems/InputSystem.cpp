@@ -206,18 +206,30 @@ void InputSystem::processMouseButton(GLFWwindow *window, int button, int action,
 }
 
 Entity *InputSystem::getClickedEntity(double mouseX, double mouseY) {
+    auto camera = entityManager->getCameraComponent(context->getCamera());
+    auto cameraTransform = entityManager->getTransformComponent(context->getCamera());
+
     // Normalized device coordinates
-    double x = (2.0 * mouseX) / context->getWidth() - 1.0f;
+    double x = (2.0 * mouseX) / context->getWidth() - 1.0;
     double y = 1.0 - (2.0 * mouseY) / context->getHeight();
     double z = 1.0;
 
-    auto deviceCoordRay = glm::vec3(x, y, z);
-    printf("Ray (Normalized device coordinates): %s\n", glm::to_string(deviceCoordRay).c_str());
+    auto rayDevice = glm::vec3(x, y, z);
+    printf("Ray (Normalized device coordinates): %s\n", glm::to_string(rayDevice).c_str());
 
     // Clip coordinates
-    auto clipCoordRay = glm::vec4(deviceCoordRay.x, deviceCoordRay.y, -1.0, 1.0);
-    printf("Ray (Clip coordinates): %s\n", glm::to_string(clipCoordRay).c_str());
+    auto rayClip = glm::vec4(rayDevice.x, rayDevice.y, -1.0, 1.0);
+    printf("Ray (Clip coordinates): %s\n", glm::to_string(rayClip).c_str());
+
+    // Eye coordinates
+    auto rayEyeProjected = glm::inverse(camera->getProjection(context->getAspect())) * rayClip;
+    auto rayEye = glm::vec4(rayEyeProjected.x, rayEyeProjected.y, -1.0, 0.0);
+
+    // World coordinates
+    auto viewEye = glm::inverse(camera->getView(cameraTransform)) * rayEye;
+    auto rayWorld = glm::normalize(glm::vec3(viewEye));
+
+    printf("Ray (World): %s\n", glm::to_string(rayWorld).c_str());
 
     return nullptr;
 }
-
