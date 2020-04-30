@@ -9,18 +9,18 @@ Size=432,349
 Collapsed=0
 
 [Window][Scene Information]
-Pos=1030,25
-Size=163,65
+Pos=830,25
+Size=156,65
 Collapsed=0
 
 [Window][Camera Information]
-Pos=880,640
+Pos=680,640
 Size=303,145
 Collapsed=0
 
 [Window][Entity Editor]
-Pos=594,78
-Size=300,288
+Pos=75,49
+Size=300,48
 Collapsed=0
 
 [Window][Dear ImGui Demo]
