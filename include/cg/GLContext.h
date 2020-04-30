@@ -46,6 +46,8 @@ public:
 
     Entity *light = nullptr;
 
+    Entity *selectedEntity = nullptr;
+
     double startTime;
 
 private:

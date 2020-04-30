@@ -205,8 +205,8 @@ void InputSystem::processMouseButton(GLFWwindow *window, int button, int action,
     }
 }
 
-bool InputSystem::isRayInSphere(uint32_t entityId, glm::vec3 origin, glm::vec3 ray) {
-    auto transform = entityManager->getTransformComponent(entityId);
+bool InputSystem::isRayInSphere(Entity *entity, glm::vec3 origin, glm::vec3 ray) {
+    auto transform = entityManager->getTransformComponent(entity);
     double radius = transform->scaling.x;
     auto center = transform->position;
 
@@ -240,8 +240,21 @@ Entity *InputSystem::getClickedEntity(double mouseX, double mouseY) {
     auto rayWorld = glm::normalize(glm::vec3(viewEye));
 
     auto origin = cameraTransform->position;
-    printf("Ray is inside the sun: %s\n", isRayInSphere(5, origin, rayWorld) ? "yes" : "no");
-    printf("Ray is inside the planet: %s\n", isRayInSphere(6, origin, rayWorld) ? "yes" : "no");
+
+    auto sun = entityManager->getEntity(5);
+    auto planet = entityManager->getEntity(6);
+
+    if (isRayInSphere(sun, origin, rayWorld)) {
+        selectEntity(sun);
+    } else if (isRayInSphere(planet, origin, rayWorld)) {
+        selectEntity(planet);
+    } else {
+        selectEntity(nullptr);
+    }
 
     return foundEntity;
+}
+
+void InputSystem::selectEntity(Entity *entity) {
+    context->selectedEntity = entity;
 }

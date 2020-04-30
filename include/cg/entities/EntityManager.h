@@ -29,6 +29,7 @@ public:
     /// Entities
     Entity* createEntity();
     std::vector<Entity *> getEntities() { return entities; }
+    Entity* getEntity(uint32_t id);
 
     /// Mesh component
     void addMeshComponent(uint32_t entityId, MeshComponent *component);
