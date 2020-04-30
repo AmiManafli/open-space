@@ -95,7 +95,7 @@ void Application::init() {
 
     auto sunPosition = glm::vec3(0, 0, 0);
     auto sunVelocity = new VelocityComponent();
-    sunVelocity->rotation = glm::vec3(0, -0.01, 0);
+    sunVelocity->rotation = glm::vec3(0, -0.2, 0);
 	auto sun = EntityBuilder::create()
 		->withMesh("./assets/models/ico-sphere.dae", meshShaderProgram)
 		->withTransform(sunPosition)
