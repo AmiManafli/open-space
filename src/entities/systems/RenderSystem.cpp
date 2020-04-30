@@ -94,7 +94,7 @@ void RenderSystem::renderMesh(MeshComponent *mesh, ShaderProgram *shaderProgram,
     shaderProgram->setUniform("model", model);
     shaderProgram->setUniform("objectColor", glm::vec3(0.5, 0.5, 0.5));
     shaderProgram->setUniform("lightColor", glm::vec3(1, 1, 1));
-    shaderProgram->setUniform("lightPos", entityManager->getTransformComponent(0)->position);
+    shaderProgram->setUniform("lightPos", entityManager->getTransformComponent(context->light)->position);
     shaderProgram->setUniform("viewPos", entityManager->getTransformComponent(1)->position);
 
     if (mesh->textures.size() > 0) {

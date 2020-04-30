@@ -20,21 +20,7 @@ Application::Application(std::string title, int width, int height) {
     renderSystem = new RenderSystem(entityManager, context);
     inputSystem = new InputSystem(entityManager, context);
     movementSystem = new MovementSystem(entityManager, context);
-    gravitySystem = new GravitySystem(entityManager);
     orbitSystem = new OrbitSystem(entityManager, context);
-
-    int instanceRows = 20;
-    int instanceCols = 20;
-
-    int startRow = -instanceRows / 2;
-    int startCol = -instanceCols / 2;
-
-    double offset = 2.5;
-    for (int r = startRow; r < instanceRows - 1; r++) {
-        for (int c = startCol; c < instanceCols - 1; c++) {
-            instanceTransformations.emplace_back(glm::vec3(offset * c, 15.0 * glm::sin(0.005 * r * c), offset * r));
-        }
-    }
 }
 
 Application::~Application() {
@@ -84,6 +70,9 @@ void Application::init() {
     meshTestLightShaderProgram->attachShader("./assets/shaders/meshTestLight.frag", ShaderType::FragmentShader);
     meshTestLightShaderProgram->link();
 
+    createCameras();
+    gravitySystem = new GravitySystem(entityManager, context->perspectiveCamera);
+
     renderSystem->init();
     inputSystem->init();
     movementSystem->init();
@@ -95,53 +84,56 @@ void Application::init() {
         ->withTransform(lightPosition)
         ->withDirectionalLight(-lightPosition, {0.2f, 0.2f, 0.2f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f, 1.0f})
         ->build(entityManager);
+    context->light = light;
 
-    createCameras();
     createGrid(62, 62, false);
 
     auto ui = renderSystem->getUserInterface();
 
-    auto sunPosition = glm::vec3(0, 2, 0);
+    auto sunPosition = glm::vec3(0, 0, 0);
     auto sunVelocity = new VelocityComponent();
-    sunVelocity->rotation = glm::vec3(0, -0.4, 0);
+    sunVelocity->rotation = glm::vec3(0, -0.01, 0);
 	auto sun = EntityBuilder::create()
 		->withMesh("./assets/models/ico-sphere.dae", meshShaderProgram)
 		->withTransform(sunPosition)
+		->withScale(6.0)
+		->withMass(10000.0)
 		->withVelocity(sunVelocity)
 		->build(entityManager);
 
-	auto planetScale = 0.3;
+	auto planetScale = 2.0;
 	auto planetVelocity = new VelocityComponent();
-	planetVelocity->rotation = glm::vec3(0, -2.5, 0);
+	planetVelocity->rotation = glm::vec3(0, -0.03, 0);
     auto planet1 = EntityBuilder::create()
         ->withMesh("./assets/models/ico-sphere.dae", meshShaderProgram)
         ->withTransform(0, 0, 0)
+        ->withMass(2000)
         ->withScale(planetScale)
-        ->withOrbit(sunPosition, 1.5, 1.5, 1.2, 0.0)
+        ->withOrbit(sunPosition, 100, 100, 0.001, 0.0)
         ->withVelocity(planetVelocity)
         ->build(entityManager);
-
-    planetScale = 0.7;
-    planetVelocity = new VelocityComponent();
-    planetVelocity->rotation = glm::vec3(1.0, -1.8, -0.3);
-    auto planet2 = EntityBuilder::create()
-            ->withMesh("./assets/models/ico-sphere.dae", meshShaderProgram)
-            ->withTransform(0, 0, 0)
-            ->withScale(planetScale)
-            ->withOrbit(sunPosition, 4.0, 4.0, 0.8, PI / 3.0)
-            ->withVelocity(planetVelocity)
-            ->build(entityManager);
-
-    planetScale = 0.4;
-    planetVelocity = new VelocityComponent();
-    planetVelocity->rotation = glm::vec3(0, -1.2, 0);
-    auto planet3 = EntityBuilder::create()
-            ->withMesh("./assets/models/ico-sphere.dae", meshShaderProgram)
-            ->withTransform(0, 0, 0)
-            ->withScale(planetScale)
-            ->withOrbit(sunPosition, 11.5, 7.0, 1.0, 3 * PI / 4.0)
-            ->withVelocity(planetVelocity)
-            ->build(entityManager);
+//
+//    planetScale = 0.7;
+//    planetVelocity = new VelocityComponent();
+//    planetVelocity->rotation = glm::vec3(1.0, -1.8, -0.3);
+//    auto planet2 = EntityBuilder::create()
+//            ->withMesh("./assets/models/ico-sphere.dae", meshShaderProgram)
+//            ->withTransform(0, 0, 0)
+//            ->withScale(planetScale)
+//            ->withOrbit(sunPosition, 4.0, 4.0, 0.8, PI / 3.0)
+//            ->withVelocity(planetVelocity)
+//            ->build(entityManager);
+//
+//    planetScale = 0.4;
+//    planetVelocity = new VelocityComponent();
+//    planetVelocity->rotation = glm::vec3(0, -1.2, 0);
+//    auto planet3 = EntityBuilder::create()
+//            ->withMesh("./assets/models/ico-sphere.dae", meshShaderProgram)
+//            ->withTransform(0, 0, 0)
+//            ->withScale(planetScale)
+//            ->withOrbit(sunPosition, 11.5, 7.0, 1.0, 3 * PI / 4.0)
+//            ->withVelocity(planetVelocity)
+//            ->build(entityManager);
 
 //    auto sphere = EntityBuilder::create()
 //        ->withMesh(new IcoSphere(1.0, 0, meshShaderProgram))
@@ -207,9 +199,11 @@ void Application::createCameras() {
     auto target = glm::vec3(0, 0, 0);
 
     /// Perspective camera
-    auto position = glm::vec3(2.3, 7.3, 11.4);
+    auto position = glm::vec3(2.3, 40.0, 80.0);
     context->perspectiveCamera = EntityBuilder::create()
         ->withTransform(position)
+        ->withVelocity(new VelocityComponent())
+        ->withMass(1.0)
         ->withCamera(CameraComponent::Mode::Free, CameraComponent::Type::Perspective, target, glm::normalize(-position), glm::vec3(0, 1, 0), context->getAspect())
         ->build(entityManager);
 
