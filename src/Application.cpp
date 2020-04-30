@@ -60,6 +60,8 @@ void Application::init() {
     highlightShaderProgram->attachShader("./assets/shaders/highlight.frag", ShaderType::FragmentShader);
     highlightShaderProgram->link();
 
+    context->highlightProgram = highlightShaderProgram;
+
     meshWithLightShaderProgram = new ShaderProgram();
     meshWithLightShaderProgram->attachShader("./assets/shaders/meshWithLight.vert", ShaderType::VertexShader);
     meshWithLightShaderProgram->attachShader("./assets/shaders/meshWithLight.frag", ShaderType::FragmentShader);
@@ -104,13 +106,13 @@ void Application::init() {
 
 	auto planetScale = 2.0;
 	auto planetVelocity = new VelocityComponent();
-	planetVelocity->rotation = glm::vec3(0, -0.03, 0);
+	planetVelocity->rotation = glm::vec3(0, -0.1, 0);
     auto planet1 = EntityBuilder::create()
         ->withMesh("./assets/models/ico-sphere.dae", meshShaderProgram)
         ->withTransform(0, 0, 0)
         ->withMass(200)
         ->withScale(planetScale)
-        ->withOrbit(sunPosition, 40, 40, 0.001, 0.0)
+        ->withOrbit(sunPosition, 40, 40, 0.1, 0.0)
         ->withVelocity(planetVelocity)
         ->build(entityManager);
 

@@ -48,6 +48,8 @@ public:
 
     Entity *selectedEntity = nullptr;
 
+    ShaderProgram *highlightProgram = nullptr;
+
     double startTime;
 
 private:

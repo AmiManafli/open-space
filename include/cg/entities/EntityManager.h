@@ -51,6 +51,11 @@ public:
 
     /// Highlight component
     void addHighlightComponent(uint32_t entityId, HighlightComponent *component);
+    void removeHighlightComponent(Entity *entity) {
+        auto component = getHighlightComponent(entity);
+        highlightComponents.erase(entity->id);
+        delete component;
+    }
     HighlightComponentMap getHighlightComponents() { return highlightComponents; }
     HighlightComponent* getHighlightComponent(Entity *entity) { return getHighlightComponent(entity->id); }
     HighlightComponent* getHighlightComponent(uint32_t entityId);

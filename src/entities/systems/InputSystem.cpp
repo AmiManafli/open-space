@@ -196,11 +196,7 @@ void InputSystem::processMouseButton(GLFWwindow *window, int button, int action,
             glfwGetCursorPos(window, &x, &y);
 
             auto entity = inputSystem->getClickedEntity(x, y);
-            if (entity) {
-                printf("Clicked entity %d\n\n", entity->id);
-            } else {
-                printf("No entity found.\n\n");
-            }
+            inputSystem->selectEntity(entity);
         }
     }
 }
@@ -245,16 +241,30 @@ Entity *InputSystem::getClickedEntity(double mouseX, double mouseY) {
     auto planet = entityManager->getEntity(6);
 
     if (isRayInSphere(sun, origin, rayWorld)) {
-        selectEntity(sun);
+        foundEntity = sun;
     } else if (isRayInSphere(planet, origin, rayWorld)) {
-        selectEntity(planet);
-    } else {
-        selectEntity(nullptr);
+        foundEntity = planet;
     }
 
     return foundEntity;
 }
 
 void InputSystem::selectEntity(Entity *entity) {
+    auto previousEntity = context->selectedEntity;
+
+    if (previousEntity) {
+        entityManager->removeHighlightComponent(previousEntity);
+        context->selectedEntity = entity;
+        if (entity) {
+            entityManager->addHighlightComponent(entity->id, new HighlightComponent(1.1, context->highlightProgram));
+        }
+    } else if (entity) {
+        auto highlight = entityManager->getHighlightComponent(entity);
+
+        if (!highlight) {
+            entityManager->addHighlightComponent(entity->id, new HighlightComponent(1.1, context->highlightProgram));
+        }
+    }
+
     context->selectedEntity = entity;
 }

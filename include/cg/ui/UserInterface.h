@@ -4,6 +4,7 @@
 #include <cg/GLHeader.h>
 #include <cg/GLContext.h>
 #include <cg/terrain/Terrain.h>
+#include "EntityWindow.h"
 
 class UserInterface {
 public:
@@ -21,9 +22,12 @@ private:
     EntityManager *entityManager;
     GLContext *context;
 
+    EntityWindow *entityWindow;
+
     bool showDemoWindow = false;
     bool showTerrainGeneratorWindow = false;
     bool showWireframe = true;
+    bool showEntityWindow = true;
 
     char* currentView = nullptr;
     std::vector<const char *> views;
