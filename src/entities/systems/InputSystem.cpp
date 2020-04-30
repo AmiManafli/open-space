@@ -16,6 +16,11 @@ void InputSystem::init() {
     glfwSetScrollCallback(window, processMouseScroll);
     glfwSetMouseButtonCallback(window, processMouseButton);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+    double mouseX, mouseY;
+    glfwGetCursorPos(window, &mouseX, &mouseY);
+    lastMouseX = mouseX;
+    lastMouseY = mouseY;
 }
 
 void InputSystem::update() {
@@ -194,6 +199,10 @@ void InputSystem::processMouseButton(GLFWwindow *window, int button, int action,
         if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
             double x, y;
             glfwGetCursorPos(window, &x, &y);
+
+            bool hoveringInterface = ImGui::IsAnyWindowHovered() || ImGui::IsAnyItemHovered();
+
+            if (hoveringInterface) return;
 
             auto entity = inputSystem->getClickedEntity(x, y);
             inputSystem->selectEntity(entity);

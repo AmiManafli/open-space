@@ -3,9 +3,9 @@
 
 class MassComponent {
 public:
-    MassComponent(double mass);
+    MassComponent(float mass);
 
-    double mass;
+    float mass;
 };
 
 #endif //CG1_PROJECT_MASSCOMPONENT_H

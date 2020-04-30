@@ -2,16 +2,15 @@
 #include <cg/entities/Entity.h>
 #include "cg/entities/components/OrbitComponent.h"
 
-OrbitComponent::OrbitComponent(glm::vec3 parentPosition, double semiMajorAxis, double semiMinorAxis, double speed, double startTheta)
-        : parentPosition(parentPosition), startTheta(startTheta) {
+OrbitComponent::OrbitComponent(glm::vec3 parentPosition, float semiMajorAxis, float semiMinorAxis, float speed, float startTheta)
+        : parentPosition(parentPosition), startTheta(startTheta), theta(startTheta) {
     update(parentPosition, semiMajorAxis, semiMinorAxis, speed);
 }
 
-void OrbitComponent::update(glm::vec3 parentPosition, double semiMajorAxis, double semiMinorAxis, double speed) {
+void OrbitComponent::update(glm::vec3 parentPosition, float semiMajorAxis, float semiMinorAxis, float speed) {
     this->semiMajorAxis = semiMajorAxis;
     this->semiMinorAxis = semiMinorAxis;
     this->speed = speed;
-    theta = startTheta;
 
     eccentricity = sqrt(1 - pow(semiMinorAxis, 2) / pow(semiMajorAxis, 2));
     width = 2 * semiMajorAxis;
@@ -21,8 +20,6 @@ void OrbitComponent::update(glm::vec3 parentPosition, double semiMajorAxis, doub
     // Set starting position based on the parent position
     float center = sqrt(pow(semiMajorAxis, 2) - pow(semiMinorAxis, 2));
     startPosition = glm::vec2(parentPosition.x + 2 * center, parentPosition.z);
-
-    printf("Orbit:\n  width: %f\n  height: %f\n  eccentricity: %f\n\n", width, height, eccentricity);
 }
 
 glm::vec3 OrbitComponent::getPosition() {
@@ -33,6 +30,6 @@ glm::vec3 OrbitComponent::getPosition() {
     return glm::vec3(position.x, parentPosition.y, position.y);
 }
 
-double OrbitComponent::calculateRadius(double theta) {
+float OrbitComponent::calculateRadius(float theta) {
     return focusCord / (1 + eccentricity * cos(theta));
 }

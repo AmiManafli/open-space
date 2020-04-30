@@ -17,6 +17,17 @@ private:
     uint16_t height;
 
     void renderEmpty();
+
+    void renderInfo(Entity *entity);
+
+    // Components
+    void renderTransformComponent(TransformComponent *component);
+    void renderMassComponent(MassComponent *component);
+    void renderOrbitComponent(OrbitComponent *component);
+    void renderVelocityComponent(VelocityComponent *component);
+    void renderCameraComponent(CameraComponent *component);
+    void renderMeshComponents(MeshComponent *component);
+    void renderHighlightComponent(HighlightComponent *component);
 };
 
 
