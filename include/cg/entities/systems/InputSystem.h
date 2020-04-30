@@ -31,6 +31,8 @@ private:
     void moveCamera(Entity *camera, CameraComponent::Direction direction, float deltaTime);
     Entity* getClickedEntity(double mouseX, double mouseY);
 
+    bool isRayInSphere(uint32_t entityId, glm::vec3 origin, glm::vec3 ray);
+
     static void mousePositionCallback(GLFWwindow* window, double x, double y);
     static void processMouseScroll(GLFWwindow* window, double xOffset, double yOffset);
     static void processMouseButton(GLFWwindow* window, int button, int action, int mods);

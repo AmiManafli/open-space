@@ -205,7 +205,20 @@ void InputSystem::processMouseButton(GLFWwindow *window, int button, int action,
     }
 }
 
+bool InputSystem::isRayInSphere(uint32_t entityId, glm::vec3 origin, glm::vec3 ray) {
+    auto transform = entityManager->getTransformComponent(entityId);
+    double radius = transform->scaling.x;
+    auto center = transform->position;
+
+    double b = glm::dot(ray, origin - center);
+    double c = glm::dot(origin - center, origin - center) - radius * radius;
+
+    return b * b - c >= 0;
+}
+
 Entity *InputSystem::getClickedEntity(double mouseX, double mouseY) {
+    Entity* foundEntity = nullptr;
+
     auto camera = entityManager->getCameraComponent(context->getCamera());
     auto cameraTransform = entityManager->getTransformComponent(context->getCamera());
 
@@ -213,13 +226,10 @@ Entity *InputSystem::getClickedEntity(double mouseX, double mouseY) {
     double x = (2.0 * mouseX) / context->getWidth() - 1.0;
     double y = 1.0 - (2.0 * mouseY) / context->getHeight();
     double z = 1.0;
-
     auto rayDevice = glm::vec3(x, y, z);
-    printf("Ray (Normalized device coordinates): %s\n", glm::to_string(rayDevice).c_str());
 
     // Clip coordinates
     auto rayClip = glm::vec4(rayDevice.x, rayDevice.y, -1.0, 1.0);
-    printf("Ray (Clip coordinates): %s\n", glm::to_string(rayClip).c_str());
 
     // Eye coordinates
     auto rayEyeProjected = glm::inverse(camera->getProjection(context->getAspect())) * rayClip;
@@ -229,7 +239,9 @@ Entity *InputSystem::getClickedEntity(double mouseX, double mouseY) {
     auto viewEye = glm::inverse(camera->getView(cameraTransform)) * rayEye;
     auto rayWorld = glm::normalize(glm::vec3(viewEye));
 
-    printf("Ray (World): %s\n", glm::to_string(rayWorld).c_str());
+    auto origin = cameraTransform->position;
+    printf("Ray is inside the sun: %s\n", isRayInSphere(5, origin, rayWorld) ? "yes" : "no");
+    printf("Ray is inside the planet: %s\n", isRayInSphere(6, origin, rayWorld) ? "yes" : "no");
 
-    return nullptr;
+    return foundEntity;
 }
