@@ -97,8 +97,8 @@ void Application::init() {
 	auto sun = EntityBuilder::create()
 		->withMesh("./assets/models/ico-sphere.dae", meshShaderProgram)
 		->withTransform(sunPosition)
-		->withScale(6.0)
-		->withMass(10000.0)
+		->withScale(4.0)
+		->withMass(1000.0)
 		->withVelocity(sunVelocity)
 		->build(entityManager);
 
@@ -108,12 +108,12 @@ void Application::init() {
     auto planet1 = EntityBuilder::create()
         ->withMesh("./assets/models/ico-sphere.dae", meshShaderProgram)
         ->withTransform(0, 0, 0)
-        ->withMass(2000)
+        ->withMass(200)
         ->withScale(planetScale)
-        ->withOrbit(sunPosition, 100, 100, 0.001, 0.0)
+        ->withOrbit(sunPosition, 40, 40, 0.001, 0.0)
         ->withVelocity(planetVelocity)
         ->build(entityManager);
-//
+
 //    planetScale = 0.7;
 //    planetVelocity = new VelocityComponent();
 //    planetVelocity->rotation = glm::vec3(1.0, -1.8, -0.3);

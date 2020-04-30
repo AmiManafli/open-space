@@ -14,6 +14,7 @@ void InputSystem::init() {
     glfwSetWindowUserPointer(window, this);
     glfwSetCursorPosCallback(window, mousePositionCallback);
     glfwSetScrollCallback(window, processMouseScroll);
+    glfwSetMouseButtonCallback(window, processMouseButton);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
@@ -184,3 +185,39 @@ void InputSystem::moveCamera(Entity *camera, CameraComponent::Direction directio
     auto transformComponent = entityManager->getTransformComponent(camera->id);
     cameraComponent->processKeyboard(direction, deltaTime, transformComponent);
 }
+
+void InputSystem::processMouseButton(GLFWwindow *window, int button, int action, int mods) {
+    auto inputSystem = (InputSystem*)glfwGetWindowUserPointer(window);
+    auto context = inputSystem->context;
+
+    if (context->displayCursor) {
+        if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
+            double x, y;
+            glfwGetCursorPos(window, &x, &y);
+
+            auto entity = inputSystem->getClickedEntity(x, y);
+            if (entity) {
+                printf("Clicked entity %d\n\n", entity->id);
+            } else {
+                printf("No entity found.\n\n");
+            }
+        }
+    }
+}
+
+Entity *InputSystem::getClickedEntity(double mouseX, double mouseY) {
+    // Normalized device coordinates
+    double x = (2.0 * mouseX) / context->getWidth() - 1.0f;
+    double y = 1.0 - (2.0 * mouseY) / context->getHeight();
+    double z = 1.0;
+
+    auto deviceCoordRay = glm::vec3(x, y, z);
+    printf("Ray (Normalized device coordinates): %s\n", glm::to_string(deviceCoordRay).c_str());
+
+    // Clip coordinates
+    auto clipCoordRay = glm::vec4(deviceCoordRay.x, deviceCoordRay.y, -1.0, 1.0);
+    printf("Ray (Clip coordinates): %s\n", glm::to_string(clipCoordRay).c_str());
+
+    return nullptr;
+}
+
