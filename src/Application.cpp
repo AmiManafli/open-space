@@ -93,7 +93,7 @@ void Application::init() {
     auto ui = renderSystem->getUserInterface();
 
     auto sphere = EntityBuilder::create()
-            ->withMesh(new IcoSphere(1.0, 0, meshShaderProgram))
+            ->withMesh(new IcoSphere(1.0, 1, meshShaderProgram))
             ->withTransform(0, 1, 0)
             ->build(entityManager);
     auto sphere2 = EntityBuilder::create()

@@ -14,8 +14,6 @@ private:
     int subdivisions;
 
     void generateMesh();
-
-    glm::vec3 calculateNormal(int top, int prev, int upper, int next, int prevLower, int lower);
 };
 
 
