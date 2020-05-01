@@ -36,7 +36,7 @@ public:
     EntityBuilder* withMass(double mass);
     EntityBuilder* withMass(MassComponent *component);
 
-    EntityBuilder* withOrbit(glm::vec3 parentPosition, double semiMajorAxis, double semiMinorAxis, double speed, double startTheta);
+    EntityBuilder* withOrbit(TransformComponent *parentTransform, double semiMajorAxis, double semiMinorAxis, double speed, double startTheta);
     EntityBuilder* withOrbit(OrbitComponent *component);
 
     Entity* build(EntityManager *entityManager);

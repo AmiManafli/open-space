@@ -144,8 +144,8 @@ EntityBuilder* EntityBuilder::withMass(MassComponent *component) {
     return this;
 }
 
-EntityBuilder* EntityBuilder::withOrbit(glm::vec3 parentPosition, double semiMajorAxis, double semiMinorAxis, double speed, double startTheta) {
-    return withOrbit(new OrbitComponent(parentPosition, semiMajorAxis, semiMinorAxis, speed, startTheta));
+EntityBuilder* EntityBuilder::withOrbit(TransformComponent *parentTransform, double semiMajorAxis, double semiMinorAxis, double speed, double startTheta) {
+    return withOrbit(new OrbitComponent(parentTransform, semiMajorAxis, semiMinorAxis, speed, startTheta));
 }
 
 EntityBuilder* EntityBuilder::withOrbit(OrbitComponent *component) {

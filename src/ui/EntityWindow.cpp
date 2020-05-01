@@ -95,10 +95,10 @@ void EntityWindow::renderOrbitComponent(OrbitComponent *component) {
         ImGui::Text("Height: %f\n", component->height);
 
         if (ImGui::DragFloat("Semi-Major Axis", &component->semiMajorAxis, 0.1, component->semiMinorAxis, 10000)) {
-            component->update(component->parentPosition, component->semiMajorAxis, component->semiMinorAxis, component->speed);
+            component->update(component->semiMajorAxis, component->semiMinorAxis, component->speed);
         }
         if (ImGui::DragFloat("Semi-Minor Axis", &component->semiMinorAxis, 0.1, 0.001, component->semiMajorAxis)) {
-            component->update(component->parentPosition, component->semiMajorAxis, component->semiMinorAxis, component->speed);
+            component->update(component->semiMajorAxis, component->semiMinorAxis, component->speed);
         }
 
         ImGui::DragFloat("Orbit Speed", &component->speed, 0.1, 0, 10000);

@@ -103,6 +103,7 @@ void Application::init() {
 		->withMass(1000.0)
 		->withVelocity(sunVelocity)
 		->build(entityManager);
+	auto sunTransform = entityManager->getTransformComponent(sun);
 
 	auto planetScale = 2.0;
 	auto planetVelocity = new VelocityComponent();
@@ -112,31 +113,22 @@ void Application::init() {
         ->withTransform(0, 0, 0)
         ->withMass(200)
         ->withScale(planetScale)
-        ->withOrbit(sunPosition, 40, 40, 0.1, 0.0)
+        ->withOrbit(sunTransform, 40, 40, 0.1, 0.0)
         ->withVelocity(planetVelocity)
         ->build(entityManager);
 
-//    planetScale = 0.7;
-//    planetVelocity = new VelocityComponent();
-//    planetVelocity->rotation = glm::vec3(1.0, -1.8, -0.3);
-//    auto planet2 = EntityBuilder::create()
-//            ->withMesh("./assets/models/ico-sphere.dae", meshShaderProgram)
-//            ->withTransform(0, 0, 0)
-//            ->withScale(planetScale)
-//            ->withOrbit(sunPosition, 4.0, 4.0, 0.8, PI / 3.0)
-//            ->withVelocity(planetVelocity)
-//            ->build(entityManager);
-//
-//    planetScale = 0.4;
-//    planetVelocity = new VelocityComponent();
-//    planetVelocity->rotation = glm::vec3(0, -1.2, 0);
-//    auto planet3 = EntityBuilder::create()
-//            ->withMesh("./assets/models/ico-sphere.dae", meshShaderProgram)
-//            ->withTransform(0, 0, 0)
-//            ->withScale(planetScale)
-//            ->withOrbit(sunPosition, 11.5, 7.0, 1.0, 3 * PI / 4.0)
-//            ->withVelocity(planetVelocity)
-//            ->build(entityManager);
+    auto planetTransform = entityManager->getTransformComponent(planet1);
+    auto moonScale = 0.8;
+    auto moonVelocity = new VelocityComponent();
+    moonVelocity->rotation = glm::vec3(0, -0.1, 0);
+    auto moon1 = EntityBuilder::create()
+            ->withMesh("./assets/models/ico-sphere.dae", meshShaderProgram)
+            ->withTransform(0, 0, 0)
+            ->withMass(200)
+            ->withScale(moonScale)
+            ->withOrbit(planetTransform, 8, 8, 1.5, 0.0)
+            ->withVelocity(moonVelocity)
+            ->build(entityManager);
 
 //    auto sphere = EntityBuilder::create()
 //        ->withMesh(new IcoSphere(1.0, 0, meshShaderProgram))

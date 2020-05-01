@@ -2,10 +2,11 @@
 #define CG1_PROJECT_ORBITCOMPONENT_H
 
 #include <cg/GLHeader.h>
+#include "TransformComponent.h"
 
 class OrbitComponent {
 public:
-    OrbitComponent(glm::vec3 parentPosition, float semiMajorAxis, float semiMinorAxis, float speed, float startTheta);
+    OrbitComponent(TransformComponent *parentTransform, float semiMajorAxis, float semiMinorAxis, float speed, float startTheta);
 
     float semiMajorAxis;
     float semiMinorAxis;
@@ -20,13 +21,15 @@ public:
     float width;
     float height;
 
-    glm::vec3 parentPosition;
+    float center;
+
+    TransformComponent *parentTransform;
     glm::vec2 startPosition;
 
     float calculateRadius(float theta);
     glm::vec3 getPosition();
 
-    void update(glm::vec3 parentPosition, float semiMajorAxis, float semiMinorAxis, float speed);
+    void update(float semiMajorAxis, float semiMinorAxis, float speed);
 };
 
 #endif //CG1_PROJECT_ORBITCOMPONENT_H
