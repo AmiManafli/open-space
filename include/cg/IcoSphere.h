@@ -14,6 +14,7 @@ private:
     int subdivisions;
 
     void generateMesh();
+    void subdivide();
 };
 
 

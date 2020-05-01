@@ -28,7 +28,7 @@ void InputSystem::update() {
     auto window = context->getWindow();
     auto isDebug = context->displayGui || context->displayCursor;
 
-    if (isKeyPressed(GLFW_KEY_Q) && isKeyDown(GLFW_KEY_LEFT_CONTROL)) {
+    if (isKeyDown(GLFW_KEY_Q) && isKeyDown(GLFW_KEY_LEFT_CONTROL)) {
         glfwSetWindowShouldClose(context->getWindow(), GLFW_TRUE);
     }
 
