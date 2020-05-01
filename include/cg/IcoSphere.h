@@ -14,7 +14,9 @@ private:
     int subdivisions;
 
     void generateMesh();
-    void subdivide();
+    void subdivide(uint16_t level);
+
+    glm::vec3 halfPosition(glm::vec3 a, glm::vec3 b);
 };
 
 

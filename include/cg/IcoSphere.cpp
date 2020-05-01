@@ -9,7 +9,9 @@ IcoSphere::IcoSphere(double radius, int subdivisions, ShaderProgram *shaderProgr
     this->instances = 1;
 
     generateMesh();
-    subdivide();
+    for (int level = 1; level <= subdivisions; level++) {
+        subdivide(level);
+    }
 
     setupBuffers();
 }
@@ -65,9 +67,9 @@ void IcoSphere::generateMesh() {
         indices.emplace_back(iLower);
 
         // Lower mid row triangle
+        indices.emplace_back(iLowerNext);
         indices.emplace_back(iLower);
         indices.emplace_back(iUpperNext);
-        indices.emplace_back(iLowerNext);
 
         inclinationUpper += inclination;
         inclinationLower += inclination;
@@ -78,16 +80,16 @@ void IcoSphere::generateMesh() {
     vertices[11].normal = glm::normalize(vertices[11].position);
 }
 
-glm::vec3 halfPosition(glm::vec3 a, glm::vec3 b) {
+glm::vec3 IcoSphere::halfPosition(glm::vec3 a, glm::vec3 b) {
     auto diff = a - b;
     float halfLength = glm::length(diff) / 2.0f;
     auto unit = glm::normalize(diff);
 
-    return b + unit * halfLength;
+    return glm::normalize(b + unit * halfLength) * static_cast<float>(radius);
 }
 
-void IcoSphere::subdivide() {
-    int max = 5 * subdivisions;
+void IcoSphere::subdivide(uint16_t level) {
+    int max = 5 * level;
 
     indices.clear();
     for (int i = 1; i <= max; i++) {
