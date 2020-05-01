@@ -53,8 +53,8 @@ glm::mat4 CameraComponent::getProjection(float aspectRatio) {
     }
 }
 
-void CameraComponent::processKeyboard(CameraComponent::Direction direction, float deltaTime, TransformComponent *positionComponent) {
-    auto position = positionComponent->position;
+void CameraComponent::processKeyboard(CameraComponent::Direction direction, float deltaTime, TransformComponent *transformComponent) {
+    auto position = transformComponent->position;
     float velocity = movementSpeed * deltaTime;
     if (direction == Forward) {
         position += front * velocity;
@@ -65,7 +65,7 @@ void CameraComponent::processKeyboard(CameraComponent::Direction direction, floa
     } else if (direction == Right) {
         position += right * velocity;
     }
-    positionComponent->position = position;
+    transformComponent->position = position;
 }
 
 void CameraComponent::processMouseMovement(float offsetX, float offsetY) {

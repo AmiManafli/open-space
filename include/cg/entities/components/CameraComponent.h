@@ -23,6 +23,8 @@ public:
         Right,
         RollLeft,
         RollRight,
+        Up,
+        Down,
     };
 
     CameraComponent(Mode mode, Type type, glm::vec3 target, glm::vec3 front, glm::vec3 up, TransformComponent *positionComponent);
@@ -30,7 +32,7 @@ public:
     glm::mat4 getView(TransformComponent *component);
     glm::mat4 getProjection(float aspectRatio);
 
-    void processKeyboard(CameraComponent::Direction direction, float deltaTime, TransformComponent *positionComponent);
+    void processKeyboard(CameraComponent::Direction direction, float deltaTime, TransformComponent *transformComponent);
     void processMouseMovement(float offsetX, float offsetY);
 
     Mode mode;

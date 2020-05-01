@@ -154,6 +154,7 @@ void Application::init() {
 	auto airplane = EntityBuilder::create()
 		->withMesh("./assets/models/airplaneUdemy.obj", meshTextureShaderProgram)
 		->withTransform(0, 0, 0)
+		->withOrbit(sunPosition, 40, 40, 0.1, 0.0)
 		->build(entityManager);
 
     inputSystem->createSpaceshipControl(airplane, context->spaceshipCamera);
@@ -203,7 +204,7 @@ void Application::createCameras() {
 
     /// Spaceship camera
     //auto position = glm::vec3(0.0, 0.0, 10.0);
-    auto position = glm::vec3(12.3, 12.3, 6.4);
+    auto position = glm::vec3(2.3, 40.3, 80.0);
 
     context->spaceshipCamera = EntityBuilder::create()
         ->withTransform(position)
@@ -211,7 +212,7 @@ void Application::createCameras() {
         ->build(entityManager);
 
     /// Perspective camera
-    auto position = glm::vec3(2.3, 40.0, 80.0);
+    position = glm::vec3(2.3, 40.0, 80.0);
     context->perspectiveCamera = EntityBuilder::create()
         ->withTransform(position)
         ->withVelocity(new VelocityComponent())

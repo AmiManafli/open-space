@@ -3,7 +3,7 @@
 
 #include <cg/GLHeader.h>
 #include <cg/entities/System.h>
-#include "../../../../SpaceshipControl.h"
+#include "cg/SpaceshipControl.h"
 
 
 class InputSystem : public System {

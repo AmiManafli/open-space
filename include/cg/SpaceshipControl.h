@@ -1,6 +1,6 @@
 #pragma once
-#include <cg\entities\Entity.h>
-#include <cg\entities\EntityManager.h>
+#include <cg/entities/Entity.h>
+#include <cg/entities/EntityManager.h>
 #include <cg/GLHeader.h>
 
 class SpaceshipControl
