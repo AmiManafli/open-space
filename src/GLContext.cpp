@@ -44,6 +44,8 @@ void GLContext::init() {
         throw std::runtime_error("failed to initialize GLAD");
     }
 
+//    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
     startTime = glfwGetTime();
     lastTime = startTime;
     lastFrameTime = lastTime;

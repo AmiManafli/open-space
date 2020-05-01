@@ -78,7 +78,7 @@ void InputSystem::update() {
             moveCamera(camera, CameraComponent::Direction::Right, deltaTime);
         }
     }
-    if (!isDebug && isKeyDown(GLFW_KEY_Q)) {
+    if (!isDebug && !isKeyDown(GLFW_KEY_LEFT_CONTROL) && isKeyDown(GLFW_KEY_Q)) {
         spaceshipControl->processKeyboard(camera, CameraComponent::Direction::Down, deltaTime);
     } else if (!isDebug && isKeyDown(GLFW_KEY_E)) {
         spaceshipControl->processKeyboard(camera, CameraComponent::Direction::Up, deltaTime);

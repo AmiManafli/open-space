@@ -1,10 +1,12 @@
 #include "IcoSphere.h"
 
 
-IcoSphere::IcoSphere(double radius, int subdivisions, ShaderProgram *shaderProgram) : radius(radius), subdivisions(subdivisions) {
+IcoSphere::IcoSphere(double radius, int subdivisions, ShaderProgram *shaderProgram)
+        : radius(radius), subdivisions(subdivisions) {
     this->shaderProgram = shaderProgram;
     this->mode = GL_TRIANGLES;
     this->indexed = true;
+    this->instances = 1;
 
     generateMesh();
 
@@ -34,8 +36,6 @@ void IcoSphere::generateMesh() {
         double y = radius * sin(azimuth);
         double xz = radius * cos(azimuth);
 
-        printf("y = %f\n", y);
-
         Vertex upper{};
         upper.position = glm::vec3(xz * cos(inclinationUpper), y, xz * sin(inclinationUpper));
 
@@ -47,8 +47,13 @@ void IcoSphere::generateMesh() {
 
         // Upper row
         indices.emplace_back(0);
-        indices.emplace_back(iUpper);
         indices.emplace_back(iUpperNext);
+        indices.emplace_back(iUpper);
+
+        // Lower row
+        indices.emplace_back(11);
+        indices.emplace_back(iLower);
+        indices.emplace_back(iLowerNext);
 
         // Upper mid row
         indices.emplace_back(iUpper);
@@ -57,13 +62,8 @@ void IcoSphere::generateMesh() {
 
         // Lower mid row
         indices.emplace_back(iLower);
-        indices.emplace_back(iLowerNext);
         indices.emplace_back(iUpperNext);
-
-        // Lower row
-        indices.emplace_back(11);
         indices.emplace_back(iLowerNext);
-        indices.emplace_back(iLower);
 
         inclinationUpper += inclination;
         inclinationLower += inclination;
@@ -72,23 +72,39 @@ void IcoSphere::generateMesh() {
     // Bottom vertex
     vertices[11] = Vertex { {0.0f, -radius, 0.0f} };
 
+    for (int i = 0; i < vertices.size(); i++) {
+        printf("vertices[%d] = (%f, %f, %f)\n", i, vertices[i].position.x, vertices[i].position.z, vertices[i].position.y);
+    }
+
     // Update normals
-    vertices[0].normal = { 0.0f, 1.0f, 0.0f };
+//    vertices[0].normal = { 0.0f, 1.0f, 0.0f };
+    vertices[0].normal = glm::normalize(vertices[0].position);
     for (int i = 1; i <= 5; i++) {
         int iUpper = i;
         int iUpperNext = i == 5 ? 1 : iUpper + 1;
+        int iUpperPrev = i == 1 ? 5 : iUpper - 1;
         int iLower = i + 5;
         int iLowerNext = i == 5 ? 6 : iLower + 1;
+        int iLowerPrev = i == 6 ? 10 : iLower - 1;
 
         Vertex upper = vertices[iUpper];
-        auto origin = vertices[iUpper].position - vertices[0].position;
-        auto right = vertices[iUpperNext].position - vertices[iUpper].position;
-        vertices[iUpper].normal = glm::normalize(glm::cross(right, origin));
-
         Vertex lower = vertices[iLower];
-        origin = vertices[iLower].position - vertices[0].position;
-        right = vertices[iLowerNext].position - vertices[iLower].position;
-        vertices[iLower].normal = glm::normalize(glm::cross(right, origin));
+//        auto origin = vertices[0].position - vertices[iUpper].position;
+//        auto right = vertices[iUpperNext].position - vertices[iUpper].position;
+//        auto normal = glm::normalize(glm::cross(right, origin));
+
+//        vertices[iUpper].normal = calculateNormal(0, iUpperPrev, iUpper, iUpperNext, iLowerPrev, iLower);
+        vertices[iUpper].normal = glm::normalize(upper.position);
+        vertices[iLower].normal = glm::normalize(lower.position);
+
+//        Vertex lower = vertices[iLower];
+//        origin = vertices[11].position - vertices[iLower].position;
+//        right = vertices[iLowerNext].position - vertices[iLower].position;
+//        vertices[iLower].normal = -glm::normalize(glm::cross(origin, right));
     }
-    vertices[11].normal = { 0.0f, -1.0f, 0.0f };
+    vertices[11].normal = glm::normalize(vertices[11].position);
+}
+
+glm::vec3 IcoSphere::calculateNormal(int top, int prev, int upper, int next, int prevLower, int lower) {
+    return glm::vec3();
 }
