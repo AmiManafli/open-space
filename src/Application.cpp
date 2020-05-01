@@ -148,7 +148,7 @@ void Application::init() {
 	auto airplane = EntityBuilder::create()
 		->withMesh("./assets/models/airplaneUdemy.obj", meshTextureShaderProgram)
 		->withTransform(0, 0, 0)
-		->withOrbit(sunPosition, 40, 40, 0.1, 0.0)
+		->withOrbit(planetTransform, 12, 12, 1.9, 2.0)
 		->build(entityManager);
 
     inputSystem->createSpaceshipControl(airplane, context->spaceshipCamera);
