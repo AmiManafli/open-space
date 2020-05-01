@@ -42,6 +42,9 @@ public:
     uint32_t instances;
     bool indexed;
 
+    uint16_t subdivisions;
+    uint16_t maxSubdivisions;
+
     void setupBuffers();
 
 protected:

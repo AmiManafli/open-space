@@ -96,10 +96,6 @@ void Application::init() {
             ->withMesh(new IcoSphere(1.0, 1, meshShaderProgram))
             ->withTransform(0, 1, 0)
             ->build(entityManager);
-    auto sphere2 = EntityBuilder::create()
-            ->withMesh("./assets/models/icosphere-low.dae", meshShaderProgram)
-            ->withTransform(2, 1, 0)
-            ->build(entityManager);
 
 //    auto sunPosition = glm::vec3(0, 0, 0);
 //    auto sunVelocity = new VelocityComponent();

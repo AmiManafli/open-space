@@ -1,17 +1,20 @@
 #include "IcoSphere.h"
 
 
-IcoSphere::IcoSphere(double radius, int subdivisions, ShaderProgram *shaderProgram)
-        : radius(radius), subdivisions(subdivisions) {
+IcoSphere::IcoSphere(double radius, int maxSubdivisions, ShaderProgram *shaderProgram)
+        : radius(radius) {
     this->shaderProgram = shaderProgram;
     this->mode = GL_TRIANGLES;
     this->indexed = true;
     this->instances = 1;
+    this->subdivisions = maxSubdivisions;
+    this->maxSubdivisions = maxSubdivisions;
 
     generateMesh();
-    for (int level = 1; level <= subdivisions; level++) {
+    for (int level = 1; level <= maxSubdivisions; level++) {
         subdivide(level);
     }
+    this->indices = subdividedIndices[subdivisions];
 
     setupBuffers();
 }
@@ -52,24 +55,24 @@ void IcoSphere::generateMesh() {
         vertices[iLower] = lower;
 
         // Upper row triangle
-        indices.emplace_back(0);
-        indices.emplace_back(iUpperNext);
-        indices.emplace_back(iUpper);
+        subdividedIndices[0].emplace_back(0);
+        subdividedIndices[0].emplace_back(iUpperNext);
+        subdividedIndices[0].emplace_back(iUpper);
 
         // Lower row triangle
-        indices.emplace_back(11);
-        indices.emplace_back(iLower);
-        indices.emplace_back(iLowerNext);
+        subdividedIndices[0].emplace_back(11);
+        subdividedIndices[0].emplace_back(iLower);
+        subdividedIndices[0].emplace_back(iLowerNext);
 
         // Upper mid row triangle
-        indices.emplace_back(iUpper);
-        indices.emplace_back(iUpperNext);
-        indices.emplace_back(iLower);
+        subdividedIndices[0].emplace_back(iUpper);
+        subdividedIndices[0].emplace_back(iUpperNext);
+        subdividedIndices[0].emplace_back(iLower);
 
         // Lower mid row triangle
-        indices.emplace_back(iLowerNext);
-        indices.emplace_back(iLower);
-        indices.emplace_back(iUpperNext);
+        subdividedIndices[0].emplace_back(iLowerNext);
+        subdividedIndices[0].emplace_back(iLower);
+        subdividedIndices[0].emplace_back(iUpperNext);
 
         inclinationUpper += inclination;
         inclinationLower += inclination;
@@ -108,21 +111,21 @@ void IcoSphere::subdivide(uint16_t level) {
         vertices.emplace_back(Vertex { upperRight, glm::normalize(upperRight) });
         vertices.emplace_back(Vertex { upperLower, glm::normalize(upperLower) });
 
-        indices.emplace_back(0);
-        indices.emplace_back(upperStartIndex + 1);
-        indices.emplace_back(upperStartIndex);
+        subdividedIndices[level].emplace_back(0);
+        subdividedIndices[level].emplace_back(upperStartIndex + 1);
+        subdividedIndices[level].emplace_back(upperStartIndex);
 
-        indices.emplace_back(upperStartIndex);
-        indices.emplace_back(upperStartIndex + 2);
-        indices.emplace_back(iUpper);
+        subdividedIndices[level].emplace_back(upperStartIndex);
+        subdividedIndices[level].emplace_back(upperStartIndex + 2);
+        subdividedIndices[level].emplace_back(iUpper);
 
-        indices.emplace_back(upperStartIndex);
-        indices.emplace_back(upperStartIndex + 1);
-        indices.emplace_back(upperStartIndex + 2);
+        subdividedIndices[level].emplace_back(upperStartIndex);
+        subdividedIndices[level].emplace_back(upperStartIndex + 1);
+        subdividedIndices[level].emplace_back(upperStartIndex + 2);
 
-        indices.emplace_back(upperStartIndex + 1);
-        indices.emplace_back(iUpperNext);
-        indices.emplace_back(upperStartIndex + 2);
+        subdividedIndices[level].emplace_back(upperStartIndex + 1);
+        subdividedIndices[level].emplace_back(iUpperNext);
+        subdividedIndices[level].emplace_back(upperStartIndex + 2);
 
         // Lower row triangle
         auto lowerLeft = halfPosition(vertices[11].position, vertices[iLower].position);
@@ -134,21 +137,21 @@ void IcoSphere::subdivide(uint16_t level) {
         vertices.emplace_back(Vertex { lowerRight, glm::normalize(lowerRight) });
         vertices.emplace_back(Vertex { lowerUpper, glm::normalize(lowerUpper) });
 
-        indices.emplace_back(11);
-        indices.emplace_back(lowerStartIndex + 0);
-        indices.emplace_back(lowerStartIndex + 1);
+        subdividedIndices[level].emplace_back(11);
+        subdividedIndices[level].emplace_back(lowerStartIndex + 0);
+        subdividedIndices[level].emplace_back(lowerStartIndex + 1);
 
-        indices.emplace_back(lowerStartIndex + 0);
-        indices.emplace_back(lowerStartIndex + 2);
-        indices.emplace_back(lowerStartIndex + 1);
+        subdividedIndices[level].emplace_back(lowerStartIndex + 0);
+        subdividedIndices[level].emplace_back(lowerStartIndex + 2);
+        subdividedIndices[level].emplace_back(lowerStartIndex + 1);
 
-        indices.emplace_back(lowerStartIndex + 0);
-        indices.emplace_back(iLower);
-        indices.emplace_back(lowerStartIndex + 2);
+        subdividedIndices[level].emplace_back(lowerStartIndex + 0);
+        subdividedIndices[level].emplace_back(iLower);
+        subdividedIndices[level].emplace_back(lowerStartIndex + 2);
 
-        indices.emplace_back(lowerStartIndex + 1);
-        indices.emplace_back(lowerStartIndex + 2);
-        indices.emplace_back(iLowerNext);
+        subdividedIndices[level].emplace_back(lowerStartIndex + 1);
+        subdividedIndices[level].emplace_back(lowerStartIndex + 2);
+        subdividedIndices[level].emplace_back(iLowerNext);
 
         // Upper mid row triangle
         lowerLeft = halfPosition(vertices[iUpper].position, vertices[iLower].position);
@@ -160,21 +163,21 @@ void IcoSphere::subdivide(uint16_t level) {
         vertices.emplace_back(Vertex { lowerRight, glm::normalize(lowerRight) });
         vertices.emplace_back(Vertex { lowerUpper, glm::normalize(lowerUpper) });
 
-        indices.emplace_back(iLower);
-        indices.emplace_back(lowerStartIndex + 0);
-        indices.emplace_back(lowerStartIndex + 1);
+        subdividedIndices[level].emplace_back(iLower);
+        subdividedIndices[level].emplace_back(lowerStartIndex + 0);
+        subdividedIndices[level].emplace_back(lowerStartIndex + 1);
 
-        indices.emplace_back(lowerStartIndex + 0);
-        indices.emplace_back(lowerStartIndex + 2);
-        indices.emplace_back(lowerStartIndex + 1);
+        subdividedIndices[level].emplace_back(lowerStartIndex + 0);
+        subdividedIndices[level].emplace_back(lowerStartIndex + 2);
+        subdividedIndices[level].emplace_back(lowerStartIndex + 1);
 
-        indices.emplace_back(lowerStartIndex + 0);
-        indices.emplace_back(iUpper);
-        indices.emplace_back(lowerStartIndex + 2);
+        subdividedIndices[level].emplace_back(lowerStartIndex + 0);
+        subdividedIndices[level].emplace_back(iUpper);
+        subdividedIndices[level].emplace_back(lowerStartIndex + 2);
 
-        indices.emplace_back(lowerStartIndex + 1);
-        indices.emplace_back(lowerStartIndex + 2);
-        indices.emplace_back(iUpperNext);
+        subdividedIndices[level].emplace_back(lowerStartIndex + 1);
+        subdividedIndices[level].emplace_back(lowerStartIndex + 2);
+        subdividedIndices[level].emplace_back(iUpperNext);
 
         // Lower mid row triangle
         upperLeft = halfPosition(vertices[iUpperNext].position, vertices[iLower].position);
@@ -186,20 +189,20 @@ void IcoSphere::subdivide(uint16_t level) {
         vertices.emplace_back(Vertex { upperRight, glm::normalize(upperRight) });
         vertices.emplace_back(Vertex { upperLower, glm::normalize(upperLower) });
 
-        indices.emplace_back(iUpperNext);
-        indices.emplace_back(upperStartIndex + 1);
-        indices.emplace_back(upperStartIndex + 0);
+        subdividedIndices[level].emplace_back(iUpperNext);
+        subdividedIndices[level].emplace_back(upperStartIndex + 1);
+        subdividedIndices[level].emplace_back(upperStartIndex + 0);
 
-        indices.emplace_back(upperStartIndex + 0);
-        indices.emplace_back(upperStartIndex + 2);
-        indices.emplace_back(iLower);
+        subdividedIndices[level].emplace_back(upperStartIndex + 0);
+        subdividedIndices[level].emplace_back(upperStartIndex + 2);
+        subdividedIndices[level].emplace_back(iLower);
 
-        indices.emplace_back(upperStartIndex + 0);
-        indices.emplace_back(upperStartIndex + 1);
-        indices.emplace_back(upperStartIndex + 2);
+        subdividedIndices[level].emplace_back(upperStartIndex + 0);
+        subdividedIndices[level].emplace_back(upperStartIndex + 1);
+        subdividedIndices[level].emplace_back(upperStartIndex + 2);
 
-        indices.emplace_back(upperStartIndex + 1);
-        indices.emplace_back(iLowerNext);
-        indices.emplace_back(upperStartIndex + 2);
+        subdividedIndices[level].emplace_back(upperStartIndex + 1);
+        subdividedIndices[level].emplace_back(iLowerNext);
+        subdividedIndices[level].emplace_back(upperStartIndex + 2);
     }
 }

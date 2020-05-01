@@ -3,15 +3,17 @@
 
 #include <cg/GLHeader.h>
 #include <cg/entities/components/MeshComponent.h>
+#include <unordered_map>
 
 
 class IcoSphere : public MeshComponent {
 public:
-    IcoSphere(double radius, int subdivisions, ShaderProgram *shaderProgram);
+    IcoSphere(double radius, int maxSubdivisions, ShaderProgram *shaderProgram);
 
 private:
     double radius;
-    int subdivisions;
+
+    std::unordered_map<uint16_t, std::vector<uint32_t>> subdividedIndices;
 
     void generateMesh();
     void subdivide(uint16_t level);
