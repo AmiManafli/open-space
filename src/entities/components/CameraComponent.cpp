@@ -8,9 +8,14 @@ CameraComponent::CameraComponent(CameraComponent::Mode mode, CameraComponent::Ty
     this->right = glm::normalize(glm::cross(this->front, worldUp));
     this->up = glm::normalize(glm::cross(this->right, this->front));
 
-    // Initialize angles
     auto position = positionComponent->position;
-    yaw = 180.0f + glm::degrees(glm::atan((position.z - target.z) / (position.x - target.x)));
+    if(mode == FirstPersonShip) {
+        yaw = glm::degrees(glm::atan((position.x - target.x) / (position.z - target.z)));   
+    }
+    else {
+        yaw = 180.0f + glm::degrees(glm::atan((position.z - target.z) / (position.x - target.x)));
+    }
+    
     if (isnan(yaw)) {
         yaw = 0.0f;
     }
@@ -20,11 +25,16 @@ CameraComponent::CameraComponent(CameraComponent::Mode mode, CameraComponent::Ty
     if (isnan(pitch)) {
         pitch = 0.0f;
     }
+
+    roll = 0.0f;
 }
 
 glm::mat4 CameraComponent::getView(TransformComponent *positionComponent) {
     auto position = positionComponent->position;
-    if (mode == Free) {
+    if (mode == FirstPersonShip) {
+        return glm::lookAt(position, position + front, up);
+    } 
+    else if (mode == Free) {
         return glm::lookAt(position, position + front, up);
     } else {
         throw std::runtime_error("camera mode not implemented!");
@@ -43,8 +53,8 @@ glm::mat4 CameraComponent::getProjection(float aspectRatio) {
     }
 }
 
-void CameraComponent::processKeyboard(CameraComponent::Direction direction, float deltaTime, TransformComponent *positionComponent) {
-    auto position = positionComponent->position;
+void CameraComponent::processKeyboard(CameraComponent::Direction direction, float deltaTime, TransformComponent *transformComponent) {
+    auto position = transformComponent->position;
     float velocity = movementSpeed * deltaTime;
     if (direction == Forward) {
         position += front * velocity;
@@ -55,7 +65,7 @@ void CameraComponent::processKeyboard(CameraComponent::Direction direction, floa
     } else if (direction == Right) {
         position += right * velocity;
     }
-    positionComponent->position = position;
+    transformComponent->position = position;
 }
 
 void CameraComponent::processMouseMovement(float offsetX, float offsetY) {

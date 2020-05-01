@@ -3,6 +3,7 @@
 
 #include <cg/GLHeader.h>
 #include <cg/entities/System.h>
+#include "cg/SpaceshipControl.h"
 
 
 class InputSystem : public System {
@@ -11,6 +12,8 @@ public:
 
     void init() override;
     void update() override;
+    void createSpaceshipControl(Entity* spaceship, Entity* camera);
+
 
     bool isKeyDown(int key);
     bool isKeyUp(int key);
@@ -19,6 +22,7 @@ public:
 private:
     GLContext *context;
 
+    SpaceshipControl* spaceshipControl;
     bool processedMouse = false;
     double lastMouseX, lastMouseY;
     std::unordered_map<uint32_t, uint32_t> keysDown;

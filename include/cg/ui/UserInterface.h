@@ -23,6 +23,7 @@ private:
 
     bool showDemoWindow = false;
     bool showTerrainGeneratorWindow = false;
+    bool showWireframe = true;
 
     char* currentView = nullptr;
     std::vector<const char *> views;

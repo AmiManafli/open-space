@@ -90,6 +90,7 @@ void Application::init() {
 
     auto ui = renderSystem->getUserInterface();
 
+
     auto sunPosition = glm::vec3(0, 0, 0);
     auto sunVelocity = new VelocityComponent();
     sunVelocity->rotation = glm::vec3(0, -0.01, 0);
@@ -150,11 +151,14 @@ void Application::init() {
 //        ->withTransform(0, 1.01, 0)
 //        ->build(entityManager);
 
-//	auto airplane = EntityBuilder::create()
-//		->withMesh("./assets/models/airplaneUdemy.obj", meshTextureShaderProgram)
-//		->withTransform(0, 0, 0)
-//		->withVelocity(new VelocityComponent(glm::vec3(0, 0.5, 0), glm::vec3(0, 0, 0)))
-//		->build(entityManager);
+	auto airplane = EntityBuilder::create()
+		->withMesh("./assets/models/airplaneUdemy.obj", meshTextureShaderProgram)
+		->withTransform(0, 0, 0)
+		->withOrbit(sunPosition, 40, 40, 0.1, 0.0)
+		->build(entityManager);
+
+    inputSystem->createSpaceshipControl(airplane, context->spaceshipCamera);
+
 
 //    auto nanoSuit = EntityBuilder::create()
 //        ->withMesh("./assets/models/nanosuit.obj", meshTextureShaderProgram)
@@ -198,8 +202,17 @@ void Application::run() {
 void Application::createCameras() {
     auto target = glm::vec3(0, 0, 0);
 
+    /// Spaceship camera
+    //auto position = glm::vec3(0.0, 0.0, 10.0);
+    auto position = glm::vec3(2.3, 40.3, 80.0);
+
+    context->spaceshipCamera = EntityBuilder::create()
+        ->withTransform(position)
+        ->withCamera(CameraComponent::Mode::FirstPersonShip, CameraComponent::Type::Perspective, target, glm::normalize(-position), glm::vec3(0, 1, 0), context->getAspect())
+        ->build(entityManager);
+
     /// Perspective camera
-    auto position = glm::vec3(2.3, 40.0, 80.0);
+    position = glm::vec3(2.3, 40.0, 80.0);
     context->perspectiveCamera = EntityBuilder::create()
         ->withTransform(position)
         ->withVelocity(new VelocityComponent())
@@ -221,7 +234,7 @@ void Application::createCameras() {
         ->withCamera(CameraComponent::Mode::Free, CameraComponent::Type::Orthographic, target, glm::normalize(-position), glm::vec3(0, 1, 0), context->getAspect())
         ->build(entityManager);
 
-    context->setActiveCamera(context->perspectiveCamera);
+    context->setActiveCamera(context->spaceshipCamera);
 }
 
 Entity* Application::createGrid(int width, int height, bool showYAxis) {

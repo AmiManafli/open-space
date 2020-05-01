@@ -9,6 +9,7 @@
 class CameraComponent : public Component {
 public:
     enum Mode {
+        FirstPersonShip,
         Free,
     };
     enum Type {
@@ -20,6 +21,10 @@ public:
         Backward,
         Left,
         Right,
+        RollLeft,
+        RollRight,
+        Up,
+        Down,
     };
 
     CameraComponent(Mode mode, Type type, glm::vec3 target, glm::vec3 front, glm::vec3 up, TransformComponent *positionComponent);
@@ -27,7 +32,7 @@ public:
     glm::mat4 getView(TransformComponent *component);
     glm::mat4 getProjection(float aspectRatio);
 
-    void processKeyboard(CameraComponent::Direction direction, float deltaTime, TransformComponent *positionComponent);
+    void processKeyboard(CameraComponent::Direction direction, float deltaTime, TransformComponent *transformComponent);
     void processMouseMovement(float offsetX, float offsetY);
 
     Mode mode;
@@ -40,11 +45,11 @@ public:
     glm::vec3 front;
 
     float yaw, pitch, roll;
-
+  
     float movementSpeed;
     float mouseSensitivity;
 
-private:
+//private:
     void updateVectors();
 };
 
