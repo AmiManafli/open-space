@@ -23,7 +23,7 @@ void IcoSphere::generateMesh() {
 
     // Top vertex
     vertices[0] = Vertex { {0.0f, radius, 0.0f} };
-//    vertices[0].normal = glm::normalize(vertices[0].position);
+    vertices[0].normal = glm::normalize(vertices[0].position);
 
     // Middle vertices
     double inclinationUpper = -PI / 2.0 - inclination / 2.0;  // -126 degrees
@@ -40,11 +40,11 @@ void IcoSphere::generateMesh() {
 
         Vertex upper{};
         upper.position = glm::vec3(xz * cos(inclinationUpper), y, xz * sin(inclinationUpper));
-//        upper.normal = glm::normalize(upper.position);
+        upper.normal = glm::normalize(upper.position);
 
         Vertex lower{};
         lower.position = glm::vec3(xz * cos(inclinationLower), -y, xz * sin(inclinationLower));
-//        lower.normal = glm::normalize(lower.position);
+        lower.normal = glm::normalize(lower.position);
 
         vertices[iUpper] = upper;
         vertices[iLower] = lower;
@@ -75,7 +75,7 @@ void IcoSphere::generateMesh() {
 
     // Bottom vertex
     vertices[11] = Vertex { {0.0f, -radius, 0.0f} };
-//    vertices[11].normal = glm::normalize(vertices[11].position);
+    vertices[11].normal = glm::normalize(vertices[11].position);
 }
 
 glm::vec3 halfPosition(glm::vec3 a, glm::vec3 b) {
@@ -102,9 +102,9 @@ void IcoSphere::subdivide() {
         auto upperLower = halfPosition(vertices[iUpper].position, vertices[iUpperNext].position);
         auto upperStartIndex = vertices.size();
 
-        vertices.emplace_back(Vertex { upperLeft });
-        vertices.emplace_back(Vertex { upperRight });
-        vertices.emplace_back(Vertex { upperLower });
+        vertices.emplace_back(Vertex { upperLeft, glm::normalize(upperLeft) });
+        vertices.emplace_back(Vertex { upperRight, glm::normalize(upperRight) });
+        vertices.emplace_back(Vertex { upperLower, glm::normalize(upperLower) });
 
         indices.emplace_back(0);
         indices.emplace_back(upperStartIndex + 1);
@@ -128,9 +128,9 @@ void IcoSphere::subdivide() {
         auto lowerUpper = halfPosition(vertices[iLower].position, vertices[iLowerNext].position);
         auto lowerStartIndex = vertices.size();
 
-        vertices.emplace_back(Vertex { lowerLeft });
-        vertices.emplace_back(Vertex { lowerRight });
-        vertices.emplace_back(Vertex { lowerUpper });
+        vertices.emplace_back(Vertex { lowerLeft, glm::normalize(lowerLeft) });
+        vertices.emplace_back(Vertex { lowerRight, glm::normalize(lowerRight) });
+        vertices.emplace_back(Vertex { lowerUpper, glm::normalize(lowerUpper) });
 
         indices.emplace_back(11);
         indices.emplace_back(lowerStartIndex + 0);
@@ -154,9 +154,9 @@ void IcoSphere::subdivide() {
         lowerUpper = halfPosition(vertices[iUpper].position, vertices[iUpperNext].position);
         lowerStartIndex = vertices.size();
 
-        vertices.emplace_back(Vertex { lowerLeft });
-        vertices.emplace_back(Vertex { lowerRight });
-        vertices.emplace_back(Vertex { lowerUpper });
+        vertices.emplace_back(Vertex { lowerLeft, glm::normalize(lowerLeft) });
+        vertices.emplace_back(Vertex { lowerRight, glm::normalize(lowerRight) });
+        vertices.emplace_back(Vertex { lowerUpper, glm::normalize(lowerUpper) });
 
         indices.emplace_back(iLower);
         indices.emplace_back(lowerStartIndex + 0);
@@ -180,9 +180,9 @@ void IcoSphere::subdivide() {
         upperLower = halfPosition(vertices[iLower].position, vertices[iLowerNext].position);
         upperStartIndex = vertices.size();
 
-        vertices.emplace_back(Vertex { upperLeft });
-        vertices.emplace_back(Vertex { upperRight });
-        vertices.emplace_back(Vertex { upperLower });
+        vertices.emplace_back(Vertex { upperLeft, glm::normalize(upperLeft) });
+        vertices.emplace_back(Vertex { upperRight, glm::normalize(upperRight) });
+        vertices.emplace_back(Vertex { upperLower, glm::normalize(upperLower) });
 
         indices.emplace_back(iUpperNext);
         indices.emplace_back(upperStartIndex + 1);
