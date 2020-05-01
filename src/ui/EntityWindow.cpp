@@ -1,7 +1,30 @@
 #include "cg/ui/EntityWindow.h"
 
+GLenum meshModeStringToGLenum(const char *mode) {
+    if (strcmp(mode, "Triangles") == 0) {
+        return GL_TRIANGLES;
+    } else if (strcmp(mode, "Lines") == 0) {
+        return GL_LINES;
+    } else if (strcmp(mode, "Points") == 0) {
+        return GL_POINTS;
+    }
+    throw std::runtime_error("Invalid mesh mode");
+}
+
+std::string meshModeEnumToString(GLenum mode) {
+    if (mode == GL_TRIANGLES) {
+        return "Triangles";
+    } else if (mode == GL_LINES) {
+        return "Lines";
+    } else if (mode == GL_POINTS) {
+        return "Points";
+    }
+    throw std::runtime_error("Invalid mesh mode");
+}
+
 EntityWindow::EntityWindow(EntityManager *entityManager, GLContext *context)
         : entityManager(entityManager), context(context), width(300), height(0) {
+    meshModes = { "Triangles", "Lines", "Points" };
 }
 
 void EntityWindow::render() {
@@ -71,10 +94,10 @@ void EntityWindow::renderOrbitComponent(OrbitComponent *component) {
         ImGui::Text("Width: %f\n", component->width);
         ImGui::Text("Height: %f\n", component->height);
 
-        if (ImGui::DragFloat("Semi-Major Axis", &component->semiMajorAxis, 0.1, 0, 10000)) {
+        if (ImGui::DragFloat("Semi-Major Axis", &component->semiMajorAxis, 0.1, component->semiMinorAxis, 10000)) {
             component->update(component->parentPosition, component->semiMajorAxis, component->semiMinorAxis, component->speed);
         }
-        if (ImGui::DragFloat("Semi-Minor Axis", &component->semiMinorAxis, 0.1, 0, 10000)) {
+        if (ImGui::DragFloat("Semi-Minor Axis", &component->semiMinorAxis, 0.1, 0.001, component->semiMajorAxis)) {
             component->update(component->parentPosition, component->semiMajorAxis, component->semiMinorAxis, component->speed);
         }
 
@@ -141,15 +164,18 @@ void EntityWindow::renderMeshComponents(std::vector<MeshComponent *> components)
         for (MeshComponent *mesh : components) {
             std::string name = "Mesh " + std::to_string(index++);
             if (ImGui::TreeNode(name.c_str())) {
-                std::string mode;
-                if (mesh->mode == GL_TRIANGLES) {
-                    mode = "Triangles";
-                } else if (mesh->mode == GL_LINES) {
-                    mode = "Lines";
-                } else {
-                    mode = "Unknown";
+
+                std::string currentMode = meshModeEnumToString(mesh->mode);
+                if (ImGui::BeginCombo("Mode", currentMode.c_str())) {
+                    for (auto mode : meshModes) {
+                        bool isSelected = strcmp(currentMode.c_str(), mode) == 0;
+                        if (ImGui::Selectable(mode, isSelected)) {
+                            mesh->mode = meshModeStringToGLenum(mode);
+                        }
+                    }
+                    ImGui::EndCombo();
                 }
-                ImGui::Text("Mode: %s", mode.c_str());
+
                 ImGui::Text("Instance count: %d", mesh->instances);
                 ImGui::Text("Vertices: %llu", mesh->vertices.size());
                 ImGui::Text("Indices: %llu", mesh->indices.size());

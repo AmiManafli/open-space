@@ -16,6 +16,8 @@ private:
     uint16_t width;
     uint16_t height;
 
+    std::vector<const char *> meshModes;
+
     void renderEmpty();
 
     void renderInfo(Entity *entity);
