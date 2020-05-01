@@ -106,7 +106,6 @@ void IcoSphere::subdivide() {
         vertices.emplace_back(Vertex { upperRight });
         vertices.emplace_back(Vertex { upperLower });
 
-        // Upper row triangle
         indices.emplace_back(0);
         indices.emplace_back(upperStartIndex + 1);
         indices.emplace_back(upperStartIndex);
@@ -148,15 +147,57 @@ void IcoSphere::subdivide() {
         indices.emplace_back(lowerStartIndex + 1);
         indices.emplace_back(lowerStartIndex + 2);
         indices.emplace_back(iLowerNext);
-//
-//        // Upper mid row triangle
-//        indices.emplace_back(iUpper);
-//        indices.emplace_back(iUpperNext);
-//        indices.emplace_back(iLower);
 
-//        // Lower mid row triangle
-//        indices.emplace_back(iLower);
-//        indices.emplace_back(iUpperNext);
-//        indices.emplace_back(iLowerNext);
+        // Upper mid row triangle
+        lowerLeft = halfPosition(vertices[iUpper].position, vertices[iLower].position);
+        lowerRight = halfPosition(vertices[iUpperNext].position, vertices[iLower].position);
+        lowerUpper = halfPosition(vertices[iUpper].position, vertices[iUpperNext].position);
+        lowerStartIndex = vertices.size();
+
+        vertices.emplace_back(Vertex { lowerLeft });
+        vertices.emplace_back(Vertex { lowerRight });
+        vertices.emplace_back(Vertex { lowerUpper });
+
+        indices.emplace_back(iLower);
+        indices.emplace_back(lowerStartIndex + 0);
+        indices.emplace_back(lowerStartIndex + 1);
+
+        indices.emplace_back(lowerStartIndex + 0);
+        indices.emplace_back(lowerStartIndex + 2);
+        indices.emplace_back(lowerStartIndex + 1);
+
+        indices.emplace_back(lowerStartIndex + 0);
+        indices.emplace_back(iUpper);
+        indices.emplace_back(lowerStartIndex + 2);
+
+        indices.emplace_back(lowerStartIndex + 1);
+        indices.emplace_back(lowerStartIndex + 2);
+        indices.emplace_back(iUpperNext);
+
+        // Lower mid row triangle
+        upperLeft = halfPosition(vertices[iUpperNext].position, vertices[iLower].position);
+        upperRight = halfPosition(vertices[iUpperNext].position, vertices[iLowerNext].position);
+        upperLower = halfPosition(vertices[iLower].position, vertices[iLowerNext].position);
+        upperStartIndex = vertices.size();
+
+        vertices.emplace_back(Vertex { upperLeft });
+        vertices.emplace_back(Vertex { upperRight });
+        vertices.emplace_back(Vertex { upperLower });
+
+        indices.emplace_back(iUpperNext);
+        indices.emplace_back(upperStartIndex + 1);
+        indices.emplace_back(upperStartIndex + 0);
+
+        indices.emplace_back(upperStartIndex + 0);
+        indices.emplace_back(upperStartIndex + 2);
+        indices.emplace_back(iLower);
+
+        indices.emplace_back(upperStartIndex + 0);
+        indices.emplace_back(upperStartIndex + 1);
+        indices.emplace_back(upperStartIndex + 2);
+
+        indices.emplace_back(upperStartIndex + 1);
+        indices.emplace_back(iLowerNext);
+        indices.emplace_back(upperStartIndex + 2);
     }
 }
