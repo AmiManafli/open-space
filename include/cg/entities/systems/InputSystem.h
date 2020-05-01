@@ -26,11 +26,17 @@ private:
     bool processedMouse = false;
     double lastMouseX, lastMouseY;
     std::unordered_map<uint32_t, uint32_t> keysDown;
+    std::unordered_map<uint32_t, uint32_t> mouseButtonsDown;
 
     void moveCamera(Entity *camera, CameraComponent::Direction direction, float deltaTime);
-    static void mousePositionCallback(GLFWwindow* window, double x, double y);
-    static void processMouseScroll(GLFWwindow* window, double xoffset, double yoffset);
+    Entity* getClickedEntity(double mouseX, double mouseY);
 
+    bool isRayInSphere(TransformComponent *transform, glm::vec3 origin, glm::vec3 ray);
+    void selectEntity(Entity *entity);
+
+    static void mousePositionCallback(GLFWwindow* window, double x, double y);
+    static void processMouseScroll(GLFWwindow* window, double xOffset, double yOffset);
+    static void processMouseButton(GLFWwindow* window, int button, int action, int mods);
 };
 
 #endif //CG1_PROJECT_INPUTSYSTEM_H

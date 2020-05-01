@@ -46,6 +46,10 @@ public:
 
     Entity *light = nullptr;
 
+    Entity *selectedEntity = nullptr;
+
+    ShaderProgram *highlightProgram = nullptr;
+
     double startTime;
 
 private:

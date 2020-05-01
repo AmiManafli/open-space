@@ -1,4 +1,4 @@
 #include "cg/entities/components/MassComponent.h"
 
-MassComponent::MassComponent(double mass) : mass(mass) {
+MassComponent::MassComponent(float mass) : mass(mass) {
 }

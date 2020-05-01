@@ -32,6 +32,8 @@ UserInterface::UserInterface(EntityManager *entityManager, GLContext *context)
     settings.persistence = 1.0;
     settings.seed = 1;
     settings.redistribution = 1.0;
+
+    entityWindow = new EntityWindow(entityManager, context);
 }
 
 void UserInterface::render() {
@@ -54,6 +56,10 @@ void UserInterface::render() {
 
     if (showTerrainGeneratorWindow) {
         renderTerrainGeneratorWindow();
+    }
+
+    if (showEntityWindow) {
+        entityWindow->render();
     }
 
     ImGui::Render();

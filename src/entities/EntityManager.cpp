@@ -8,6 +8,15 @@ Entity *EntityManager::createEntity() {
     return entity;
 }
 
+Entity *EntityManager::getEntity(uint32_t id) {
+    for (auto& entity : entities) {
+        if (entity->id == id) {
+            return entity;
+        }
+    }
+    return nullptr;
+}
+
 uint32_t EntityManager::getNextEntityId() {
     return nextId++;
 }
