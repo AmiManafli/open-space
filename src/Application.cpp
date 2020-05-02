@@ -98,9 +98,14 @@ void Application::init() {
 //            ->build(entityManager);
 
     auto sphere = EntityBuilder::create()
-            ->withMesh(new IcoSphere(1.0, 0, meshShaderProgram))
+            ->withMesh(new IcoSphere(1.0, 1, meshTextureShaderProgram))
             ->withTransform(0, 1, 0)
             ->build(entityManager);
+
+//	auto airplane = EntityBuilder::create()
+//		->withMesh("./assets/models/airplaneUdemy.obj", meshTextureShaderProgram)
+//		->withTransform(0, 0, 0)
+//		->build(entityManager);
 
 //    auto sunPosition = glm::vec3(0, 0, 0);
 //    auto sunVelocity = new VelocityComponent();

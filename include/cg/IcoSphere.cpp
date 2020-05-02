@@ -1,3 +1,4 @@
+#include <stb_image.h>
 #include "IcoSphere.h"
 
 
@@ -32,11 +33,8 @@ void IcoSphere::generateMesh() {
     double inclinationLower = -PI / 2.0;                      // -90 degrees
 
     // Texture
-    auto width = 2048;
-    auto height = 1024;
-
-    float s = 186.0 / width;
-    float t = 322.0 / height;
+    float s = horizontalStep / textureWidth;
+    float t = verticalStep / textureHeight;
 
     for (int i = 1; i <= 5; i++) {
         double y = radius * sin(azimuth);
@@ -126,7 +124,11 @@ glm::vec3 IcoSphere::halfPosition(glm::vec3 a, glm::vec3 b) {
 }
 
 glm::vec2 IcoSphere::halfTextureCoord(glm::vec2 a, glm::vec2 b) {
-    return glm::vec2();
+    auto diff = a - b;
+    float halfLength = glm::length(diff) / 2.0f;
+    auto unit = glm::normalize(diff);
+
+    return glm::normalize(b + unit * halfLength);
 }
 
 void IcoSphere::subdivide(uint16_t subdivisions) {
@@ -155,44 +157,26 @@ void IcoSphere::subdivide(uint16_t subdivisions) {
             // Bottom left triangle
             auto normal = calculateNormal(a, d, f);
             newVertices.emplace_back(Vertex { a, normal, oldVertices[i].textureCoord });
-            newVertices.emplace_back(Vertex {
-                d, normal,
-            });
-            newVertices.emplace_back(Vertex {
-                f, normal,
-            });
+            newVertices.emplace_back(Vertex { d, normal, dTextureCoord });
+            newVertices.emplace_back(Vertex { f, normal, fTextureCoord });
 
             // Middle triangle
             normal = calculateNormal(d, e, f);
-            newVertices.emplace_back(Vertex {
-                d, normal,
-            });
-            newVertices.emplace_back(Vertex {
-                e, normal,
-            });
-            newVertices.emplace_back(Vertex {
-                f, normal,
-            });
+            newVertices.emplace_back(Vertex { d, normal, dTextureCoord });
+            newVertices.emplace_back(Vertex { e, normal, eTextureCoord });
+            newVertices.emplace_back(Vertex { f, normal, fTextureCoord });
 
             // Bottom right triangle
             normal = calculateNormal(f, e, c);
-            newVertices.emplace_back(Vertex {
-                f, normal,
-            });
-            newVertices.emplace_back(Vertex {
-                e, normal,
-            });
+            newVertices.emplace_back(Vertex { f, normal, fTextureCoord });
+            newVertices.emplace_back(Vertex { e, normal, eTextureCoord });
             newVertices.emplace_back(Vertex { c, normal, oldVertices[i + 2].textureCoord });
 
             // Top triangle
             normal = calculateNormal(d, b, e);
-            newVertices.emplace_back(Vertex {
-                d, normal,
-            });
+            newVertices.emplace_back(Vertex { d, normal, dTextureCoord });
             newVertices.emplace_back(Vertex { b, normal, oldVertices[i + 1].textureCoord });
-            newVertices.emplace_back(Vertex {
-                e, normal,
-            });
+            newVertices.emplace_back(Vertex { e, normal, eTextureCoord });
         }
 
         vertices = newVertices;
@@ -203,5 +187,29 @@ void IcoSphere::subdivide(uint16_t subdivisions) {
 }
 
 void IcoSphere::generateTexture() {
+    auto data = new unsigned char[textureWidth * textureHeight * 3 * 3];
+    for (int i = 0; i < textureWidth * textureHeight * 3 * 3; i += 3) {
+        data[i] = 147;
+        data[i + 1] = 226;
+        data[i + 2] = 255;
+    }
+
+    auto texture = Texture {};
+    texture.type = "texture_diffuse";
+
+    glGenTextures(1, &texture.id);
+
+    glBindTexture(GL_TEXTURE_2D, texture.id);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, textureWidth, textureHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+//     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+//     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+//     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+//     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    textures.emplace_back(texture);
+
+    delete[] data;
 }
 
