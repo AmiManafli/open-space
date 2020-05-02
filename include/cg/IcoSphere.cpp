@@ -5,7 +5,7 @@ IcoSphere::IcoSphere(double radius, uint16_t subdivisions, ShaderProgram *shader
         : radius(radius) {
     this->shaderProgram = shaderProgram;
     mode = GL_TRIANGLES;
-    indexed = true;
+    indexed = false;
     instances = 1;
     subdivision = subdivisions;
 
@@ -18,68 +18,58 @@ IcoSphere::IcoSphere(double radius, uint16_t subdivisions, ShaderProgram *shader
     setupBuffers();
 }
 
+glm::vec3 calculateNormal(glm::vec3 a, glm::vec3 b, glm::vec3 c) {
+    return glm::normalize(glm::cross(a - b, a - c));
+}
+
 void IcoSphere::generateMesh() {
     const double inclination = PI / 180.0 * 72.0;
     const double azimuth = atan(0.5);
-    const int vertexCount = 12;
 
-    vertices.resize(vertexCount);
-
-    // Top vertex
-    vertices[0] = Vertex { {0.0f, radius, 0.0f} };
-    vertices[0].normal = glm::normalize(vertices[0].position);
+    auto top = glm::vec3(0, radius, 0);
+    auto bottom = glm::vec3(0, -radius, 0);
 
     double inclinationUpper = -PI / 2.0 - inclination / 2.0;  // -126 degrees
     double inclinationLower = -PI / 2.0;                      // -90 degrees
 
-    // Middle vertices
     for (int i = 1; i <= 5; i++) {
-        int iUpper = i;
-        int iUpperNext = i == 5 ? 1 : iUpper + 1;
-        int iLower = i + 5;
-        int iLowerNext = i == 5 ? 6 : iLower + 1;
-
         double y = radius * sin(azimuth);
         double xz = radius * cos(azimuth);
 
-        Vertex upper{};
-        upper.position = glm::vec3(xz * cos(inclinationUpper), y, xz * sin(inclinationUpper));
-        upper.normal = glm::normalize(upper.position);
+        auto upper = glm::vec3(xz * cos(inclinationUpper), y, xz * sin(inclinationUpper));
+        auto upperNext = glm::vec3(xz * cos(inclinationUpper + inclination), y, xz * sin(inclinationUpper + inclination));
 
-        Vertex lower{};
-        lower.position = glm::vec3(xz * cos(inclinationLower), -y, xz * sin(inclinationLower));
-        lower.normal = glm::normalize(lower.position);
+        auto lower = glm::vec3(xz * cos(inclinationLower), -y, xz * sin(inclinationLower));
+        auto lowerNext = glm::vec3(xz * cos(inclinationLower + inclination), -y, xz * sin(inclinationLower + inclination));
 
-        vertices[iUpper] = upper;
-        vertices[iLower] = lower;
+        auto upperNormal = calculateNormal(top, upper, upperNext);
+        auto upperMidNormal = calculateNormal(upper, upperNext, lower);
+        auto lowerMidNormal = calculateNormal(lower, lowerNext, upperNext);
+        auto lowerNormal = calculateNormal(bottom, lower, lowerNext);
 
         // Upper row triangle
-        subdividedIndices[0].emplace_back(0);
-        subdividedIndices[0].emplace_back(iUpperNext);
-        subdividedIndices[0].emplace_back(iUpper);
-
-        // Lower row triangle
-        subdividedIndices[0].emplace_back(11);
-        subdividedIndices[0].emplace_back(iLower);
-        subdividedIndices[0].emplace_back(iLowerNext);
+        vertices.emplace_back(Vertex { top, upperNormal });
+        vertices.emplace_back(Vertex { upperNext, upperNormal });
+        vertices.emplace_back(Vertex { upper, upperNormal });
 
         // Upper mid row triangle
-        subdividedIndices[0].emplace_back(iUpper);
-        subdividedIndices[0].emplace_back(iUpperNext);
-        subdividedIndices[0].emplace_back(iLower);
+        vertices.emplace_back(Vertex { upper, upperMidNormal });
+        vertices.emplace_back(Vertex { upperNext, upperMidNormal });
+        vertices.emplace_back(Vertex { lower, upperMidNormal });
 
         // Lower mid row triangle
-        subdividedIndices[0].emplace_back(iLowerNext);
-        subdividedIndices[0].emplace_back(iLower);
-        subdividedIndices[0].emplace_back(iUpperNext);
+        vertices.emplace_back(Vertex { lowerNext, lowerMidNormal });
+        vertices.emplace_back(Vertex { lower, lowerMidNormal });
+        vertices.emplace_back(Vertex { upperNext, lowerMidNormal });
+
+        // Lower row triangle
+        vertices.emplace_back(Vertex { bottom, lowerNormal });
+        vertices.emplace_back(Vertex { lower, lowerNormal });
+        vertices.emplace_back(Vertex { lowerNext, lowerNormal });
 
         inclinationUpper += inclination;
         inclinationLower += inclination;
     }
-
-    // Bottom vertex
-    vertices[11] = Vertex { {0.0f, -radius, 0.0f} };
-    vertices[11].normal = glm::normalize(vertices[11].position);
 }
 
 glm::vec3 IcoSphere::halfPosition(glm::vec3 a, glm::vec3 b) {

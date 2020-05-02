@@ -21,7 +21,7 @@ void RenderSystem::init() {
     glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
 //    glEnable(GL_CULL_FACE);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+//    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
 void RenderSystem::update() {
