@@ -10,8 +10,6 @@ IcoSphere::IcoSphere(double radius, uint16_t subdivisions, ShaderProgram *shader
     subdivision = subdivisions;
 
     subdivide(subdivisions);
-
-    setupBuffers();
 }
 
 glm::vec3 calculateNormal(glm::vec3 a, glm::vec3 b, glm::vec3 c) {
@@ -77,6 +75,7 @@ glm::vec3 IcoSphere::halfPosition(glm::vec3 a, glm::vec3 b) {
 }
 
 void IcoSphere::subdivide(uint16_t subdivisions) {
+    vertices.clear();
     generateMesh();
 
     for (int level = 1; level <= subdivisions; level++) {
@@ -122,6 +121,8 @@ void IcoSphere::subdivide(uint16_t subdivisions) {
 
         vertices = newVertices;
     }
+
+    setupBuffers();
 }
 
 void IcoSphere::generateTexture() {
