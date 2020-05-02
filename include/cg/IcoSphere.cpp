@@ -1,20 +1,18 @@
 #include "IcoSphere.h"
 
 
-IcoSphere::IcoSphere(double radius, int maxSubdivisions, ShaderProgram *shaderProgram)
+IcoSphere::IcoSphere(double radius, uint16_t subdivisions, ShaderProgram *shaderProgram)
         : radius(radius) {
     this->shaderProgram = shaderProgram;
-    this->mode = GL_TRIANGLES;
-    this->indexed = true;
-    this->instances = 1;
-    this->subdivisions = maxSubdivisions;
-    this->maxSubdivisions = maxSubdivisions;
+    mode = GL_TRIANGLES;
+    indexed = true;
+    instances = 1;
+    subdivision = subdivisions;
 
+    subdividedIndices.resize(1);
     generateMesh();
-    for (int level = 1; level <= maxSubdivisions; level++) {
-        subdivide(level);
-    }
-    this->indices = subdividedIndices[subdivisions];
+
+    subdivide(subdivisions);
 
     setupBuffers();
 }
@@ -91,118 +89,49 @@ glm::vec3 IcoSphere::halfPosition(glm::vec3 a, glm::vec3 b) {
     return glm::normalize(b + unit * halfLength) * static_cast<float>(radius);
 }
 
-void IcoSphere::subdivide(uint16_t level) {
-    int max = 5 * level;
-
-    indices.clear();
-    for (int i = 1; i <= max; i++) {
-        int iUpper = i;
-        int iUpperNext = i == max ? 1 : iUpper + 1;
-        int iLower = i + max;
-        int iLowerNext = i == max ? max + 1 : iLower + 1;
-
-        // Upper row triangle
-        auto upperLeft = halfPosition(vertices[0].position, vertices[iUpper].position);
-        auto upperRight = halfPosition(vertices[0].position, vertices[iUpperNext].position);
-        auto upperLower = halfPosition(vertices[iUpper].position, vertices[iUpperNext].position);
-        auto upperStartIndex = vertices.size();
-
-        vertices.emplace_back(Vertex { upperLeft, glm::normalize(upperLeft) });
-        vertices.emplace_back(Vertex { upperRight, glm::normalize(upperRight) });
-        vertices.emplace_back(Vertex { upperLower, glm::normalize(upperLower) });
-
-        subdividedIndices[level].emplace_back(0);
-        subdividedIndices[level].emplace_back(upperStartIndex + 1);
-        subdividedIndices[level].emplace_back(upperStartIndex);
-
-        subdividedIndices[level].emplace_back(upperStartIndex);
-        subdividedIndices[level].emplace_back(upperStartIndex + 2);
-        subdividedIndices[level].emplace_back(iUpper);
-
-        subdividedIndices[level].emplace_back(upperStartIndex);
-        subdividedIndices[level].emplace_back(upperStartIndex + 1);
-        subdividedIndices[level].emplace_back(upperStartIndex + 2);
-
-        subdividedIndices[level].emplace_back(upperStartIndex + 1);
-        subdividedIndices[level].emplace_back(iUpperNext);
-        subdividedIndices[level].emplace_back(upperStartIndex + 2);
-
-        // Lower row triangle
-        auto lowerLeft = halfPosition(vertices[11].position, vertices[iLower].position);
-        auto lowerRight = halfPosition(vertices[11].position, vertices[iLowerNext].position);
-        auto lowerUpper = halfPosition(vertices[iLower].position, vertices[iLowerNext].position);
-        auto lowerStartIndex = vertices.size();
-
-        vertices.emplace_back(Vertex { lowerLeft, glm::normalize(lowerLeft) });
-        vertices.emplace_back(Vertex { lowerRight, glm::normalize(lowerRight) });
-        vertices.emplace_back(Vertex { lowerUpper, glm::normalize(lowerUpper) });
-
-        subdividedIndices[level].emplace_back(11);
-        subdividedIndices[level].emplace_back(lowerStartIndex + 0);
-        subdividedIndices[level].emplace_back(lowerStartIndex + 1);
-
-        subdividedIndices[level].emplace_back(lowerStartIndex + 0);
-        subdividedIndices[level].emplace_back(lowerStartIndex + 2);
-        subdividedIndices[level].emplace_back(lowerStartIndex + 1);
-
-        subdividedIndices[level].emplace_back(lowerStartIndex + 0);
-        subdividedIndices[level].emplace_back(iLower);
-        subdividedIndices[level].emplace_back(lowerStartIndex + 2);
-
-        subdividedIndices[level].emplace_back(lowerStartIndex + 1);
-        subdividedIndices[level].emplace_back(lowerStartIndex + 2);
-        subdividedIndices[level].emplace_back(iLowerNext);
-
-        // Upper mid row triangle
-        lowerLeft = halfPosition(vertices[iUpper].position, vertices[iLower].position);
-        lowerRight = halfPosition(vertices[iUpperNext].position, vertices[iLower].position);
-        lowerUpper = halfPosition(vertices[iUpper].position, vertices[iUpperNext].position);
-        lowerStartIndex = vertices.size();
-
-        vertices.emplace_back(Vertex { lowerLeft, glm::normalize(lowerLeft) });
-        vertices.emplace_back(Vertex { lowerRight, glm::normalize(lowerRight) });
-        vertices.emplace_back(Vertex { lowerUpper, glm::normalize(lowerUpper) });
-
-        subdividedIndices[level].emplace_back(iLower);
-        subdividedIndices[level].emplace_back(lowerStartIndex + 0);
-        subdividedIndices[level].emplace_back(lowerStartIndex + 1);
-
-        subdividedIndices[level].emplace_back(lowerStartIndex + 0);
-        subdividedIndices[level].emplace_back(lowerStartIndex + 2);
-        subdividedIndices[level].emplace_back(lowerStartIndex + 1);
-
-        subdividedIndices[level].emplace_back(lowerStartIndex + 0);
-        subdividedIndices[level].emplace_back(iUpper);
-        subdividedIndices[level].emplace_back(lowerStartIndex + 2);
-
-        subdividedIndices[level].emplace_back(lowerStartIndex + 1);
-        subdividedIndices[level].emplace_back(lowerStartIndex + 2);
-        subdividedIndices[level].emplace_back(iUpperNext);
-
-        // Lower mid row triangle
-        upperLeft = halfPosition(vertices[iUpperNext].position, vertices[iLower].position);
-        upperRight = halfPosition(vertices[iUpperNext].position, vertices[iLowerNext].position);
-        upperLower = halfPosition(vertices[iLower].position, vertices[iLowerNext].position);
-        upperStartIndex = vertices.size();
-
-        vertices.emplace_back(Vertex { upperLeft, glm::normalize(upperLeft) });
-        vertices.emplace_back(Vertex { upperRight, glm::normalize(upperRight) });
-        vertices.emplace_back(Vertex { upperLower, glm::normalize(upperLower) });
-
-        subdividedIndices[level].emplace_back(iUpperNext);
-        subdividedIndices[level].emplace_back(upperStartIndex + 1);
-        subdividedIndices[level].emplace_back(upperStartIndex + 0);
-
-        subdividedIndices[level].emplace_back(upperStartIndex + 0);
-        subdividedIndices[level].emplace_back(upperStartIndex + 2);
-        subdividedIndices[level].emplace_back(iLower);
-
-        subdividedIndices[level].emplace_back(upperStartIndex + 0);
-        subdividedIndices[level].emplace_back(upperStartIndex + 1);
-        subdividedIndices[level].emplace_back(upperStartIndex + 2);
-
-        subdividedIndices[level].emplace_back(upperStartIndex + 1);
-        subdividedIndices[level].emplace_back(iLowerNext);
-        subdividedIndices[level].emplace_back(upperStartIndex + 2);
+void IcoSphere::subdivide(uint16_t subdivisions) {
+    if (subdivisions < subdividedIndices.size()) {
+        indices = subdividedIndices[subdivisions];
+        return;
     }
+
+    for (int level = subdividedIndices.size(); level <= subdivisions; level++) {
+        subdividedIndices.emplace_back(std::vector<uint32_t>());
+        auto oldIndices = subdividedIndices[level - 1];
+
+        for (uint32_t i = 0; i < oldIndices.size(); i += 3) {
+            auto a = vertices[oldIndices[i]].position; auto aIndex = oldIndices[i];
+            auto b = vertices[oldIndices[i + 1]].position; auto bIndex = oldIndices[i + 1];
+            auto c = vertices[oldIndices[i + 2]].position; auto cIndex = oldIndices[i + 2];
+            auto d = halfPosition(a, b); auto dIndex = vertices.size();
+            auto e = halfPosition(b, c); auto eIndex = dIndex + 1;
+            auto f = halfPosition(a, c); auto fIndex = dIndex + 2;
+
+            auto dVertex = Vertex { d, glm::normalize(d) };
+            auto eVertex = Vertex { e, glm::normalize(e) };
+            auto fVertex = Vertex { f, glm::normalize(f) };
+
+            vertices.emplace_back(dVertex);
+            vertices.emplace_back(eVertex);
+            vertices.emplace_back(fVertex);
+
+            subdividedIndices[level].emplace_back(aIndex);
+            subdividedIndices[level].emplace_back(dIndex);
+            subdividedIndices[level].emplace_back(fIndex);
+
+            subdividedIndices[level].emplace_back(dIndex);
+            subdividedIndices[level].emplace_back(eIndex);
+            subdividedIndices[level].emplace_back(fIndex);
+
+            subdividedIndices[level].emplace_back(fIndex);
+            subdividedIndices[level].emplace_back(eIndex);
+            subdividedIndices[level].emplace_back(cIndex);
+
+            subdividedIndices[level].emplace_back(dIndex);
+            subdividedIndices[level].emplace_back(bIndex);
+            subdividedIndices[level].emplace_back(eIndex);
+        }
+    }
+    indices = subdividedIndices[subdivisions];
 }
+

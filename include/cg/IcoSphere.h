@@ -8,15 +8,16 @@
 
 class IcoSphere : public MeshComponent {
 public:
-    IcoSphere(double radius, int maxSubdivisions, ShaderProgram *shaderProgram);
+    IcoSphere(double radius, uint16_t subdivisions, ShaderProgram *shaderProgram);
+
+    void subdivide(uint16_t subdivisions);
 
 private:
     double radius;
 
-    std::unordered_map<uint16_t, std::vector<uint32_t>> subdividedIndices;
+    std::vector<std::vector<uint32_t>> subdividedIndices;
 
     void generateMesh();
-    void subdivide(uint16_t level);
 
     glm::vec3 halfPosition(glm::vec3 a, glm::vec3 b);
 };
