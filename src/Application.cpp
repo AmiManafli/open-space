@@ -92,6 +92,11 @@ void Application::init() {
 
     auto ui = renderSystem->getUserInterface();
 
+//    auto moon1 = EntityBuilder::create()
+//            ->withMesh("./assets/models/untitled.obj", meshTextureShaderProgram)
+//            ->withTransform(0, 0, 0)
+//            ->build(entityManager);
+
     auto sphere = EntityBuilder::create()
             ->withMesh(new IcoSphere(1.0, 0, meshShaderProgram))
             ->withTransform(0, 1, 0)
@@ -152,7 +157,6 @@ void Application::init() {
 
 //    inputSystem->createSpaceshipControl(airplane, context->spaceshipCamera);
     inputSystem->createSpaceshipControl(nullptr, context->spaceshipCamera);
-
 
 //    auto nanoSuit = EntityBuilder::create()
 //        ->withMesh("./assets/models/nanosuit.obj", meshTextureShaderProgram)

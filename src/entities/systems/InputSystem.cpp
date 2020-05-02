@@ -178,11 +178,9 @@ void InputSystem::processMouseScroll(GLFWwindow *window, double xoffset, double 
     auto camera = context->getCamera();
     auto cameraComponent = inputManager->entityManager->getCameraComponent(camera->id);
 
-    cameraComponent->movementSpeed += yoffset;
+    auto speed = cameraComponent->movementSpeed + yoffset;
+    cameraComponent->movementSpeed = glm::clamp(speed, 0.0, speed);
     printf("Camera movement speed: %.1f\n", cameraComponent->movementSpeed);
-
-//zoom with the scroll
-//    cameraComponent->zoom = glm::clamp(cameraComponent->zoom + (yoffset * (cameraComponent->zoom)) * 0.1, 0.5, 45.0);
 }
 
 void InputSystem::moveCamera(Entity *camera, CameraComponent::Direction direction, float deltaTime) {

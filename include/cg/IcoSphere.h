@@ -18,6 +18,7 @@ private:
     std::vector<std::vector<uint32_t>> subdividedIndices;
 
     void generateMesh();
+    void generateTexture();
 
     glm::vec3 halfPosition(glm::vec3 a, glm::vec3 b);
 };

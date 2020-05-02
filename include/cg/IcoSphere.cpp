@@ -11,6 +11,7 @@ IcoSphere::IcoSphere(double radius, uint16_t subdivisions, ShaderProgram *shader
 
     subdividedIndices.resize(1);
     generateMesh();
+    generateTexture();
 
     subdivide(subdivisions);
 
@@ -28,10 +29,10 @@ void IcoSphere::generateMesh() {
     vertices[0] = Vertex { {0.0f, radius, 0.0f} };
     vertices[0].normal = glm::normalize(vertices[0].position);
 
-    // Middle vertices
     double inclinationUpper = -PI / 2.0 - inclination / 2.0;  // -126 degrees
     double inclinationLower = -PI / 2.0;                      // -90 degrees
 
+    // Middle vertices
     for (int i = 1; i <= 5; i++) {
         int iUpper = i;
         int iUpperNext = i == 5 ? 1 : iUpper + 1;
@@ -137,5 +138,29 @@ void IcoSphere::subdivide(uint16_t subdivisions) {
     indices = subdividedIndices[subdivisions];
     setupBuffers();
     printf("Created subdivisions for level: %d\n", subdivisions);
+}
+
+void IcoSphere::generateTexture() {
+    auto width = 2048;
+    auto height = 1024;
+
+    float s = 186.0 / width;
+    float t = 322.0 / height;
+
+    vertices[0].textureCoord = glm::vec2(0, 0);
+    for (int i = 1; i <= 5; i++) {
+        int iUpper = i;
+        int iUpperNext = i == 5 ? 1 : iUpper + 1;
+        int iLower = i + 5;
+        int iLowerNext = i == 5 ? 6 : iLower + 1;
+
+        vertices[iUpper].textureCoord = glm::vec2(0, 0);
+        vertices[iLower].textureCoord = glm::vec2(0, 0);
+    }
+    vertices[11].textureCoord = glm::vec2(0, 0);
+
+//    auto texture = Texture {};
+//    texture.id =
+//    textures.emplace_back(texture);
 }
 
