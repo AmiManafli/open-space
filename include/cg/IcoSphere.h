@@ -10,7 +10,7 @@ class IcoSphere : public MeshComponent {
 public:
     IcoSphere(double radius, uint16_t subdivisions, ShaderProgram *shaderProgram);
 
-    void subdivide(uint16_t subdivisions);
+    void subdivide(uint16_t subdivisions) override;
 
 private:
     double radius;

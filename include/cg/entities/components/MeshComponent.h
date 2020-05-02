@@ -33,6 +33,8 @@ public:
 
     void createInstances(std::vector<glm::vec3>& transformations);
 
+    virtual void subdivide(uint16_t subdivisions) {}
+
     uint32_t vao, vbo, instanceVbo, ebo;
     ShaderProgram *shaderProgram;
     GLenum mode;

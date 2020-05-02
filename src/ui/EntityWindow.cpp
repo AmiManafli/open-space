@@ -181,6 +181,12 @@ void EntityWindow::renderMeshComponents(std::vector<MeshComponent *> components)
                 ImGui::Text("Indices: %llu", mesh->indices.size());
                 ImGui::Text("Textures: %llu", mesh->textures.size());
 
+                int subdivisions = mesh->subdivision;
+                if (ImGui::SliderInt("Subdivisions", &subdivisions, 0, 7)) {
+                    mesh->subdivision = subdivisions;
+                    mesh->subdivide(subdivisions);
+                }
+
                 ImGui::TreePop();
                 if (components.size() != index) {
                     ImGui::Separator();

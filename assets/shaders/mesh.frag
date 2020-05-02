@@ -1,5 +1,5 @@
 #version 330 core
-flat in vec3 vNormal;
+in vec3 vNormal;
 
 out vec4 fragColor;
 

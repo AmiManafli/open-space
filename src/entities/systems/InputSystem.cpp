@@ -267,7 +267,7 @@ Entity *InputSystem::getClickedEntity(double mouseX, double mouseY) {
 void InputSystem::selectEntity(Entity *entity) {
     auto previousEntity = context->selectedEntity;
 
-    double highlightSize = 0.25;
+    double highlightSize = 0.01;
     double highlightScale;
     if (entity) {
         auto transform = entityManager->getTransformComponent(entity);

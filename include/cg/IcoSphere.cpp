@@ -92,6 +92,8 @@ glm::vec3 IcoSphere::halfPosition(glm::vec3 a, glm::vec3 b) {
 void IcoSphere::subdivide(uint16_t subdivisions) {
     if (subdivisions < subdividedIndices.size()) {
         indices = subdividedIndices[subdivisions];
+        setupBuffers();
+        printf("Loaded subdivisions for level: %d\n", subdivisions);
         return;
     }
 
@@ -133,5 +135,7 @@ void IcoSphere::subdivide(uint16_t subdivisions) {
         }
     }
     indices = subdividedIndices[subdivisions];
+    setupBuffers();
+    printf("Created subdivisions for level: %d\n", subdivisions);
 }
 
