@@ -164,7 +164,6 @@ void EntityWindow::renderMeshComponents(std::vector<MeshComponent *> components)
         for (MeshComponent *mesh : components) {
             std::string name = "Mesh " + std::to_string(index++);
             if (ImGui::TreeNode(name.c_str())) {
-
                 std::string currentMode = meshModeEnumToString(mesh->mode);
                 if (ImGui::BeginCombo("Mode", currentMode.c_str())) {
                     for (auto mode : meshModes) {
@@ -174,6 +173,10 @@ void EntityWindow::renderMeshComponents(std::vector<MeshComponent *> components)
                         }
                     }
                     ImGui::EndCombo();
+                }
+
+                if (ImGui::ColorPicker3("Color", glm::value_ptr(mesh->color))) {
+                    mesh->setColor(mesh->color);
                 }
 
                 ImGui::Text("Instance count: %d", mesh->instances);

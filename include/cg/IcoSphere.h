@@ -8,9 +8,11 @@
 
 class IcoSphere : public MeshComponent {
 public:
-    IcoSphere(double radius, uint16_t subdivisions, ShaderProgram *shaderProgram);
+    IcoSphere(double radius, uint16_t subdivisions, glm::vec3 color, uint16_t textureWidth, ShaderProgram *shaderProgram);
 
     void subdivide(uint16_t subdivisions) override;
+
+    void setColor(glm::vec3 color) override;
 
 private:
     uint16_t textureWidth, textureHeight;

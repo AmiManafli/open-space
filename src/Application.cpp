@@ -97,8 +97,9 @@ void Application::init() {
 //            ->withTransform(0, 0, 0)
 //            ->build(entityManager);
 
+    auto color = glm::vec3(0.576, 0.886, 1.0);
     auto sphere = EntityBuilder::create()
-            ->withMesh(new IcoSphere(1.0, 1, meshTextureShaderProgram))
+            ->withMesh(new IcoSphere(1.0, 0, color, 11, meshTextureShaderProgram))
             ->withTransform(0, 1, 0)
             ->build(entityManager);
 

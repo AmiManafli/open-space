@@ -2,18 +2,22 @@
 #include "IcoSphere.h"
 
 
-IcoSphere::IcoSphere(double radius, uint16_t subdivisions, ShaderProgram *shaderProgram)
+IcoSphere::IcoSphere(double radius, uint16_t subdivisions, glm::vec3 color, uint16_t textureWidth, ShaderProgram *shaderProgram)
         : radius(radius) {
+    if (textureWidth < 11) {
+        throw std::runtime_error("Texture width needs to be greater than or equal to 11");
+    }
     this->shaderProgram = shaderProgram;
+    this->color = color;
     mode = GL_TRIANGLES;
     indexed = false;
     instances = 1;
     subdivision = subdivisions;
 
-    textureWidth = 2048;
-    textureHeight = 1024;
-    horizontalStep = 186.0;
-    verticalStep = 322.0;
+    this->textureWidth = textureWidth;
+    textureHeight = textureWidth / 2.0;
+    horizontalStep = static_cast<int>(textureWidth / 11.0);
+    verticalStep = static_cast<int>(textureHeight / 3.0);
 
     subdivide(subdivisions);
 }
@@ -187,11 +191,12 @@ void IcoSphere::subdivide(uint16_t subdivisions) {
 }
 
 void IcoSphere::generateTexture() {
-    auto data = new unsigned char[textureWidth * textureHeight * 3 * 3];
-    for (int i = 0; i < textureWidth * textureHeight * 3 * 3; i += 3) {
-        data[i] = 147;
-        data[i + 1] = 226;
-        data[i + 2] = 255;
+    auto size = textureWidth * textureHeight * 3 * 3;
+    auto data = new unsigned char[size];
+    for (int i = 0; i < size; i += 3) {
+        data[i] = static_cast<unsigned char>(glm::round(color.x * 255));
+        data[i + 1] = static_cast<unsigned char>(glm::round(color.y * 255));
+        data[i + 2] = static_cast<unsigned char>(glm::round(color.z * 255));
     }
 
     auto texture = Texture {};
@@ -211,5 +216,10 @@ void IcoSphere::generateTexture() {
     textures.emplace_back(texture);
 
     delete[] data;
+}
+
+void IcoSphere::setColor(glm::vec3 color) {
+    this->color = color;
+    generateTexture();
 }
 
