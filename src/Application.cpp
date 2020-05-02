@@ -100,7 +100,9 @@ void Application::init() {
     auto color = glm::vec3(0.576, 0.886, 1.0);
     auto sphere = EntityBuilder::create()
             ->withMesh(new IcoSphere(1.0, 0, color, 11, meshTextureShaderProgram))
-            ->withTransform(0, 1, 0)
+            ->withTransform(0, 0, 0)
+            ->withScale(100)
+            ->withVelocity(new VelocityComponent())
             ->build(entityManager);
 
 //	auto airplane = EntityBuilder::create()

@@ -10,8 +10,7 @@ TransformComponent::TransformComponent(glm::vec3 position) : TransformComponent(
 }
 
 void TransformComponent::scale(float factor) {
-    scaling = glm::vec3(factor, factor, factor);
-    scale(scaling);
+    scale(glm::vec3(factor, factor, factor));
 }
 
 void TransformComponent::scale(glm::vec3 scaling) {
