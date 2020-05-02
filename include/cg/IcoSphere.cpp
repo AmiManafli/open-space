@@ -9,10 +9,6 @@ IcoSphere::IcoSphere(double radius, uint16_t subdivisions, ShaderProgram *shader
     instances = 1;
     subdivision = subdivisions;
 
-    subdividedIndices.resize(1);
-    generateMesh();
-    generateTexture();
-
     subdivide(subdivisions);
 
     setupBuffers();
@@ -81,53 +77,51 @@ glm::vec3 IcoSphere::halfPosition(glm::vec3 a, glm::vec3 b) {
 }
 
 void IcoSphere::subdivide(uint16_t subdivisions) {
-    if (subdivisions < subdividedIndices.size()) {
-        indices = subdividedIndices[subdivisions];
-        setupBuffers();
-        printf("Loaded subdivisions for level: %d\n", subdivisions);
-        return;
-    }
+    generateMesh();
 
-    for (int level = subdividedIndices.size(); level <= subdivisions; level++) {
-        subdividedIndices.emplace_back(std::vector<uint32_t>());
-        auto oldIndices = subdividedIndices[level - 1];
+    for (int level = 1; level <= subdivisions; level++) {
+        auto oldVertices = vertices;
+        auto newVertices = std::vector<Vertex>();
 
-        for (uint32_t i = 0; i < oldIndices.size(); i += 3) {
-            auto a = vertices[oldIndices[i]].position; auto aIndex = oldIndices[i];
-            auto b = vertices[oldIndices[i + 1]].position; auto bIndex = oldIndices[i + 1];
-            auto c = vertices[oldIndices[i + 2]].position; auto cIndex = oldIndices[i + 2];
-            auto d = halfPosition(a, b); auto dIndex = vertices.size();
-            auto e = halfPosition(b, c); auto eIndex = dIndex + 1;
-            auto f = halfPosition(a, c); auto fIndex = dIndex + 2;
+        for (uint32_t i = 0; i < oldVertices.size(); i += 3) {
+            // Old vertices
+            auto a = oldVertices[i].position;
+            auto b = oldVertices[i + 1].position;
+            auto c = oldVertices[i + 2].position;
 
-            auto dVertex = Vertex { d, glm::normalize(d) };
-            auto eVertex = Vertex { e, glm::normalize(e) };
-            auto fVertex = Vertex { f, glm::normalize(f) };
+            // New vertex positions
+            auto d = halfPosition(a, b);
+            auto e = halfPosition(b, c);
+            auto f = halfPosition(a, c);
 
-            vertices.emplace_back(dVertex);
-            vertices.emplace_back(eVertex);
-            vertices.emplace_back(fVertex);
+            // Bottom left triangle
+            auto normal = calculateNormal(a, d, f);
+            newVertices.emplace_back(Vertex { a, normal });
+            newVertices.emplace_back(Vertex { d, normal });
+            newVertices.emplace_back(Vertex { f, normal });
 
-            subdividedIndices[level].emplace_back(aIndex);
-            subdividedIndices[level].emplace_back(dIndex);
-            subdividedIndices[level].emplace_back(fIndex);
+            // Middle triangle
+            normal = calculateNormal(d, e, f);
+            newVertices.emplace_back(Vertex { d, normal });
+            newVertices.emplace_back(Vertex { e, normal });
+            newVertices.emplace_back(Vertex { f, normal });
 
-            subdividedIndices[level].emplace_back(dIndex);
-            subdividedIndices[level].emplace_back(eIndex);
-            subdividedIndices[level].emplace_back(fIndex);
+            // Bottom right triangle
+            normal = calculateNormal(f, e, c);
+            newVertices.emplace_back(Vertex { f, normal });
+            newVertices.emplace_back(Vertex { e, normal });
+            newVertices.emplace_back(Vertex { c, normal });
 
-            subdividedIndices[level].emplace_back(fIndex);
-            subdividedIndices[level].emplace_back(eIndex);
-            subdividedIndices[level].emplace_back(cIndex);
+            // Top triangle
+            normal = calculateNormal(d, b, e);
+            newVertices.emplace_back(Vertex { d, normal });
+            newVertices.emplace_back(Vertex { b, normal });
+            newVertices.emplace_back(Vertex { e, normal });
 
-            subdividedIndices[level].emplace_back(dIndex);
-            subdividedIndices[level].emplace_back(bIndex);
-            subdividedIndices[level].emplace_back(eIndex);
         }
+
+        vertices = newVertices;
     }
-    indices = subdividedIndices[subdivisions];
-    setupBuffers();
-    printf("Created subdivisions for level: %d\n", subdivisions);
 }
 
 void IcoSphere::generateTexture() {
