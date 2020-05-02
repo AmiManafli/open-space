@@ -203,7 +203,7 @@ void EntityWindow::renderHighlightComponent(HighlightComponent *component) {
     if (!component) return;
 
     if (ImGui::CollapsingHeader("Highlight Component")) {
-        ImGui::DragFloat("Scale factor", &component->scaleFactor, 0.1, 0, 100);
+        ImGui::DragFloat("Size", &component->size, 0.1, 0, 100);
     }
 }
 

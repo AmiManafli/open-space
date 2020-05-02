@@ -74,7 +74,8 @@ void RenderSystem::renderEntities() {
             glStencilMask(0x00); // disable writing to the stencil buffer
             glDisable(GL_DEPTH_TEST);
 
-            auto highlightModel = highlight->getModel(transform->getModel());
+            auto cameraPosition = entityManager->getTransformComponent(context->getCamera())->position;
+            auto highlightModel = highlight->getModel(transform->getModel(), glm::length(transform->position - cameraPosition));
             for (auto it = meshes.first; it != meshes.second; it++) {
                 renderMesh(it->second, highlight->shaderProgram, highlightModel);
             }
