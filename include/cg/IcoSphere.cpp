@@ -9,6 +9,11 @@ IcoSphere::IcoSphere(double radius, uint16_t subdivisions, ShaderProgram *shader
     instances = 1;
     subdivision = subdivisions;
 
+    textureWidth = 2048;
+    textureHeight = 1024;
+    horizontalStep = 186.0;
+    verticalStep = 322.0;
+
     subdivide(subdivisions);
 }
 
@@ -26,6 +31,13 @@ void IcoSphere::generateMesh() {
     double inclinationUpper = -PI / 2.0 - inclination / 2.0;  // -126 degrees
     double inclinationLower = -PI / 2.0;                      // -90 degrees
 
+    // Texture
+    auto width = 2048;
+    auto height = 1024;
+
+    float s = 186.0 / width;
+    float t = 322.0 / height;
+
     for (int i = 1; i <= 5; i++) {
         double y = radius * sin(azimuth);
         double xz = radius * cos(azimuth);
@@ -41,25 +53,64 @@ void IcoSphere::generateMesh() {
         auto lowerMidNormal = calculateNormal(lower, lowerNext, upperNext);
         auto lowerNormal = calculateNormal(bottom, lower, lowerNext);
 
+        // Texture coordinates
+        int j = i - 1;
+
         // Upper row triangle
-        vertices.emplace_back(Vertex { top, upperNormal });
-        vertices.emplace_back(Vertex { upperNext, upperNormal });
-        vertices.emplace_back(Vertex { upper, upperNormal });
+        vertices.emplace_back(Vertex {
+            top, upperNormal,
+            glm::vec2(s * static_cast<float>(1 + j * 2), 0)
+        });
+        vertices.emplace_back(Vertex {
+            upperNext, upperNormal,
+            glm::vec2(s * static_cast<float>(j * 2), t)
+        });
+        vertices.emplace_back(Vertex {
+            upper, upperNormal,
+            glm::vec2(s * static_cast<float>(2 + j * 2), t)
+        });
 
         // Upper mid row triangle
-        vertices.emplace_back(Vertex { upper, upperMidNormal });
-        vertices.emplace_back(Vertex { upperNext, upperMidNormal });
-        vertices.emplace_back(Vertex { lower, upperMidNormal });
+        vertices.emplace_back(Vertex {
+            upper, upperMidNormal,
+            glm::vec2(s * static_cast<float>(j * 2), t)
+        });
+        vertices.emplace_back(Vertex {
+            upperNext, upperMidNormal,
+            glm::vec2(s * static_cast<float>(2 + j * 2), t)
+        });
+        vertices.emplace_back(Vertex {
+            lower, upperMidNormal,
+            glm::vec2(s * static_cast<float>(1 + j * 2), 2 * t)
+         });
 
         // Lower mid row triangle
-        vertices.emplace_back(Vertex { lowerNext, lowerMidNormal });
-        vertices.emplace_back(Vertex { lower, lowerMidNormal });
-        vertices.emplace_back(Vertex { upperNext, lowerMidNormal });
+        vertices.emplace_back(Vertex {
+            lowerNext, lowerMidNormal,
+            glm::vec2(s * static_cast<float>(2 + j * 2), 2 * t)
+        });
+        vertices.emplace_back(Vertex {
+            lower, lowerMidNormal,
+            glm::vec2(s * static_cast<float>(1 + j * 2), 2 * t)
+        });
+        vertices.emplace_back(Vertex {
+            upperNext, lowerMidNormal,
+            glm::vec2(s * static_cast<float>(2 + j * 2), t)
+        });
 
         // Lower row triangle
-        vertices.emplace_back(Vertex { bottom, lowerNormal });
-        vertices.emplace_back(Vertex { lower, lowerNormal });
-        vertices.emplace_back(Vertex { lowerNext, lowerNormal });
+        vertices.emplace_back(Vertex {
+            bottom, lowerNormal,
+            glm::vec2(s * static_cast<float>(2 + j * 2), 3 * t)
+        });
+        vertices.emplace_back(Vertex {
+            lower, lowerNormal,
+            glm::vec2(s * static_cast<float>(1 + j * 2), 2 * t)
+        });
+        vertices.emplace_back(Vertex {
+            lowerNext, lowerNormal,
+            glm::vec2(s * static_cast<float>(2 + j * 2), 2 * t)
+        });
 
         inclinationUpper += inclination;
         inclinationLower += inclination;
@@ -72,6 +123,10 @@ glm::vec3 IcoSphere::halfPosition(glm::vec3 a, glm::vec3 b) {
     auto unit = glm::normalize(diff);
 
     return glm::normalize(b + unit * halfLength) * static_cast<float>(radius);
+}
+
+glm::vec2 IcoSphere::halfTextureCoord(glm::vec2 a, glm::vec2 b) {
+    return glm::vec2();
 }
 
 void IcoSphere::subdivide(uint16_t subdivisions) {
@@ -93,59 +148,60 @@ void IcoSphere::subdivide(uint16_t subdivisions) {
             auto e = halfPosition(b, c);
             auto f = halfPosition(a, c);
 
+            auto dTextureCoord = halfTextureCoord(oldVertices[i].textureCoord, oldVertices[i + 1].textureCoord);
+            auto eTextureCoord = halfTextureCoord(oldVertices[i + 1].textureCoord, oldVertices[i + 2].textureCoord);
+            auto fTextureCoord = halfTextureCoord(oldVertices[i].textureCoord, oldVertices[i + 2].textureCoord);
+
             // Bottom left triangle
             auto normal = calculateNormal(a, d, f);
-            newVertices.emplace_back(Vertex { a, normal });
-            newVertices.emplace_back(Vertex { d, normal });
-            newVertices.emplace_back(Vertex { f, normal });
+            newVertices.emplace_back(Vertex { a, normal, oldVertices[i].textureCoord });
+            newVertices.emplace_back(Vertex {
+                d, normal,
+            });
+            newVertices.emplace_back(Vertex {
+                f, normal,
+            });
 
             // Middle triangle
             normal = calculateNormal(d, e, f);
-            newVertices.emplace_back(Vertex { d, normal });
-            newVertices.emplace_back(Vertex { e, normal });
-            newVertices.emplace_back(Vertex { f, normal });
+            newVertices.emplace_back(Vertex {
+                d, normal,
+            });
+            newVertices.emplace_back(Vertex {
+                e, normal,
+            });
+            newVertices.emplace_back(Vertex {
+                f, normal,
+            });
 
             // Bottom right triangle
             normal = calculateNormal(f, e, c);
-            newVertices.emplace_back(Vertex { f, normal });
-            newVertices.emplace_back(Vertex { e, normal });
-            newVertices.emplace_back(Vertex { c, normal });
+            newVertices.emplace_back(Vertex {
+                f, normal,
+            });
+            newVertices.emplace_back(Vertex {
+                e, normal,
+            });
+            newVertices.emplace_back(Vertex { c, normal, oldVertices[i + 2].textureCoord });
 
             // Top triangle
             normal = calculateNormal(d, b, e);
-            newVertices.emplace_back(Vertex { d, normal });
-            newVertices.emplace_back(Vertex { b, normal });
-            newVertices.emplace_back(Vertex { e, normal });
-
+            newVertices.emplace_back(Vertex {
+                d, normal,
+            });
+            newVertices.emplace_back(Vertex { b, normal, oldVertices[i + 1].textureCoord });
+            newVertices.emplace_back(Vertex {
+                e, normal,
+            });
         }
 
         vertices = newVertices;
     }
 
+    generateTexture();
     setupBuffers();
 }
 
 void IcoSphere::generateTexture() {
-    auto width = 2048;
-    auto height = 1024;
-
-    float s = 186.0 / width;
-    float t = 322.0 / height;
-
-    vertices[0].textureCoord = glm::vec2(0, 0);
-    for (int i = 1; i <= 5; i++) {
-        int iUpper = i;
-        int iUpperNext = i == 5 ? 1 : iUpper + 1;
-        int iLower = i + 5;
-        int iLowerNext = i == 5 ? 6 : iLower + 1;
-
-        vertices[iUpper].textureCoord = glm::vec2(0, 0);
-        vertices[iLower].textureCoord = glm::vec2(0, 0);
-    }
-    vertices[11].textureCoord = glm::vec2(0, 0);
-
-//    auto texture = Texture {};
-//    texture.id =
-//    textures.emplace_back(texture);
 }
 
