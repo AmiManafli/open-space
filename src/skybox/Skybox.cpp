@@ -144,12 +144,15 @@ void Skybox::render(RenderSystem *renderSystem, EntityManager *entityManager, Ca
 //    };
     std::vector<std::vector<glm::vec3>> directions = {
             // Front, right, up
-            { glm::vec3(1, 0, 0), glm::vec3(0, 0, 1), glm::vec3(0, 1, 0) },
-            { glm::vec3(-1, 0, 0), glm::vec3(0, 0, -1), glm::vec3(0, 1, 0) },
+            // X - pos / neg
+            { glm::vec3(1, 0, 0), glm::vec3(0, 0, -1), glm::vec3(0, -1, 0) },
+            { glm::vec3(-1, 0, 0), glm::vec3(0, 0, 1), glm::vec3(0, -1, 0) },
+            // Y - pos / neg
             { glm::vec3(0, 1, 0), glm::vec3(1, 0, 0), glm::vec3(0, 0, 1) },
             { glm::vec3(0, -1, 0), glm::vec3(-1, 0, 0), glm::vec3(0, 0, 1) },
-            { glm::vec3(0, 0, 1), glm::vec3(-1, 0, 0), glm::vec3(0, 1, 0) },
-            { glm::vec3(0, 0, -1), glm::vec3(1, 0, 0), glm::vec3(0, 1, 0) },
+            // Z - pos / neg
+            { glm::vec3(0, 0, 1), glm::vec3(1, 0, 0), glm::vec3(0, -1, 0) },
+            { glm::vec3(0, 0, -1), glm::vec3(-1, 0, 0), glm::vec3(0, -1, 0) },
     };
 
     uint32_t framebuffer;
@@ -227,16 +230,60 @@ void Skybox::createEntities(EntityManager *entityManager, ShaderProgram *shaderP
 //                ->build(entityManager);
         rad += diff;
     }
-    for (int i = -100; i < 101; i += 10) {
-        EntityBuilder::create()
-                ->withTransform(i, 0, 100)
-                ->withMesh(new SkyboxStar(1, shaderProgram))
-                ->build(entityManager);
-        EntityBuilder::create()
-                ->withTransform(0, i, 100)
-                ->withMesh(new SkyboxStar(1, shaderProgram))
-                ->build(entityManager);
-    }
+//    for (int i = -100; i < 101; i += 10) {
+//        EntityBuilder::create()
+//                ->withTransform(i, 0, 100)
+//                ->withMesh(new SkyboxStar(1, shaderProgram))
+//                ->build(entityManager);
+//        EntityBuilder::create()
+//                ->withTransform(0, i, 100)
+//                ->withMesh(new SkyboxStar(1, shaderProgram))
+//                ->build(entityManager);
+//    }
+
+    // X
+    auto transform = new TransformComponent(glm::vec3(100, 0, 0));
+    transform->rotate(glm::vec3(0, 90, 0));
+    EntityBuilder::create()
+            ->withTransform(transform)
+            ->withMesh(new SkyboxStar(1, shaderProgram))
+            ->build(entityManager);
+    transform = new TransformComponent(glm::vec3(100, 0, 10));
+    transform->rotate(glm::vec3(0, 90, 0));
+    EntityBuilder::create()
+            ->withTransform(transform)
+            ->withMesh(new SkyboxStar(2, shaderProgram))
+            ->build(entityManager);
+    transform = new TransformComponent(glm::vec3(-100, 0, 0));
+    transform->rotate(glm::vec3(0, 90, 0));
+    EntityBuilder::create()
+            ->withTransform(transform)
+            ->withMesh(new SkyboxStar(1, shaderProgram))
+            ->build(entityManager);
+    transform = new TransformComponent(glm::vec3(-100, 0, 10));
+    transform->rotate(glm::vec3(0, 90, 0));
+    EntityBuilder::create()
+            ->withTransform(transform)
+            ->withMesh(new SkyboxStar(2, shaderProgram))
+            ->build(entityManager);
+
+    // Z
+    EntityBuilder::create()
+            ->withTransform(0, 0, -100)
+            ->withMesh(new SkyboxStar(1, shaderProgram))
+            ->build(entityManager);
+    EntityBuilder::create()
+            ->withTransform(10, 0, -100)
+            ->withMesh(new SkyboxStar(2, shaderProgram))
+            ->build(entityManager);
+    EntityBuilder::create()
+            ->withTransform(0, 0, 100)
+            ->withMesh(new SkyboxStar(1, shaderProgram))
+            ->build(entityManager);
+    EntityBuilder::create()
+            ->withTransform(10, 0, 100)
+            ->withMesh(new SkyboxStar(2, shaderProgram))
+            ->build(entityManager);
 }
 
 void Skybox::renderEntities(RenderSystem *renderSystem, EntityManager *entityManager, ShaderProgram *shaderProgram) {

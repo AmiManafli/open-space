@@ -224,7 +224,7 @@ void Application::createCameras() {
     auto target = glm::vec3(0, 0, 0);
 
     /// Spaceship camera
-    auto position = glm::vec3(2.3, 80, 80.0);
+    auto position = glm::vec3(0, 0, 0);
 
     context->spaceshipCamera = EntityBuilder::create()
         ->withTransform(position)
