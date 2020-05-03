@@ -39,6 +39,10 @@ public:
 
     uint32_t triangleCount = 0;
 
+    Entity *grid = nullptr;
+
+    Entity *player = nullptr;
+
     Entity *spaceshipCamera = nullptr;
     Entity *perspectiveCamera = nullptr;
     Entity *topCamera = nullptr;

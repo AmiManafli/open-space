@@ -107,9 +107,9 @@ void Application::init() {
 
 	auto planetScale = 2.0;
 	auto planetVelocity = new VelocityComponent();
-	planetVelocity->rotation = glm::vec3(0, -0.1, 0);
+	planetVelocity->rotation = glm::vec3(0, -0.8, 0);
     auto planet1 = EntityBuilder::create()
-        ->withMesh(new IcoSphere(1.0, 3, color, 11, meshTextureShaderProgram))
+        ->withMesh(new IcoSphere(1.0, 2, color, 11, meshTextureShaderProgram))
         ->withTransform(0, 0, 0)
         ->withMass(200)
         ->withScale(planetScale)
@@ -120,9 +120,9 @@ void Application::init() {
     auto planetTransform = entityManager->getTransformComponent(planet1);
     auto moonScale = 0.8;
     auto moonVelocity = new VelocityComponent();
-    moonVelocity->rotation = glm::vec3(0, -0.1, 0);
+    moonVelocity->rotation = glm::vec3(0, -3.2, 0);
     auto moon1 = EntityBuilder::create()
-            ->withMesh(new IcoSphere(1.0, 3, glm::vec3(0.6), 11, meshTextureShaderProgram))
+            ->withMesh(new IcoSphere(1.0, 1, glm::vec3(0.6), 11, meshTextureShaderProgram))
             ->withTransform(0, 0, 0)
             ->withMass(200)
             ->withScale(moonScale)
