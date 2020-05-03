@@ -2,6 +2,7 @@
 #define CG1_PROJECT_APPLICATION_H
 
 #include <cg/GLHeader.h>
+#include <cg/Skybox.h>
 #include <cg/entities/EntityManager.h>
 #include <cg/entities/systems/RenderSystem.h>
 #include <cg/entities/systems/InputSystem.h>
@@ -30,6 +31,8 @@ private:
     ShaderProgram *meshWithLightShaderProgram;
     ShaderProgram *meshTestLightShaderProgram;
     ShaderProgram *skyboxShaderProgram;
+
+    Skybox *sky;
 
     // Lights
     Entity *light;

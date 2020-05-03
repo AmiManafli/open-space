@@ -106,3 +106,54 @@ void Skybox::createTriangle(glm::vec3 a, glm::vec3 b, glm::vec3 c) {
     vertices.emplace_back(Vertex { b, normal });
     vertices.emplace_back(Vertex { c, normal });
 }
+
+/**
+ * Generate a random skybox texture based on the seed.
+ */
+void Skybox::generate(uint64_t seed) {
+}
+
+void Skybox::render(RenderSystem *renderSystem) {
+    std::vector<glm::vec4> clearColors = {
+            glm::vec4(1.0f, 0.0f, 0.0f, 1.0f),
+            glm::vec4(1.0f, 0.0f, 1.0f, 1.0f),
+            glm::vec4(0.0f, 0.0f, 1.0f, 1.0f),
+            glm::vec4(1.0f, 1.0f, 0.0f, 1.0f),
+            glm::vec4(0.0f, 1.0f, 0.0f, 1.0f),
+            glm::vec4(0.0f, 1.0f, 1.0f, 1.0f),
+    };
+
+    uint32_t fbo;
+    glGenFramebuffers(1, &fbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    uint32_t texture;
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
+
+    for (uint16_t i = 0; i < 6; i++) {
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, 800, 800, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, texture, 0);
+
+        auto clearColor = clearColors[i];
+        glClearColor(clearColor.x, clearColor.y, clearColor.z, clearColor.w);
+        glClear(GL_COLOR_BUFFER_BIT);
+    }
+
+    textures[0].id = texture;
+
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+        printf("Failed to generate skybox!\n");
+    }
+
+    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glDeleteFramebuffers(1, &fbo);
+}

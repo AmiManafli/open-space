@@ -5,7 +5,6 @@
 #include <cg/terrain/PerlinNoise.h>
 #include <cg/IcoSphere.h>
 #include <cg/entities/components/OrbitComponent.h>
-#include <cg/Skybox.h>
 #include "cg/Application.h"
 
 bool onUpdateTerrain(Terrain *terrain, TerrainSettings& settings) {
@@ -100,8 +99,9 @@ void Application::init() {
 
     auto color = glm::vec3(0.576, 0.886, 1.0);
 
+    sky = new Skybox(glm::vec3(10000), "./assets/textures/skybox1", skyboxShaderProgram);
     context->skybox = EntityBuilder::create()
-            ->withMesh(new Skybox(glm::vec3(10000), "./assets/textures/skybox1", skyboxShaderProgram))
+            ->withMesh(sky)
             ->withTransform(0, 0, 0)
             ->build(entityManager);
 
@@ -182,6 +182,8 @@ void Application::init() {
 }
 
 void Application::run() {
+    bool renderedSkybox = false;
+
     while (!context->shouldClose()) {
         context->update();
 
@@ -195,6 +197,13 @@ void Application::run() {
         orbitSystem->update();
         inputSystem->update();
         movementSystem->update();
+
+        if (!renderedSkybox) {
+            sky->render(renderSystem);
+            renderedSkybox = true;
+            printf("Rendered the skybox.\n");
+        }
+
         renderSystem->update();
     }
 }
