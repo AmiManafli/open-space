@@ -191,8 +191,8 @@ void Skybox::render(RenderSystem *renderSystem, EntityManager *entityManager, Ca
 
 //        auto clearColor = clearColors[i];
         float diff = 5.0 / 255.0;
-        auto clearColor = glm::vec4(i * diff, i * diff, i * diff, 1.0);
-//        auto clearColor = glm::vec4(0, 0, 0, 1.0);
+//        auto clearColor = glm::vec4(i * diff, i * diff, i * diff, 1.0);
+        auto clearColor = glm::vec4(0, 0, 0, 1.0);
         glClearColor(clearColor.x, clearColor.y, clearColor.z, clearColor.w);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -221,7 +221,7 @@ glm::vec3 getStarRotation(glm::vec3 position) {
     auto forward = glm::vec3(0, 0, -1);
     auto angle = glm::acos(glm::dot(glm::normalize(pos), forward));
 
-    auto up = glm::normalize(glm::cross(pos, forward));
+    auto up = glm::normalize(glm::cross(forward, pos));
     return up * angle;
 }
 
@@ -235,8 +235,8 @@ void Skybox::createEntities(EntityManager *entityManager, ShaderProgram *shaderP
         float z1 = radius * glm::sin(rad);
         auto position1 = glm::vec3(x1, 0, z1);
         auto rotation1 = getStarRotation(position1);
-        auto transform = new TransformComponent(position1);
         auto size = 1.0;
+        auto transform = new TransformComponent(position1);
         transform->rotate(rotation1);
         EntityBuilder::create()
                 ->withTransform(transform)
