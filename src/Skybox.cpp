@@ -34,28 +34,28 @@ void Skybox::createMesh() {
     auto h =  glm::vec3(0.5, -0.5, -0.5);
 
     // Front
-    createTriangle(a, c, b);
-    createTriangle(b, c, d);
+    createTriangle(a, b, c);
+    createTriangle(b, d, c);
 
     // Top
-    createTriangle(a, b, e);
-    createTriangle(b, f, e);
+    createTriangle(a, e, b);
+    createTriangle(b, e, f);
 
     // Left side
-    createTriangle(a, e, g);
-    createTriangle(a, g, c);
+    createTriangle(a, g, e);
+    createTriangle(a, c, g);
 
     // Right side
-    createTriangle(b, d, h);
-    createTriangle(b, h, f);
+    createTriangle(b, h, d);
+    createTriangle(b, f, h);
 
     // Back side
-    createTriangle(f, g, e);
-    createTriangle(f, h, g);
+    createTriangle(f, e, g);
+    createTriangle(f, g, h);
 
     // Under side
-    createTriangle(c, g, h);
-    createTriangle(c, h, d);
+    createTriangle(c, h, g);
+    createTriangle(c, d, h);
 }
 
 void Skybox::createTexture(glm::vec3 position) {
