@@ -1,5 +1,7 @@
 #include <stb_image.h>
-#include "cg/Skybox.h"
+#include <cg/entities/EntityBuilder.h>
+#include <cg/skybox/SkyboxStar.h>
+#include "cg/skybox/Skybox.h"
 
 Skybox::Skybox(glm::vec3 size, ShaderProgram *shaderProgram) : size(size) {
     indexed = false;
@@ -113,14 +115,33 @@ void Skybox::createTriangle(glm::vec3 a, glm::vec3 b, glm::vec3 c) {
 void Skybox::generate(uint64_t seed) {
 }
 
-void Skybox::render(RenderSystem *renderSystem) {
+void Skybox::render(RenderSystem *renderSystem, EntityManager *entityManager, CameraComponent *camera) {
     std::vector<glm::vec4> clearColors = {
             glm::vec4(1.0f, 0.0f, 0.0f, 1.0f),
-            glm::vec4(1.0f, 0.0f, 1.0f, 1.0f),
+            glm::vec4(0.0f, 0.0f, 0.0f, 1.0f),
             glm::vec4(0.0f, 0.0f, 1.0f, 1.0f),
             glm::vec4(1.0f, 1.0f, 0.0f, 1.0f),
             glm::vec4(0.0f, 1.0f, 0.0f, 1.0f),
             glm::vec4(0.0f, 1.0f, 1.0f, 1.0f),
+    };
+
+//    std::vector<std::vector<glm::vec3>> directions = {
+//            // Front, right, up
+//            { glm::vec3(1, 0, 0), glm::vec3(0, 0, 1), glm::vec3(0, 1, 0) },
+//            { glm::vec3(-1, 0, 0), glm::vec3(0, 0, -1), glm::vec3(0, 1, 0) },
+//            { glm::vec3(0, 1, 0), glm::vec3(1, 0, 0), glm::vec3(0, 0, 1) },
+//            { glm::vec3(0, -1, 0), glm::vec3(-1, 0, 0), glm::vec3(0, 0, 1) },
+//            { glm::vec3(0, 0, 1), glm::vec3(-1, 0, 0), glm::vec3(0, 1, 0) },
+//            { glm::vec3(0, 0, -1), glm::vec3(1, 0, 0), glm::vec3(0, 1, 0) },
+//    };
+    std::vector<std::vector<glm::vec3>> directions = {
+            // Front, right, up
+            { glm::vec3(1, 0, 0), glm::vec3(0, 0, 1), glm::vec3(0, 1, 0) },
+            { glm::vec3(-1, 0, 0), glm::vec3(0, 0, -1), glm::vec3(0, 1, 0) },
+            { glm::vec3(0, 1, 0), glm::vec3(1, 0, 0), glm::vec3(0, 0, 1) },
+            { glm::vec3(0, -1, 0), glm::vec3(-1, 0, 0), glm::vec3(0, 0, 1) },
+            { glm::vec3(0, 0, 1), glm::vec3(-1, 0, 0), glm::vec3(0, 1, 0) },
+            { glm::vec3(0, 0, -1), glm::vec3(1, 0, 0), glm::vec3(0, 1, 0) },
     };
 
     uint32_t fbo;
@@ -131,7 +152,20 @@ void Skybox::render(RenderSystem *renderSystem) {
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
 
+    auto starShaderProgram = new ShaderProgram();
+    starShaderProgram->attachShader("./assets/shaders/skyboxStar.vert", ShaderType::VertexShader);
+    starShaderProgram->attachShader("./assets/shaders/skyboxStar.frag", ShaderType::FragmentShader);
+    starShaderProgram->link();
+
+    createEntities(entityManager, starShaderProgram);
+
+    glEnable(GL_DEPTH);
     for (uint16_t i = 0; i < 6; i++) {
+        // Rotate camera
+        camera->front = directions[i][0];
+        camera->right = directions[i][1];
+        camera->up = directions[i][2];
+
         glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, 800, 800, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
 
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -142,9 +176,13 @@ void Skybox::render(RenderSystem *renderSystem) {
 
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, texture, 0);
 
-        auto clearColor = clearColors[i];
+//        auto clearColor = clearColors[i];
+        float diff = 5.0 / 255.0;
+        auto clearColor = glm::vec4(i * diff, i * diff, i * diff, 1.0);
         glClearColor(clearColor.x, clearColor.y, clearColor.z, clearColor.w);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        renderEntities(renderSystem, entityManager, starShaderProgram);
     }
 
     textures[0].id = texture;
@@ -156,4 +194,46 @@ void Skybox::render(RenderSystem *renderSystem) {
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glDeleteFramebuffers(1, &fbo);
+}
+
+void Skybox::createEntities(EntityManager *entityManager, ShaderProgram *shaderProgram) {
+    float radius = 500;
+    int count = 4;
+    float rad = 0.0f;
+    float diff = 2 * PI / static_cast<float>(count);
+    for (int i = 0; i < count; i++) {
+        float x = radius * glm::cos(rad);
+        float z = -radius * glm::sin(rad);
+//        printf("(%f, %f, %f)\n", x, 0, z);
+//        auto star = EntityBuilder::create()
+//                ->withTransform(x, 0, z)
+//                ->withMesh(new SkyboxStar(2, shaderProgram))
+//                ->build(entityManager);
+        rad += diff;
+    }
+    for (int i = -100; i < 100; i += 10) {
+        EntityBuilder::create()
+                ->withTransform(i, 0, -100)
+                ->withMesh(new SkyboxStar(1, shaderProgram))
+                ->build(entityManager);
+        if (i != 0) {
+            EntityBuilder::create()
+                    ->withTransform(0, i, -100)
+                    ->withMesh(new SkyboxStar(1, shaderProgram))
+                    ->build(entityManager);
+        }
+    }
+}
+
+void Skybox::renderEntities(RenderSystem *renderSystem, EntityManager *entityManager, ShaderProgram *shaderProgram) {
+    for (auto& pair : entityManager->getTransformComponents()) {
+        auto entityId = pair.first;
+        auto transform = pair.second;
+        auto meshes = entityManager->getMeshComponents(entityId);
+
+        for (auto it = meshes.first; it != meshes.second; it++) {
+            auto mesh = it->second;
+            renderSystem->renderMesh(mesh, shaderProgram, transform->getModel());
+        }
+    }
 }

@@ -48,6 +48,7 @@ public:
     Entity *player = nullptr;
 
     Entity *spaceshipCamera = nullptr;
+    Entity *skyboxCamera = nullptr;
     Entity *perspectiveCamera = nullptr;
     Entity *topCamera = nullptr;
     Entity *sideCamera = nullptr;

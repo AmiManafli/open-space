@@ -2,6 +2,7 @@
 #define CG1_PROJECT_SKYBOX_H
 
 #include <cg/GLHeader.h>
+#include <cg/entities/EntityManager.h>
 #include <cg/entities/components/MeshComponent.h>
 #include <cg/entities/systems/RenderSystem.h>
 
@@ -12,7 +13,7 @@ public:
     Skybox(glm::vec3 size, glm::vec3 position, ShaderProgram *shaderProgram);
 
     void generate(uint64_t seed);
-    void render(RenderSystem *renderSystem);
+    void render(RenderSystem *renderSystem, EntityManager *entityManager, CameraComponent *camera);
 
     uint32_t numStars;
     uint32_t resolution;
@@ -24,6 +25,9 @@ private:
     void createTexture(std::string filename);
 
     void createTriangle(glm::vec3 a, glm::vec3 b, glm::vec3 c);
+
+    void createEntities(EntityManager *entityManager, ShaderProgram *shaderProgram);
+    void renderEntities(RenderSystem *renderSystem, EntityManager *entityManager, ShaderProgram *shaderProgram);
 
     glm::vec3 size;
 };

@@ -11,10 +11,12 @@ public:
     enum Mode {
         FirstPersonShip,
         Free,
+        CubeMap,
     };
     enum Type {
         Orthographic,
         Perspective,
+        CubeMapType,
     };
     enum Direction {
         Forward,
