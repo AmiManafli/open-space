@@ -207,7 +207,7 @@ void Application::run() {
         movementSystem->update();
 
         if (!renderedSkybox) {
-            glDisable(GL_CULL_FACE);
+//            glDisable(GL_CULL_FACE);
             context->setActiveCamera(context->skyboxCamera);
             auto camera = entityManager->getCameraComponent(context->skyboxCamera);
             sky->render(renderSystem, skyboxEntityManager, camera);
@@ -215,7 +215,7 @@ void Application::run() {
             printf("Rendered the skybox.\n");
             context->setActiveCamera(context->spaceshipCamera);
             glViewport(0, 0, context->getWidth(), context->getHeight());
-            glEnable(GL_CULL_FACE);
+//            glEnable(GL_CULL_FACE);
         }
 
         renderSystem->update();
