@@ -243,13 +243,13 @@ void Skybox::createEntities(EntityManager *entityManager, ShaderProgram *shaderP
 
     // X
     auto transform = new TransformComponent(glm::vec3(100, 0, 0));
-    transform->rotate(glm::vec3(0, 90, 0));
+    transform->rotate(glm::vec3(0, -90, 0));
     EntityBuilder::create()
             ->withTransform(transform)
             ->withMesh(new SkyboxStar(1, shaderProgram))
             ->build(entityManager);
     transform = new TransformComponent(glm::vec3(100, 0, 10));
-    transform->rotate(glm::vec3(0, 90, 0));
+    transform->rotate(glm::vec3(0, -90, 0));
     EntityBuilder::create()
             ->withTransform(transform)
             ->withMesh(new SkyboxStar(2, shaderProgram))
@@ -267,6 +267,32 @@ void Skybox::createEntities(EntityManager *entityManager, ShaderProgram *shaderP
             ->withMesh(new SkyboxStar(2, shaderProgram))
             ->build(entityManager);
 
+    // Y
+    transform = new TransformComponent(glm::vec3(0, 100, 0));
+    transform->rotate(glm::vec3(90, 0, 0));
+    EntityBuilder::create()
+            ->withTransform(transform)
+            ->withMesh(new SkyboxStar(1, shaderProgram))
+            ->build(entityManager);
+    transform = new TransformComponent(glm::vec3(10, 100, 0));
+    transform->rotate(glm::vec3(90, 0, 0));
+    EntityBuilder::create()
+            ->withTransform(transform)
+            ->withMesh(new SkyboxStar(2, shaderProgram))
+            ->build(entityManager);
+    transform = new TransformComponent(glm::vec3(0, -100, 0));
+    transform->rotate(glm::vec3(-90, 0, 0));
+    EntityBuilder::create()
+            ->withTransform(transform)
+            ->withMesh(new SkyboxStar(1, shaderProgram))
+            ->build(entityManager);
+    transform = new TransformComponent(glm::vec3(10, -100, 0));
+    transform->rotate(glm::vec3(-90, 0, 0));
+    EntityBuilder::create()
+            ->withTransform(transform)
+            ->withMesh(new SkyboxStar(2, shaderProgram))
+            ->build(entityManager);
+
     // Z
     EntityBuilder::create()
             ->withTransform(0, 0, -100)
@@ -276,12 +302,16 @@ void Skybox::createEntities(EntityManager *entityManager, ShaderProgram *shaderP
             ->withTransform(10, 0, -100)
             ->withMesh(new SkyboxStar(2, shaderProgram))
             ->build(entityManager);
+    transform = new TransformComponent(glm::vec3(0, 0, 100));
+    transform->rotate(glm::vec3(180, 0, 0));
     EntityBuilder::create()
-            ->withTransform(0, 0, 100)
+            ->withTransform(transform)
             ->withMesh(new SkyboxStar(1, shaderProgram))
             ->build(entityManager);
+    transform = new TransformComponent(glm::vec3(10, 0, 100));
+    transform->rotate(glm::vec3(180, 0, 0));
     EntityBuilder::create()
-            ->withTransform(10, 0, 100)
+            ->withTransform(transform)
             ->withMesh(new SkyboxStar(2, shaderProgram))
             ->build(entityManager);
 }
