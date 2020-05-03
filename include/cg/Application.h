@@ -29,6 +29,7 @@ private:
     ShaderProgram *highlightShaderProgram;
     ShaderProgram *meshWithLightShaderProgram;
     ShaderProgram *meshTestLightShaderProgram;
+    ShaderProgram *skyboxShaderProgram;
 
     // Lights
     Entity *light;
