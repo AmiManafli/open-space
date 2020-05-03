@@ -38,7 +38,6 @@ void GLContext::init() {
         throw std::runtime_error("failed to create window");
     }
     glfwMakeContextCurrent(window);
-    glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
 
     if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
         throw std::runtime_error("failed to initialize GLAD");
@@ -91,8 +90,4 @@ void GLContext::update() {
 
 void GLContext::swapBuffers() {
     glfwSwapBuffers(window);
-}
-
-void GLContext::framebufferSizeCallback(GLFWwindow *window, int width, int height) {
-    glViewport(0, 0, width, height);
 }

@@ -16,6 +16,7 @@ void InputSystem::init() {
     glfwSetScrollCallback(window, processMouseScroll);
     glfwSetMouseButtonCallback(window, processMouseButton);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
 
     double mouseX, mouseY;
     glfwGetCursorPos(window, &mouseX, &mouseY);
@@ -144,39 +145,39 @@ bool InputSystem::isKeyPressed(int key) {
 }
 
 void InputSystem::mousePositionCallback(GLFWwindow *window, double x, double y) {
-    auto inputManager = (InputSystem *) glfwGetWindowUserPointer(window);
-    auto context = inputManager->context;
+    auto inputSystem = (InputSystem *) glfwGetWindowUserPointer(window);
+    auto context = inputSystem->context;
 
-    auto offsetX = x - inputManager->lastMouseX;
-    auto offsetY = inputManager->lastMouseY - y;
+    auto offsetX = x - inputSystem->lastMouseX;
+    auto offsetY = inputSystem->lastMouseY - y;
 
-    inputManager->lastMouseX = x;
-    inputManager->lastMouseY = y;
+    inputSystem->lastMouseX = x;
+    inputSystem->lastMouseY = y;
 
     if (context->displayCursor) return;
 
     auto camera = context->getCamera();
-    auto cameraComponent = inputManager->entityManager->getCameraComponent(camera->id);
+    auto cameraComponent = inputSystem->entityManager->getCameraComponent(camera->id);
 
-    if (!inputManager->processedMouse) {
-        inputManager->lastMouseX = x;
-        inputManager->lastMouseY = y;
-        inputManager->processedMouse = true;
+    if (!inputSystem->processedMouse) {
+        inputSystem->lastMouseX = x;
+        inputSystem->lastMouseY = y;
+        inputSystem->processedMouse = true;
     }
 
     if (cameraComponent->mode == CameraComponent::FirstPersonShip) {
-        inputManager->spaceshipControl->processMouseMovement(offsetX, offsetY);
+        inputSystem->spaceshipControl->processMouseMovement(offsetX, offsetY);
     } else {
         cameraComponent->processMouseMovement(offsetX, offsetY);
     }
 }
 
 void InputSystem::processMouseScroll(GLFWwindow *window, double xoffset, double yoffset) {
-    auto inputManager = (InputSystem *) glfwGetWindowUserPointer(window);
-    auto context = inputManager->context;
+    auto inputSystem = (InputSystem *) glfwGetWindowUserPointer(window);
+    auto context = inputSystem->context;
     if (context->displayCursor) return;
     auto camera = context->getCamera();
-    auto cameraComponent = inputManager->entityManager->getCameraComponent(camera->id);
+    auto cameraComponent = inputSystem->entityManager->getCameraComponent(camera->id);
 
     auto speed = cameraComponent->movementSpeed + yoffset;
     cameraComponent->movementSpeed = glm::clamp(speed, 0.0, speed);
@@ -290,4 +291,12 @@ void InputSystem::selectEntity(Entity *entity) {
     }
 
     context->selectedEntity = entity;
+}
+
+void InputSystem::framebufferSizeCallback(GLFWwindow *window, int width, int height) {
+    auto inputSystem = (InputSystem *) glfwGetWindowUserPointer(window);
+    auto context = inputSystem->context;
+    context->width = width;
+    context->height = height;
+    glViewport(0, 0, width, height);
 }
