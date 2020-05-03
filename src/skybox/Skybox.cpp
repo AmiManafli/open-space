@@ -191,7 +191,8 @@ void Skybox::render(RenderSystem *renderSystem, EntityManager *entityManager, Ca
 
 //        auto clearColor = clearColors[i];
         float diff = 5.0 / 255.0;
-        auto clearColor = glm::vec4(i * diff, i * diff, i * diff, 1.0);
+//        auto clearColor = glm::vec4(i * diff, i * diff, i * diff, 1.0);
+        auto clearColor = glm::vec4(0, 0, 0, 1.0);
         glClearColor(clearColor.x, clearColor.y, clearColor.z, clearColor.w);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -215,19 +216,58 @@ void Skybox::render(RenderSystem *renderSystem, EntityManager *entityManager, Ca
     glDeleteFramebuffers(1, &framebuffer);
 }
 
+glm::vec3 getStarRotation(glm::vec3 position) {
+    static const double pi4 = PI / 4.0;
+
+    auto angle = glm::acos(glm::dot(glm::vec3(0, 0, -1), position) / glm::length(position));
+    auto rotation = glm::vec3(0, 0, 0);
+    if (angle > pi4) {
+        angle = glm::acos(glm::dot(glm::vec3(0, 0, 1), position) / glm::length(position));
+        if (angle < pi4) {
+            rotation.y = 0;
+        } else {
+            angle = glm::acos(glm::dot(glm::vec3(1, 0, 0), position) / glm::length(position));
+            if (angle < pi4) {
+                rotation.y = -90;
+            } else {
+                angle = glm::acos(glm::dot(glm::vec3(-1, 0, 0), position) / glm::length(position));
+                if (angle < pi4) {
+                    rotation.y = 90;
+                } else {
+                    rotation.x = 90;
+                }
+            }
+        }
+    }
+    return rotation;
+}
+
 void Skybox::createEntities(EntityManager *entityManager, ShaderProgram *shaderProgram) {
-    float radius = 500;
-    int count = 4;
+    float radius = 50;
+    int count = 32;
     float rad = 0.0f;
-    float diff = 2 * PI / static_cast<float>(count);
+    float diff = (2 * PI) / static_cast<float>(count);
     for (int i = 0; i < count; i++) {
-        float x = radius * glm::cos(rad);
-        float z = -radius * glm::sin(rad);
-//        printf("(%f, %f, %f)\n", x, 0, z);
-//        auto star = EntityBuilder::create()
-//                ->withTransform(x, 0, z)
-//                ->withMesh(new SkyboxStar(2, shaderProgram))
-//                ->build(entityManager);
+        float x1 = radius * glm::cos(rad);
+        float z1 = radius * glm::sin(rad);
+        auto position1 = glm::vec3(x1, 0, z1);
+        auto rotation1 = getStarRotation(position1);
+        auto transform = new TransformComponent(position1);
+        transform->rotate(rotation1);
+        EntityBuilder::create()
+                ->withTransform(transform)
+                ->withMesh(new SkyboxStar(1.0, shaderProgram))
+                ->build(entityManager);
+        float z2 = radius * glm::cos(rad);
+        float y2 = radius * glm::sin(rad);
+        auto position2 = glm::vec3(0, y2, z2);
+        auto rotation2 = getStarRotation(position2);
+        transform = new TransformComponent(position2);
+        transform->rotate(rotation2);
+        EntityBuilder::create()
+                ->withTransform(transform)
+                ->withMesh(new SkyboxStar(1.0, shaderProgram))
+                ->build(entityManager);
         rad += diff;
     }
 //    for (int i = -100; i < 101; i += 10) {
@@ -242,12 +282,12 @@ void Skybox::createEntities(EntityManager *entityManager, ShaderProgram *shaderP
 //    }
 
     // X
-    auto transform = new TransformComponent(glm::vec3(100, 0, 0));
-    transform->rotate(glm::vec3(0, -90, 0));
-    EntityBuilder::create()
-            ->withTransform(transform)
-            ->withMesh(new SkyboxStar(1, shaderProgram))
-            ->build(entityManager);
+//    auto transform = new TransformComponent(glm::vec3(100, 0, 0));
+//    transform->rotate(glm::vec3(0, -90, 0));
+//    EntityBuilder::create()
+//            ->withTransform(transform)
+//            ->withMesh(new SkyboxStar(1, shaderProgram))
+//            ->build(entityManager);
 //    transform = new TransformComponent(glm::vec3(100, 0, 10));
 //    transform->rotate(glm::vec3(0, -90, 0));
 //    EntityBuilder::create()

@@ -19,9 +19,6 @@ void RenderSystem::init() {
     glEnable(GL_STENCIL_TEST);
     glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
     glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-
-    glEnable(GL_CULL_FACE);
-//    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
 void RenderSystem::update() {

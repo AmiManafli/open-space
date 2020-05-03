@@ -50,7 +50,7 @@ glm::mat4 CameraComponent::getProjection(float aspectRatio) {
         auto fov = 45.0f / zoom;
         return glm::perspective(glm::radians(fov), aspectRatio, 0.1f, 10000.0f);
     } else if (type == CubeMapType) {
-        return glm::perspective(static_cast<float>(PI / 2.0), 1.0f, 0.00001f, 100000.0f);
+        return glm::perspective(static_cast<float>(PI / 2.0), 1.0f, 0.000001f, 100000000.0f);
     } else {
         throw std::runtime_error("failed to get projection: unknown projection mode");
     }
