@@ -125,8 +125,9 @@ void RenderSystem::renderMesh(MeshComponent *mesh, ShaderProgram *shaderProgram,
 
 void RenderSystem::renderTexture(MeshComponent *mesh, ShaderProgram *shaderProgram) {
 	for (unsigned int i = 0; i < mesh->textures.size(); i++) {
-		glActiveTexture(GL_TEXTURE0 + i); // active proper texture unit before binding
-		std::string name = mesh->textures[i].type;
+		glActiveTexture(GL_TEXTURE0 + i);
+		auto texture = mesh->textures[i];
+		std::string name = texture.type;
 		if (name == "texture_diffuse") {
 		    shaderProgram->setUniform("material.diffuse", i);
 		} else if (name == "texture_specular") {
@@ -137,7 +138,10 @@ void RenderSystem::renderTexture(MeshComponent *mesh, ShaderProgram *shaderProgr
 //            shaderProgram->setUniform("material.height", i);
 		}
 
-		// and finally bind the texture
-		glBindTexture(GL_TEXTURE_2D, mesh->textures[i].id);
+		if (texture.isCubeMap) {
+            glBindTexture(GL_TEXTURE_CUBE_MAP, texture.id);
+		} else {
+            glBindTexture(GL_TEXTURE_2D, texture.id);
+		}
 	}
 }

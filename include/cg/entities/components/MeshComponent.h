@@ -22,6 +22,7 @@ public:
         uint32_t id;
         std::string type;
 		std::string path;
+		bool isCubeMap;
     };
 
 public:

@@ -42,6 +42,7 @@ public:
 
     uint32_t triangleCount = 0;
 
+    Entity *skybox = nullptr;
     Entity *grid = nullptr;
 
     Entity *player = nullptr;

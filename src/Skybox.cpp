@@ -67,8 +67,17 @@ void Skybox::createTexture(glm::vec3 position) {
 }
 
 void Skybox::createTexture(std::string filename) {
-    std::vector<std::string> faces(6);
+    std::vector<std::string> faces = {
+            "./assets/textures/skybox1/right.png",
+            "./assets/textures/skybox1/left.png",
+            "./assets/textures/skybox1/top.png",
+            "./assets/textures/skybox1/bottom.png",
+            "./assets/textures/skybox1/front.png",
+            "./assets/textures/skybox1/back.png",
+    };
+
     Texture texture {};
+    texture.isCubeMap = true;
 
     glGenTextures(1, &texture.id);
     glBindTexture(GL_TEXTURE_CUBE_MAP, texture.id);
@@ -76,7 +85,8 @@ void Skybox::createTexture(std::string filename) {
     for (GLuint i = 0; i < faces.size(); i++) {
         int width, height, numChannels;
         unsigned char *data = stbi_load(faces[i].c_str(), &width, &height, &numChannels, 0);
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        auto format = numChannels == 3 ? GL_RGB : GL_RGBA;
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
         stbi_image_free(data);
     }
 
