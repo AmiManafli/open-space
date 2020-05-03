@@ -226,7 +226,7 @@ glm::vec3 getStarRotation(glm::vec3 position) {
 }
 
 void Skybox::createEntities(EntityManager *entityManager, ShaderProgram *shaderProgram) {
-    float radius = 50;
+    float radius = 300;
     int count = 64;
     float rad = 0.0f;
     float diff = static_cast<float>(2 * PI) / static_cast<float>(count);

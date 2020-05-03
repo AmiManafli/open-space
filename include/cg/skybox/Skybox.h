@@ -30,7 +30,7 @@ private:
 
     glm::vec3 size;
 
-    static constexpr uint32_t resolution = 512;
+    static constexpr uint32_t resolution = 4096;
 };
 
 #endif //CG1_PROJECT_SKYBOX_H
