@@ -105,7 +105,7 @@ void Application::init() {
 
     auto color = glm::vec3(0.576, 0.886, 1.0);
 
-    sky = new Skybox(glm::vec3(50), "./assets/textures/skybox1", skyboxShaderProgram);
+    sky = new Skybox(glm::vec3(1000), "./assets/textures/skybox1", skyboxShaderProgram);
     context->skybox = EntityBuilder::create()
             ->withMesh(sky)
             ->withTransform(0, 0, 0)

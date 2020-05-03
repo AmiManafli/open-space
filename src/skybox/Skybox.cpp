@@ -217,20 +217,17 @@ void Skybox::render(RenderSystem *renderSystem, EntityManager *entityManager, Ca
 }
 
 glm::vec3 getStarRotation(glm::vec3 position) {
+    auto pos = glm::normalize(position);
     auto forward = glm::vec3(0, 0, -1);
-    auto abc = glm::dot(position, forward);
-    auto angle = glm::acos(glm::dot(position, forward));
-    if (std::isnan(angle)) return glm::vec3(0);
+    auto angle = glm::acos(glm::dot(glm::normalize(pos), forward));
 
-    auto up = glm::normalize(glm::cross(position, forward));
-//    auto left = glm::normalize(glm::cross(up, position));
-//    auto left = glm::normalize(glm::cross(position, up));
-    return up * glm::degrees(angle);
+    auto up = glm::normalize(glm::cross(pos, forward));
+    return up * angle;
 }
 
 void Skybox::createEntities(EntityManager *entityManager, ShaderProgram *shaderProgram) {
     float radius = 50;
-    int count = 4;
+    int count = 64;
     float rad = 0.0f;
     float diff = static_cast<float>(2 * PI) / static_cast<float>(count);
     for (int i = 0; i < count; i++) {
@@ -269,8 +266,8 @@ void Skybox::createEntities(EntityManager *entityManager, ShaderProgram *shaderP
 //    }
 
     // X
-//    auto transform = new TransformComponent(glm::vec3(100, 0, 0));
-//    transform->rotate(glm::vec3(0, -90, 0));
+//    auto transform = new TransformComponent(glm::vec3(50, 0, 0));
+//    transform->rotate(glm::vec3(0, glm::radians(90.0f), 0));
 //    EntityBuilder::create()
 //            ->withTransform(transform)
 //            ->withMesh(new SkyboxStar(1, shaderProgram))
