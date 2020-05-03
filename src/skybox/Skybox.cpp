@@ -1,7 +1,15 @@
 #include <stb_image.h>
 #include <cg/entities/EntityBuilder.h>
 #include <cg/skybox/SkyboxStar.h>
+#include <stb_image_write.h>
 #include "cg/skybox/Skybox.h"
+
+//#define STB_IMAGE_IMPLEMENTATION
+//#include "stb_image.h"
+
+#define STBI_MSC_SECURE_CRT
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image_write.h"
 
 Skybox::Skybox(glm::vec3 size, ShaderProgram *shaderProgram) : size(size) {
     indexed = false;
@@ -183,6 +191,17 @@ void Skybox::render(RenderSystem *renderSystem, EntityManager *entityManager, Ca
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         renderEntities(renderSystem, entityManager, starShaderProgram);
+
+        const uint32_t maxX = 800;
+        const uint32_t maxY = 800;
+        uint32_t width = 800;
+        uint32_t height = 800;
+
+        std::string filename = "cubemap_" + std::to_string(i) + ".png";
+        auto data = new uint8_t[maxY][maxX][3];
+        glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
+        stbi_write_png(filename.c_str(), width, height, 3, data, 0);
+        delete[] data;
     }
 
     textures[0].id = texture;
@@ -213,12 +232,12 @@ void Skybox::createEntities(EntityManager *entityManager, ShaderProgram *shaderP
     }
     for (int i = -100; i < 100; i += 10) {
         EntityBuilder::create()
-                ->withTransform(i, 0, -100)
+                ->withTransform(i, 0, 100)
                 ->withMesh(new SkyboxStar(1, shaderProgram))
                 ->build(entityManager);
         if (i != 0) {
             EntityBuilder::create()
-                    ->withTransform(0, i, -100)
+                    ->withTransform(0, i, 100)
                     ->withMesh(new SkyboxStar(1, shaderProgram))
                     ->build(entityManager);
         }

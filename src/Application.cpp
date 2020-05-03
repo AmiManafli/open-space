@@ -99,7 +99,7 @@ void Application::init() {
         ->build(entityManager);
     context->light = light;
 
-    createGrid(62, 62, false);
+//    createGrid(62, 62, false);
 
     auto ui = renderSystem->getUserInterface();
 
