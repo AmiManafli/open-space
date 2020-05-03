@@ -152,9 +152,11 @@ void Skybox::render(RenderSystem *renderSystem, EntityManager *entityManager, Ca
             { glm::vec3(0, 0, -1), glm::vec3(1, 0, 0), glm::vec3(0, 1, 0) },
     };
 
-    uint32_t fbo;
-    glGenFramebuffers(1, &fbo);
-    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    uint32_t framebuffer;
+    glGenFramebuffers(1, &framebuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+
+    glViewport(0, 0, resolution, resolution);
 
     uint32_t texture;
     glGenTextures(1, &texture);
@@ -174,7 +176,7 @@ void Skybox::render(RenderSystem *renderSystem, EntityManager *entityManager, Ca
         camera->right = directions[i][1];
         camera->up = directions[i][2];
 
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, 800, 800, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, resolution, resolution, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
 
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -192,15 +194,10 @@ void Skybox::render(RenderSystem *renderSystem, EntityManager *entityManager, Ca
 
         renderEntities(renderSystem, entityManager, starShaderProgram);
 
-        const uint32_t maxX = 800;
-        const uint32_t maxY = 800;
-        uint32_t width = 800;
-        uint32_t height = 800;
-
         std::string filename = "cubemap_" + std::to_string(i) + ".png";
-        auto data = new uint8_t[maxY][maxX][3];
-        glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
-        stbi_write_png(filename.c_str(), width, height, 3, data, 0);
+        auto data = new uint8_t[resolution][resolution][3];
+        glReadPixels(0, 0, resolution, resolution, GL_RGB, GL_UNSIGNED_BYTE, data);
+        stbi_write_png(filename.c_str(), resolution, resolution, 3, data, 0);
         delete[] data;
     }
 
@@ -212,7 +209,7 @@ void Skybox::render(RenderSystem *renderSystem, EntityManager *entityManager, Ca
 
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glDeleteFramebuffers(1, &fbo);
+    glDeleteFramebuffers(1, &framebuffer);
 }
 
 void Skybox::createEntities(EntityManager *entityManager, ShaderProgram *shaderProgram) {
@@ -230,17 +227,15 @@ void Skybox::createEntities(EntityManager *entityManager, ShaderProgram *shaderP
 //                ->build(entityManager);
         rad += diff;
     }
-    for (int i = -100; i < 100; i += 10) {
+    for (int i = -100; i < 101; i += 10) {
         EntityBuilder::create()
                 ->withTransform(i, 0, 100)
                 ->withMesh(new SkyboxStar(1, shaderProgram))
                 ->build(entityManager);
-        if (i != 0) {
-            EntityBuilder::create()
-                    ->withTransform(0, i, 100)
-                    ->withMesh(new SkyboxStar(1, shaderProgram))
-                    ->build(entityManager);
-        }
+        EntityBuilder::create()
+                ->withTransform(0, i, 100)
+                ->withMesh(new SkyboxStar(1, shaderProgram))
+                ->build(entityManager);
     }
 }
 

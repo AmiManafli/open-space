@@ -16,7 +16,6 @@ public:
     void render(RenderSystem *renderSystem, EntityManager *entityManager, CameraComponent *camera);
 
     uint32_t numStars;
-    uint32_t resolution;
 
 private:
     void createMesh();
@@ -30,6 +29,8 @@ private:
     void renderEntities(RenderSystem *renderSystem, EntityManager *entityManager, ShaderProgram *shaderProgram);
 
     glm::vec3 size;
+
+    static constexpr uint32_t resolution = 512;
 };
 
 #endif //CG1_PROJECT_SKYBOX_H

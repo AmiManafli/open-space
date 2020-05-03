@@ -213,6 +213,7 @@ void Application::run() {
             renderedSkybox = true;
             printf("Rendered the skybox.\n");
             context->setActiveCamera(context->spaceshipCamera);
+            glViewport(0, 0, context->getWidth(), context->getHeight());
         }
 
         renderSystem->update();
