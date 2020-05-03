@@ -1,7 +1,7 @@
 #include <stb_image.h>
 #include "cg/Skybox.h"
 
-Skybox::Skybox(ShaderProgram *shaderProgram) {
+Skybox::Skybox(glm::vec3 size, ShaderProgram *shaderProgram) : size(size) {
     indexed = false;
     mode = GL_TRIANGLES;
     indexed = false;
@@ -11,27 +11,31 @@ Skybox::Skybox(ShaderProgram *shaderProgram) {
     createMesh();
 }
 
-Skybox::Skybox(std::string textureFilename, ShaderProgram *shaderProgram) : Skybox(shaderProgram) {
+Skybox::Skybox(glm::vec3 size, std::string textureFilename, ShaderProgram *shaderProgram) : Skybox(size, shaderProgram) {
     createTexture(textureFilename);
 
     setupBuffers();
 }
 
-Skybox::Skybox(glm::vec3 position, ShaderProgram *shaderProgram) : Skybox(shaderProgram) {
+Skybox::Skybox(glm::vec3 size, glm::vec3 position, ShaderProgram *shaderProgram) : Skybox(size, shaderProgram) {
     createTexture(position);
 
     setupBuffers();
 }
 
 void Skybox::createMesh() {
-    auto a =  glm::vec3(-0.5, 0.5, 0.5);
-    auto b =  glm::vec3(0.5, 0.5, 0.5);
-    auto c =  glm::vec3(-0.5, -0.5, 0.5);
-    auto d =  glm::vec3(0.5, -0.5, 0.5);
-    auto e =  glm::vec3(-0.5, 0.5, -0.5);
-    auto f =  glm::vec3(0.5, 0.5, -0.5);
-    auto g =  glm::vec3(-0.5, -0.5, -0.5);
-    auto h =  glm::vec3(0.5, -0.5, -0.5);
+    float x = size.x / 2.0f;
+    float y = size.y / 2.0f;
+    float z = size.z / 2.0f;
+
+    auto a =  glm::vec3(-x, y, z);
+    auto b =  glm::vec3(x, y, z);
+    auto c =  glm::vec3(-x, -y, z);
+    auto d =  glm::vec3(x, -y, z);
+    auto e =  glm::vec3(-x, y, -z);
+    auto f =  glm::vec3(x, y, -z);
+    auto g =  glm::vec3(-x, -y, -z);
+    auto h =  glm::vec3(x, -y, -z);
 
     // Front
     createTriangle(a, b, c);
