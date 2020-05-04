@@ -8,14 +8,15 @@
 
 class Skybox : public MeshComponent {
 public:
-    Skybox(glm::vec3 size, uint32_t numStars, ShaderProgram *shaderProgram);
-    Skybox(glm::vec3 size, uint32_t numStars, std::string textureFilename, ShaderProgram *shaderProgram);
-    Skybox(glm::vec3 size, uint32_t numStars, glm::vec3 position, ShaderProgram *shaderProgram);
+    Skybox(uint32_t size, uint32_t numStars, uint32_t numBigStars, ShaderProgram *shaderProgram);
+    Skybox(uint32_t size, uint32_t numStars, uint32_t numBigStars, std::string textureFilename, ShaderProgram *shaderProgram);
+    Skybox(uint32_t size, uint32_t numStars, uint32_t numBigStars, glm::vec3 position, ShaderProgram *shaderProgram);
 
     void generate(uint64_t seed);
     void render(RenderSystem *renderSystem, EntityManager *entityManager, CameraComponent *camera);
 
     uint32_t numStars;
+    uint32_t numBigStars;
 
 private:
     void createMesh();
@@ -25,12 +26,12 @@ private:
 
     void createTriangle(glm::vec3 a, glm::vec3 b, glm::vec3 c);
 
-    void createEntities(EntityManager *entityManager, ShaderProgram *shaderProgram);
+    void createStars(EntityManager *entityManager, ShaderProgram *shaderProgram, uint32_t count, float starSize, float distance, uint16_t subdivisions);
     void renderEntities(RenderSystem *renderSystem, EntityManager *entityManager, ShaderProgram *shaderProgram);
 
-    glm::vec3 size;
+    uint32_t size;
 
-    static constexpr uint32_t resolution = 2048;
+    static constexpr uint32_t resolution = 3072;
 };
 
 #endif //CG1_PROJECT_SKYBOX_H

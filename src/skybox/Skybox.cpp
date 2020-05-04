@@ -1,18 +1,14 @@
 #include <stb_image.h>
 #include <cg/entities/EntityBuilder.h>
-#include <cg/skybox/SkyboxStar.h>
 #include <stb_image_write.h>
 #include <cg/IcoSphere.h>
 #include "cg/skybox/Skybox.h"
-
-//#define STB_IMAGE_IMPLEMENTATION
-//#include "stb_image.h"
 
 #define STBI_MSC_SECURE_CRT
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
 
-Skybox::Skybox(glm::vec3 size, uint32_t numStars, ShaderProgram *shaderProgram) : size(size), numStars(numStars) {
+Skybox::Skybox(uint32_t size, uint32_t numStars, uint32_t numBigStars, ShaderProgram *shaderProgram) : size(size), numStars(numStars), numBigStars(numBigStars) {
     indexed = false;
     mode = GL_TRIANGLES;
     indexed = false;
@@ -22,22 +18,22 @@ Skybox::Skybox(glm::vec3 size, uint32_t numStars, ShaderProgram *shaderProgram) 
     createMesh();
 }
 
-Skybox::Skybox(glm::vec3 size, uint32_t numStars, std::string textureFilename, ShaderProgram *shaderProgram) : Skybox(size, numStars, shaderProgram) {
+Skybox::Skybox(uint32_t size, uint32_t numStars, uint32_t numBigStars, std::string textureFilename, ShaderProgram *shaderProgram) : Skybox(size, numStars, numBigStars, shaderProgram) {
     createTexture(textureFilename);
 
     setupBuffers();
 }
 
-Skybox::Skybox(glm::vec3 size, uint32_t numStars, glm::vec3 position, ShaderProgram *shaderProgram) : Skybox(size, numStars, shaderProgram) {
+Skybox::Skybox(uint32_t size, uint32_t numStars, uint32_t numBigStars, glm::vec3 position, ShaderProgram *shaderProgram) : Skybox(size, numStars, numBigStars, shaderProgram) {
     createTexture(position);
 
     setupBuffers();
 }
 
 void Skybox::createMesh() {
-    float x = size.x / 2.0f;
-    float y = size.y / 2.0f;
-    float z = size.z / 2.0f;
+    float x = size / 2.0f;
+    float y = size / 2.0f;
+    float z = size / 2.0f;
 
     auto a =  glm::vec3(-x, y, z);
     auto b =  glm::vec3(x, y, z);
@@ -153,7 +149,13 @@ void Skybox::render(RenderSystem *renderSystem, EntityManager *entityManager, Ca
     starShaderProgram->attachShader("./assets/shaders/skyboxStar.frag", ShaderType::FragmentShader);
     starShaderProgram->link();
 
-    createEntities(entityManager, starShaderProgram);
+    // Normal stars
+    createStars(entityManager, starShaderProgram, 0.92 * numStars, 0.03, 110, 1);
+    createStars(entityManager, starShaderProgram, 0.06 * numStars, 0.05, 100, 1);
+    createStars(entityManager, starShaderProgram, 0.02 * numStars, 0.05, 90, 1);
+
+    // Big stars
+    createStars(entityManager, starShaderProgram, numBigStars, 0.05, 40, 1);
 
     const char *filenames[] = {
             "right.png",
@@ -181,7 +183,6 @@ void Skybox::render(RenderSystem *renderSystem, EntityManager *entityManager, Ca
 
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, texture, 0);
 
-//        auto clearColor = clearColors[i];
         float diff = 5.0 / 255.0;
 //        auto clearColor = glm::vec4(i * diff, i * diff, i * diff, 1.0);
         auto clearColor = glm::vec4(0, 0, 0, 1.0);
@@ -217,25 +218,17 @@ glm::vec3 getStarRotation(glm::vec3 position) {
     return up * angle;
 }
 
-void Skybox::createEntities(EntityManager *entityManager, ShaderProgram *shaderProgram) {
-    float starSize = 1.0;
-
+void Skybox::createStars(EntityManager *entityManager, ShaderProgram *shaderProgram, uint32_t count, float starSize, float distance, uint16_t subdivisions) {
     std::vector<glm::vec3> transformations;
-    for (int i = 0; i < numStars; i++) {
-//        float distance = glm::linearRand(128.0f, 135.0f);
-        float distance = 20.0f;
+    for (int i = 0; i < count; i++) {
         auto position = distance * glm::normalize(glm::sphericalRand(1.0f));
         auto transform = new TransformComponent(position);
         transform->rotate(getStarRotation(position));
         transformations.emplace_back(position);
-//        EntityBuilder::create()
-//                ->withTransform(transform)
-//                ->withMesh(new SkyboxStar(starSize, shaderProgram))
-//                ->build(entityManager);
     }
     EntityBuilder::create()
             ->withTransform(0, 0, 0)
-            ->withMesh(new IcoSphere(0.01, 0, glm::vec3(1), 11, shaderProgram))
+            ->withMesh(new IcoSphere(starSize, subdivisions, glm::vec3(1), 11, shaderProgram))
             ->withInstances(transformations)
             ->build(entityManager);
 }
