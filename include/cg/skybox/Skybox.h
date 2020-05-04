@@ -8,9 +8,9 @@
 
 class Skybox : public MeshComponent {
 public:
-    Skybox(glm::vec3 size, ShaderProgram *shaderProgram);
-    Skybox(glm::vec3 size, std::string textureFilename, ShaderProgram *shaderProgram);
-    Skybox(glm::vec3 size, glm::vec3 position, ShaderProgram *shaderProgram);
+    Skybox(glm::vec3 size, uint32_t numStars, ShaderProgram *shaderProgram);
+    Skybox(glm::vec3 size, uint32_t numStars, std::string textureFilename, ShaderProgram *shaderProgram);
+    Skybox(glm::vec3 size, uint32_t numStars, glm::vec3 position, ShaderProgram *shaderProgram);
 
     void generate(uint64_t seed);
     void render(RenderSystem *renderSystem, EntityManager *entityManager, CameraComponent *camera);
@@ -30,7 +30,7 @@ private:
 
     glm::vec3 size;
 
-    static constexpr uint32_t resolution = 4096;
+    static constexpr uint32_t resolution = 2048;
 };
 
 #endif //CG1_PROJECT_SKYBOX_H

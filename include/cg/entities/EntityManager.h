@@ -26,6 +26,8 @@ typedef std::unordered_map<uint32_t, OrbitComponent *> OrbitComponentMap;
 
 class EntityManager {
 public:
+    ~EntityManager();
+
     /// Entities
     Entity* createEntity();
     std::vector<Entity *> getEntities() { return entities; }

@@ -105,7 +105,7 @@ void Application::init() {
 
     auto color = glm::vec3(0.576, 0.886, 1.0);
 
-    sky = new Skybox(glm::vec3(1000), "./assets/textures/skybox1", skyboxShaderProgram);
+    sky = new Skybox(glm::vec3(1000), 100000, "./assets/textures/skybox1", skyboxShaderProgram);
     context->skybox = EntityBuilder::create()
             ->withMesh(sky)
             ->withTransform(0, 0, 0)
@@ -207,15 +207,15 @@ void Application::run() {
         movementSystem->update();
 
         if (!renderedSkybox) {
-//            glDisable(GL_CULL_FACE);
+            glDisable(GL_CULL_FACE);
             context->setActiveCamera(context->skyboxCamera);
             auto camera = entityManager->getCameraComponent(context->skyboxCamera);
             sky->render(renderSystem, skyboxEntityManager, camera);
             renderedSkybox = true;
-            printf("Rendered the skybox.\n");
+            delete skyboxEntityManager;
             context->setActiveCamera(context->spaceshipCamera);
             glViewport(0, 0, context->getWidth(), context->getHeight());
-//            glEnable(GL_CULL_FACE);
+            glEnable(GL_CULL_FACE);
         }
 
         renderSystem->update();

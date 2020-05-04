@@ -1,5 +1,15 @@
 #include "cg/entities/EntityManager.h"
 
+EntityManager::~EntityManager() {
+    for (auto& pair : transformComponents) {
+        auto component = pair.second;
+        delete component;
+    }
+    for (auto& pair : meshComponents) {
+        auto component = pair.second;
+        delete component;
+    }
+}
 
 Entity *EntityManager::createEntity() {
     auto entity = new Entity();
