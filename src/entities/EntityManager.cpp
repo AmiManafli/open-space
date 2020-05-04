@@ -9,6 +9,9 @@ EntityManager::~EntityManager() {
         auto component = pair.second;
         delete component;
     }
+    for (auto& entity : entities) {
+        delete entity;
+    }
 }
 
 Entity *EntityManager::createEntity() {
