@@ -23,12 +23,12 @@ void MeshComponent::createInstances(std::vector<glm::vec3>& transformations) {
 
     glGenBuffers(1, &instanceVbo);
     glBindBuffer(GL_ARRAY_BUFFER, instanceVbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * instances, transformations.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, transformations.size() * sizeof(glm::vec3), transformations.data(), GL_STATIC_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     glEnableVertexAttribArray(3);
     glBindBuffer(GL_ARRAY_BUFFER, instanceVbo);
-    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), nullptr);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glVertexAttribDivisor(3, 1);
 

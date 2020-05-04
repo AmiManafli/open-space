@@ -2,6 +2,7 @@
 #include <cg/entities/EntityBuilder.h>
 #include <cg/skybox/SkyboxStar.h>
 #include <stb_image_write.h>
+#include <cg/IcoSphere.h>
 #include "cg/skybox/Skybox.h"
 
 //#define STB_IMAGE_IMPLEMENTATION
@@ -154,7 +155,7 @@ void Skybox::render(RenderSystem *renderSystem, EntityManager *entityManager, Ca
 
     createEntities(entityManager, starShaderProgram);
 
-    const char filenames[] = {
+    const char *filenames[] = {
             "right.png",
             "left.png",
             "top.png",
@@ -217,19 +218,26 @@ glm::vec3 getStarRotation(glm::vec3 position) {
 }
 
 void Skybox::createEntities(EntityManager *entityManager, ShaderProgram *shaderProgram) {
-    float starSize = 0.05;
+    float starSize = 1.0;
 
     std::vector<glm::vec3> transformations;
     for (int i = 0; i < numStars; i++) {
-        float distance = glm::linearRand(128.0f, 135.0f);
+//        float distance = glm::linearRand(128.0f, 135.0f);
+        float distance = 20.0f;
         auto position = distance * glm::normalize(glm::sphericalRand(1.0f));
         auto transform = new TransformComponent(position);
         transform->rotate(getStarRotation(position));
-        EntityBuilder::create()
-                ->withTransform(transform)
-                ->withMesh(new SkyboxStar(starSize, shaderProgram))
-                ->build(entityManager);
+        transformations.emplace_back(position);
+//        EntityBuilder::create()
+//                ->withTransform(transform)
+//                ->withMesh(new SkyboxStar(starSize, shaderProgram))
+//                ->build(entityManager);
     }
+    EntityBuilder::create()
+            ->withTransform(0, 0, 0)
+            ->withMesh(new IcoSphere(0.01, 0, glm::vec3(1), 11, shaderProgram))
+            ->withInstances(transformations)
+            ->build(entityManager);
 }
 
 void Skybox::renderEntities(RenderSystem *renderSystem, EntityManager *entityManager, ShaderProgram *shaderProgram) {

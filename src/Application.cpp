@@ -111,6 +111,17 @@ void Application::init() {
             ->withTransform(0, 0, 0)
             ->build(entityManager);
 
+//    std::vector<glm::vec3> transformations = {
+//            glm::vec3(0, 0, -20),
+//            glm::vec3(5, 10, -20),
+//            glm::vec3(10, 0, -20),
+//    };
+//    EntityBuilder::create()
+//            ->withTransform(0, 0, -20)
+//            ->withMesh(new IcoSphere(1.0, 0, glm::vec3(1), 11, meshShaderProgram))
+//            ->withInstances(transformations)
+//            ->build(entityManager);
+
 //    auto sunVelocity = new VelocityComponent();
 //    sunVelocity->rotation = glm::vec3(0, -0.2, 0);
 //	auto sun = EntityBuilder::create()
@@ -226,7 +237,7 @@ void Application::createCameras() {
     auto target = glm::vec3(0, 0, 0);
 
     /// Spaceship camera
-    auto position = glm::vec3(0, 0, 0);
+    auto position = glm::vec3(0, 3, 10);
 
     context->spaceshipCamera = EntityBuilder::create()
         ->withTransform(position)

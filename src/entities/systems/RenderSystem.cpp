@@ -58,9 +58,6 @@ void RenderSystem::renderEntities() {
         }
 
         // Render meshes
-        if (entityId == 6) {
-//            printf("%d, Position: %s\n", entityId, glm::to_string(transform->position).c_str());
-        }
         for (auto it = meshes.first; it != meshes.second; it++) {
             triangleCount += (double) it->second->indices.size() / 3.0;
             renderMesh(it->second, it->second->shaderProgram, transform->getModel());
