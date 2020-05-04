@@ -124,15 +124,6 @@ void Skybox::generate(uint64_t seed) {
 }
 
 void Skybox::render(RenderSystem *renderSystem, EntityManager *entityManager, CameraComponent *camera) {
-    std::vector<glm::vec4> clearColors = {
-            glm::vec4(1.0f, 0.0f, 0.0f, 1.0f),
-            glm::vec4(0.0f, 0.0f, 0.0f, 1.0f),
-            glm::vec4(0.0f, 0.0f, 1.0f, 1.0f),
-            glm::vec4(1.0f, 1.0f, 0.0f, 1.0f),
-            glm::vec4(0.0f, 1.0f, 0.0f, 1.0f),
-            glm::vec4(0.0f, 1.0f, 1.0f, 1.0f),
-    };
-
     std::vector<std::vector<glm::vec3>> directions = {
             // Front, right, up
             // X - pos / neg
@@ -163,6 +154,15 @@ void Skybox::render(RenderSystem *renderSystem, EntityManager *entityManager, Ca
 
     createEntities(entityManager, starShaderProgram);
 
+    const char filenames[] = {
+            "right.png",
+            "left.png",
+            "top.png",
+            "bottom.png",
+            "front.png",
+            "back.png",
+    };
+
     glEnable(GL_DEPTH);
     for (uint16_t i = 0; i < 6; i++) {
         // Rotate camera
@@ -189,10 +189,10 @@ void Skybox::render(RenderSystem *renderSystem, EntityManager *entityManager, Ca
 
         renderEntities(renderSystem, entityManager, starShaderProgram);
 
-//        std::string filename = "cubemap_" + std::to_string(i) + ".png";
+        /// Save the cubemap texture to files
 //        auto data = new uint8_t[resolution][resolution][3];
 //        glReadPixels(0, 0, resolution, resolution, GL_RGB, GL_UNSIGNED_BYTE, data);
-//        stbi_write_png(filename.c_str(), resolution, resolution, 3, data, 0);
+//        stbi_write_png(filenames[i], resolution, resolution, 3, data, 0);
 //        delete[] data;
     }
 
@@ -219,6 +219,7 @@ glm::vec3 getStarRotation(glm::vec3 position) {
 void Skybox::createEntities(EntityManager *entityManager, ShaderProgram *shaderProgram) {
     float starSize = 0.05;
 
+    std::vector<glm::vec3> transformations;
     for (int i = 0; i < numStars; i++) {
         float distance = glm::linearRand(128.0f, 135.0f);
         auto position = distance * glm::normalize(glm::sphericalRand(1.0f));
