@@ -33,7 +33,7 @@ private:
     ShaderProgram *skyboxShaderProgram;
     ShaderProgram *shaderProgram;
 
-    Skybox *sky;
+    Skybox *sky = nullptr;
 
     // Lights
     Entity *light;

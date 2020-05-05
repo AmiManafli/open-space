@@ -99,17 +99,12 @@ void Application::init() {
         ->build(entityManager);
     context->light = light;
 
-//    createGrid(62, 62, false);
+    createGrid(62, 62, false);
 
     auto ui = renderSystem->getUserInterface();
 
     auto color = glm::vec3(0.576, 0.886, 1.0);
 
-    sky = new Skybox(10000, 100000, 20, "./assets/textures/skybox1", skyboxShaderProgram);
-    context->skybox = EntityBuilder::create()
-            ->withMesh(sky)
-            ->withTransform(0, 0, 0)
-            ->build(entityManager);
 
 //    std::vector<glm::vec3> transformations = {
 //            glm::vec3(0, 0, -20),
@@ -168,41 +163,13 @@ void Application::init() {
 //        ->withTransform(0, 1.01, 0)
 //        ->build(entityManager);
 
-//	auto airplane = EntityBuilder::create()
-//		->withMesh("./assets/models/airplaneUdemy.obj", meshTextureShaderProgram)
-//		->withTransform(0, 0, 0)
-//		->withOrbit(planetTransform, 12, 12, 1.9, 2.0)
-//		->build(entityManager);
-
-//    inputSystem->createSpaceshipControl(airplane, context->spaceshipCamera);
     inputSystem->createSpaceshipControl(nullptr, context->spaceshipCamera);
-
-//    auto nanoSuit = EntityBuilder::create()
-//        ->withMesh("./assets/models/nanosuit.obj", meshTextureShaderProgram)
-//        ->withTransform(0, 0, 0)
-//        ->withScale(0.3)
-//		->withVelocity(new VelocityComponent(glm::vec3(0, 0.5, 0), glm::vec3(0, 0, 0)))
-//        ->build(entityManager);
-
-  //  auto nanoSuit = EntityBuilder::create()
-  //      ->withMesh("./assets/models/nanosuit.obj", meshTextureShaderProgram)
-  //      ->withTransform(0, 0, 0)
-  //      ->withScale(0.3)
-		//->withVelocity(new VelocityComponent(glm::vec3(0, 0.5, 0), glm::vec3(0, 0, 0)))
-  //      ->build(entityManager);
-
-    //auto floor = EntityBuilder::create()
-    //    ->withMesh("./assets/models/plane.dae", meshWithLightShaderProgram)
-    //    ->withTransform(0, 0, 0)
-    //    ->withScale(30.0)
-    //    ->build(entityManager);
 }
 
 void Application::run() {
     bool renderedSkybox = false;
     auto skyboxEntityManager = new EntityManager();
 
-    context->setActiveCamera(context->skyboxCamera);
     while (!context->shouldClose()) {
         context->update();
 
@@ -217,7 +184,7 @@ void Application::run() {
         inputSystem->update();
         movementSystem->update();
 
-        if (!renderedSkybox) {
+        if (!renderedSkybox && sky != nullptr) {
             glDisable(GL_CULL_FACE);
             context->setActiveCamera(context->skyboxCamera);
             auto camera = entityManager->getCameraComponent(context->skyboxCamera);
@@ -239,8 +206,10 @@ void Application::createCameras() {
     /// Spaceship camera
     auto position = glm::vec3(0, 3, 10);
 
+    sky = new Skybox(10000, 100000, 20, "./assets/textures/skybox1", skyboxShaderProgram);
     context->spaceshipCamera = EntityBuilder::create()
         ->withTransform(position)
+        ->withMesh(sky)
         ->withCamera(CameraComponent::Mode::FirstPersonShip, CameraComponent::Type::Perspective, target, glm::normalize(-position), glm::vec3(0, 1, 0), context->getAspect())
         ->build(entityManager);
 

@@ -15,12 +15,12 @@ Collapsed=0
 
 [Window][Camera Information]
 Pos=880,640
-Size=303,145
+Size=296,145
 Collapsed=0
 
 [Window][Entity Editor]
 Pos=678,24
-Size=300,493
+Size=300,48
 Collapsed=0
 
 [Window][Dear ImGui Demo]
