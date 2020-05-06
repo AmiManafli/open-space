@@ -104,7 +104,7 @@ void UserInterface::renderSceneInfoWindow() {
 void UserInterface::renderCameraInfoWindow() {
     auto cameraEntity = context->getCamera();
     auto transform = entityManager->getComponent<TransformComponent>(cameraEntity);
-    auto camera = entityManager->getCameraComponent(cameraEntity->id);
+    auto camera = entityManager->getComponent<CameraComponent>(cameraEntity);
 
     ImGui::SetNextWindowPos(ImVec2(context->getWidth() - 320, context->getHeight() - 160));
     ImGui::Begin("Camera Information", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize);

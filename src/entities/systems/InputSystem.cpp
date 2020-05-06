@@ -45,7 +45,7 @@ void InputSystem::update() {
     }
 
     auto camera = context->getCamera();
-    CameraComponent *cameraComponent = entityManager->getCameraComponent(camera->id);
+    auto cameraComponent = entityManager->getComponent<CameraComponent>(camera);
     if (!isDebug && isKeyDown(GLFW_KEY_W)) {
         if (cameraComponent->mode == CameraComponent::FirstPersonShip) {
             spaceshipControl->processKeyboard(camera, CameraComponent::Direction::Forward, deltaTime);
@@ -157,7 +157,7 @@ void InputSystem::mousePositionCallback(GLFWwindow *window, double x, double y) 
     if (context->displayCursor) return;
 
     auto camera = context->getCamera();
-    auto cameraComponent = inputSystem->entityManager->getCameraComponent(camera->id);
+    auto cameraComponent = inputSystem->entityManager->getComponent<CameraComponent>(camera);
 
     if (!inputSystem->processedMouse) {
         inputSystem->lastMouseX = x;
@@ -177,7 +177,7 @@ void InputSystem::processMouseScroll(GLFWwindow *window, double xoffset, double 
     auto context = inputSystem->context;
     if (context->displayCursor) return;
     auto camera = context->getCamera();
-    auto cameraComponent = inputSystem->entityManager->getCameraComponent(camera->id);
+    auto cameraComponent = inputSystem->entityManager->getComponent<CameraComponent>(camera);
 
     auto speed = cameraComponent->movementSpeed + yoffset;
     cameraComponent->movementSpeed = glm::clamp(speed, 0.0, speed);
@@ -185,7 +185,7 @@ void InputSystem::processMouseScroll(GLFWwindow *window, double xoffset, double 
 }
 
 void InputSystem::moveCamera(Entity *camera, CameraComponent::Direction direction, float deltaTime) {
-    auto cameraComponent = entityManager->getCameraComponent(camera->id);
+    auto cameraComponent = entityManager->getComponent<CameraComponent>(camera);
     auto transformComponent = entityManager->getComponent<TransformComponent>(camera);
     cameraComponent->processKeyboard(direction, deltaTime, transformComponent);
 }
@@ -222,7 +222,7 @@ bool InputSystem::isRayInSphere(TransformComponent *transform, glm::vec3 origin,
 Entity *InputSystem::getClickedEntity(double mouseX, double mouseY) {
     Entity* foundEntity = nullptr;
 
-    auto camera = entityManager->getCameraComponent(context->getCamera());
+    auto camera = entityManager->getComponent<CameraComponent>(context->getCamera());
     auto cameraTransform = entityManager->getComponent<TransformComponent>(context->getCamera());
 
     // Normalized device coordinates

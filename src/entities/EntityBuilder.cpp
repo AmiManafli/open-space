@@ -8,7 +8,7 @@ Entity *EntityBuilder::build(EntityManager *entityManager) {
         entityManager->addComponent(entity, transformComponent);
     }
     if (cameraComponent != nullptr) {
-        entityManager->addCameraComponent(entity->id, cameraComponent);
+        entityManager->addComponent(entity, cameraComponent);
     }
     if (highlightComponent != nullptr) {
         entityManager->addHighlightComponent(entity->id, highlightComponent);

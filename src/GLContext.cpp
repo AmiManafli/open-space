@@ -11,14 +11,13 @@ GLContext::~GLContext() {
 glm::mat4 GLContext::getView() {
     auto camera = getCamera();
     auto cameraId = camera->id;
-    auto cameraComponent = entityManager->getCameraComponent(cameraId);
+    auto cameraComponent = entityManager->getComponent<CameraComponent>(camera);
     auto transformComponent = entityManager->getComponent<TransformComponent>(camera);
     return cameraComponent->getView(transformComponent);
 }
 
 glm::mat4 GLContext::getProjection() {
-    auto cameraId = getCamera()->id;
-    auto cameraComponent = entityManager->getCameraComponent(cameraId);
+    auto cameraComponent = entityManager->getComponent<CameraComponent>(getCamera());
     return cameraComponent->getProjection(getAspect());
 }
 

@@ -1,17 +1,6 @@
 #include "cg/entities/EntityManager.h"
 
 EntityManager::~EntityManager() {
-    for (auto& pair : transformComponents) {
-        auto component = pair.second;
-        delete component;
-    }
-    for (auto& pair : meshComponents) {
-        auto component = pair.second;
-        delete component;
-    }
-    for (auto& entity : entities) {
-        delete entity;
-    }
 }
 
 Entity *EntityManager::createEntity() {
@@ -40,22 +29,6 @@ void EntityManager::addMeshComponent(uint32_t entityId, MeshComponent *component
 
 std::pair<MeshComponentMultimap::iterator, MeshComponentMultimap::iterator> EntityManager::getMeshComponents(uint32_t entityId) {
     return meshComponents.equal_range(entityId);
-}
-
-//void EntityManager::addTransformComponent(uint32_t entityId, TransformComponent* component) {
-//    transformComponents.emplace(entityId, component);
-//}
-
-//TransformComponent* EntityManager::getTransformComponent(uint32_t entityId) {
-//    return getComponent(transformComponents, entityId);
-//}
-
-void EntityManager::addCameraComponent(uint32_t entityId, CameraComponent* component) {
-    cameraComponents.emplace(entityId, component);
-}
-
-CameraComponent* EntityManager::getCameraComponent(uint32_t entityId) {
-    return getComponent(cameraComponents, entityId);
 }
 
 void EntityManager::addHighlightComponent(uint32_t entityId, HighlightComponent *component) {

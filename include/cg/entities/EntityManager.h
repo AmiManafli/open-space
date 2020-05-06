@@ -39,13 +39,6 @@ public:
     std::pair<MeshComponentMultimap::iterator, MeshComponentMultimap::iterator> getMeshComponents(Entity *entity) { return getMeshComponents(entity->id); }
     std::pair<MeshComponentMultimap::iterator, MeshComponentMultimap::iterator> getMeshComponents(uint32_t entityId);
 
-    /// Transform component
-//    void addTransformComponent(uint32_t entityId, TransformComponent *component);
-//    TransformComponentMap getTransformComponents() { return transformComponents; }
-//    TransformComponent* getTransformComponent(Entity *entity) { return getTransformComponent(entity->id); };
-//    TransformComponent* getTransformComponent(uint32_t entityId);
-
-    std::unordered_map<const char *, std::unordered_map<Entity *, Component *>> components;
 
     template<class T>
     void addComponent(Entity *entity, T *component) {
@@ -73,10 +66,10 @@ public:
     }
 
     /// Camera component
-    void addCameraComponent(uint32_t entityId, CameraComponent *component);
-    CameraComponentMap getCameraComponents() { return cameraComponents; }
-    CameraComponent* getCameraComponent(Entity *entity) { return getCameraComponent(entity->id); }
-    CameraComponent* getCameraComponent(uint32_t entityId);
+//    void addCameraComponent(uint32_t entityId, CameraComponent *component);
+//    CameraComponentMap getCameraComponents() { return cameraComponents; }
+//    CameraComponent* getCameraComponent(Entity *entity) { return getCameraComponent(entity->id); }
+//    CameraComponent* getCameraComponent(uint32_t entityId);
 
     /// Highlight component
     void addHighlightComponent(uint32_t entityId, HighlightComponent *component);
@@ -120,9 +113,9 @@ private:
     std::vector<Entity *> entities;
 
     /// Components
+    std::unordered_map<const char *, std::unordered_map<Entity *, Component *>> components;
+
     MeshComponentMultimap meshComponents;
-    TransformComponentMap transformComponents;
-    CameraComponentMap cameraComponents;
     HighlightComponentMap highlightComponents;
     VelocityComponentMap velocityComponents;
     LightComponentMap lightComponents;

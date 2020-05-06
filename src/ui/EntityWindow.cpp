@@ -48,7 +48,7 @@ void EntityWindow::render() {
     renderMassComponent(entityManager->getMassComponent(entity));
     renderOrbitComponent(entityManager->getOrbitComponent(entity));
     renderVelocityComponent(entityManager->getVelocityComponent(entity));
-    renderCameraComponent(entityManager->getCameraComponent(entity));
+    renderCameraComponent(entityManager->getComponent<CameraComponent>(entity));
     renderMeshComponents(meshComponents);
     renderHighlightComponent(entityManager->getHighlightComponent(entity));
 

@@ -2,7 +2,7 @@
 
 SpaceshipControl::SpaceshipControl(Entity* spaceship, Entity* camera, EntityManager* entityManager) {
     this->cameraTransform = entityManager->getComponent<TransformComponent>(camera);
-    this->cameraComponent = entityManager->getCameraComponent(camera->id);
+    this->cameraComponent = entityManager->getComponent<CameraComponent>(camera);
     this->entityManager = entityManager;
 }
 
