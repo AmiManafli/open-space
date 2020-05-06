@@ -115,7 +115,19 @@ void Application::init() {
 		->withVelocity(sunVelocity)
 		->build(entityManager);
 	auto sunTransform = entityManager->getComponent<TransformComponent>(sun);
-    context->light = sun;
+
+    sunVelocity = new VelocityComponent();
+    sunVelocity->rotation = glm::vec3(0, -0.3, 0);
+    auto sun2 = EntityBuilder::create()
+            ->withMesh(new IcoSphere(1.0, 3, glm::vec3(0.96), 11, starTextureShaderProgram))
+            ->withTransform(7, 4, 0)
+            ->withPointLight(glm::vec3(0.2), glm::vec3(1.0), glm::vec3(1.0), 1.0, 0.07, 0.017)
+            ->isSelectable()
+            ->withScale(1.0)
+            ->withMass(1000.0)
+            ->withVelocity(sunVelocity)
+            ->build(entityManager);
+    auto sunTransform2 = entityManager->getComponent<TransformComponent>(sun2);
 
 	auto planetScale = 0.4;
 	auto planetVelocity = new VelocityComponent();
@@ -154,7 +166,7 @@ void Application::init() {
             ->isSelectable()
             ->withMass(200)
             ->withScale(planetScale)
-            ->withOrbit(sunTransform, 12, 12, 0.1, 1.0)
+            ->withOrbit(sunTransform2, 5, 5, 0.8, 1.0)
             ->withVelocity(planetVelocity)
             ->build(entityManager);
 
