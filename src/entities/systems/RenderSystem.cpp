@@ -50,7 +50,7 @@ void RenderSystem::renderEntities() {
         auto entity = pair.first;
         auto transform = dynamic_cast<TransformComponent *>(pair.second);
         auto meshes = entityManager->getMeshComponents(entity);
-        auto highlight = entityManager->getHighlightComponent(entity);
+        auto highlight = entityManager->getComponent<HighlightComponent>(entity);
 
         if (highlight) {
             glStencilFunc(GL_ALWAYS, 1, 0xFF);

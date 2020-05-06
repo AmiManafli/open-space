@@ -50,6 +50,14 @@ public:
     }
 
     template<class T>
+    void removeComponent(Entity *entity) {
+        auto key = typeid(T).name();
+        auto component = getComponent<T>(entity);
+        components[key].erase(entity);
+        delete component;
+    }
+
+    template<class T>
     std::unordered_map<Entity *, Component *> getComponents() {
         auto key = typeid(T).name();
         return components[key];
@@ -64,23 +72,6 @@ public:
             return nullptr;
         }
     }
-
-    /// Camera component
-//    void addCameraComponent(uint32_t entityId, CameraComponent *component);
-//    CameraComponentMap getCameraComponents() { return cameraComponents; }
-//    CameraComponent* getCameraComponent(Entity *entity) { return getCameraComponent(entity->id); }
-//    CameraComponent* getCameraComponent(uint32_t entityId);
-
-    /// Highlight component
-    void addHighlightComponent(uint32_t entityId, HighlightComponent *component);
-    void removeHighlightComponent(Entity *entity) {
-        auto component = getHighlightComponent(entity);
-        highlightComponents.erase(entity->id);
-        delete component;
-    }
-    HighlightComponentMap getHighlightComponents() { return highlightComponents; }
-    HighlightComponent* getHighlightComponent(Entity *entity) { return getHighlightComponent(entity->id); }
-    HighlightComponent* getHighlightComponent(uint32_t entityId);
 
     /// Velocity component
     void addVelocityComponent(uint32_t entityId, VelocityComponent *component);

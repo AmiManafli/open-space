@@ -50,7 +50,7 @@ void EntityWindow::render() {
     renderVelocityComponent(entityManager->getVelocityComponent(entity));
     renderCameraComponent(entityManager->getComponent<CameraComponent>(entity));
     renderMeshComponents(meshComponents);
-    renderHighlightComponent(entityManager->getHighlightComponent(entity));
+    renderHighlightComponent(entityManager->getComponent<HighlightComponent>(entity));
 
     ImGui::End();
 }

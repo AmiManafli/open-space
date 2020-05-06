@@ -11,7 +11,7 @@ Entity *EntityBuilder::build(EntityManager *entityManager) {
         entityManager->addComponent(entity, cameraComponent);
     }
     if (highlightComponent != nullptr) {
-        entityManager->addHighlightComponent(entity->id, highlightComponent);
+        entityManager->addComponent<HighlightComponent>(entity, highlightComponent);
     }
 
     for (auto& mesh : meshComponents) {

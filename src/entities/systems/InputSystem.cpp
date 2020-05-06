@@ -85,7 +85,6 @@ void InputSystem::update() {
         spaceshipControl->processKeyboard(camera, CameraComponent::Direction::Up, deltaTime);
     }
 
-
     if (!isDebug && isKeyPressed(GLFW_KEY_G)) {
         context->displayGrid = !context->displayGrid;
     }
@@ -94,7 +93,6 @@ void InputSystem::update() {
         context->displayGui = !context->displayGui;
     }
 
-    //CameraComponent* cameraComponent = entityManager->getCameraComponent(camera->id);
     if (!isDebug && isKeyDown(GLFW_KEY_EQUAL)) {
         cameraComponent->movementSpeed += 0.1;
         printf("Camera movement speed: %.1f\n", cameraComponent->movementSpeed);
@@ -277,16 +275,16 @@ void InputSystem::selectEntity(Entity *entity) {
     }
 
     if (previousEntity) {
-        entityManager->removeHighlightComponent(previousEntity);
+        entityManager->removeComponent<HighlightComponent>(previousEntity);
         context->selectedEntity = entity;
         if (entity) {
-            entityManager->addHighlightComponent(entity->id, new HighlightComponent(highlightScale, context->highlightProgram));
+            entityManager->addComponent(entity, new HighlightComponent(highlightScale, context->highlightProgram));
         }
     } else if (entity) {
-        auto highlight = entityManager->getHighlightComponent(entity);
+        auto highlight = entityManager->getComponent<HighlightComponent>(entity);
 
         if (!highlight) {
-            entityManager->addHighlightComponent(entity->id, new HighlightComponent(highlightScale, context->highlightProgram));
+            entityManager->addComponent(entity, new HighlightComponent(highlightScale, context->highlightProgram));
         }
     }
 

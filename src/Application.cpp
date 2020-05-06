@@ -116,29 +116,17 @@ void Application::init() {
 
     auto color = glm::vec3(0.576, 0.886, 1.0);
 
-
-//    std::vector<glm::vec3> transformations = {
-//            glm::vec3(0, 0, -20),
-//            glm::vec3(5, 10, -20),
-//            glm::vec3(10, 0, -20),
-//    };
-//    EntityBuilder::create()
-//            ->withTransform(0, 0, -20)
-//            ->withMesh(new IcoSphere(1.0, 0, glm::vec3(1), 11, meshShaderProgram))
-//            ->withInstances(transformations)
-//            ->build(entityManager);
-
-//    auto sunVelocity = new VelocityComponent();
-//    sunVelocity->rotation = glm::vec3(0, -0.2, 0);
-//	auto sun = EntityBuilder::create()
-//		->withMesh(new IcoSphere(1.0, 3, glm::vec3(0.96), 11, meshTextureShaderProgram))
-//		->withTransform(0, 0, 0)
-//		->withScale(20.0)
-//		->withMass(1000.0)
-//		->withVelocity(sunVelocity)
-//		->build(entityManager);
+    auto sunVelocity = new VelocityComponent();
+    sunVelocity->rotation = glm::vec3(0, -0.2, 0);
+	auto sun = EntityBuilder::create()
+		->withMesh(new IcoSphere(1.0, 3, glm::vec3(0.96), 11, meshTextureShaderProgram))
+		->withTransform(0, 0, 0)
+		->withScale(1.0)
+		->withMass(1000.0)
+		->withVelocity(sunVelocity)
+		->build(entityManager);
 //	auto sunTransform = entityManager->getTransformComponent(sun);
-//
+
 //	auto planetScale = 2.0;
 //	auto planetVelocity = new VelocityComponent();
 //	planetVelocity->rotation = glm::vec3(0, -0.8, 0);

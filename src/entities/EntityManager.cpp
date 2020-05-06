@@ -31,14 +31,6 @@ std::pair<MeshComponentMultimap::iterator, MeshComponentMultimap::iterator> Enti
     return meshComponents.equal_range(entityId);
 }
 
-void EntityManager::addHighlightComponent(uint32_t entityId, HighlightComponent *component) {
-    highlightComponents.emplace(entityId, component);
-}
-
-HighlightComponent *EntityManager::getHighlightComponent(uint32_t entityId) {
-    return getComponent(highlightComponents, entityId);
-}
-
 void EntityManager::addVelocityComponent(uint32_t entityId, VelocityComponent *component) {
     velocityComponents.emplace(entityId, component);
 }
