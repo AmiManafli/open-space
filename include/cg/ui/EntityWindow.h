@@ -29,6 +29,7 @@ private:
     void renderVelocityComponent(VelocityComponent *component);
     void renderCameraComponent(CameraComponent *component);
     void renderMeshComponents(std::vector<MeshComponent *> components);
+    void renderLightComponent(LightComponent *component);
     void renderHighlightComponent(HighlightComponent *component);
 };
 

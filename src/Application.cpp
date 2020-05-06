@@ -97,13 +97,6 @@ void Application::init() {
     gravitySystem->init();
     orbitSystem->init();
 
-//    auto lightPosition = glm::vec3(0, 20, 20);
-//    light = EntityBuilder::create()
-//        ->withTransform(lightPosition)
-//        ->withDirectionalLight(-lightPosition, {0.2f, 0.2f, 0.2f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f, 1.0f})
-//        ->build(entityManager);
-//    context->light = light;
-
     context->grid = createGrid(62, 62, false);
 
     auto ui = renderSystem->getUserInterface();
@@ -115,7 +108,7 @@ void Application::init() {
 	auto sun = EntityBuilder::create()
 		->withMesh(new IcoSphere(1.0, 3, glm::vec3(0.96), 11, starTextureShaderProgram))
 		->withTransform(0, 0, 0)
-        ->withDirectionalLight(glm::vec3(0, 20, 20), {0.2f, 0.2f, 0.2f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f, 1.0f})
+        ->withPointLight(glm::vec3(0.2), glm::vec3(1.0), glm::vec3(1.0), 1.0, 0.07, 0.017)
 		->isSelectable()
 		->withScale(1.0)
 		->withMass(1000.0)
@@ -149,6 +142,20 @@ void Application::init() {
             ->withScale(moonScale)
             ->withOrbit(planetTransform, 1.1, 1.0, 1.4, 0.0)
             ->withVelocity(moonVelocity)
+            ->build(entityManager);
+
+    color = glm::vec3(0.886, 0.576, 1.0);
+    planetScale = 0.6;
+    planetVelocity = new VelocityComponent();
+    planetVelocity->rotation = glm::vec3(0, -0.9, 0);
+    auto planet2 = EntityBuilder::create()
+            ->withMesh(new IcoSphere(1.0, 2, color, 11, meshTextureShaderProgram))
+            ->withTransform(0, 0, 0)
+            ->isSelectable()
+            ->withMass(200)
+            ->withScale(planetScale)
+            ->withOrbit(sunTransform, 12, 12, 0.1, 1.0)
+            ->withVelocity(planetVelocity)
             ->build(entityManager);
 
 //    auto terrainMesh = Terrain::generate(10, 10, meshWithLightShaderProgram, GL_TRIANGLES, NoiseType::OpenSimplex);
@@ -276,7 +283,6 @@ Entity* Application::createGrid(int width, int height, bool showYAxis) {
     }
 
     return EntityBuilder::create()
-        ->withTransform(0, 0, 0)
         ->withMesh(vertices, indices, textures, gridShaderProgram, GL_LINES)
         ->build(entityManager);
 }

@@ -36,6 +36,7 @@ public:
 
     EntityBuilder* withLight(LightComponent *light);
     EntityBuilder* withDirectionalLight(glm::vec3 direction, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular);
+    EntityBuilder* withPointLight(glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular, float constant, float linear, float quadratic);
 
     EntityBuilder* withMass(double mass);
     EntityBuilder* withMass(MassComponent *component);

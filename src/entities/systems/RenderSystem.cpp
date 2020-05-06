@@ -126,9 +126,9 @@ void RenderSystem::renderTexture(MeshComponent *mesh, ShaderProgram *shaderProgr
 		auto texture = mesh->textures[i];
 		std::string name = texture.type;
 		if (name == "texture_diffuse") {
-		    shaderProgram->setUniform("material.diffuse", i);
+		    shaderProgram->setUniform("material.diffuse", static_cast<int>(i));
 		} else if (name == "texture_specular") {
-            shaderProgram->setUniform("material.specular", i);
+            shaderProgram->setUniform("material.specular", static_cast<int>(i));
 		} else if (name == "texture_normal") {
 //            shaderProgram->setUniform("material.normal", i);
         } else if (name == "texture_height") {

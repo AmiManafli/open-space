@@ -133,6 +133,14 @@ EntityBuilder *EntityBuilder::withDirectionalLight(glm::vec3 direction, glm::vec
     return this;
 }
 
+EntityBuilder *EntityBuilder::withPointLight(glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular, float constant, float linear, float quadratic) {
+    if (lightComponent != nullptr) {
+        throw std::runtime_error("entity already has a light component");
+    }
+    lightComponent = LightComponent::createPointLight(ambient, diffuse, specular, constant, linear, quadratic);
+    return this;
+}
+
 EntityBuilder* EntityBuilder::withMass(double mass) {
     return withMass(new MassComponent(mass));
 }

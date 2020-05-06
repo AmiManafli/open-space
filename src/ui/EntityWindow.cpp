@@ -51,6 +51,7 @@ void EntityWindow::render() {
     renderVelocityComponent(entityManager->getComponent<VelocityComponent>(entity));
     renderCameraComponent(entityManager->getComponent<CameraComponent>(entity));
     renderMeshComponents(meshComponents);
+    renderLightComponent(entityManager->getComponent<LightComponent>(entity));
     renderHighlightComponent(entityManager->getComponent<HighlightComponent>(entity));
 
     ImGui::End();
@@ -197,6 +198,20 @@ void EntityWindow::renderMeshComponents(std::vector<MeshComponent *> components)
                 }
             }
         }
+    }
+}
+
+void EntityWindow::renderLightComponent(LightComponent *component) {
+    if (!component) return;
+
+    if (ImGui::CollapsingHeader("Light Component")) {
+        ImGui::ColorPicker3("Ambient Color", glm::value_ptr(component->ambient));
+        ImGui::ColorPicker3("Diffuse Color", glm::value_ptr(component->diffuse));
+        ImGui::ColorPicker3("Specular Color", glm::value_ptr(component->specular));
+
+        ImGui::DragFloat("Constant", &component->constant, 0.1, 0, 100);
+        ImGui::DragFloat("Linear", &component->linear, 0.1, 0, 100);
+        ImGui::DragFloat("Quadtratic", &component->quadratic, 0.1, 0, 100);
     }
 }
 

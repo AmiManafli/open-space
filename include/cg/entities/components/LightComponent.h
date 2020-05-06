@@ -13,7 +13,7 @@ public:
     };
 
     static LightComponent* createDirectionalLight(glm::vec3 direction, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular);
-//    static LightComponent* createPointLight(glm::vec3 direction, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular);
+    static LightComponent* createPointLight(glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular, float constant, float linear, float quadratic);
 //    static LightComponent* createSpotLight(glm::vec3 direction, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular);
 
     LightComponent();
@@ -25,7 +25,13 @@ public:
     glm::vec3 diffuse;
     glm::vec3 specular;
 
+    // Directional light
     glm::vec3 direction;
+
+    // Point light
+    float constant;
+    float linear;
+    float quadratic;
 };
 
 #endif //CG1_PROJECT_LIGHTCOMPONENT_H
