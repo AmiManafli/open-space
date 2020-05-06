@@ -51,6 +51,11 @@ void Application::init() {
 	meshTextureShaderProgram->attachShader("./assets/shaders/meshTexture.frag", ShaderType::FragmentShader);
 	meshTextureShaderProgram->link();
 
+    starTextureShaderProgram = new ShaderProgram();
+    starTextureShaderProgram->attachShader("./assets/shaders/starTexture.vert", ShaderType::VertexShader);
+    starTextureShaderProgram->attachShader("./assets/shaders/starTexture.frag", ShaderType::FragmentShader);
+    starTextureShaderProgram->link();
+
     gridShaderProgram = new ShaderProgram();
     gridShaderProgram->attachShader("./assets/shaders/grid.vert", ShaderType::VertexShader);
     gridShaderProgram->attachShader("./assets/shaders/grid.frag", ShaderType::FragmentShader);
@@ -92,12 +97,12 @@ void Application::init() {
     gravitySystem->init();
     orbitSystem->init();
 
-    auto lightPosition = glm::vec3(0, 20, 20);
-    light = EntityBuilder::create()
-        ->withTransform(lightPosition)
-        ->withDirectionalLight(-lightPosition, {0.2f, 0.2f, 0.2f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f, 1.0f})
-        ->build(entityManager);
-    context->light = light;
+//    auto lightPosition = glm::vec3(0, 20, 20);
+//    light = EntityBuilder::create()
+//        ->withTransform(lightPosition)
+//        ->withDirectionalLight(-lightPosition, {0.2f, 0.2f, 0.2f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f, 1.0f})
+//        ->build(entityManager);
+//    context->light = light;
 
     context->grid = createGrid(62, 62, false);
 
@@ -108,14 +113,16 @@ void Application::init() {
     auto sunVelocity = new VelocityComponent();
     sunVelocity->rotation = glm::vec3(0, -0.2, 0);
 	auto sun = EntityBuilder::create()
-		->withMesh(new IcoSphere(1.0, 3, glm::vec3(0.96), 11, meshTextureShaderProgram))
+		->withMesh(new IcoSphere(1.0, 3, glm::vec3(0.96), 11, starTextureShaderProgram))
 		->withTransform(0, 0, 0)
+        ->withDirectionalLight(glm::vec3(0, 20, 20), {0.2f, 0.2f, 0.2f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f, 1.0f})
 		->isSelectable()
 		->withScale(1.0)
 		->withMass(1000.0)
 		->withVelocity(sunVelocity)
 		->build(entityManager);
 	auto sunTransform = entityManager->getComponent<TransformComponent>(sun);
+    context->light = sun;
 
 	auto planetScale = 0.4;
 	auto planetVelocity = new VelocityComponent();
@@ -178,8 +185,8 @@ void Application::run() {
         context->update();
 
         // Update shader with light info
-        auto lightComponent = entityManager->getComponent<LightComponent>(light);
-        auto lightTransform = entityManager->getComponent<TransformComponent>(light);
+        auto lightComponent = entityManager->getComponent<LightComponent>(context->light);
+        auto lightTransform = entityManager->getComponent<TransformComponent>(context->light);
         lightComponent->setUniforms(meshTextureShaderProgram, lightTransform);
 
         // Process systems

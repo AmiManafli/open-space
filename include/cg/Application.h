@@ -26,6 +26,7 @@ private:
     // Shaders
     ShaderProgram *meshShaderProgram;
 	ShaderProgram* meshTextureShaderProgram;
+    ShaderProgram* starTextureShaderProgram;
     ShaderProgram *gridShaderProgram;
     ShaderProgram *highlightShaderProgram;
     ShaderProgram *meshWithLightShaderProgram;
@@ -34,9 +35,6 @@ private:
     ShaderProgram *shaderProgram;
 
     Skybox *sky = nullptr;
-
-    // Lights
-    Entity *light;
 
     // Systems
     RenderSystem *renderSystem;
