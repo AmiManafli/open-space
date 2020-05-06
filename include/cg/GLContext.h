@@ -38,7 +38,6 @@ public:
 
     bool displayCursor = false;
     bool displayGui = false;
-    bool displayGrid = true;
 
     uint32_t triangleCount = 0;
 

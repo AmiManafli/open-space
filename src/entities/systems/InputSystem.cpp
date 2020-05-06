@@ -87,7 +87,12 @@ void InputSystem::update() {
     }
 
     if (!isDebug && isKeyPressed(GLFW_KEY_G)) {
-        context->displayGrid = !context->displayGrid;
+        auto transform = entityManager->getComponent<TransformComponent>(context->grid);
+        if (transform) {
+            entityManager->removeComponent<TransformComponent>(context->grid);
+        } else {
+            entityManager->addComponent(context->grid, new TransformComponent(glm::vec3(0, 0, 0)));
+        }
     }
 
     if (isKeyPressed(GLFW_KEY_BACKSLASH)) {
