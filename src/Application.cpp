@@ -166,8 +166,21 @@ void Application::init() {
 }
 
 void Application::run() {
-    bool renderedSkybox = false;
-    auto skyboxEntityManager = new EntityManager();
+    if (sky != nullptr) {
+        auto skyboxEntityManager = new EntityManager();
+        context->update();
+
+        glDisable(GL_CULL_FACE);
+        context->setActiveCamera(context->skyboxCamera);
+        auto camera = entityManager->getComponent<CameraComponent>(context->skyboxCamera);
+        sky->render(renderSystem, skyboxEntityManager, camera);
+
+        // Cleanup
+        delete skyboxEntityManager;
+        context->setActiveCamera(context->spaceshipCamera);
+        glViewport(0, 0, context->getWidth(), context->getHeight());
+        glEnable(GL_CULL_FACE);
+    }
 
     while (!context->shouldClose()) {
         context->update();
@@ -182,19 +195,6 @@ void Application::run() {
         orbitSystem->update();
         inputSystem->update();
         movementSystem->update();
-
-        if (!renderedSkybox && sky != nullptr) {
-            glDisable(GL_CULL_FACE);
-            context->setActiveCamera(context->skyboxCamera);
-            auto camera = entityManager->getComponent<CameraComponent>(context->skyboxCamera);
-            sky->render(renderSystem, skyboxEntityManager, camera);
-            renderedSkybox = true;
-            delete skyboxEntityManager;
-            context->setActiveCamera(context->spaceshipCamera);
-            glViewport(0, 0, context->getWidth(), context->getHeight());
-            glEnable(GL_CULL_FACE);
-        }
-
         renderSystem->update();
     }
 }

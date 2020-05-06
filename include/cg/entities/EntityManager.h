@@ -60,12 +60,6 @@ public:
         }
     }
 
-    /// Mesh component
-//    void addMeshComponent(uint32_t entityId, MeshComponent *component);
-//    MeshComponentMultimap getMeshComponents() { return meshComponents; }
-//    std::pair<MeshComponentMultimap::iterator, MeshComponentMultimap::iterator> getMeshComponents(Entity *entity) { return getMeshComponents(entity->id); }
-//    std::pair<MeshComponentMultimap::iterator, MeshComponentMultimap::iterator> getMeshComponents(uint32_t entityId);
-
     template<class T>
     void addMultiComponent(Entity *entity, T *component) {
         auto key = typeid(T).name();
@@ -75,19 +69,19 @@ public:
         multiComponents[key].emplace(entity, component);
     }
 
-//    template<class T>
-//    void removeMultiComponent(Entity *entity) {
-//        auto key = typeid(T).name();
-//        auto component = getMultiComponent<T>(entity);
-//        multiComponents[key].erase(entity);
-//        delete component;
-//    }
+    template<class T>
+    void removeMultiComponent(Entity *entity) {
+        auto key = typeid(T).name();
+        auto component = getMultiComponent<T>(entity);
+        multiComponents[key].erase(entity);
+        delete component;
+    }
 
-//    template<class T>
-//    ComponentMultiMap getMultiComponents() {
-//        auto key = typeid(T).name();
-//        return multiComponents[key];
-//    }
+    template<class T>
+    ComponentMultiMap getMultiComponents() {
+        auto key = typeid(T).name();
+        return multiComponents[key];
+    }
 
     template<class T>
     std::pair<ComponentMultiMap::iterator, ComponentMultiMap::iterator> getMultiComponents(Entity *entity) {
@@ -104,10 +98,6 @@ private:
     /// Components
     std::unordered_map<const char *, ComponentMap> components;
     std::unordered_map<const char *, ComponentMultiMap> multiComponents;
-
-//    MeshComponentMultimap meshComponents;
-
-//    template <class T> T* getComponent(std::unordered_map<uint32_t, T*> map, uint32_t entityId);
 };
 
 #endif //CG1_PROJECT_ENTITYMANAGER_H
