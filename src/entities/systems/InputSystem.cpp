@@ -251,7 +251,7 @@ Entity *InputSystem::getClickedEntity(double mouseX, double mouseY) {
 
         if (isRayInSphere(transform, origin, rayWorld)) {
             auto distance = glm::length(transform->position - origin);
-            if (distance < entityDistance) {
+            if (distance <= entityDistance) {
                 entityDistance = distance;
                 foundEntity = entity;
             }
