@@ -192,9 +192,19 @@ void Application::run() {
         context->update();
 
         // Update shader with light info
-        auto lightComponent = entityManager->getComponent<LightComponent>(context->light);
-        auto lightTransform = entityManager->getComponent<TransformComponent>(context->light);
-        lightComponent->setUniforms(meshTextureShaderProgram, lightTransform);
+        int index = 0;
+        std::vector<std::pair<LightComponent *, TransformComponent *>> lights;
+        for (auto& pair : entityManager->getComponents<LightComponent>()) {
+            // TODO: Take the MAX_LIGHTS closes to the camera
+            if (index++ >= MAX_LIGHTS) {
+                break;
+            }
+            auto entity = pair.first;
+            auto light = dynamic_cast<LightComponent *>(pair.second);
+            auto transform = entityManager->getComponent<TransformComponent>(entity);
+            lights.emplace_back(std::make_pair(light, transform));
+        }
+        setLightUniforms(meshTextureShaderProgram, lights);
 
         // Process systems
         gravitySystem->update();
@@ -285,4 +295,35 @@ Entity* Application::createGrid(int width, int height, bool showYAxis) {
     return EntityBuilder::create()
         ->withMesh(vertices, indices, textures, gridShaderProgram, GL_LINES)
         ->build(entityManager);
+}
+
+void Application::setLightUniforms(ShaderProgram *shaderProgram, std::vector<std::pair<LightComponent *, TransformComponent *>> lights) {
+    for (int i = 0; i < lights.size(); i++) {
+        auto light = lights[i].first;
+        auto transform = lights[i].second;
+        std::string name = "lights[" + std::to_string(i) + "]";
+        switch (light->type) {
+            case LightComponent::Direction:
+                shaderProgram->setUniform(name + ".type", light->type);
+                shaderProgram->setUniform(name + ".direction", light->direction);
+                shaderProgram->setUniform(name + ".ambient", light->ambient);
+                shaderProgram->setUniform(name + ".diffuse", light->diffuse);
+                shaderProgram->setUniform(name + ".specular", light->specular);
+                break;
+            case LightComponent::Point:
+                shaderProgram->setUniform(name + ".type", light->type);
+                shaderProgram->setUniform(name + ".position", transform->position);
+
+                shaderProgram->setUniform(name + ".ambient", light->ambient);
+                shaderProgram->setUniform(name + ".diffuse", light->diffuse);
+                shaderProgram->setUniform(name + ".specular", light->specular);
+
+                shaderProgram->setUniform(name + ".constant", light->constant);
+                shaderProgram->setUniform(name + ".linear", light->linear);
+                shaderProgram->setUniform(name + ".quadratic", light->quadratic);
+                break;
+            default:
+                throw std::runtime_error("Unsupported light type");
+        }
+    }
 }

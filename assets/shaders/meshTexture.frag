@@ -1,12 +1,13 @@
-#version 330 core
+#version 410 core
 in vec3 vNormal;
 in vec2 vTextureCoord;
 in vec3 vFragPos;
 
 out vec4 fragColor;
 
-int LIGHT_TYPE_DIRECTIONAL = 0;
-int LIGHT_TYPE_POINT = 1;
+const int MAX_LIGHTS = 2;
+const int LIGHT_TYPE_DIRECTIONAL = 0;
+const int LIGHT_TYPE_POINT = 1;
 
 struct Material {
     sampler2D diffuse;
@@ -30,7 +31,7 @@ struct Light {
 };
 
 uniform Material material;
-uniform Light light;
+uniform Light lights[MAX_LIGHTS];
 uniform vec3 viewPos;
 
 vec3 calculateDirectionalLight(Light light, vec3 normal, vec3 viewDirection, vec3 materialDiffuse, vec3 materialSpecular) {
@@ -78,12 +79,18 @@ void main() {
     vec3 materialDiffuse = vec3(texture(material.diffuse, vTextureCoord));
     vec3 materialSpecular = vec3(texture(material.specular, vTextureCoord));
 
-    vec3 result;
-    if (light.type == LIGHT_TYPE_DIRECTIONAL) {
-        result = calculateDirectionalLight(light, normal, viewDirection, materialDiffuse, materialSpecular);
-    } else {
-        result = calculatePointLight(light, normal, viewDirection, materialDiffuse, materialSpecular);
+    vec3 color;
+    for (int i = 0; i < lights.length(); i++) {
+        Light light = lights[i];
+
+        vec3 result;
+        if (light.type == LIGHT_TYPE_DIRECTIONAL) {
+            result = calculateDirectionalLight(light, normal, viewDirection, materialDiffuse, materialSpecular);
+        } else {
+            result = calculatePointLight(light, normal, viewDirection, materialDiffuse, materialSpecular);
+        }
+        color += result;
     }
 
-    fragColor = vec4(result, 1.0);
+    fragColor = vec4(color, 1.0);
 }

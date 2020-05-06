@@ -209,9 +209,9 @@ void EntityWindow::renderLightComponent(LightComponent *component) {
         ImGui::ColorPicker3("Diffuse Color", glm::value_ptr(component->diffuse));
         ImGui::ColorPicker3("Specular Color", glm::value_ptr(component->specular));
 
-        ImGui::DragFloat("Constant", &component->constant, 0.1, 0, 100);
-        ImGui::DragFloat("Linear", &component->linear, 0.1, 0, 100);
-        ImGui::DragFloat("Quadtratic", &component->quadratic, 0.1, 0, 100);
+        ImGui::DragFloat("Constant", &component->constant, 0.01, 0, 100);
+        ImGui::DragFloat("Linear", &component->linear, 0.01, 0, 100);
+        ImGui::DragFloat("Quadtratic", &component->quadratic, 0.01, 0, 100);
     }
 }
 

@@ -13,6 +13,8 @@
 
 class Application {
 public:
+    const uint16_t MAX_LIGHTS = 2;
+
     Application(std::string title, int width, int height);
     ~Application();
 
@@ -47,6 +49,8 @@ private:
 
     void createCameras();
     Entity* createGrid(int width, int height, bool showYAxis);
+
+    void setLightUniforms(ShaderProgram *meshTextureShaderProgram, std::vector<std::pair<LightComponent *, TransformComponent *>> lights);
 };
 
 #endif //CG1_PROJECT_APPLICATION_H
