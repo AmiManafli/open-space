@@ -7,7 +7,7 @@ GravitySystem::~GravitySystem() {
 }
 
 void GravitySystem::init() {
-    objectTransform = entityManager->getTransformComponent(object);
+    objectTransform = entityManager->getComponent<TransformComponent>(object);
     objectVelocity = entityManager->getVelocityComponent(object);
     objectMass = entityManager->getMassComponent(object);
 }
@@ -20,7 +20,7 @@ void GravitySystem::update() {
         if (entityId == object->id) continue;
 
         auto mass = pair.second;
-        auto transform = entityManager->getTransformComponent(entityId);
+        auto transform = entityManager->getComponent<TransformComponent>(entityManager->getEntity(entityId));
 
         auto distance = transform->position - objectTransform->position;
         auto length = glm::length(distance);

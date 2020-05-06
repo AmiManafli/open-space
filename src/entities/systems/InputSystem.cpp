@@ -186,7 +186,7 @@ void InputSystem::processMouseScroll(GLFWwindow *window, double xoffset, double 
 
 void InputSystem::moveCamera(Entity *camera, CameraComponent::Direction direction, float deltaTime) {
     auto cameraComponent = entityManager->getCameraComponent(camera->id);
-    auto transformComponent = entityManager->getTransformComponent(camera->id);
+    auto transformComponent = entityManager->getComponent<TransformComponent>(camera);
     cameraComponent->processKeyboard(direction, deltaTime, transformComponent);
 }
 
@@ -223,7 +223,7 @@ Entity *InputSystem::getClickedEntity(double mouseX, double mouseY) {
     Entity* foundEntity = nullptr;
 
     auto camera = entityManager->getCameraComponent(context->getCamera());
-    auto cameraTransform = entityManager->getTransformComponent(context->getCamera());
+    auto cameraTransform = entityManager->getComponent<TransformComponent>(context->getCamera());
 
     // Normalized device coordinates
     double x = (2.0 * mouseX) / context->getWidth() - 1.0;
@@ -245,17 +245,17 @@ Entity *InputSystem::getClickedEntity(double mouseX, double mouseY) {
     auto origin = cameraTransform->position;
 
     double entityDistance = DBL_MAX;
-    for (auto& pair : entityManager->getTransformComponents()) {
-        auto entityId = pair.first;
-        auto transform = pair.second;
+    for (auto& pair : entityManager->getComponents<TransformComponent>()) {
+        auto entity = pair.first;
+        auto transform = dynamic_cast<TransformComponent *>(pair.second);
 
-        if (entityId == context->getCamera()->id) continue;
+        if (entity->id == context->getCamera()->id) continue;
 
         if (isRayInSphere(transform, origin, rayWorld)) {
             auto distance = glm::length(transform->position - origin);
             if (distance < entityDistance) {
                 entityDistance = distance;
-                foundEntity = entityManager->getEntity(entityId);
+                foundEntity = entity;
             }
         }
     }
@@ -269,7 +269,7 @@ void InputSystem::selectEntity(Entity *entity) {
     double highlightSize = 0.01;
     double highlightScale;
     if (entity) {
-        auto transform = entityManager->getTransformComponent(entity);
+        auto transform = entityManager->getComponent<TransformComponent>(entity);
         auto radius = transform->scaling.x / 2.0;
         highlightScale = (radius + highlightSize) / radius;
     } else {

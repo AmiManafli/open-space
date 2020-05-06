@@ -46,11 +46,11 @@ void RenderSystem::update() {
 void RenderSystem::renderEntities() {
     uint32_t triangleCount = 0;
 
-    for (auto& pair : entityManager->getTransformComponents()) {
-        auto entityId = pair.first;
-        auto transform = pair.second;
-        auto meshes = entityManager->getMeshComponents(entityId);
-        auto highlight = entityManager->getHighlightComponent(entityId);
+    for (auto& pair : entityManager->getComponents<TransformComponent>()) {
+        auto entity = pair.first;
+        auto transform = dynamic_cast<TransformComponent *>(pair.second);
+        auto meshes = entityManager->getMeshComponents(entity);
+        auto highlight = entityManager->getHighlightComponent(entity);
 
         if (highlight) {
             glStencilFunc(GL_ALWAYS, 1, 0xFF);
@@ -68,7 +68,7 @@ void RenderSystem::renderEntities() {
             glStencilMask(0x00); // disable writing to the stencil buffer
             glDisable(GL_DEPTH_TEST);
 
-            auto cameraPosition = entityManager->getTransformComponent(context->getCamera())->position;
+            auto cameraPosition = entityManager->getComponent<TransformComponent>(context->getCamera())->position;
             auto highlightModel = highlight->getModel(transform->getModel(), glm::length(transform->position - cameraPosition));
             for (auto it = meshes.first; it != meshes.second; it++) {
                 renderMesh(it->second, highlight->shaderProgram, highlightModel);
@@ -90,8 +90,8 @@ void RenderSystem::renderMesh(MeshComponent *mesh, ShaderProgram *shaderProgram,
     shaderProgram->setUniform("model", model);
     shaderProgram->setUniform("objectColor", glm::vec3(0.5, 0.5, 0.5));
     shaderProgram->setUniform("lightColor", glm::vec3(1, 1, 1));
-    shaderProgram->setUniform("lightPos", entityManager->getTransformComponent(context->light)->position);
-    shaderProgram->setUniform("viewPos", entityManager->getTransformComponent(1)->position);
+    shaderProgram->setUniform("lightPos", entityManager->getComponent<TransformComponent>(context->light)->position);
+    shaderProgram->setUniform("viewPos", entityManager->getComponent<TransformComponent>(context->getCamera())->position);
 
     if (mesh->textures.size() > 0) {
         renderTexture(mesh, shaderProgram);

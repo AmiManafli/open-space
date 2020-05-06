@@ -103,7 +103,7 @@ void UserInterface::renderSceneInfoWindow() {
 
 void UserInterface::renderCameraInfoWindow() {
     auto cameraEntity = context->getCamera();
-    auto transform = entityManager->getTransformComponent(cameraEntity->id);
+    auto transform = entityManager->getComponent<TransformComponent>(cameraEntity);
     auto camera = entityManager->getCameraComponent(cameraEntity->id);
 
     ImGui::SetNextWindowPos(ImVec2(context->getWidth() - 320, context->getHeight() - 160));

@@ -5,7 +5,7 @@ Entity *EntityBuilder::build(EntityManager *entityManager) {
     auto entity = entityManager->createEntity();
 
     if (transformComponent != nullptr) {
-        entityManager->addTransformComponent(entity->id, transformComponent);
+        entityManager->addComponent(entity, transformComponent);
     }
     if (cameraComponent != nullptr) {
         entityManager->addCameraComponent(entity->id, cameraComponent);

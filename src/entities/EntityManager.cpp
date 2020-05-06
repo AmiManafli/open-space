@@ -42,13 +42,13 @@ std::pair<MeshComponentMultimap::iterator, MeshComponentMultimap::iterator> Enti
     return meshComponents.equal_range(entityId);
 }
 
-void EntityManager::addTransformComponent(uint32_t entityId, TransformComponent* component) {
-    transformComponents.emplace(entityId, component);
-}
+//void EntityManager::addTransformComponent(uint32_t entityId, TransformComponent* component) {
+//    transformComponents.emplace(entityId, component);
+//}
 
-TransformComponent* EntityManager::getTransformComponent(uint32_t entityId) {
-    return getComponent(transformComponents, entityId);
-}
+//TransformComponent* EntityManager::getTransformComponent(uint32_t entityId) {
+//    return getComponent(transformComponents, entityId);
+//}
 
 void EntityManager::addCameraComponent(uint32_t entityId, CameraComponent* component) {
     cameraComponents.emplace(entityId, component);
@@ -106,3 +106,4 @@ T *EntityManager::getComponent(std::unordered_map<uint32_t, T *> map, uint32_t e
         return nullptr;
     }
 }
+

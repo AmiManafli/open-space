@@ -14,7 +14,7 @@ void OrbitSystem::update() {
     for (auto& pair : entityManager->getOrbitComponents()) {
         auto entityId = pair.first;
         auto orbit = pair.second;
-        auto transform = entityManager->getTransformComponent(entityId);
+        auto transform = entityManager->getComponent<TransformComponent>(entityManager->getEntity(entityId));
 
         auto diff = orbit->getPosition() - transform->position;
         transform->move(diff);

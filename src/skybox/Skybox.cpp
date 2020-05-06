@@ -234,10 +234,10 @@ void Skybox::createStars(EntityManager *entityManager, ShaderProgram *shaderProg
 }
 
 void Skybox::renderEntities(RenderSystem *renderSystem, EntityManager *entityManager, ShaderProgram *shaderProgram) {
-    for (auto& pair : entityManager->getTransformComponents()) {
-        auto entityId = pair.first;
-        auto transform = pair.second;
-        auto meshes = entityManager->getMeshComponents(entityId);
+    for (auto& pair : entityManager->getComponents<TransformComponent>()) {
+        auto entity = pair.first;
+        auto transform = dynamic_cast<TransformComponent *>(pair.second);
+        auto meshes = entityManager->getMeshComponents(entity);
 
         for (auto it = meshes.first; it != meshes.second; it++) {
             auto mesh = it->second;

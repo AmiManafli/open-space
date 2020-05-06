@@ -44,7 +44,7 @@ void EntityWindow::render() {
         meshComponents.emplace_back(i->second);
     }
 
-    renderTransformComponent(entityManager->getTransformComponent(entity));
+    renderTransformComponent(entityManager->getComponent<TransformComponent>(entity));
     renderMassComponent(entityManager->getMassComponent(entity));
     renderOrbitComponent(entityManager->getOrbitComponent(entity));
     renderVelocityComponent(entityManager->getVelocityComponent(entity));

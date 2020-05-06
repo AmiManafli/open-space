@@ -9,9 +9,10 @@ GLContext::~GLContext() {
 }
 
 glm::mat4 GLContext::getView() {
-    auto cameraId = getCamera()->id;
+    auto camera = getCamera();
+    auto cameraId = camera->id;
     auto cameraComponent = entityManager->getCameraComponent(cameraId);
-    auto transformComponent = entityManager->getTransformComponent(cameraId);
+    auto transformComponent = entityManager->getComponent<TransformComponent>(camera);
     return cameraComponent->getView(transformComponent);
 }
 

@@ -1,7 +1,7 @@
 #include "cg/SpaceshipControl.h"
 
 SpaceshipControl::SpaceshipControl(Entity* spaceship, Entity* camera, EntityManager* entityManager) {
-    this->cameraTransform = entityManager->getTransformComponent(camera->id);
+    this->cameraTransform = entityManager->getComponent<TransformComponent>(camera);
     this->cameraComponent = entityManager->getCameraComponent(camera->id);
     this->entityManager = entityManager;
 }
@@ -54,6 +54,5 @@ void SpaceshipControl::processInput() {
     glm::quat final = roll * pitchYaw;
 
     cameraComponent->right = final * glm::vec3(1.0, 0.0, 0.0);
-//    cameraComponent->up =  (final * glm::vec3(0.0, 1.0, 0.0));
     cameraComponent->up = glm::cross(cameraComponent->right, cameraComponent->front);
 }

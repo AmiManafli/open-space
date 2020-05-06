@@ -40,10 +40,37 @@ public:
     std::pair<MeshComponentMultimap::iterator, MeshComponentMultimap::iterator> getMeshComponents(uint32_t entityId);
 
     /// Transform component
-    void addTransformComponent(uint32_t entityId, TransformComponent *component);
-    TransformComponentMap getTransformComponents() { return transformComponents; }
-    TransformComponent* getTransformComponent(Entity *entity) { return getTransformComponent(entity->id); };
-    TransformComponent* getTransformComponent(uint32_t entityId);
+//    void addTransformComponent(uint32_t entityId, TransformComponent *component);
+//    TransformComponentMap getTransformComponents() { return transformComponents; }
+//    TransformComponent* getTransformComponent(Entity *entity) { return getTransformComponent(entity->id); };
+//    TransformComponent* getTransformComponent(uint32_t entityId);
+
+    std::unordered_map<const char *, std::unordered_map<Entity *, Component *>> components;
+
+    template<class T>
+    void addComponent(Entity *entity, T *component) {
+        auto key = typeid(T).name();
+        if (components.find(key) == components.end()) {
+            components[key] = std::unordered_map<Entity *, Component *>();
+        }
+        components[key][entity] = component;
+    }
+
+    template<class T>
+    std::unordered_map<Entity *, Component *> getComponents() {
+        auto key = typeid(T).name();
+        return components[key];
+    }
+
+    template<class T>
+    T* getComponent(Entity *entity) {
+        auto key = typeid(T).name();
+        try {
+            return reinterpret_cast<T *>(components[key].at(entity));
+        } catch (std::out_of_range &e) {
+            return nullptr;
+        }
+    }
 
     /// Camera component
     void addCameraComponent(uint32_t entityId, CameraComponent *component);

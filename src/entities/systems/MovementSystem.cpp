@@ -13,7 +13,7 @@ void MovementSystem::update() {
     for (auto& pair : entityManager->getVelocityComponents()) {
         auto entityId = pair.first;
         auto velocity = pair.second;
-        auto transform = entityManager->getTransformComponent(entityId);
+        auto transform = entityManager->getComponent<TransformComponent>(entityManager->getEntity(entityId));
         auto light = entityManager->getLightComponent(entityId);
 
         if (velocity && transform) {
