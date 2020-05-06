@@ -1,14 +1,18 @@
 #ifndef CG1_PROJECT_ENTITYBUILDER_H
 #define CG1_PROJECT_ENTITYBUILDER_H
 
+#include "EntityManager.h"
 #include <cg/entities/components/CameraComponent.h>
 #include <cg/entities/components/LightComponent.h>
 #include <cg/entities/components/MassComponent.h>
-#include "EntityManager.h"
+#include <cg/entities/components/SelectableComponent.h>
 
 class EntityBuilder {
 public:
     static EntityBuilder* create() { return new EntityBuilder(); }
+
+    Entity* build(EntityManager *entityManager);
+    void destroy();
 
     EntityBuilder* withTransform(TransformComponent *transform) { transformComponent = transform; return this; }
     EntityBuilder* withTransform(float x, float y, float z);
@@ -39,8 +43,7 @@ public:
     EntityBuilder* withOrbit(TransformComponent *parentTransform, double semiMajorAxis, double semiMinorAxis, double speed, double startTheta);
     EntityBuilder* withOrbit(OrbitComponent *component);
 
-    Entity* build(EntityManager *entityManager);
-    void destroy();
+    EntityBuilder* isSelectable();
 
 private:
     std::vector<MeshComponent *> meshComponents;
@@ -51,6 +54,7 @@ private:
     LightComponent *lightComponent = nullptr;
     MassComponent *massComponent = nullptr;
     OrbitComponent *orbitComponent = nullptr;
+    SelectableComponent *selectableComponent = nullptr;
 };
 
 #endif //CG1_PROJECT_ENTITYBUILDER_H

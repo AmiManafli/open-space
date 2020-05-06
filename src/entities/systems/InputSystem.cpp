@@ -1,3 +1,4 @@
+#include <cg/entities/components/SelectableComponent.h>
 #include "cg/entities/systems/InputSystem.h"
 #include "cg/SpaceshipControl.h"
 
@@ -243,9 +244,9 @@ Entity *InputSystem::getClickedEntity(double mouseX, double mouseY) {
     auto origin = cameraTransform->position;
 
     double entityDistance = DBL_MAX;
-    for (auto& pair : entityManager->getComponents<TransformComponent>()) {
+    for (auto& pair : entityManager->getComponents<SelectableComponent>()) {
         auto entity = pair.first;
-        auto transform = dynamic_cast<TransformComponent *>(pair.second);
+        auto transform = entityManager->getComponent<TransformComponent>(entity);
 
         if (entity->id == context->getCamera()->id) continue;
 

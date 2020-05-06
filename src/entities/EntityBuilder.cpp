@@ -34,6 +34,10 @@ Entity *EntityBuilder::build(EntityManager *entityManager) {
         entityManager->addComponent<OrbitComponent>(entity, orbitComponent);
     }
 
+    if (selectableComponent != nullptr) {
+        entityManager->addComponent<SelectableComponent>(entity, selectableComponent);
+    }
+
     return entity;
 }
 
@@ -41,10 +45,7 @@ Entity *EntityBuilder::build(EntityManager *entityManager) {
  * Destroy entity and all components.
  */
 void EntityBuilder::destroy() {
-    for (auto mesh : meshComponents) {
-        delete mesh;
-    }
-    delete transformComponent;
+    // TODO: Delete all components that are not nullptr
     delete this;
 }
 
@@ -153,5 +154,13 @@ EntityBuilder* EntityBuilder::withOrbit(OrbitComponent *component) {
         throw std::runtime_error("entity already has an orbit");
     }
     orbitComponent = component;
+    return this;
+}
+
+EntityBuilder* EntityBuilder::isSelectable() {
+    if (selectableComponent != nullptr) {
+        throw std::runtime_error("entity is already selectable");
+    }
+    selectableComponent = new SelectableComponent();
     return this;
 }

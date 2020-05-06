@@ -110,36 +110,39 @@ void Application::init() {
 	auto sun = EntityBuilder::create()
 		->withMesh(new IcoSphere(1.0, 3, glm::vec3(0.96), 11, meshTextureShaderProgram))
 		->withTransform(0, 0, 0)
+		->isSelectable()
 		->withScale(1.0)
 		->withMass(1000.0)
 		->withVelocity(sunVelocity)
 		->build(entityManager);
-//	auto sunTransform = entityManager->getTransformComponent(sun);
+	auto sunTransform = entityManager->getComponent<TransformComponent>(sun);
 
-//	auto planetScale = 2.0;
-//	auto planetVelocity = new VelocityComponent();
-//	planetVelocity->rotation = glm::vec3(0, -0.8, 0);
-//    auto planet1 = EntityBuilder::create()
-//        ->withMesh(new IcoSphere(1.0, 2, color, 11, meshTextureShaderProgram))
-//        ->withTransform(0, 0, 0)
-//        ->withMass(200)
-//        ->withScale(planetScale)
-//        ->withOrbit(sunTransform, 40, 40, 0.1, 0.0)
-//        ->withVelocity(planetVelocity)
-//        ->build(entityManager);
-//
-//    auto planetTransform = entityManager->getTransformComponent(planet1);
-//    auto moonScale = 0.8;
-//    auto moonVelocity = new VelocityComponent();
-//    moonVelocity->rotation = glm::vec3(0, -3.2, 0);
-//    auto moon1 = EntityBuilder::create()
-//            ->withMesh(new IcoSphere(1.0, 1, glm::vec3(0.6), 11, meshTextureShaderProgram))
-//            ->withTransform(0, 0, 0)
-//            ->withMass(200)
-//            ->withScale(moonScale)
-//            ->withOrbit(planetTransform, 8, 8, 1.5, 0.0)
-//            ->withVelocity(moonVelocity)
-//            ->build(entityManager);
+	auto planetScale = 0.4;
+	auto planetVelocity = new VelocityComponent();
+	planetVelocity->rotation = glm::vec3(0, -0.8, 0);
+    auto planet1 = EntityBuilder::create()
+        ->withMesh(new IcoSphere(1.0, 2, color, 11, meshTextureShaderProgram))
+        ->withTransform(0, 0, 0)
+        ->isSelectable()
+        ->withMass(200)
+        ->withScale(planetScale)
+        ->withOrbit(sunTransform, 4.2, 4, 0.5, 0.0)
+        ->withVelocity(planetVelocity)
+        ->build(entityManager);
+
+    auto planetTransform = entityManager->getComponent<TransformComponent>(planet1);
+    auto moonScale = 0.1;
+    auto moonVelocity = new VelocityComponent();
+    moonVelocity->rotation = glm::vec3(0, -3.2, 0);
+    auto moon1 = EntityBuilder::create()
+            ->withMesh(new IcoSphere(1.0, 1, glm::vec3(1.0), 11, meshTextureShaderProgram))
+            ->withTransform(0, 0, 0)
+            ->isSelectable()
+            ->withMass(200)
+            ->withScale(moonScale)
+            ->withOrbit(planetTransform, 1.1, 1.0, 1.4, 0.0)
+            ->withVelocity(moonVelocity)
+            ->build(entityManager);
 
 //    auto terrainMesh = Terrain::generate(10, 10, meshWithLightShaderProgram, GL_TRIANGLES, NoiseType::OpenSimplex);
 //    terrainMesh->setupBuffers();
