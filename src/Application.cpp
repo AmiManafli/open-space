@@ -99,17 +99,6 @@ void Application::init() {
         ->build(entityManager);
     context->light = light;
 
-    auto test = entityManager->createEntity();
-    auto abc = new TransformComponent(glm::vec3(0, 0, 0));
-    entityManager->addComponent(test, abc);
-    auto comp = entityManager->getComponent<TransformComponent>(test);
-
-    for (auto& pair : entityManager->getComponents<TransformComponent>()) {
-        auto entity = pair.first;
-        auto component = static_cast<TransformComponent *>(pair.second);
-        printf("Entity: %d\nPosition: %s\n", entity->id, glm::to_string(component->position).c_str());
-    }
-
     createGrid(62, 62, false);
 
     auto ui = renderSystem->getUserInterface();
