@@ -4,7 +4,7 @@
 #include <cg/GLHeader.h>
 #include "TransformComponent.h"
 
-class OrbitComponent {
+class OrbitComponent : public Component {
 public:
     OrbitComponent(TransformComponent *parentTransform, float semiMajorAxis, float semiMinorAxis, float speed, float startTheta);
 

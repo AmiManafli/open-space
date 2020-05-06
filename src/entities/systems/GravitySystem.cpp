@@ -8,19 +8,19 @@ GravitySystem::~GravitySystem() {
 
 void GravitySystem::init() {
     objectTransform = entityManager->getComponent<TransformComponent>(object);
-    objectVelocity = entityManager->getVelocityComponent(object);
-    objectMass = entityManager->getMassComponent(object);
+    objectVelocity = entityManager->getComponent<VelocityComponent>(object);
+    objectMass = entityManager->getComponent<MassComponent>(object);
 }
 
 void GravitySystem::update() {
     auto totalForce = glm::vec3(0);
 
-    for (auto& pair : entityManager->getMassComponents()) {
-        auto entityId = pair.first;
-        if (entityId == object->id) continue;
+    for (auto& pair : entityManager->getComponents<MassComponent>()) {
+        auto entity = pair.first;
+        if (entity->id == object->id) continue;
 
-        auto mass = pair.second;
-        auto transform = entityManager->getComponent<TransformComponent>(entityManager->getEntity(entityId));
+        auto mass = dynamic_cast<MassComponent *>(pair.second);
+        auto transform = entityManager->getComponent<TransformComponent>(entity);
 
         auto distance = transform->position - objectTransform->position;
         auto length = glm::length(distance);

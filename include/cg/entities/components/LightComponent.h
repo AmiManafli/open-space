@@ -4,7 +4,7 @@
 #include <cg/GLHeader.h>
 #include <cg/shaders/ShaderProgram.h>
 
-class LightComponent {
+class LightComponent : public Component {
 public:
     enum Type {
         Direction,

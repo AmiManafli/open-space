@@ -16,8 +16,8 @@ VelocityComponent::VelocityComponent(glm::vec3 position, glm::vec3 rotation, glm
         : position(position), rotation(rotation), rotationPoint(rotationPoint), scaling(glm::vec3(0)), gravity(glm::vec3(0)) {
 }
 
-void VelocityComponent::update(EntityManager *entityManager, uint32_t entityId) {
+void VelocityComponent::update(EntityManager *entityManager, Entity *entity) {
     if (customUpdate.has_value()) {
-        customUpdate.value()(entityManager, entityId);
+        customUpdate.value()(entityManager, entity);
     }
 }

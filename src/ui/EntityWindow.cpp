@@ -39,15 +39,16 @@ void EntityWindow::render() {
 
     // Components
     std::vector<MeshComponent *> meshComponents;
-    auto meshes = entityManager->getMeshComponents(entity->id);
-    for (auto i = meshes.first; i != meshes.second; i++) {
-        meshComponents.emplace_back(i->second);
+    auto meshes = entityManager->getMultiComponents<MeshComponent>(entity);
+    for (auto it = meshes.first; it != meshes.second; it++) {
+        auto mesh = dynamic_cast<MeshComponent *>(it->second);
+        meshComponents.emplace_back(mesh);
     }
 
     renderTransformComponent(entityManager->getComponent<TransformComponent>(entity));
-    renderMassComponent(entityManager->getMassComponent(entity));
-    renderOrbitComponent(entityManager->getOrbitComponent(entity));
-    renderVelocityComponent(entityManager->getVelocityComponent(entity));
+    renderMassComponent(entityManager->getComponent<MassComponent>(entity));
+    renderOrbitComponent(entityManager->getComponent<OrbitComponent>(entity));
+    renderVelocityComponent(entityManager->getComponent<VelocityComponent>(entity));
     renderCameraComponent(entityManager->getComponent<CameraComponent>(entity));
     renderMeshComponents(meshComponents);
     renderHighlightComponent(entityManager->getComponent<HighlightComponent>(entity));

@@ -1,4 +1,5 @@
 #include "cg/entities/systems/MovementSystem.h"
+#include "cg/entities/components/VelocityComponent.h"
 
 MovementSystem::MovementSystem(EntityManager *entityManager, GLContext *context) : System(entityManager), context(context) {
 }
@@ -10,11 +11,10 @@ void MovementSystem::init() {
 }
 
 void MovementSystem::update() {
-    for (auto& pair : entityManager->getVelocityComponents()) {
-        auto entityId = pair.first;
-        auto velocity = pair.second;
-        auto transform = entityManager->getComponent<TransformComponent>(entityManager->getEntity(entityId));
-        auto light = entityManager->getLightComponent(entityId);
+    for (auto& pair : entityManager->getComponents<VelocityComponent>()) {
+        auto entity = pair.first;
+        auto velocity = reinterpret_cast<VelocityComponent *>(pair.second);
+        auto transform = entityManager->getComponent<TransformComponent>(entity);
 
         if (velocity && transform) {
             auto translation = velocity->position;
@@ -29,7 +29,9 @@ void MovementSystem::update() {
                 transform->scale(glm::normalize(scaling));
             }
 
-            velocity->update(entityManager, entityId);
+            if (velocity->customUpdate.has_value()) {
+                velocity->customUpdate.value()(entityManager, entity);
+            }
         }
     }
 }

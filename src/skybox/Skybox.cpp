@@ -237,10 +237,10 @@ void Skybox::renderEntities(RenderSystem *renderSystem, EntityManager *entityMan
     for (auto& pair : entityManager->getComponents<TransformComponent>()) {
         auto entity = pair.first;
         auto transform = dynamic_cast<TransformComponent *>(pair.second);
-        auto meshes = entityManager->getMeshComponents(entity);
+        auto meshes = entityManager->getMultiComponents<MeshComponent>(entity);
 
         for (auto it = meshes.first; it != meshes.second; it++) {
-            auto mesh = it->second;
+            auto mesh = dynamic_cast<MeshComponent *>(it->second);
             renderSystem->renderMesh(mesh, shaderProgram, transform->getModel());
         }
     }

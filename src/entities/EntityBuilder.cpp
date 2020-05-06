@@ -15,23 +15,23 @@ Entity *EntityBuilder::build(EntityManager *entityManager) {
     }
 
     for (auto& mesh : meshComponents) {
-        entityManager->addMeshComponent(entity->id, mesh);
+        entityManager->addMultiComponent<MeshComponent>(entity, mesh);
     }
 
     if (velocityComponent != nullptr) {
-        entityManager->addVelocityComponent(entity->id, velocityComponent);
+        entityManager->addComponent<VelocityComponent>(entity, velocityComponent);
     }
 
     if (lightComponent != nullptr) {
-        entityManager->addLightComponent(entity->id, lightComponent);
+        entityManager->addComponent<LightComponent>(entity, lightComponent);
     }
 
     if (massComponent != nullptr) {
-        entityManager->addMassComponent(entity->id, massComponent);
+        entityManager->addComponent<MassComponent>(entity, massComponent);
     }
 
     if (orbitComponent != nullptr) {
-        entityManager->addOrbitComponent(entity->id, orbitComponent);
+        entityManager->addComponent<OrbitComponent>(entity, orbitComponent);
     }
 
     return entity;
@@ -108,7 +108,7 @@ EntityBuilder *EntityBuilder::withHighlight(float scaleFactor, ShaderProgram *sh
     return this;
 }
 
-EntityBuilder *EntityBuilder::withVelocity(glm::vec3 velocity, std::function<void(EntityManager *, uint32_t)> customUpdate) {
+EntityBuilder *EntityBuilder::withVelocity(glm::vec3 velocity, std::function<void(EntityManager *, Entity *)> customUpdate) {
     velocityComponent = new VelocityComponent(velocity);
     if (customUpdate != nullptr) {
         velocityComponent->customUpdate = customUpdate;
@@ -153,10 +153,5 @@ EntityBuilder* EntityBuilder::withOrbit(OrbitComponent *component) {
         throw std::runtime_error("entity already has an orbit");
     }
     orbitComponent = component;
-
-//    transformComponent->position += orbitComponent->startPosition;
-//
-//    printf("Start position: %s\n", glm::to_string(transformComponent->position).c_str());
-
     return this;
 }

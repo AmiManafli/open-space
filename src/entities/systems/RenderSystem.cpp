@@ -49,7 +49,7 @@ void RenderSystem::renderEntities() {
     for (auto& pair : entityManager->getComponents<TransformComponent>()) {
         auto entity = pair.first;
         auto transform = dynamic_cast<TransformComponent *>(pair.second);
-        auto meshes = entityManager->getMeshComponents(entity);
+        auto meshes = entityManager->getMultiComponents<MeshComponent>(entity);
         auto highlight = entityManager->getComponent<HighlightComponent>(entity);
 
         if (highlight) {
@@ -59,8 +59,10 @@ void RenderSystem::renderEntities() {
 
         // Render meshes
         for (auto it = meshes.first; it != meshes.second; it++) {
-            triangleCount += (double) it->second->indices.size() / 3.0;
-            renderMesh(it->second, it->second->shaderProgram, transform->getModel());
+            auto entity = it->first;
+            auto mesh = dynamic_cast<MeshComponent *>(it->second);
+            triangleCount += (double) mesh->indices.size() / 3.0;
+            renderMesh(mesh, mesh->shaderProgram, transform->getModel());
         }
 
         if (highlight) {
@@ -71,7 +73,8 @@ void RenderSystem::renderEntities() {
             auto cameraPosition = entityManager->getComponent<TransformComponent>(context->getCamera())->position;
             auto highlightModel = highlight->getModel(transform->getModel(), glm::length(transform->position - cameraPosition));
             for (auto it = meshes.first; it != meshes.second; it++) {
-                renderMesh(it->second, highlight->shaderProgram, highlightModel);
+                auto mesh = dynamic_cast<MeshComponent *>(it->second);
+                renderMesh(mesh, highlight->shaderProgram, highlightModel);
             }
 
             glStencilMask(0xFF);

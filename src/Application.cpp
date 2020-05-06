@@ -173,7 +173,7 @@ void Application::run() {
         context->update();
 
         // Update shader with light info
-        auto lightComponent = entityManager->getLightComponent(light->id);
+        auto lightComponent = entityManager->getComponent<LightComponent>(light);
         auto lightTransform = entityManager->getComponent<TransformComponent>(light);
         lightComponent->setUniforms(meshTextureShaderProgram, lightTransform);
 
