@@ -92,14 +92,14 @@ void Application::init() {
 
     auto ui = renderSystem->getUserInterface();
 
+    auto color = glm::vec3(0.576, 0.886, 1.0);
 
-    auto sunPosition = glm::vec3(0, 0, 0);
     auto sunVelocity = new VelocityComponent();
     sunVelocity->rotation = glm::vec3(0, -0.2, 0);
 	auto sun = EntityBuilder::create()
-		->withMesh("./assets/models/ico-sphere.dae", meshShaderProgram)
-		->withTransform(sunPosition)
-		->withScale(4.0)
+		->withMesh(new IcoSphere(1.0, 3, glm::vec3(0.96), 11, meshTextureShaderProgram))
+		->withTransform(0, 0, 0)
+		->withScale(20.0)
 		->withMass(1000.0)
 		->withVelocity(sunVelocity)
 		->build(entityManager);
@@ -109,7 +109,7 @@ void Application::init() {
 	auto planetVelocity = new VelocityComponent();
 	planetVelocity->rotation = glm::vec3(0, -0.1, 0);
     auto planet1 = EntityBuilder::create()
-        ->withMesh("./assets/models/ico-sphere.dae", meshShaderProgram)
+        ->withMesh(new IcoSphere(1.0, 3, color, 11, meshTextureShaderProgram))
         ->withTransform(0, 0, 0)
         ->withMass(200)
         ->withScale(planetScale)
@@ -122,18 +122,13 @@ void Application::init() {
     auto moonVelocity = new VelocityComponent();
     moonVelocity->rotation = glm::vec3(0, -0.1, 0);
     auto moon1 = EntityBuilder::create()
-            ->withMesh("./assets/models/ico-sphere.dae", meshShaderProgram)
+            ->withMesh(new IcoSphere(1.0, 3, glm::vec3(0.6), 11, meshTextureShaderProgram))
             ->withTransform(0, 0, 0)
             ->withMass(200)
             ->withScale(moonScale)
             ->withOrbit(planetTransform, 8, 8, 1.5, 0.0)
             ->withVelocity(moonVelocity)
             ->build(entityManager);
-
-//    auto sphere = EntityBuilder::create()
-//        ->withMesh(new IcoSphere(1.0, 0, meshShaderProgram))
-//        ->withTransform(0, 0, 0)
-//        ->build(entityManager);
 
 //    auto terrainMesh = Terrain::generate(10, 10, meshWithLightShaderProgram, GL_TRIANGLES, NoiseType::OpenSimplex);
 //    terrainMesh->setupBuffers();
@@ -145,14 +140,14 @@ void Application::init() {
 //        ->withTransform(0, 1.01, 0)
 //        ->build(entityManager);
 
-	auto airplane = EntityBuilder::create()
-		->withMesh("./assets/models/airplaneUdemy.obj", meshTextureShaderProgram)
-		->withTransform(0, 0, 0)
-		->withOrbit(planetTransform, 12, 12, 1.9, 2.0)
-		->build(entityManager);
+//	auto airplane = EntityBuilder::create()
+//		->withMesh("./assets/models/airplaneUdemy.obj", meshTextureShaderProgram)
+//		->withTransform(0, 0, 0)
+//		->withOrbit(planetTransform, 12, 12, 1.9, 2.0)
+//		->build(entityManager);
 
-    inputSystem->createSpaceshipControl(airplane, context->spaceshipCamera);
-
+//    inputSystem->createSpaceshipControl(airplane, context->spaceshipCamera);
+    inputSystem->createSpaceshipControl(nullptr, context->spaceshipCamera);
 
 //    auto nanoSuit = EntityBuilder::create()
 //        ->withMesh("./assets/models/nanosuit.obj", meshTextureShaderProgram)
@@ -197,8 +192,7 @@ void Application::createCameras() {
     auto target = glm::vec3(0, 0, 0);
 
     /// Spaceship camera
-    //auto position = glm::vec3(0.0, 0.0, 10.0);
-    auto position = glm::vec3(2.3, 40.3, 80.0);
+    auto position = glm::vec3(2.3, 80.3, 60.0);
 
     context->spaceshipCamera = EntityBuilder::create()
         ->withTransform(position)

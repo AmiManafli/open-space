@@ -3,17 +3,31 @@
 
 #include <cg/GLHeader.h>
 #include <cg/entities/components/MeshComponent.h>
+#include <unordered_map>
 
 
 class IcoSphere : public MeshComponent {
 public:
-    IcoSphere(double radius, int subdivisions, ShaderProgram *shaderProgram);
+    IcoSphere(double radius, uint16_t subdivisions, glm::vec3 color, uint16_t textureWidth, ShaderProgram *shaderProgram);
+
+    void subdivide(uint16_t subdivisions) override;
+
+    void setColor(glm::vec3 color) override;
 
 private:
+    uint16_t textureWidth, textureHeight;
+    double horizontalStep, verticalStep;
+
     double radius;
-    int subdivisions;
+
+    std::vector<std::vector<uint32_t>> subdividedIndices;
 
     void generateMesh();
+    void generateTexture();
+
+    glm::vec3 halfPosition(glm::vec3 a, glm::vec3 b);
+
+    glm::vec2 halfTextureCoord(glm::vec2 a, glm::vec2 b);
 };
 
 

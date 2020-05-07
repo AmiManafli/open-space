@@ -164,7 +164,6 @@ void EntityWindow::renderMeshComponents(std::vector<MeshComponent *> components)
         for (MeshComponent *mesh : components) {
             std::string name = "Mesh " + std::to_string(index++);
             if (ImGui::TreeNode(name.c_str())) {
-
                 std::string currentMode = meshModeEnumToString(mesh->mode);
                 if (ImGui::BeginCombo("Mode", currentMode.c_str())) {
                     for (auto mode : meshModes) {
@@ -176,10 +175,20 @@ void EntityWindow::renderMeshComponents(std::vector<MeshComponent *> components)
                     ImGui::EndCombo();
                 }
 
+                if (ImGui::ColorPicker3("Color", glm::value_ptr(mesh->color))) {
+                    mesh->setColor(mesh->color);
+                }
+
                 ImGui::Text("Instance count: %d", mesh->instances);
                 ImGui::Text("Vertices: %llu", mesh->vertices.size());
                 ImGui::Text("Indices: %llu", mesh->indices.size());
                 ImGui::Text("Textures: %llu", mesh->textures.size());
+
+                int subdivisions = mesh->subdivision;
+                if (ImGui::SliderInt("Subdivisions", &subdivisions, 0, 7)) {
+                    mesh->subdivision = subdivisions;
+                    mesh->subdivide(subdivisions);
+                }
 
                 ImGui::TreePop();
                 if (components.size() != index) {
@@ -194,7 +203,7 @@ void EntityWindow::renderHighlightComponent(HighlightComponent *component) {
     if (!component) return;
 
     if (ImGui::CollapsingHeader("Highlight Component")) {
-        ImGui::DragFloat("Scale factor", &component->scaleFactor, 0.1, 0, 100);
+        ImGui::DragFloat("Size", &component->size, 0.1, 0, 100);
     }
 }
 

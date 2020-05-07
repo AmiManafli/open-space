@@ -78,7 +78,7 @@ void UserInterface::renderMainMenu() {
             ImGui::MenuItem("ImGui Demo", nullptr, &showDemoWindow);
             if (ImGui::MenuItem("Turn on/offc wireframe mode")) {
                 showWireframe = !showWireframe;
-                if(showWireframe) {
+                if (showWireframe) {
                     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
                 } else { 
                     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); 

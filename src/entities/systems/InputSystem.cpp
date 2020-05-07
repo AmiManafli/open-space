@@ -28,7 +28,7 @@ void InputSystem::update() {
     auto window = context->getWindow();
     auto isDebug = context->displayGui || context->displayCursor;
 
-    if (isKeyPressed(GLFW_KEY_Q) && isKeyDown(GLFW_KEY_LEFT_CONTROL)) {
+    if (isKeyDown(GLFW_KEY_Q) && isKeyDown(GLFW_KEY_LEFT_CONTROL)) {
         glfwSetWindowShouldClose(context->getWindow(), GLFW_TRUE);
     }
 
@@ -78,7 +78,7 @@ void InputSystem::update() {
             moveCamera(camera, CameraComponent::Direction::Right, deltaTime);
         }
     }
-    if (!isDebug && isKeyDown(GLFW_KEY_Q)) {
+    if (!isDebug && !isKeyDown(GLFW_KEY_LEFT_CONTROL) && isKeyDown(GLFW_KEY_Q)) {
         spaceshipControl->processKeyboard(camera, CameraComponent::Direction::Down, deltaTime);
     } else if (!isDebug && isKeyDown(GLFW_KEY_E)) {
         spaceshipControl->processKeyboard(camera, CameraComponent::Direction::Up, deltaTime);
@@ -178,11 +178,9 @@ void InputSystem::processMouseScroll(GLFWwindow *window, double xoffset, double 
     auto camera = context->getCamera();
     auto cameraComponent = inputManager->entityManager->getCameraComponent(camera->id);
 
-    cameraComponent->movementSpeed += yoffset;
+    auto speed = cameraComponent->movementSpeed + yoffset;
+    cameraComponent->movementSpeed = glm::clamp(speed, 0.0, speed);
     printf("Camera movement speed: %.1f\n", cameraComponent->movementSpeed);
-
-//zoom with the scroll
-//    cameraComponent->zoom = glm::clamp(cameraComponent->zoom + (yoffset * (cameraComponent->zoom)) * 0.1, 0.5, 45.0);
 }
 
 void InputSystem::moveCamera(Entity *camera, CameraComponent::Direction direction, float deltaTime) {
@@ -267,7 +265,7 @@ Entity *InputSystem::getClickedEntity(double mouseX, double mouseY) {
 void InputSystem::selectEntity(Entity *entity) {
     auto previousEntity = context->selectedEntity;
 
-    double highlightSize = 0.25;
+    double highlightSize = 0.01;
     double highlightScale;
     if (entity) {
         auto transform = entityManager->getTransformComponent(entity);

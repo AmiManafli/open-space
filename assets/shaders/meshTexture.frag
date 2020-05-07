@@ -1,5 +1,5 @@
 #version 330 core
-flat in vec3 vNormal;
+in vec3 vNormal;
 in vec2 vTextureCoord;
 in vec3 vFragPos;
 
@@ -36,7 +36,7 @@ vec3 calculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDir
     float specularValue = pow(max(dot(viewDirection, reflectDirection), 0.0), 64);
     vec3 specular = light.specular * specularValue * materialSpecular;
 
-    return ambient + diffuse + specular;
+    return ambient + diffuse;// + specular;
 }
 
 void main() {

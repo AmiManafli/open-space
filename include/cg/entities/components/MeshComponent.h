@@ -33,6 +33,9 @@ public:
 
     void createInstances(std::vector<glm::vec3>& transformations);
 
+    virtual void subdivide(uint16_t subdivisions) {}
+    virtual void setColor(glm::vec3 color) {}
+
     uint32_t vao, vbo, instanceVbo, ebo;
     ShaderProgram *shaderProgram;
     GLenum mode;
@@ -41,6 +44,9 @@ public:
     std::vector<Texture> textures;
     uint32_t instances;
     bool indexed;
+
+    uint16_t subdivision;
+    glm::vec3 color;
 
     void setupBuffers();
 

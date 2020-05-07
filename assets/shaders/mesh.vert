@@ -3,7 +3,7 @@
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec3 aNormal;
 
-flat out vec3 vNormal;
+out vec3 vNormal;
 out vec3 vFragPos;
 
 uniform mat4 model;

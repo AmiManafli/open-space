@@ -8,12 +8,12 @@
 
 class HighlightComponent : public Component {
 public:
-    explicit HighlightComponent(float scaleFactor, ShaderProgram *shaderProgram);
+    explicit HighlightComponent(float size, ShaderProgram *shaderProgram);
 
-    glm::mat4 getModel(glm::mat4 translated);
+    glm::mat4 getModel(glm::mat4 translated, float distance);
 
     ShaderProgram *shaderProgram;
-    float scaleFactor;
+    float size;
 };
 
 #endif //CG1_PROJECT_HIGHLIGHTCOMPONENT_H
