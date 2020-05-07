@@ -56,7 +56,16 @@ public:
 
     Entity *selectedEntity = nullptr;
 
-    ShaderProgram *highlightProgram = nullptr;
+    // Shaders
+    ShaderProgram *meshProgram;
+    ShaderProgram *meshTextureProgram;
+    ShaderProgram *starProgram;
+    ShaderProgram *planetProgram;
+    ShaderProgram *gridProgram;
+    ShaderProgram *highlightProgram;
+    ShaderProgram *meshWithLightProgram;
+    ShaderProgram *meshTestLightProgram;
+    ShaderProgram *skyboxProgram;
 
     double startTime;
 

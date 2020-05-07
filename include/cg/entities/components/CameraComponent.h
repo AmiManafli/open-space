@@ -5,20 +5,23 @@
 #include <cg/entities/Component.h>
 #include "TransformComponent.h"
 
-
-class CameraComponent : public Component {
+class CameraComponent : public Component
+{
 public:
-    enum Mode {
+    enum Mode
+    {
         FirstPersonShip,
         Free,
         CubeMap,
     };
-    enum Type {
+    enum Type
+    {
         Orthographic,
         Perspective,
         CubeMapType,
     };
-    enum Direction {
+    enum Direction
+    {
         Forward,
         Backward,
         Left,
@@ -37,6 +40,8 @@ public:
     void processKeyboard(CameraComponent::Direction direction, float deltaTime, TransformComponent *transformComponent);
     void processMouseMovement(float offsetX, float offsetY);
 
+    double getSpeed() { return 0.07855 * glm::exp(0.22455 * movementSpeedTick); }
+
     Mode mode;
     Type type;
     float zoom;
@@ -47,11 +52,11 @@ public:
     glm::vec3 front;
 
     float yaw, pitch, roll;
-  
-    float movementSpeed;
+
+    uint32_t movementSpeedTick;
     float mouseSensitivity;
 
-//private:
+    //private:
     void updateVectors();
 };
 
