@@ -33,8 +33,9 @@ glm::mat4 CameraComponent::getView(TransformComponent *positionComponent) {
     auto position = positionComponent->position;
     if (mode == FirstPersonShip) {
         return glm::lookAt(position, position + front, up);
-    } 
-    else if (mode == Free) {
+    } else if (mode == Free) {
+        return glm::lookAt(position, position + front, up);
+    } else if (mode == CubeMap) {
         return glm::lookAt(position, position + front, up);
     } else {
         throw std::runtime_error("camera mode not implemented!");
@@ -46,8 +47,10 @@ glm::mat4 CameraComponent::getProjection(float aspectRatio) {
         auto orthoZoom = zoom;
         return glm::ortho(-aspectRatio * orthoZoom, aspectRatio * orthoZoom, -1.0f * orthoZoom, 1.0f * orthoZoom, -1000.0f, 100.0f);
     } else if (type == Perspective) {
-        auto fov = 45.0f / zoom;	
+        auto fov = 45.0f / zoom;
         return glm::perspective(glm::radians(fov), aspectRatio, 0.1f, 10000.0f);
+    } else if (type == CubeMapType) {
+        return glm::perspective(static_cast<float>(PI / 2.0), 1.0f, 0.000001f, 100000000.0f);
     } else {
         throw std::runtime_error("failed to get projection: unknown projection mode");
     }

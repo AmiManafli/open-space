@@ -5,33 +5,37 @@ Entity *EntityBuilder::build(EntityManager *entityManager) {
     auto entity = entityManager->createEntity();
 
     if (transformComponent != nullptr) {
-        entityManager->addTransformComponent(entity->id, transformComponent);
+        entityManager->addComponent(entity, transformComponent);
     }
     if (cameraComponent != nullptr) {
-        entityManager->addCameraComponent(entity->id, cameraComponent);
+        entityManager->addComponent(entity, cameraComponent);
     }
     if (highlightComponent != nullptr) {
-        entityManager->addHighlightComponent(entity->id, highlightComponent);
+        entityManager->addComponent<HighlightComponent>(entity, highlightComponent);
     }
 
     for (auto& mesh : meshComponents) {
-        entityManager->addMeshComponent(entity->id, mesh);
+        entityManager->addMultiComponent<MeshComponent>(entity, mesh);
     }
 
     if (velocityComponent != nullptr) {
-        entityManager->addVelocityComponent(entity->id, velocityComponent);
+        entityManager->addComponent<VelocityComponent>(entity, velocityComponent);
     }
 
     if (lightComponent != nullptr) {
-        entityManager->addLightComponent(entity->id, lightComponent);
+        entityManager->addComponent<LightComponent>(entity, lightComponent);
     }
 
     if (massComponent != nullptr) {
-        entityManager->addMassComponent(entity->id, massComponent);
+        entityManager->addComponent<MassComponent>(entity, massComponent);
     }
 
     if (orbitComponent != nullptr) {
-        entityManager->addOrbitComponent(entity->id, orbitComponent);
+        entityManager->addComponent<OrbitComponent>(entity, orbitComponent);
+    }
+
+    if (selectableComponent != nullptr) {
+        entityManager->addComponent<SelectableComponent>(entity, selectableComponent);
     }
 
     return entity;
@@ -41,10 +45,7 @@ Entity *EntityBuilder::build(EntityManager *entityManager) {
  * Destroy entity and all components.
  */
 void EntityBuilder::destroy() {
-    for (auto mesh : meshComponents) {
-        delete mesh;
-    }
-    delete transformComponent;
+    // TODO: Delete all components that are not nullptr
     delete this;
 }
 
@@ -108,7 +109,7 @@ EntityBuilder *EntityBuilder::withHighlight(float scaleFactor, ShaderProgram *sh
     return this;
 }
 
-EntityBuilder *EntityBuilder::withVelocity(glm::vec3 velocity, std::function<void(EntityManager *, uint32_t)> customUpdate) {
+EntityBuilder *EntityBuilder::withVelocity(glm::vec3 velocity, std::function<void(EntityManager *, Entity *)> customUpdate) {
     velocityComponent = new VelocityComponent(velocity);
     if (customUpdate != nullptr) {
         velocityComponent->customUpdate = customUpdate;
@@ -129,6 +130,14 @@ EntityBuilder *EntityBuilder::withDirectionalLight(glm::vec3 direction, glm::vec
         throw std::runtime_error("entity already has a light component");
     }
     lightComponent = LightComponent::createDirectionalLight(direction, ambient, diffuse, specular);
+    return this;
+}
+
+EntityBuilder *EntityBuilder::withPointLight(glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular, float constant, float linear, float quadratic) {
+    if (lightComponent != nullptr) {
+        throw std::runtime_error("entity already has a light component");
+    }
+    lightComponent = LightComponent::createPointLight(ambient, diffuse, specular, constant, linear, quadratic);
     return this;
 }
 
@@ -153,10 +162,13 @@ EntityBuilder* EntityBuilder::withOrbit(OrbitComponent *component) {
         throw std::runtime_error("entity already has an orbit");
     }
     orbitComponent = component;
+    return this;
+}
 
-//    transformComponent->position += orbitComponent->startPosition;
-//
-//    printf("Start position: %s\n", glm::to_string(transformComponent->position).c_str());
-
+EntityBuilder* EntityBuilder::isSelectable() {
+    if (selectableComponent != nullptr) {
+        throw std::runtime_error("entity is already selectable");
+    }
+    selectableComponent = new SelectableComponent();
     return this;
 }

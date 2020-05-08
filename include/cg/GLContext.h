@@ -33,13 +33,21 @@ public:
 
     void swapBuffers();
 
+    uint16_t width;
+    uint16_t height;
+
     bool displayCursor = false;
     bool displayGui = false;
-    bool displayGrid = true;
 
     uint32_t triangleCount = 0;
 
+    Entity *skybox = nullptr;
+    Entity *grid = nullptr;
+
+    Entity *player = nullptr;
+
     Entity *spaceshipCamera = nullptr;
+    Entity *skyboxCamera = nullptr;
     Entity *perspectiveCamera = nullptr;
     Entity *topCamera = nullptr;
     Entity *sideCamera = nullptr;
@@ -55,8 +63,6 @@ public:
 private:
     EntityManager *entityManager;
     const std::string title;
-    uint16_t width;
-    uint16_t height;
 
     GLFWwindow *window;
 
@@ -70,8 +76,6 @@ private:
     double timePerFrame;
 
     void setupImgui();
-
-    static void framebufferSizeCallback(GLFWwindow *window, int width, int height);
 };
 
 

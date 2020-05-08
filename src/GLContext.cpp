@@ -9,15 +9,15 @@ GLContext::~GLContext() {
 }
 
 glm::mat4 GLContext::getView() {
-    auto cameraId = getCamera()->id;
-    auto cameraComponent = entityManager->getCameraComponent(cameraId);
-    auto transformComponent = entityManager->getTransformComponent(cameraId);
+    auto camera = getCamera();
+    auto cameraId = camera->id;
+    auto cameraComponent = entityManager->getComponent<CameraComponent>(camera);
+    auto transformComponent = entityManager->getComponent<TransformComponent>(camera);
     return cameraComponent->getView(transformComponent);
 }
 
 glm::mat4 GLContext::getProjection() {
-    auto cameraId = getCamera()->id;
-    auto cameraComponent = entityManager->getCameraComponent(cameraId);
+    auto cameraComponent = entityManager->getComponent<CameraComponent>(getCamera());
     return cameraComponent->getProjection(getAspect());
 }
 
@@ -38,7 +38,6 @@ void GLContext::init() {
         throw std::runtime_error("failed to create window");
     }
     glfwMakeContextCurrent(window);
-    glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
 
     if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
         throw std::runtime_error("failed to initialize GLAD");
@@ -91,8 +90,4 @@ void GLContext::update() {
 
 void GLContext::swapBuffers() {
     glfwSwapBuffers(window);
-}
-
-void GLContext::framebufferSizeCallback(GLFWwindow *window, int width, int height) {
-    glViewport(0, 0, width, height);
 }

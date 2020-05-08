@@ -37,6 +37,7 @@ private:
     static void mousePositionCallback(GLFWwindow* window, double x, double y);
     static void processMouseScroll(GLFWwindow* window, double xOffset, double yOffset);
     static void processMouseButton(GLFWwindow* window, int button, int action, int mods);
+    static void framebufferSizeCallback(GLFWwindow *window, int width, int height);
 };
 
 #endif //CG1_PROJECT_INPUTSYSTEM_H

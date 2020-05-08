@@ -19,9 +19,6 @@ void RenderSystem::init() {
     glEnable(GL_STENCIL_TEST);
     glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
     glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-
-//    glEnable(GL_CULL_FACE);
-//    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
 void RenderSystem::update() {
@@ -49,11 +46,11 @@ void RenderSystem::update() {
 void RenderSystem::renderEntities() {
     uint32_t triangleCount = 0;
 
-    for (auto& pair : entityManager->getTransformComponents()) {
-        auto entityId = pair.first;
-        auto transform = pair.second;
-        auto meshes = entityManager->getMeshComponents(entityId);
-        auto highlight = entityManager->getHighlightComponent(entityId);
+    for (auto& pair : entityManager->getComponents<TransformComponent>()) {
+        auto entity = pair.first;
+        auto transform = dynamic_cast<TransformComponent *>(pair.second);
+        auto meshes = entityManager->getMultiComponents<MeshComponent>(entity);
+        auto highlight = entityManager->getComponent<HighlightComponent>(entity);
 
         if (highlight) {
             glStencilFunc(GL_ALWAYS, 1, 0xFF);
@@ -61,12 +58,11 @@ void RenderSystem::renderEntities() {
         }
 
         // Render meshes
-        if (entityId == 6) {
-//            printf("%d, Position: %s\n", entityId, glm::to_string(transform->position).c_str());
-        }
         for (auto it = meshes.first; it != meshes.second; it++) {
-            triangleCount += (double) it->second->indices.size() / 3.0;
-            renderMesh(it->second, it->second->shaderProgram, transform->getModel());
+            auto entity = it->first;
+            auto mesh = dynamic_cast<MeshComponent *>(it->second);
+            triangleCount += (double) mesh->indices.size() / 3.0;
+            renderMesh(mesh, mesh->shaderProgram, transform->getModel());
         }
 
         if (highlight) {
@@ -74,10 +70,11 @@ void RenderSystem::renderEntities() {
             glStencilMask(0x00); // disable writing to the stencil buffer
             glDisable(GL_DEPTH_TEST);
 
-            auto cameraPosition = entityManager->getTransformComponent(context->getCamera())->position;
+            auto cameraPosition = entityManager->getComponent<TransformComponent>(context->getCamera())->position;
             auto highlightModel = highlight->getModel(transform->getModel(), glm::length(transform->position - cameraPosition));
             for (auto it = meshes.first; it != meshes.second; it++) {
-                renderMesh(it->second, highlight->shaderProgram, highlightModel);
+                auto mesh = dynamic_cast<MeshComponent *>(it->second);
+                renderMesh(mesh, highlight->shaderProgram, highlightModel);
             }
 
             glStencilMask(0xFF);
@@ -96,8 +93,8 @@ void RenderSystem::renderMesh(MeshComponent *mesh, ShaderProgram *shaderProgram,
     shaderProgram->setUniform("model", model);
     shaderProgram->setUniform("objectColor", glm::vec3(0.5, 0.5, 0.5));
     shaderProgram->setUniform("lightColor", glm::vec3(1, 1, 1));
-    shaderProgram->setUniform("lightPos", entityManager->getTransformComponent(context->light)->position);
-    shaderProgram->setUniform("viewPos", entityManager->getTransformComponent(1)->position);
+//    shaderProgram->setUniform("lightPos", entityManager->getComponent<TransformComponent>(context->light)->position);
+    shaderProgram->setUniform("viewPos", entityManager->getComponent<TransformComponent>(context->getCamera())->position);
 
     if (mesh->textures.size() > 0) {
         renderTexture(mesh, shaderProgram);
@@ -125,19 +122,23 @@ void RenderSystem::renderMesh(MeshComponent *mesh, ShaderProgram *shaderProgram,
 
 void RenderSystem::renderTexture(MeshComponent *mesh, ShaderProgram *shaderProgram) {
 	for (unsigned int i = 0; i < mesh->textures.size(); i++) {
-		glActiveTexture(GL_TEXTURE0 + i); // active proper texture unit before binding
-		std::string name = mesh->textures[i].type;
+		glActiveTexture(GL_TEXTURE0 + i);
+		auto texture = mesh->textures[i];
+		std::string name = texture.type;
 		if (name == "texture_diffuse") {
-		    shaderProgram->setUniform("material.diffuse", i);
+		    shaderProgram->setUniform("material.diffuse", static_cast<int>(i));
 		} else if (name == "texture_specular") {
-            shaderProgram->setUniform("material.specular", i);
+            shaderProgram->setUniform("material.specular", static_cast<int>(i));
 		} else if (name == "texture_normal") {
 //            shaderProgram->setUniform("material.normal", i);
         } else if (name == "texture_height") {
 //            shaderProgram->setUniform("material.height", i);
 		}
 
-		// and finally bind the texture
-		glBindTexture(GL_TEXTURE_2D, mesh->textures[i].id);
+		if (texture.isCubeMap) {
+            glBindTexture(GL_TEXTURE_CUBE_MAP, texture.id);
+		} else {
+            glBindTexture(GL_TEXTURE_2D, texture.id);
+		}
 	}
 }

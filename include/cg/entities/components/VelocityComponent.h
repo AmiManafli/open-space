@@ -18,7 +18,7 @@ public:
     VelocityComponent(glm::vec3 rotation, glm::vec3 rotationPoint);
     VelocityComponent(glm::vec3 position, glm::vec3 rotation, glm::vec3 rotationPoint);
 
-    void update(EntityManager *entityManager, uint32_t entityId);
+    void update(EntityManager *entityManager, Entity *entity);
 
     glm::vec3 position;
 
@@ -29,7 +29,7 @@ public:
 
     glm::vec3 scaling;
 
-    std::optional<std::function<void(EntityManager *, uint32_t)>> customUpdate;
+    std::optional<std::function<void(EntityManager *, Entity *)>> customUpdate;
 };
 
 

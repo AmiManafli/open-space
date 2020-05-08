@@ -39,18 +39,20 @@ void EntityWindow::render() {
 
     // Components
     std::vector<MeshComponent *> meshComponents;
-    auto meshes = entityManager->getMeshComponents(entity->id);
-    for (auto i = meshes.first; i != meshes.second; i++) {
-        meshComponents.emplace_back(i->second);
+    auto meshes = entityManager->getMultiComponents<MeshComponent>(entity);
+    for (auto it = meshes.first; it != meshes.second; it++) {
+        auto mesh = dynamic_cast<MeshComponent *>(it->second);
+        meshComponents.emplace_back(mesh);
     }
 
-    renderTransformComponent(entityManager->getTransformComponent(entity));
-    renderMassComponent(entityManager->getMassComponent(entity));
-    renderOrbitComponent(entityManager->getOrbitComponent(entity));
-    renderVelocityComponent(entityManager->getVelocityComponent(entity));
-    renderCameraComponent(entityManager->getCameraComponent(entity));
+    renderTransformComponent(entityManager->getComponent<TransformComponent>(entity));
+    renderMassComponent(entityManager->getComponent<MassComponent>(entity));
+    renderOrbitComponent(entityManager->getComponent<OrbitComponent>(entity));
+    renderVelocityComponent(entityManager->getComponent<VelocityComponent>(entity));
+    renderCameraComponent(entityManager->getComponent<CameraComponent>(entity));
     renderMeshComponents(meshComponents);
-    renderHighlightComponent(entityManager->getHighlightComponent(entity));
+    renderLightComponent(entityManager->getComponent<LightComponent>(entity));
+    renderHighlightComponent(entityManager->getComponent<HighlightComponent>(entity));
 
     ImGui::End();
 }
@@ -196,6 +198,20 @@ void EntityWindow::renderMeshComponents(std::vector<MeshComponent *> components)
                 }
             }
         }
+    }
+}
+
+void EntityWindow::renderLightComponent(LightComponent *component) {
+    if (!component) return;
+
+    if (ImGui::CollapsingHeader("Light Component")) {
+        ImGui::ColorPicker3("Ambient Color", glm::value_ptr(component->ambient));
+        ImGui::ColorPicker3("Diffuse Color", glm::value_ptr(component->diffuse));
+        ImGui::ColorPicker3("Specular Color", glm::value_ptr(component->specular));
+
+        ImGui::DragFloat("Constant", &component->constant, 0.01, 0, 100);
+        ImGui::DragFloat("Linear", &component->linear, 0.01, 0, 100);
+        ImGui::DragFloat("Quadtratic", &component->quadratic, 0.01, 0, 100);
     }
 }
 

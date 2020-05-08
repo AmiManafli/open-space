@@ -1,7 +1,9 @@
 #ifndef CG1_PROJECT_MASSCOMPONENT_H
 #define CG1_PROJECT_MASSCOMPONENT_H
 
-class MassComponent {
+#include <cg/entities/Component.h>
+
+class MassComponent : public Component {
 public:
     MassComponent(float mass);
 

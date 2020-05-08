@@ -14,75 +14,80 @@
 #include "Component.h"
 #include "Entity.h"
 
-typedef std::unordered_multimap<uint32_t, MeshComponent *> MeshComponentMultimap;
-typedef std::unordered_map<uint32_t, CameraComponent *> CameraComponentMap;
-typedef std::unordered_map<uint32_t, TransformComponent *> TransformComponentMap;
-typedef std::unordered_map<uint32_t, HighlightComponent *> HighlightComponentMap;
-typedef std::unordered_map<uint32_t, VelocityComponent *> VelocityComponentMap;
-typedef std::unordered_map<uint32_t, LightComponent *> LightComponentMap;
-typedef std::unordered_map<uint32_t, MassComponent *> MassComponentMap;
-typedef std::unordered_map<uint32_t, OrbitComponent *> OrbitComponentMap;
+typedef std::unordered_multimap<Entity *, Component *> ComponentMultiMap;
+typedef std::unordered_map<Entity *, Component *> ComponentMap;
 
 
 class EntityManager {
 public:
+    ~EntityManager();
+
     /// Entities
     Entity* createEntity();
-    std::vector<Entity *> getEntities() { return entities; }
     Entity* getEntity(uint32_t id);
+    std::vector<Entity *> getEntities() { return entities; }
 
-    /// Mesh component
-    void addMeshComponent(uint32_t entityId, MeshComponent *component);
-    MeshComponentMultimap getMeshComponents() { return meshComponents; }
-    std::pair<MeshComponentMultimap::iterator, MeshComponentMultimap::iterator> getMeshComponents(Entity *entity) { return getMeshComponents(entity->id); }
-    std::pair<MeshComponentMultimap::iterator, MeshComponentMultimap::iterator> getMeshComponents(uint32_t entityId);
+    template<class T>
+    void addComponent(Entity *entity, T *component) {
+        auto key = typeid(T).name();
+        if (components.find(key) == components.end()) {
+            components[key] = std::unordered_map<Entity *, Component *>();
+        }
+        components[key][entity] = component;
+    }
 
-    /// Transform component
-    void addTransformComponent(uint32_t entityId, TransformComponent *component);
-    TransformComponentMap getTransformComponents() { return transformComponents; }
-    TransformComponent* getTransformComponent(Entity *entity) { return getTransformComponent(entity->id); };
-    TransformComponent* getTransformComponent(uint32_t entityId);
-
-    /// Camera component
-    void addCameraComponent(uint32_t entityId, CameraComponent *component);
-    CameraComponentMap getCameraComponents() { return cameraComponents; }
-    CameraComponent* getCameraComponent(Entity *entity) { return getCameraComponent(entity->id); }
-    CameraComponent* getCameraComponent(uint32_t entityId);
-
-    /// Highlight component
-    void addHighlightComponent(uint32_t entityId, HighlightComponent *component);
-    void removeHighlightComponent(Entity *entity) {
-        auto component = getHighlightComponent(entity);
-        highlightComponents.erase(entity->id);
+    template<class T>
+    void removeComponent(Entity *entity) {
+        auto key = typeid(T).name();
+        auto component = getComponent<T>(entity);
+        components[key].erase(entity);
         delete component;
     }
-    HighlightComponentMap getHighlightComponents() { return highlightComponents; }
-    HighlightComponent* getHighlightComponent(Entity *entity) { return getHighlightComponent(entity->id); }
-    HighlightComponent* getHighlightComponent(uint32_t entityId);
 
-    /// Velocity component
-    void addVelocityComponent(uint32_t entityId, VelocityComponent *component);
-    VelocityComponentMap getVelocityComponents() { return velocityComponents; }
-    VelocityComponent* getVelocityComponent(Entity *entity) { return getVelocityComponent(entity->id); }
-    VelocityComponent* getVelocityComponent(uint32_t entityId);
+    template<class T>
+    ComponentMap getComponents() {
+        auto key = typeid(T).name();
+        return components[key];
+    }
 
-    /// Light component
-    void addLightComponent(uint32_t entityId, LightComponent *component);
-    LightComponentMap getLightComponents() { return lightComponents; }
-    LightComponent* getLightComponent(Entity *entity) { return getLightComponent(entity->id); }
-    LightComponent* getLightComponent(uint32_t entityId);
+    template<class T>
+    T* getComponent(Entity *entity) {
+        auto key = typeid(T).name();
+        try {
+            return reinterpret_cast<T *>(components[key].at(entity));
+        } catch (std::out_of_range &e) {
+            return nullptr;
+        }
+    }
 
-    /// Mass component
-    void addMassComponent(uint32_t entityId, MassComponent *component);
-    MassComponentMap getMassComponents() { return massComponents; }
-    MassComponent* getMassComponent(Entity *entity) { return getMassComponent(entity->id); }
-    MassComponent* getMassComponent(uint32_t entityId);
+    template<class T>
+    void addMultiComponent(Entity *entity, T *component) {
+        auto key = typeid(T).name();
+        if (multiComponents.find(key) == multiComponents.end()) {
+            multiComponents[key] = std::unordered_multimap<Entity *, Component *>();
+        }
+        multiComponents[key].emplace(entity, component);
+    }
 
-    /// Orbit component
-    void addOrbitComponent(uint32_t entityId, OrbitComponent *component);
-    OrbitComponentMap getOrbitComponents() { return orbitComponents; }
-    OrbitComponent* getOrbitComponent(Entity *entity) { return getOrbitComponent(entity->id); }
-    OrbitComponent* getOrbitComponent(uint32_t entityId);
+    template<class T>
+    void removeMultiComponent(Entity *entity) {
+        auto key = typeid(T).name();
+        auto component = getMultiComponent<T>(entity);
+        multiComponents[key].erase(entity);
+        delete component;
+    }
+
+    template<class T>
+    ComponentMultiMap getMultiComponents() {
+        auto key = typeid(T).name();
+        return multiComponents[key];
+    }
+
+    template<class T>
+    std::pair<ComponentMultiMap::iterator, ComponentMultiMap::iterator> getMultiComponents(Entity *entity) {
+        auto key = typeid(T).name();
+        return multiComponents[key].equal_range(entity);
+    }
 
 private:
     /// Entities
@@ -91,16 +96,8 @@ private:
     std::vector<Entity *> entities;
 
     /// Components
-    MeshComponentMultimap meshComponents;
-    TransformComponentMap transformComponents;
-    CameraComponentMap cameraComponents;
-    HighlightComponentMap highlightComponents;
-    VelocityComponentMap velocityComponents;
-    LightComponentMap lightComponents;
-    MassComponentMap massComponents;
-    OrbitComponentMap orbitComponents;
-
-    template <class T> T* getComponent(std::unordered_map<uint32_t, T*> map, uint32_t entityId);
+    std::unordered_map<const char *, ComponentMap> components;
+    std::unordered_map<const char *, ComponentMultiMap> multiComponents;
 };
 
 #endif //CG1_PROJECT_ENTITYMANAGER_H

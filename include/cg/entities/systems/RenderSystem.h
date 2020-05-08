@@ -14,6 +14,10 @@ public:
     void init() override;
     void update() override;
 
+    void renderEntities();
+    void renderMesh(MeshComponent *mesh, ShaderProgram *shaderProgram, glm::mat4 model);
+    void renderTexture(MeshComponent* mesh, ShaderProgram* shader);
+
 private:
     GLContext *context;
 
@@ -21,9 +25,6 @@ private:
 
     glm::vec4 clearColor;
 
-    void renderEntities();
-    void renderMesh(MeshComponent *mesh, ShaderProgram *shaderProgram, glm::mat4 model);
-	void renderTexture(MeshComponent* mesh, ShaderProgram* shader);
 };
 
 #endif //CG1_PROJECT_RENDERSYSTEM_H

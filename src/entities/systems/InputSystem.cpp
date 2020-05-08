@@ -1,3 +1,4 @@
+#include <cg/entities/components/SelectableComponent.h>
 #include "cg/entities/systems/InputSystem.h"
 #include "cg/SpaceshipControl.h"
 
@@ -16,6 +17,7 @@ void InputSystem::init() {
     glfwSetScrollCallback(window, processMouseScroll);
     glfwSetMouseButtonCallback(window, processMouseButton);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
 
     double mouseX, mouseY;
     glfwGetCursorPos(window, &mouseX, &mouseY);
@@ -44,7 +46,7 @@ void InputSystem::update() {
     }
 
     auto camera = context->getCamera();
-    CameraComponent *cameraComponent = entityManager->getCameraComponent(camera->id);
+    auto cameraComponent = entityManager->getComponent<CameraComponent>(camera);
     if (!isDebug && isKeyDown(GLFW_KEY_W)) {
         if (cameraComponent->mode == CameraComponent::FirstPersonShip) {
             spaceshipControl->processKeyboard(camera, CameraComponent::Direction::Forward, deltaTime);
@@ -84,16 +86,19 @@ void InputSystem::update() {
         spaceshipControl->processKeyboard(camera, CameraComponent::Direction::Up, deltaTime);
     }
 
-
     if (!isDebug && isKeyPressed(GLFW_KEY_G)) {
-        context->displayGrid = !context->displayGrid;
+        auto transform = entityManager->getComponent<TransformComponent>(context->grid);
+        if (transform) {
+            entityManager->removeComponent<TransformComponent>(context->grid);
+        } else {
+            entityManager->addComponent(context->grid, new TransformComponent(glm::vec3(0, 0, 0)));
+        }
     }
 
     if (isKeyPressed(GLFW_KEY_BACKSLASH)) {
         context->displayGui = !context->displayGui;
     }
 
-    //CameraComponent* cameraComponent = entityManager->getCameraComponent(camera->id);
     if (!isDebug && isKeyDown(GLFW_KEY_EQUAL)) {
         cameraComponent->movementSpeed += 0.1;
         printf("Camera movement speed: %.1f\n", cameraComponent->movementSpeed);
@@ -144,39 +149,39 @@ bool InputSystem::isKeyPressed(int key) {
 }
 
 void InputSystem::mousePositionCallback(GLFWwindow *window, double x, double y) {
-    auto inputManager = (InputSystem *) glfwGetWindowUserPointer(window);
-    auto context = inputManager->context;
+    auto inputSystem = (InputSystem *) glfwGetWindowUserPointer(window);
+    auto context = inputSystem->context;
 
-    auto offsetX = x - inputManager->lastMouseX;
-    auto offsetY = inputManager->lastMouseY - y;
+    auto offsetX = x - inputSystem->lastMouseX;
+    auto offsetY = inputSystem->lastMouseY - y;
 
-    inputManager->lastMouseX = x;
-    inputManager->lastMouseY = y;
+    inputSystem->lastMouseX = x;
+    inputSystem->lastMouseY = y;
 
     if (context->displayCursor) return;
 
     auto camera = context->getCamera();
-    auto cameraComponent = inputManager->entityManager->getCameraComponent(camera->id);
+    auto cameraComponent = inputSystem->entityManager->getComponent<CameraComponent>(camera);
 
-    if (!inputManager->processedMouse) {
-        inputManager->lastMouseX = x;
-        inputManager->lastMouseY = y;
-        inputManager->processedMouse = true;
+    if (!inputSystem->processedMouse) {
+        inputSystem->lastMouseX = x;
+        inputSystem->lastMouseY = y;
+        inputSystem->processedMouse = true;
     }
 
     if (cameraComponent->mode == CameraComponent::FirstPersonShip) {
-        inputManager->spaceshipControl->processMouseMovement(offsetX, offsetY);
+        inputSystem->spaceshipControl->processMouseMovement(offsetX, offsetY);
     } else {
         cameraComponent->processMouseMovement(offsetX, offsetY);
     }
 }
 
 void InputSystem::processMouseScroll(GLFWwindow *window, double xoffset, double yoffset) {
-    auto inputManager = (InputSystem *) glfwGetWindowUserPointer(window);
-    auto context = inputManager->context;
+    auto inputSystem = (InputSystem *) glfwGetWindowUserPointer(window);
+    auto context = inputSystem->context;
     if (context->displayCursor) return;
     auto camera = context->getCamera();
-    auto cameraComponent = inputManager->entityManager->getCameraComponent(camera->id);
+    auto cameraComponent = inputSystem->entityManager->getComponent<CameraComponent>(camera);
 
     auto speed = cameraComponent->movementSpeed + yoffset;
     cameraComponent->movementSpeed = glm::clamp(speed, 0.0, speed);
@@ -184,8 +189,8 @@ void InputSystem::processMouseScroll(GLFWwindow *window, double xoffset, double 
 }
 
 void InputSystem::moveCamera(Entity *camera, CameraComponent::Direction direction, float deltaTime) {
-    auto cameraComponent = entityManager->getCameraComponent(camera->id);
-    auto transformComponent = entityManager->getTransformComponent(camera->id);
+    auto cameraComponent = entityManager->getComponent<CameraComponent>(camera);
+    auto transformComponent = entityManager->getComponent<TransformComponent>(camera);
     cameraComponent->processKeyboard(direction, deltaTime, transformComponent);
 }
 
@@ -221,8 +226,8 @@ bool InputSystem::isRayInSphere(TransformComponent *transform, glm::vec3 origin,
 Entity *InputSystem::getClickedEntity(double mouseX, double mouseY) {
     Entity* foundEntity = nullptr;
 
-    auto camera = entityManager->getCameraComponent(context->getCamera());
-    auto cameraTransform = entityManager->getTransformComponent(context->getCamera());
+    auto camera = entityManager->getComponent<CameraComponent>(context->getCamera());
+    auto cameraTransform = entityManager->getComponent<TransformComponent>(context->getCamera());
 
     // Normalized device coordinates
     double x = (2.0 * mouseX) / context->getWidth() - 1.0;
@@ -244,17 +249,17 @@ Entity *InputSystem::getClickedEntity(double mouseX, double mouseY) {
     auto origin = cameraTransform->position;
 
     double entityDistance = DBL_MAX;
-    for (auto& pair : entityManager->getTransformComponents()) {
-        auto entityId = pair.first;
-        auto transform = pair.second;
+    for (auto& pair : entityManager->getComponents<SelectableComponent>()) {
+        auto entity = pair.first;
+        auto transform = entityManager->getComponent<TransformComponent>(entity);
 
-        if (entityId == context->getCamera()->id) continue;
+        if (entity->id == context->getCamera()->id) continue;
 
         if (isRayInSphere(transform, origin, rayWorld)) {
             auto distance = glm::length(transform->position - origin);
-            if (distance < entityDistance) {
+            if (distance <= entityDistance) {
                 entityDistance = distance;
-                foundEntity = entityManager->getEntity(entityId);
+                foundEntity = entity;
             }
         }
     }
@@ -268,7 +273,7 @@ void InputSystem::selectEntity(Entity *entity) {
     double highlightSize = 0.01;
     double highlightScale;
     if (entity) {
-        auto transform = entityManager->getTransformComponent(entity);
+        auto transform = entityManager->getComponent<TransformComponent>(entity);
         auto radius = transform->scaling.x / 2.0;
         highlightScale = (radius + highlightSize) / radius;
     } else {
@@ -276,18 +281,26 @@ void InputSystem::selectEntity(Entity *entity) {
     }
 
     if (previousEntity) {
-        entityManager->removeHighlightComponent(previousEntity);
+        entityManager->removeComponent<HighlightComponent>(previousEntity);
         context->selectedEntity = entity;
         if (entity) {
-            entityManager->addHighlightComponent(entity->id, new HighlightComponent(highlightScale, context->highlightProgram));
+            entityManager->addComponent(entity, new HighlightComponent(highlightScale, context->highlightProgram));
         }
     } else if (entity) {
-        auto highlight = entityManager->getHighlightComponent(entity);
+        auto highlight = entityManager->getComponent<HighlightComponent>(entity);
 
         if (!highlight) {
-            entityManager->addHighlightComponent(entity->id, new HighlightComponent(highlightScale, context->highlightProgram));
+            entityManager->addComponent(entity, new HighlightComponent(highlightScale, context->highlightProgram));
         }
     }
 
     context->selectedEntity = entity;
+}
+
+void InputSystem::framebufferSizeCallback(GLFWwindow *window, int width, int height) {
+    auto inputSystem = (InputSystem *) glfwGetWindowUserPointer(window);
+    auto context = inputSystem->context;
+    context->width = width;
+    context->height = height;
+    glViewport(0, 0, width, height);
 }

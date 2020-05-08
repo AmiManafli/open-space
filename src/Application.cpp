@@ -5,6 +5,7 @@
 #include <cg/terrain/PerlinNoise.h>
 #include <cg/IcoSphere.h>
 #include <cg/entities/components/OrbitComponent.h>
+#include <cg/skybox/SkyboxStar.h>
 #include "cg/Application.h"
 
 bool onUpdateTerrain(Terrain *terrain, TerrainSettings& settings) {
@@ -50,6 +51,11 @@ void Application::init() {
 	meshTextureShaderProgram->attachShader("./assets/shaders/meshTexture.frag", ShaderType::FragmentShader);
 	meshTextureShaderProgram->link();
 
+    starTextureShaderProgram = new ShaderProgram();
+    starTextureShaderProgram->attachShader("./assets/shaders/starTexture.vert", ShaderType::VertexShader);
+    starTextureShaderProgram->attachShader("./assets/shaders/starTexture.frag", ShaderType::FragmentShader);
+    starTextureShaderProgram->link();
+
     gridShaderProgram = new ShaderProgram();
     gridShaderProgram->attachShader("./assets/shaders/grid.vert", ShaderType::VertexShader);
     gridShaderProgram->attachShader("./assets/shaders/grid.frag", ShaderType::FragmentShader);
@@ -72,6 +78,16 @@ void Application::init() {
     meshTestLightShaderProgram->attachShader("./assets/shaders/meshTestLight.frag", ShaderType::FragmentShader);
     meshTestLightShaderProgram->link();
 
+    skyboxShaderProgram = new ShaderProgram();
+    skyboxShaderProgram->attachShader("./assets/shaders/skybox.vert", ShaderType::VertexShader);
+    skyboxShaderProgram->attachShader("./assets/shaders/skybox.frag", ShaderType::FragmentShader);
+    skyboxShaderProgram->link();
+
+    shaderProgram = new ShaderProgram();
+    shaderProgram->attachShader("./assets/shaders/skyboxStar.vert", ShaderType::VertexShader);
+    shaderProgram->attachShader("./assets/shaders/skyboxStar.frag", ShaderType::FragmentShader);
+    shaderProgram->link();
+
     createCameras();
     gravitySystem = new GravitySystem(entityManager, context->perspectiveCamera);
 
@@ -81,14 +97,7 @@ void Application::init() {
     gravitySystem->init();
     orbitSystem->init();
 
-    auto lightPosition = glm::vec3(0, 20, 20);
-    light = EntityBuilder::create()
-        ->withTransform(lightPosition)
-        ->withDirectionalLight(-lightPosition, {0.2f, 0.2f, 0.2f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f, 1.0f})
-        ->build(entityManager);
-    context->light = light;
-
-    createGrid(62, 62, false);
+    context->grid = createGrid(62, 62, false);
 
     auto ui = renderSystem->getUserInterface();
 
@@ -97,37 +106,68 @@ void Application::init() {
     auto sunVelocity = new VelocityComponent();
     sunVelocity->rotation = glm::vec3(0, -0.2, 0);
 	auto sun = EntityBuilder::create()
-		->withMesh(new IcoSphere(1.0, 3, glm::vec3(0.96), 11, meshTextureShaderProgram))
+		->withMesh(new IcoSphere(1.0, 3, glm::vec3(0.96), 11, starTextureShaderProgram))
 		->withTransform(0, 0, 0)
-		->withScale(20.0)
+        ->withPointLight(glm::vec3(0.2), glm::vec3(1.0), glm::vec3(1.0), 1.0, 0.07, 0.017)
+		->isSelectable()
+		->withScale(1.0)
 		->withMass(1000.0)
 		->withVelocity(sunVelocity)
 		->build(entityManager);
-	auto sunTransform = entityManager->getTransformComponent(sun);
+	auto sunTransform = entityManager->getComponent<TransformComponent>(sun);
 
-	auto planetScale = 2.0;
+    sunVelocity = new VelocityComponent();
+    sunVelocity->rotation = glm::vec3(0, -0.3, 0);
+    auto sun2 = EntityBuilder::create()
+            ->withMesh(new IcoSphere(1.0, 3, glm::vec3(0.96), 11, starTextureShaderProgram))
+            ->withTransform(7, 4, 0)
+            ->withPointLight(glm::vec3(0.2), glm::vec3(1.0), glm::vec3(1.0), 1.0, 0.07, 0.017)
+            ->isSelectable()
+            ->withScale(1.0)
+            ->withMass(1000.0)
+            ->withVelocity(sunVelocity)
+            ->build(entityManager);
+    auto sunTransform2 = entityManager->getComponent<TransformComponent>(sun2);
+
+	auto planetScale = 0.4;
 	auto planetVelocity = new VelocityComponent();
-	planetVelocity->rotation = glm::vec3(0, -0.1, 0);
+	planetVelocity->rotation = glm::vec3(0, -0.8, 0);
     auto planet1 = EntityBuilder::create()
-        ->withMesh(new IcoSphere(1.0, 3, color, 11, meshTextureShaderProgram))
+        ->withMesh(new IcoSphere(1.0, 2, color, 11, meshTextureShaderProgram))
         ->withTransform(0, 0, 0)
+        ->isSelectable()
         ->withMass(200)
         ->withScale(planetScale)
-        ->withOrbit(sunTransform, 40, 40, 0.1, 0.0)
+        ->withOrbit(sunTransform, 4.2, 4, 0.5, 0.0)
         ->withVelocity(planetVelocity)
         ->build(entityManager);
 
-    auto planetTransform = entityManager->getTransformComponent(planet1);
-    auto moonScale = 0.8;
+    auto planetTransform = entityManager->getComponent<TransformComponent>(planet1);
+    auto moonScale = 0.1;
     auto moonVelocity = new VelocityComponent();
-    moonVelocity->rotation = glm::vec3(0, -0.1, 0);
+    moonVelocity->rotation = glm::vec3(0, -3.2, 0);
     auto moon1 = EntityBuilder::create()
-            ->withMesh(new IcoSphere(1.0, 3, glm::vec3(0.6), 11, meshTextureShaderProgram))
+            ->withMesh(new IcoSphere(1.0, 1, glm::vec3(1.0), 11, meshTextureShaderProgram))
             ->withTransform(0, 0, 0)
+            ->isSelectable()
             ->withMass(200)
             ->withScale(moonScale)
-            ->withOrbit(planetTransform, 8, 8, 1.5, 0.0)
+            ->withOrbit(planetTransform, 1.1, 1.0, 1.4, 0.0)
             ->withVelocity(moonVelocity)
+            ->build(entityManager);
+
+    color = glm::vec3(0.886, 0.576, 1.0);
+    planetScale = 0.6;
+    planetVelocity = new VelocityComponent();
+    planetVelocity->rotation = glm::vec3(0, -0.9, 0);
+    auto planet2 = EntityBuilder::create()
+            ->withMesh(new IcoSphere(1.0, 2, color, 11, meshTextureShaderProgram))
+            ->withTransform(0, 0, 0)
+            ->isSelectable()
+            ->withMass(200)
+            ->withScale(planetScale)
+            ->withOrbit(sunTransform2, 5, 5, 0.8, 1.0)
+            ->withVelocity(planetVelocity)
             ->build(entityManager);
 
 //    auto terrainMesh = Terrain::generate(10, 10, meshWithLightShaderProgram, GL_TRIANGLES, NoiseType::OpenSimplex);
@@ -140,44 +180,43 @@ void Application::init() {
 //        ->withTransform(0, 1.01, 0)
 //        ->build(entityManager);
 
-//	auto airplane = EntityBuilder::create()
-//		->withMesh("./assets/models/airplaneUdemy.obj", meshTextureShaderProgram)
-//		->withTransform(0, 0, 0)
-//		->withOrbit(planetTransform, 12, 12, 1.9, 2.0)
-//		->build(entityManager);
-
-//    inputSystem->createSpaceshipControl(airplane, context->spaceshipCamera);
     inputSystem->createSpaceshipControl(nullptr, context->spaceshipCamera);
-
-//    auto nanoSuit = EntityBuilder::create()
-//        ->withMesh("./assets/models/nanosuit.obj", meshTextureShaderProgram)
-//        ->withTransform(0, 0, 0)
-//        ->withScale(0.3)
-//		->withVelocity(new VelocityComponent(glm::vec3(0, 0.5, 0), glm::vec3(0, 0, 0)))
-//        ->build(entityManager);
-
-  //  auto nanoSuit = EntityBuilder::create()
-  //      ->withMesh("./assets/models/nanosuit.obj", meshTextureShaderProgram)
-  //      ->withTransform(0, 0, 0)
-  //      ->withScale(0.3)
-		//->withVelocity(new VelocityComponent(glm::vec3(0, 0.5, 0), glm::vec3(0, 0, 0)))
-  //      ->build(entityManager);
-
-    //auto floor = EntityBuilder::create()
-    //    ->withMesh("./assets/models/plane.dae", meshWithLightShaderProgram)
-    //    ->withTransform(0, 0, 0)
-    //    ->withScale(30.0)
-    //    ->build(entityManager);
 }
 
 void Application::run() {
+    if (sky != nullptr) {
+        auto skyboxEntityManager = new EntityManager();
+        context->update();
+
+        glDisable(GL_CULL_FACE);
+        context->setActiveCamera(context->skyboxCamera);
+        auto camera = entityManager->getComponent<CameraComponent>(context->skyboxCamera);
+        sky->render(renderSystem, skyboxEntityManager, camera);
+
+        // Cleanup
+        delete skyboxEntityManager;
+        context->setActiveCamera(context->spaceshipCamera);
+        glViewport(0, 0, context->getWidth(), context->getHeight());
+        glEnable(GL_CULL_FACE);
+    }
+
     while (!context->shouldClose()) {
         context->update();
 
         // Update shader with light info
-        auto lightComponent = entityManager->getLightComponent(light->id);
-        auto lightTransform = entityManager->getTransformComponent(light->id);
-        lightComponent->setUniforms(meshTextureShaderProgram, lightTransform);
+        int index = 0;
+        std::vector<std::pair<LightComponent *, TransformComponent *>> lights;
+        for (auto& pair : entityManager->getComponents<LightComponent>()) {
+            // TODO: Take the MAX_LIGHTS closes to the camera
+            if (index++ >= MAX_LIGHTS) {
+                break;
+            }
+            auto entity = pair.first;
+            auto light = dynamic_cast<LightComponent *>(pair.second);
+            auto transform = entityManager->getComponent<TransformComponent>(entity);
+            lights.emplace_back(std::make_pair(light, transform));
+        }
+        setLightUniforms(meshTextureShaderProgram, lights);
 
         // Process systems
         gravitySystem->update();
@@ -192,12 +231,19 @@ void Application::createCameras() {
     auto target = glm::vec3(0, 0, 0);
 
     /// Spaceship camera
-    auto position = glm::vec3(2.3, 80.3, 60.0);
+    auto position = glm::vec3(0, 3, 10);
 
+    sky = new Skybox(10000, 100000, 20, "./assets/textures/skybox1", skyboxShaderProgram);
     context->spaceshipCamera = EntityBuilder::create()
         ->withTransform(position)
+        ->withMesh(sky)
         ->withCamera(CameraComponent::Mode::FirstPersonShip, CameraComponent::Type::Perspective, target, glm::normalize(-position), glm::vec3(0, 1, 0), context->getAspect())
         ->build(entityManager);
+
+    context->skyboxCamera = EntityBuilder::create()
+            ->withTransform(0, 0, 0)
+            ->withCamera(CameraComponent::Mode::CubeMap, CameraComponent::Type::CubeMapType, target, glm::normalize(-position), glm::vec3(0, 1, 0), 1)
+            ->build(entityManager);
 
     /// Perspective camera
     position = glm::vec3(2.3, 40.0, 80.0);
@@ -259,7 +305,37 @@ Entity* Application::createGrid(int width, int height, bool showYAxis) {
     }
 
     return EntityBuilder::create()
-        ->withTransform(0, 0, 0)
         ->withMesh(vertices, indices, textures, gridShaderProgram, GL_LINES)
         ->build(entityManager);
+}
+
+void Application::setLightUniforms(ShaderProgram *shaderProgram, std::vector<std::pair<LightComponent *, TransformComponent *>> lights) {
+    for (int i = 0; i < lights.size(); i++) {
+        auto light = lights[i].first;
+        auto transform = lights[i].second;
+        std::string name = "lights[" + std::to_string(i) + "]";
+        switch (light->type) {
+            case LightComponent::Direction:
+                shaderProgram->setUniform(name + ".type", light->type);
+                shaderProgram->setUniform(name + ".direction", light->direction);
+                shaderProgram->setUniform(name + ".ambient", light->ambient);
+                shaderProgram->setUniform(name + ".diffuse", light->diffuse);
+                shaderProgram->setUniform(name + ".specular", light->specular);
+                break;
+            case LightComponent::Point:
+                shaderProgram->setUniform(name + ".type", light->type);
+                shaderProgram->setUniform(name + ".position", transform->position);
+
+                shaderProgram->setUniform(name + ".ambient", light->ambient);
+                shaderProgram->setUniform(name + ".diffuse", light->diffuse);
+                shaderProgram->setUniform(name + ".specular", light->specular);
+
+                shaderProgram->setUniform(name + ".constant", light->constant);
+                shaderProgram->setUniform(name + ".linear", light->linear);
+                shaderProgram->setUniform(name + ".quadratic", light->quadratic);
+                break;
+            default:
+                throw std::runtime_error("Unsupported light type");
+        }
+    }
 }
