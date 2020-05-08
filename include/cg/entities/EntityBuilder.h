@@ -6,6 +6,8 @@
 #include <cg/entities/components/LightComponent.h>
 #include <cg/entities/components/MassComponent.h>
 #include <cg/entities/components/SelectableComponent.h>
+#include <cg/entities/components/CollisionComponent.h>
+
 
 class EntityBuilder {
 public:
@@ -45,7 +47,6 @@ public:
     EntityBuilder* withOrbit(OrbitComponent *component);
 
     EntityBuilder* withSphereCollision(float radius);
-
 
     EntityBuilder* isSelectable();
 
