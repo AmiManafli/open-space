@@ -6,6 +6,7 @@
 #include <cg/IcoSphere.h>
 #include <cg/entities/components/OrbitComponent.h>
 #include <cg/skybox/SkyboxStar.h>
+#include <cg/collision/BoundingSphere.h>
 #include "cg/Application.h"
 
 bool onUpdateTerrain(Terrain *terrain, TerrainSettings& settings) {
@@ -126,6 +127,7 @@ void Application::init() {
             ->withScale(1.0)
             ->withMass(1000.0)
             ->withVelocity(sunVelocity)
+            ->withSphereCollision(5.0f)
             ->build(entityManager);
     auto sunTransform2 = entityManager->getComponent<TransformComponent>(sun2);
 
