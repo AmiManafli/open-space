@@ -27,8 +27,7 @@ void SpaceshipControl::processKeyboard(Entity* camera, CameraComponent::Directio
     }
 
     if (direction == cameraComponent->Forward) {
-        velocityComponent->acceleration = cameraComponent->front * 2.0f;
-//        position += cameraComponent->front * velocity;
+        velocityComponent->acceleration = cameraComponent->front * 10.0f;
     } else if (direction == cameraComponent->Backward) {
         position -= cameraComponent->front * velocity;
     }

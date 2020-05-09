@@ -67,7 +67,7 @@ void InputSystem::update() {
     }
 
     if (!isDebug && isKeyPressed(GLFW_KEY_W)) {
-        printf("\nKey W was pressed and released, current acceleration = %s, velocity = %s\n", glm::to_string(velocityComponent->acceleration).c_str(), glm::to_string(velocityComponent->position).c_str());
+        velocityComponent->acceleration = glm::vec3(0.0, 0.0, 0.0);
     }
 
     if (!isDebug && isKeyDown(GLFW_KEY_Z)) {

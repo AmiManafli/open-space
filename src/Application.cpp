@@ -192,7 +192,6 @@ void Application::init() {
             ->withTransform(1, 0, 0)
             ->isSelectable()
             ->withScale(0.3)
-            ->withSphereCollision(2.0f)
             ->build(entityManager);
 
 //    auto terrainMesh = Terrain::generate(10, 10, meshWithLightShaderProgram, GL_TRIANGLES, NoiseType::OpenSimplex);
