@@ -89,9 +89,23 @@ void Application::init() {
     shaderProgram->attachShader("./assets/shaders/skyboxStar.frag", ShaderType::FragmentShader);
     shaderProgram->link();
 
-    createCameras();
-    gravitySystem = new GravitySystem(entityManager, context->perspectiveCamera);
+    sky = new Skybox(10000, 100000, 20, "./assets/textures/skybox1", skyboxShaderProgram);
+    auto playerPosition = glm::vec3(0, 10, 10);
+    context->player = EntityBuilder::create()
+            ->withTransform(playerPosition)
+            ->withVelocity(new VelocityComponent())
+            ->withMesh(sky)
+            ->withCamera(CameraComponent::Mode::FirstPersonShip, CameraComponent::Type::Perspective, glm::vec3(0, 0, 0), glm::normalize(-playerPosition), glm::vec3(0, 1, 0), context->getAspect())
+            ->build(entityManager);
+    context->setActiveCamera(context->player);
 
+    createCameras();
+    BoundingSphere playerBoundingSphere = BoundingSphere(0.01f, *entityManager->getComponent<TransformComponent>(context->player));
+
+    gravitySystem = new GravitySystem(entityManager, context->player);
+    collisionSystem = new CollisionSystem(entityManager, context->player, playerBoundingSphere);
+
+    collisionSystem->init();
     renderSystem->init();
     inputSystem->init();
     movementSystem->init();
@@ -108,7 +122,7 @@ void Application::init() {
     sunVelocity->rotation = glm::vec3(0, -0.2, 0);
 	auto sun = EntityBuilder::create()
 		->withMesh(new IcoSphere(1.0, 3, glm::vec3(0.96), 11, starTextureShaderProgram))
-		->withTransform(0, 0, 0)
+		->withTransform(50, 0, 0)
         ->withPointLight(glm::vec3(0.2), glm::vec3(1.0), glm::vec3(1.0), 1.0, 0.07, 0.017)
 		->isSelectable()
 		->withScale(1.0)
@@ -127,11 +141,11 @@ void Application::init() {
             ->withScale(1.0)
             ->withMass(1000.0)
             ->withVelocity(sunVelocity)
-            ->withSphereCollision(5.0f)
             ->build(entityManager);
     auto sunTransform2 = entityManager->getComponent<TransformComponent>(sun2);
 
-	auto planetScale = 0.4;
+
+    auto planetScale = 0.4;
 	auto planetVelocity = new VelocityComponent();
 	planetVelocity->rotation = glm::vec3(0, -0.8, 0);
     auto planet1 = EntityBuilder::create()
@@ -139,9 +153,10 @@ void Application::init() {
         ->withTransform(0, 0, 0)
         ->isSelectable()
         ->withMass(200)
-        ->withScale(planetScale)
-        ->withOrbit(sunTransform, 4.2, 4, 0.5, 0.0)
+        ->withScale(planetScale )
+        ->withOrbit(sunTransform, 4.2, 4, 0.0, 0.0)
         ->withVelocity(planetVelocity)
+        ->withSphereCollision(0.4f)
         ->build(entityManager);
 
     auto planetTransform = entityManager->getComponent<TransformComponent>(planet1);
@@ -172,6 +187,14 @@ void Application::init() {
             ->withVelocity(planetVelocity)
             ->build(entityManager);
 
+    auto airplane = EntityBuilder::create()
+            ->withMesh("./assets/models/airplaneUdemy.obj", meshTextureShaderProgram)
+            ->withTransform(1, 0, 0)
+            ->isSelectable()
+            ->withScale(0.3)
+            ->withSphereCollision(2.0f)
+            ->build(entityManager);
+
 //    auto terrainMesh = Terrain::generate(10, 10, meshWithLightShaderProgram, GL_TRIANGLES, NoiseType::OpenSimplex);
 //    terrainMesh->setupBuffers();
 //
@@ -182,7 +205,7 @@ void Application::init() {
 //        ->withTransform(0, 1.01, 0)
 //        ->build(entityManager);
 
-    inputSystem->createSpaceshipControl(nullptr, context->spaceshipCamera);
+    inputSystem->createSpaceshipControl(nullptr, context->player);
 }
 
 void Application::run() {
@@ -197,7 +220,7 @@ void Application::run() {
 
         // Cleanup
         delete skyboxEntityManager;
-        context->setActiveCamera(context->spaceshipCamera);
+        context->setActiveCamera(context->player);
         glViewport(0, 0, context->getWidth(), context->getHeight());
         glEnable(GL_CULL_FACE);
     }
@@ -225,6 +248,7 @@ void Application::run() {
         orbitSystem->update();
         inputSystem->update();
         movementSystem->update();
+        collisionSystem->update();
         renderSystem->update();
     }
 }
@@ -235,42 +259,42 @@ void Application::createCameras() {
     /// Spaceship camera
     auto position = glm::vec3(0, 3, 10);
 
-    sky = new Skybox(10000, 100000, 20, "./assets/textures/skybox1", skyboxShaderProgram);
-    context->spaceshipCamera = EntityBuilder::create()
-        ->withTransform(position)
-        ->withMesh(sky)
-        ->withCamera(CameraComponent::Mode::FirstPersonShip, CameraComponent::Type::Perspective, target, glm::normalize(-position), glm::vec3(0, 1, 0), context->getAspect())
-        ->build(entityManager);
+//    sky = new Skybox(10000, 100000, 20, "./assets/textures/skybox1", skyboxShaderProgram);
+//    context->spaceshipCamera = EntityBuilder::create()
+//        ->withTransform(position)
+//        ->withMesh(sky)
+//        ->withCamera(CameraComponent::Mode::FirstPersonShip, CameraComponent::Type::Perspective, target, glm::normalize(-position), glm::vec3(0, 1, 0), context->getAspect())
+//        ->build(entityManager);
 
     context->skyboxCamera = EntityBuilder::create()
             ->withTransform(0, 0, 0)
             ->withCamera(CameraComponent::Mode::CubeMap, CameraComponent::Type::CubeMapType, target, glm::normalize(-position), glm::vec3(0, 1, 0), 1)
             ->build(entityManager);
 
-    /// Perspective camera
-    position = glm::vec3(2.3, 40.0, 80.0);
-    context->perspectiveCamera = EntityBuilder::create()
-        ->withTransform(position)
-        ->withVelocity(new VelocityComponent())
-        ->withMass(1.0)
-        ->withCamera(CameraComponent::Mode::Free, CameraComponent::Type::Perspective, target, glm::normalize(-position), glm::vec3(0, 1, 0), context->getAspect())
-        ->build(entityManager);
+//    /// Perspective camera
+//    position = glm::vec3(2.3, 40.0, 80.0);
+//    context->perspectiveCamera = EntityBuilder::create()
+//        ->withTransform(position)
+//        ->withVelocity(new VelocityComponent())
+//        ->withMass(1.0)
+//        ->withCamera(CameraComponent::Mode::Free, CameraComponent::Type::Perspective, target, glm::normalize(-position), glm::vec3(0, 1, 0), context->getAspect())
+//        ->build(entityManager);
+//
+//    /// Top camera
+//    position = glm::vec3(0, 5, 0);
+//    context->topCamera = EntityBuilder::create()
+//        ->withTransform(position)
+//        ->withCamera(CameraComponent::Mode::Free, CameraComponent::Type::Orthographic, target, glm::normalize(-position), glm::vec3(0, 0, -1), context->getAspect())
+//        ->build(entityManager);
+//
+//    /// Side camera
+//    position = glm::vec3(0, 0, 5);
+//    context->sideCamera = EntityBuilder::create()
+//        ->withTransform(position)
+//        ->withCamera(CameraComponent::Mode::Free, CameraComponent::Type::Orthographic, target, glm::normalize(-position), glm::vec3(0, 1, 0), context->getAspect())
+//        ->build(entityManager);
 
-    /// Top camera
-    position = glm::vec3(0, 5, 0);
-    context->topCamera = EntityBuilder::create()
-        ->withTransform(position)
-        ->withCamera(CameraComponent::Mode::Free, CameraComponent::Type::Orthographic, target, glm::normalize(-position), glm::vec3(0, 0, -1), context->getAspect())
-        ->build(entityManager);
-
-    /// Side camera
-    position = glm::vec3(0, 0, 5);
-    context->sideCamera = EntityBuilder::create()
-        ->withTransform(position)
-        ->withCamera(CameraComponent::Mode::Free, CameraComponent::Type::Orthographic, target, glm::normalize(-position), glm::vec3(0, 1, 0), context->getAspect())
-        ->build(entityManager);
-
-    context->setActiveCamera(context->spaceshipCamera);
+//    context->setActiveCamera(context->spaceshipCamera);
 }
 
 Entity* Application::createGrid(int width, int height, bool showYAxis) {

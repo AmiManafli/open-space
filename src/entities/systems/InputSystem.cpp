@@ -47,8 +47,13 @@ void InputSystem::update() {
 
     auto camera = context->getCamera();
     auto cameraComponent = entityManager->getComponent<CameraComponent>(camera);
+    auto velocityComponent = entityManager->getComponent<VelocityComponent>(camera);
+    double accelStart = 0;
+
     if (!isDebug && isKeyDown(GLFW_KEY_W)) {
+
         if (cameraComponent->mode == CameraComponent::FirstPersonShip) {
+            accelStart = context->getTime();
             spaceshipControl->processKeyboard(camera, CameraComponent::Direction::Forward, deltaTime);
         } else {
             moveCamera(camera, CameraComponent::Direction::Forward, deltaTime);
@@ -59,6 +64,10 @@ void InputSystem::update() {
         } else {
             moveCamera(camera, CameraComponent::Direction::Backward, deltaTime);
         }
+    }
+
+    if (!isDebug && isKeyPressed(GLFW_KEY_W)) {
+        printf("\nKey W was pressed and released, current acceleration = %s, velocity = %s\n", glm::to_string(velocityComponent->acceleration).c_str(), glm::to_string(velocityComponent->position).c_str());
     }
 
     if (!isDebug && isKeyDown(GLFW_KEY_Z)) {

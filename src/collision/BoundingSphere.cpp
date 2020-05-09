@@ -10,11 +10,6 @@ BoundingSphere::BoundingSphere(float radius, TransformComponent &transformCompon
 
 bool BoundingSphere::intersects(BoundingSphere boundingSphere) {
     auto distance = glm::length(transformComponent.position - boundingSphere.getPosition());
-    if(distance <= boundingSphere.radius + this->radius) {
-        printf("Spheres intersected! Distance was = %f\n", distance);
-        return true;
-    }
-    printf("Spheres didn't intersect! Distance was = %f\n", distance);
-    return false;
+    return (distance <= boundingSphere.radius + this->radius);
 };
 

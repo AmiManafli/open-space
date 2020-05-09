@@ -16,6 +16,7 @@ private:
     TransformComponent* cameraTransform;
     TransformComponent* shaceshipTransform;
     CameraComponent* cameraComponent;
+    VelocityComponent* velocityComponent;
     EntityManager* entityManager;
 
 };
