@@ -25,9 +25,9 @@ void OrbitComponent::update(float semiMajorAxis, float semiMinorAxis, float spee
 glm::vec3 OrbitComponent::getPosition() {
     auto radius = calculateRadius(theta);
 
-    auto startPosition = glm::vec3(parentTransform->position.x + 2 * center, parentTransform->position.y, parentTransform->position.z);
+    auto position = glm::vec3(parentTransform->position.x + 2 * center, parentTransform->position.y, parentTransform->position.z);
 
-    return startPosition + glm::vec3(radius * cos(theta), 0, radius * sin(theta));
+    return position + glm::vec3(radius * cos(theta), 0, radius * sin(theta));
 }
 
 float OrbitComponent::calculateRadius(float theta) {

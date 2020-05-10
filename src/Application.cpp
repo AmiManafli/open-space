@@ -94,6 +94,7 @@ void Application::init()
                           ->withTransform(playerPosition)
                           ->withVelocity(new VelocityComponent())
                           ->withMesh(sky)
+                          ->withMass(10)
                           ->withCamera(CameraComponent::Mode::FirstPersonShip, CameraComponent::Type::Perspective, glm::vec3(0, 0, 0), glm::normalize(-playerPosition), glm::vec3(0, 1, 0), context->getAspect())
                           ->build(entityManager);
     context->setActiveCamera(context->player);
@@ -118,10 +119,11 @@ void Application::init()
     auto color = glm::vec3(0.576, 0.886, 1.0);
 
     auto galaxy = universe.getGalaxy(0, 0, 0);
-    auto solarSystems = galaxy.getSolarSystems(0, 0, 0);
-    universeEntityFactory->createEntities(solarSystems);
-    solarSystems = galaxy.getSolarSystems(1, 0, 0);
-    universeEntityFactory->createEntities(solarSystems);
+    for (int x = -2; x < 2; x++) {
+        for (int z = -2; z < 2; z++) {
+            universeEntityFactory->createEntities(galaxy.getSolarSystems(x, 0, z));
+        }
+    }
 
     inputSystem->createSpaceshipControl(nullptr, context->player);
 }
