@@ -48,6 +48,7 @@ Entity *UniverseEntityFactory::createEntities(TransformComponent *parent, Planet
             ->withMesh(new IcoSphere(1.0, 3, planet.color, 11, context.planetProgram))
             ->withSphereCollision(planet.radius)
             ->withScale(planet.radius)
+            ->withMass(10)
             ->isSelectable()
             ->build(&entityManager);
     return entity;

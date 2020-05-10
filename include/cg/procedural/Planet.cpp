@@ -7,7 +7,7 @@ Planet::Planet(std::vector<SeedType> seed, Star &star, SeedType index) : seed(se
     auto seedSequence = std::seed_seq(seed.begin(), seed.end());
     random = std::mt19937(seedSequence);
 
-    auto distance = 5.0 * star.radius * index;
+    auto distance = 5.0 * star.radius * (index + 1);
 
     position = glm::dvec3(distance, star.position.y, star.position.z);
     radius = star.radius * 0.1;
@@ -16,8 +16,6 @@ Planet::Planet(std::vector<SeedType> seed, Star &star, SeedType index) : seed(se
     auto g = limit(random(), 0.2, 1.0);
     auto b = limit(random(), 0.2, 1.0);
     color = glm::vec3(r, g, b);
-
-//    printf("Planet %d: %s\n", index, glm::to_string(position).c_str());
 
     // Orbit details
     semiMajorAxis = distance;
