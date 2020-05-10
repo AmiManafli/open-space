@@ -95,7 +95,6 @@ void Application::init() {
             ->withTransform(playerPosition)
             ->withVelocity(new VelocityComponent())
             ->withMesh(sky)
-            ->withMass(10)
             ->withCamera(CameraComponent::Mode::FirstPersonShip, CameraComponent::Type::Perspective, glm::vec3(0, 0, 0), glm::normalize(-playerPosition), glm::vec3(0, 1, 0), context->getAspect())
             ->build(entityManager);
     context->setActiveCamera(context->player);
@@ -127,7 +126,6 @@ void Application::init() {
         ->withPointLight(glm::vec3(0.2), glm::vec3(1.0), glm::vec3(1.0), 1.0, 0.07, 0.017)
 		->isSelectable()
 		->withScale(1.0)
-//		->withMass(1000.0)
 		->withVelocity(sunVelocity)
 		->build(entityManager);
 	auto sunTransform = entityManager->getComponent<TransformComponent>(sun);
@@ -140,7 +138,6 @@ void Application::init() {
             ->withPointLight(glm::vec3(0.2), glm::vec3(1.0), glm::vec3(1.0), 1.0, 0.07, 0.017)
             ->isSelectable()
             ->withScale(1.0)
-//            ->withMass(1000.0)
             ->withVelocity(sunVelocity)
             ->build(entityManager);
     auto sunTransform2 = entityManager->getComponent<TransformComponent>(sun2);
@@ -153,8 +150,7 @@ void Application::init() {
         ->withMesh(new IcoSphere(1.0, 2, color, 11, meshTextureShaderProgram))
         ->withTransform(0, 0, 0)
         ->isSelectable()
-//        ->withMass(200)
-        ->withScale(planetScale )
+        ->withScale(planetScale)
         ->withOrbit(sunTransform, 4.2, 4, 0.0, 0.0)
         ->withVelocity(planetVelocity)
         ->build(entityManager);
@@ -167,7 +163,6 @@ void Application::init() {
             ->withMesh(new IcoSphere(1.0, 1, glm::vec3(1.0), 11, meshTextureShaderProgram))
             ->withTransform(0, 0, 0)
             ->isSelectable()
-//            ->withMass(200)
             ->withScale(moonScale)
             ->withOrbit(planetTransform, 1.1, 1.0, 0.0, 0.0)
             ->withVelocity(moonVelocity)
@@ -181,7 +176,6 @@ void Application::init() {
             ->withMesh(new IcoSphere(1.0, 2, color, 11, meshTextureShaderProgram))
             ->withTransform(0, 0, 0)
             ->isSelectable()
-            ->withMass(200)
             ->withScale(planetScale)
             ->withOrbit(sunTransform2, 5, 5, 0.0, 1.0)
             ->withVelocity(planetVelocity)
