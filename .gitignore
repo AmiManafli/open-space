@@ -518,5 +518,6 @@ MigrationBackup/
 
 lib/assimp/*
 
-
 !/assets/models/**/*.obj
+
+imgui.json

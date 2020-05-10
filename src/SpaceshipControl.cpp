@@ -1,54 +1,66 @@
 #include "cg/SpaceshipControl.h"
 
-SpaceshipControl::SpaceshipControl(Entity* spaceship, Entity* camera, EntityManager* entityManager) {
+SpaceshipControl::SpaceshipControl(Entity *spaceship, Entity *camera, EntityManager *entityManager)
+{
     this->cameraTransform = entityManager->getComponent<TransformComponent>(camera);
     this->cameraComponent = entityManager->getComponent<CameraComponent>(camera);
     this->velocityComponent = entityManager->getComponent<VelocityComponent>(camera);
     this->entityManager = entityManager;
 }
 
-void SpaceshipControl::processMouseMovement(float offsetX, float offsetY) {    
+void SpaceshipControl::processMouseMovement(float offsetX, float offsetY)
+{
     offsetX *= cameraComponent->mouseSensitivity;
     offsetY *= cameraComponent->mouseSensitivity;
     cameraComponent->pitch = glm::clamp(cameraComponent->pitch + offsetY, -89.0f, 89.0f);
     cameraComponent->yaw -= offsetX;
 }
 
-void SpaceshipControl::processKeyboard(Entity* camera, CameraComponent::Direction direction, float deltaTime) {
+void SpaceshipControl::processKeyboard(Entity *camera, CameraComponent::Direction direction, float deltaTime)
+{
     auto position = cameraTransform->position;
-    float speed = cameraComponent->movementSpeed / 2;
+    float speed = cameraComponent->getSpeed() * deltaTime;
 
-
-
-    if(direction == cameraComponent->RollLeft) {
+    if (direction == cameraComponent->RollLeft)
+    {
         cameraComponent->roll -= deltaTime * 50.0f;
-    } else if (direction == cameraComponent->RollRight) {
+    }
+    else if (direction == cameraComponent->RollRight)
+    {
         cameraComponent->roll += deltaTime * 50.0f;
     }
 
-    if (direction == cameraComponent->Forward) {
-        velocityComponent->position = cameraComponent->front * speed;
-    } else if (direction == cameraComponent->Backward) {
-        velocityComponent->position = -cameraComponent->front * speed;
+    if (direction == cameraComponent->Forward)
+    {
+        velocityComponent->position += cameraComponent->front * speed;
+    }
+    else if (direction == cameraComponent->Backward)
+    {
+        velocityComponent->position -= cameraComponent->front * speed;
     }
 
-    if (direction == cameraComponent->Left) {
-        velocityComponent->position = -cameraComponent->right * speed;
-    } else if (direction == cameraComponent->Right) {
-        velocityComponent->position = cameraComponent->right * speed;
+    if (direction == cameraComponent->Left)
+    {
+        velocityComponent->position -= cameraComponent->right * speed;
+    }
+    else if (direction == cameraComponent->Right)
+    {
+        velocityComponent->position += cameraComponent->right * speed;
     }
 
-    if (direction == cameraComponent->Down) {
-        velocityComponent->position = -cameraComponent->up * speed;
-    } else if (direction == cameraComponent->Up) {
-        velocityComponent->position = cameraComponent->up * speed;
+    if (direction == cameraComponent->Down)
+    {
+        velocityComponent->position -= cameraComponent->up * speed;
     }
-
-    cameraTransform->position = position;
+    else if (direction == cameraComponent->Up)
+    {
+        velocityComponent->position += cameraComponent->up * speed;
+    }
 }
 
-void SpaceshipControl::processInput() {
-    glm::vec3 eulerAngles = { glm::radians(cameraComponent->pitch), glm::radians(cameraComponent->yaw), glm::radians(0.0) };
+void SpaceshipControl::processInput()
+{
+    glm::vec3 eulerAngles = {glm::radians(cameraComponent->pitch), glm::radians(cameraComponent->yaw), glm::radians(0.0)};
     glm::quat pitchYaw(eulerAngles);
 
     cameraComponent->front = pitchYaw * glm::vec3(0.0, 0.0, -1.0);

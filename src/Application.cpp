@@ -9,15 +9,19 @@
 #include <cg/collision/BoundingSphere.h>
 #include "cg/Application.h"
 
-bool onUpdateTerrain(Terrain *terrain, TerrainSettings& settings) {
+bool onUpdateTerrain(Terrain *terrain, TerrainSettings &settings)
+{
     bool success = terrain->update(settings);
 
     return success;
 }
 
-Application::Application(std::string title, int width, int height) {
+Application::Application(std::string title, int width, int height)
+{
     entityManager = new EntityManager();
     context = new GLContext(entityManager, title, width, height);
+
+    universeEntityFactory = new UniverseEntityFactory(*entityManager, universe, *context);
 
     renderSystem = new RenderSystem(entityManager, context);
     inputSystem = new InputSystem(entityManager, context);
@@ -25,78 +29,73 @@ Application::Application(std::string title, int width, int height) {
     orbitSystem = new OrbitSystem(entityManager, context);
 }
 
-Application::~Application() {
+Application::~Application()
+{
     delete inputSystem;
     delete renderSystem;
     delete movementSystem;
-
-    delete highlightShaderProgram;
-    delete gridShaderProgram;
-    delete meshShaderProgram;
-	delete meshTextureShaderProgram;
 
     delete context;
     delete entityManager;
 }
 
-void Application::init() {
+void Application::init()
+{
     context->init();
 
-    meshShaderProgram = new ShaderProgram();
-    meshShaderProgram->attachShader("./assets/shaders/mesh.vert", ShaderType::VertexShader);
-    meshShaderProgram->attachShader("./assets/shaders/mesh.frag", ShaderType::FragmentShader);
-    meshShaderProgram->link();
+    context->meshProgram = new ShaderProgram();
+    context->meshProgram->attachShader("./assets/shaders/mesh.vert", ShaderType::VertexShader);
+    context->meshProgram->attachShader("./assets/shaders/mesh.frag", ShaderType::FragmentShader);
+    context->meshProgram->link();
 
-	meshTextureShaderProgram = new ShaderProgram();
-	meshTextureShaderProgram->attachShader("./assets/shaders/meshTexture.vert", ShaderType::VertexShader);
-	meshTextureShaderProgram->attachShader("./assets/shaders/meshTexture.frag", ShaderType::FragmentShader);
-	meshTextureShaderProgram->link();
+    context->meshTextureProgram = new ShaderProgram();
+    context->meshTextureProgram->attachShader("./assets/shaders/meshTexture.vert", ShaderType::VertexShader);
+    context->meshTextureProgram->attachShader("./assets/shaders/meshTexture.frag", ShaderType::FragmentShader);
+    context->meshTextureProgram->link();
 
-    starTextureShaderProgram = new ShaderProgram();
-    starTextureShaderProgram->attachShader("./assets/shaders/starTexture.vert", ShaderType::VertexShader);
-    starTextureShaderProgram->attachShader("./assets/shaders/starTexture.frag", ShaderType::FragmentShader);
-    starTextureShaderProgram->link();
+    context->starProgram = new ShaderProgram();
+    context->starProgram->attachShader("./assets/shaders/starTexture.vert", ShaderType::VertexShader);
+    context->starProgram->attachShader("./assets/shaders/starTexture.frag", ShaderType::FragmentShader);
+    context->starProgram->link();
 
-    gridShaderProgram = new ShaderProgram();
-    gridShaderProgram->attachShader("./assets/shaders/grid.vert", ShaderType::VertexShader);
-    gridShaderProgram->attachShader("./assets/shaders/grid.frag", ShaderType::FragmentShader);
-    gridShaderProgram->link();
+    context->planetProgram = new ShaderProgram();
+    context->planetProgram->attachShader("./assets/shaders/planet.vert", ShaderType::VertexShader);
+    context->planetProgram->attachShader("./assets/shaders/planet.frag", ShaderType::FragmentShader);
+    context->planetProgram->link();
 
-    highlightShaderProgram = new ShaderProgram();
-    highlightShaderProgram->attachShader("./assets/shaders/mesh.vert", ShaderType::VertexShader);
-    highlightShaderProgram->attachShader("./assets/shaders/highlight.frag", ShaderType::FragmentShader);
-    highlightShaderProgram->link();
+    context->gridProgram = new ShaderProgram();
+    context->gridProgram->attachShader("./assets/shaders/grid.vert", ShaderType::VertexShader);
+    context->gridProgram->attachShader("./assets/shaders/grid.frag", ShaderType::FragmentShader);
+    context->gridProgram->link();
 
-    context->highlightProgram = highlightShaderProgram;
+    context->highlightProgram = new ShaderProgram();
+    context->highlightProgram->attachShader("./assets/shaders/highlight.vert", ShaderType::VertexShader);
+    context->highlightProgram->attachShader("./assets/shaders/highlight.frag", ShaderType::FragmentShader);
+    context->highlightProgram->link();
 
-    meshWithLightShaderProgram = new ShaderProgram();
-    meshWithLightShaderProgram->attachShader("./assets/shaders/meshWithLight.vert", ShaderType::VertexShader);
-    meshWithLightShaderProgram->attachShader("./assets/shaders/meshWithLight.frag", ShaderType::FragmentShader);
-    meshWithLightShaderProgram->link();
+    context->meshWithLightProgram = new ShaderProgram();
+    context->meshWithLightProgram->attachShader("./assets/shaders/meshWithLight.vert", ShaderType::VertexShader);
+    context->meshWithLightProgram->attachShader("./assets/shaders/meshWithLight.frag", ShaderType::FragmentShader);
+    context->meshWithLightProgram->link();
 
-    meshTestLightShaderProgram = new ShaderProgram();
-    meshTestLightShaderProgram->attachShader("./assets/shaders/mesh.vert", ShaderType::VertexShader);
-    meshTestLightShaderProgram->attachShader("./assets/shaders/meshTestLight.frag", ShaderType::FragmentShader);
-    meshTestLightShaderProgram->link();
+    context->meshTestLightProgram = new ShaderProgram();
+    context->meshTestLightProgram->attachShader("./assets/shaders/mesh.vert", ShaderType::VertexShader);
+    context->meshTestLightProgram->attachShader("./assets/shaders/meshTestLight.frag", ShaderType::FragmentShader);
+    context->meshTestLightProgram->link();
 
-    skyboxShaderProgram = new ShaderProgram();
-    skyboxShaderProgram->attachShader("./assets/shaders/skybox.vert", ShaderType::VertexShader);
-    skyboxShaderProgram->attachShader("./assets/shaders/skybox.frag", ShaderType::FragmentShader);
-    skyboxShaderProgram->link();
+    context->skyboxProgram = new ShaderProgram();
+    context->skyboxProgram->attachShader("./assets/shaders/skybox.vert", ShaderType::VertexShader);
+    context->skyboxProgram->attachShader("./assets/shaders/skybox.frag", ShaderType::FragmentShader);
+    context->skyboxProgram->link();
 
-    shaderProgram = new ShaderProgram();
-    shaderProgram->attachShader("./assets/shaders/skyboxStar.vert", ShaderType::VertexShader);
-    shaderProgram->attachShader("./assets/shaders/skyboxStar.frag", ShaderType::FragmentShader);
-    shaderProgram->link();
-
-    sky = new Skybox(10000, 100000, 20, "./assets/textures/skybox1", skyboxShaderProgram);
+    sky = new Skybox(10000, 100000, 20, "./assets/textures/skybox1", context->skyboxProgram);
     auto playerPosition = glm::vec3(0, 10, 10);
     context->player = EntityBuilder::create()
-            ->withTransform(playerPosition)
-            ->withVelocity(new VelocityComponent())
-            ->withMesh(sky)
-            ->withCamera(CameraComponent::Mode::FirstPersonShip, CameraComponent::Type::Perspective, glm::vec3(0, 0, 0), glm::normalize(-playerPosition), glm::vec3(0, 1, 0), context->getAspect())
-            ->build(entityManager);
+                          ->withTransform(playerPosition)
+                          ->withVelocity(new VelocityComponent())
+                          ->withMesh(sky)
+                          ->withCamera(CameraComponent::Mode::FirstPersonShip, CameraComponent::Type::Perspective, glm::vec3(0, 0, 0), glm::normalize(-playerPosition), glm::vec3(0, 1, 0), context->getAspect())
+                          ->build(entityManager);
     context->setActiveCamera(context->player);
 
     createCameras();
@@ -118,85 +117,19 @@ void Application::init() {
 
     auto color = glm::vec3(0.576, 0.886, 1.0);
 
-    auto sunVelocity = new VelocityComponent();
-    sunVelocity->rotation = glm::vec3(0, -0.2, 0);
-	auto sun = EntityBuilder::create()
-		->withMesh(new IcoSphere(1.0, 3, glm::vec3(0.96), 11, starTextureShaderProgram))
-		->withTransform(50, 0, 0)
-        ->withPointLight(glm::vec3(0.2), glm::vec3(1.0), glm::vec3(1.0), 1.0, 0.07, 0.017)
-		->isSelectable()
-		->withScale(1.0)
-		->withVelocity(sunVelocity)
-		->build(entityManager);
-	auto sunTransform = entityManager->getComponent<TransformComponent>(sun);
-
-    sunVelocity = new VelocityComponent();
-    sunVelocity->rotation = glm::vec3(0, -0.3, 0);
-    auto sun2 = EntityBuilder::create()
-            ->withMesh(new IcoSphere(1.0, 3, glm::vec3(0.96), 11, starTextureShaderProgram))
-            ->withTransform(7, 4, 0)
-            ->withPointLight(glm::vec3(0.2), glm::vec3(1.0), glm::vec3(1.0), 1.0, 0.07, 0.017)
-            ->isSelectable()
-            ->withScale(1.0)
-            ->withVelocity(sunVelocity)
-            ->build(entityManager);
-    auto sunTransform2 = entityManager->getComponent<TransformComponent>(sun2);
-
-
-    auto planetScale = 0.4;
-	auto planetVelocity = new VelocityComponent();
-//	planetVelocity->rotation = glm::vec3(0, -0.8, 0);
-    auto planet1 = EntityBuilder::create()
-        ->withMesh(new IcoSphere(1.0, 2, color, 11, meshTextureShaderProgram))
-        ->withTransform(0, 0, 0)
-        ->isSelectable()
-        ->withScale(planetScale)
-        ->withOrbit(sunTransform, 4.2, 4, 0.0, 0.0)
-        ->withVelocity(planetVelocity)
-        ->build(entityManager);
-
-    auto planetTransform = entityManager->getComponent<TransformComponent>(planet1);
-    auto moonScale = 0.1;
-    auto moonVelocity = new VelocityComponent();
-//    moonVelocity->rotation = glm::vec3(0, -3.2, 0);
-    auto moon1 = EntityBuilder::create()
-            ->withMesh(new IcoSphere(1.0, 1, glm::vec3(1.0), 11, meshTextureShaderProgram))
-            ->withTransform(0, 0, 0)
-            ->isSelectable()
-            ->withScale(moonScale)
-            ->withOrbit(planetTransform, 1.1, 1.0, 0.0, 0.0)
-            ->withVelocity(moonVelocity)
-            ->build(entityManager);
-
-    color = glm::vec3(0.886, 0.576, 1.0);
-    planetScale = 0.6;
-    planetVelocity = new VelocityComponent();
-//    planetVelocity->rotation = glm::vec3(0, -0.9, 0);
-    auto planet2 = EntityBuilder::create()
-            ->withMesh(new IcoSphere(1.0, 2, color, 11, meshTextureShaderProgram))
-            ->withTransform(0, 0, 0)
-            ->isSelectable()
-            ->withScale(planetScale)
-            ->withOrbit(sunTransform2, 5, 5, 0.0, 1.0)
-            ->withVelocity(planetVelocity)
-            ->withSphereCollision(planetScale)
-            ->build(entityManager);
-
-//    auto terrainMesh = Terrain::generate(10, 10, meshWithLightShaderProgram, GL_TRIANGLES, NoiseType::OpenSimplex);
-//    terrainMesh->setupBuffers();
-//
-//    ui->onUpdateTerrain(terrainMesh, onUpdateTerrain);
-//
-//    auto terrain = EntityBuilder::create()
-//        ->withMesh(terrainMesh)
-//        ->withTransform(0, 1.01, 0)
-//        ->build(entityManager);
+    auto galaxy = universe.getGalaxy(0, 0, 0);
+    auto solarSystems = galaxy.getSolarSystems(0, 0, 0);
+    universeEntityFactory->createEntities(solarSystems);
+    solarSystems = galaxy.getSolarSystems(1, 0, 0);
+    universeEntityFactory->createEntities(solarSystems);
 
     inputSystem->createSpaceshipControl(nullptr, context->player);
 }
 
-void Application::run() {
-    if (sky != nullptr) {
+void Application::run()
+{
+    if (sky != nullptr)
+    {
         auto skyboxEntityManager = new EntityManager();
         context->update();
 
@@ -212,15 +145,18 @@ void Application::run() {
         glEnable(GL_CULL_FACE);
     }
 
-    while (!context->shouldClose()) {
+    while (!context->shouldClose())
+    {
         context->update();
 
         // Update shader with light info
         int index = 0;
         std::vector<std::pair<LightComponent *, TransformComponent *>> lights;
-        for (auto& pair : entityManager->getComponents<LightComponent>()) {
+        for (auto &pair : entityManager->getComponents<LightComponent>())
+        {
             // TODO: Take the MAX_LIGHTS closes to the camera
-            if (index++ >= MAX_LIGHTS) {
+            if (index++ >= MAX_LIGHTS)
+            {
                 break;
             }
             auto entity = pair.first;
@@ -228,7 +164,7 @@ void Application::run() {
             auto transform = entityManager->getComponent<TransformComponent>(entity);
             lights.emplace_back(std::make_pair(light, transform));
         }
-        setLightUniforms(meshTextureShaderProgram, lights);
+        setLightUniforms(context->planetProgram, lights);
 
         // Process systems
         gravitySystem->update();
@@ -240,115 +176,91 @@ void Application::run() {
     }
 }
 
-void Application::createCameras() {
-    auto target = glm::vec3(0, 0, 0);
+void Application::createCameras()
+{
+    auto target = glm::vec3(50, 50, 50);
 
     /// Spaceship camera
-    auto position = glm::vec3(0, 3, 10);
-
-//    sky = new Skybox(10000, 100000, 20, "./assets/textures/skybox1", skyboxShaderProgram);
-//    context->spaceshipCamera = EntityBuilder::create()
-//        ->withTransform(position)
-//        ->withMesh(sky)
-//        ->withCamera(CameraComponent::Mode::FirstPersonShip, CameraComponent::Type::Perspective, target, glm::normalize(-position), glm::vec3(0, 1, 0), context->getAspect())
-//        ->build(entityManager);
+    auto position = glm::vec3(0, 200, 0);
 
     context->skyboxCamera = EntityBuilder::create()
-            ->withTransform(0, 0, 0)
-            ->withCamera(CameraComponent::Mode::CubeMap, CameraComponent::Type::CubeMapType, target, glm::normalize(-position), glm::vec3(0, 1, 0), 1)
-            ->build(entityManager);
-
-//    /// Perspective camera
-//    position = glm::vec3(2.3, 40.0, 80.0);
-//    context->perspectiveCamera = EntityBuilder::create()
-//        ->withTransform(position)
-//        ->withVelocity(new VelocityComponent())
-//        ->withMass(1.0)
-//        ->withCamera(CameraComponent::Mode::Free, CameraComponent::Type::Perspective, target, glm::normalize(-position), glm::vec3(0, 1, 0), context->getAspect())
-//        ->build(entityManager);
-//
-//    /// Top camera
-//    position = glm::vec3(0, 5, 0);
-//    context->topCamera = EntityBuilder::create()
-//        ->withTransform(position)
-//        ->withCamera(CameraComponent::Mode::Free, CameraComponent::Type::Orthographic, target, glm::normalize(-position), glm::vec3(0, 0, -1), context->getAspect())
-//        ->build(entityManager);
-//
-//    /// Side camera
-//    position = glm::vec3(0, 0, 5);
-//    context->sideCamera = EntityBuilder::create()
-//        ->withTransform(position)
-//        ->withCamera(CameraComponent::Mode::Free, CameraComponent::Type::Orthographic, target, glm::normalize(-position), glm::vec3(0, 1, 0), context->getAspect())
-//        ->build(entityManager);
-
-//    context->setActiveCamera(context->spaceshipCamera);
+                                ->withTransform(0, 0, 0)
+                                ->withCamera(CameraComponent::Mode::CubeMap, CameraComponent::Type::CubeMapType, target, glm::normalize(-position), glm::vec3(0, 1, 0), 1)
+                                ->build(entityManager);
 }
 
-Entity* Application::createGrid(int width, int height, bool showYAxis) {
+Entity *Application::createGrid(int width, int height, bool showYAxis)
+{
     int startX = width / 2;
     int startZ = height / 2;
     std::vector<MeshComponent::Vertex> vertices;
     std::vector<uint32_t> indices;
     std::vector<MeshComponent::Texture> textures;
     uint32_t index = 0;
-    for (int i = 0; i < width; i++) {
+    for (int i = 0; i < width; i++)
+    {
         float step = 1.0f;
-        auto start = MeshComponent::Vertex { step * glm::vec3(-startX + i, 0, -startZ) };
-        auto end = MeshComponent::Vertex { step * glm::vec3(-startX + i, 0, -startZ + height) };
+        auto start = MeshComponent::Vertex{step * glm::vec3(-startX + i, 0, -startZ)};
+        auto end = MeshComponent::Vertex{step * glm::vec3(-startX + i, 0, -startZ + height)};
         vertices.push_back(start);
         vertices.push_back(end);
         indices.push_back(index++);
         indices.push_back(index++);
     }
-    for (int i = 0; i < height; i++) {
+    for (int i = 0; i < height; i++)
+    {
         float step = 1.0f;
-        auto start = MeshComponent::Vertex { step * glm::vec3(-startX, 0, -startZ + i) };
-        auto end = MeshComponent::Vertex { step * glm::vec3(-startX + width, 0, -startZ + i) };
+        auto start = MeshComponent::Vertex{step * glm::vec3(-startX, 0, -startZ + i)};
+        auto end = MeshComponent::Vertex{step * glm::vec3(-startX + width, 0, -startZ + i)};
         vertices.push_back(start);
         vertices.push_back(end);
         indices.push_back(index++);
         indices.push_back(index++);
     }
 
-    if (showYAxis) {
-        vertices.push_back(MeshComponent::Vertex { glm::vec3(0, 0, 0) });
-        vertices.push_back(MeshComponent::Vertex { glm::vec3(0, 10, 0) });
+    if (showYAxis)
+    {
+        vertices.push_back(MeshComponent::Vertex{glm::vec3(0, 0, 0)});
+        vertices.push_back(MeshComponent::Vertex{glm::vec3(0, 10, 0)});
         indices.push_back(index++);
         indices.push_back(index++);
     }
 
     return EntityBuilder::create()
-        ->withMesh(vertices, indices, textures, gridShaderProgram, GL_LINES)
+        ->withMesh(vertices, indices, textures, context->gridProgram, GL_LINES)
         ->build(entityManager);
 }
 
-void Application::setLightUniforms(ShaderProgram *shaderProgram, std::vector<std::pair<LightComponent *, TransformComponent *>> lights) {
-    for (int i = 0; i < lights.size(); i++) {
+void Application::setLightUniforms(ShaderProgram *shaderProgram, std::vector<std::pair<LightComponent *, TransformComponent *>> lights)
+{
+    for (int i = 0; i < lights.size(); i++)
+    {
         auto light = lights[i].first;
         auto transform = lights[i].second;
         std::string name = "lights[" + std::to_string(i) + "]";
-        switch (light->type) {
-            case LightComponent::Direction:
-                shaderProgram->setUniform(name + ".type", light->type);
-                shaderProgram->setUniform(name + ".direction", light->direction);
-                shaderProgram->setUniform(name + ".ambient", light->ambient);
-                shaderProgram->setUniform(name + ".diffuse", light->diffuse);
-                shaderProgram->setUniform(name + ".specular", light->specular);
-                break;
-            case LightComponent::Point:
-                shaderProgram->setUniform(name + ".type", light->type);
-                shaderProgram->setUniform(name + ".position", transform->position);
+        switch (light->type)
+        {
+        case LightComponent::Direction:
+            shaderProgram->setUniform(name + ".type", light->type);
+            shaderProgram->setUniform(name + ".direction", light->direction);
+            shaderProgram->setUniform(name + ".ambient", light->ambient);
+            shaderProgram->setUniform(name + ".diffuse", light->diffuse);
+            shaderProgram->setUniform(name + ".specular", light->specular);
+            break;
+        case LightComponent::Point:
+            shaderProgram->setUniform(name + ".type", light->type);
+            shaderProgram->setUniform(name + ".position", transform->position);
 
-                shaderProgram->setUniform(name + ".ambient", light->ambient);
-                shaderProgram->setUniform(name + ".diffuse", light->diffuse);
-                shaderProgram->setUniform(name + ".specular", light->specular);
+            shaderProgram->setUniform(name + ".ambient", light->ambient);
+            shaderProgram->setUniform(name + ".diffuse", light->diffuse);
+            shaderProgram->setUniform(name + ".specular", light->specular);
 
-                shaderProgram->setUniform(name + ".constant", light->constant);
-                shaderProgram->setUniform(name + ".linear", light->linear);
-                shaderProgram->setUniform(name + ".quadratic", light->quadratic);
-                break;
-            default:
-                throw std::runtime_error("Unsupported light type");
+            shaderProgram->setUniform(name + ".constant", light->constant);
+            shaderProgram->setUniform(name + ".linear", light->linear);
+            shaderProgram->setUniform(name + ".quadratic", light->quadratic);
+            break;
+        default:
+            throw std::runtime_error("Unsupported light type");
         }
     }
 }

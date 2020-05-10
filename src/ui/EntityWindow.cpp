@@ -155,7 +155,7 @@ void EntityWindow::renderCameraComponent(CameraComponent *component) {
         ImGui::DragFloat("Roll", &component->roll, 0.1, -10000, 10000);
 
         ImGui::DragFloat("Mouse sensitivity", &component->mouseSensitivity, 0.1, -10000, 10000);
-        ImGui::DragFloat("Movement speed", &component->movementSpeed, 0.1, -10000, 10000);
+        ImGui::DragInt("Movement speed", reinterpret_cast<int *>(&component->movementSpeedTick), 1.0f, 0, 10000);
     }
 }
 
