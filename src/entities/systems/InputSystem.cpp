@@ -59,6 +59,8 @@ void InputSystem::update()
     auto cameraComponent = entityManager->getComponent<CameraComponent>(camera);
     auto velocityComponent = entityManager->getComponent<VelocityComponent>(camera);
 
+    velocityComponent->position = glm::vec3(0);
+
     if (!isDebug && isKeyDown(GLFW_KEY_W))
     {
         if (cameraComponent->mode == CameraComponent::FirstPersonShip)
@@ -82,18 +84,18 @@ void InputSystem::update()
         }
     }
 
-    if ((!isDebug && isKeyPressed(GLFW_KEY_W)) || (!isDebug && isKeyPressed(GLFW_KEY_S)))
-    {
-        velocityComponent->position = cameraComponent->front * 0.0f;
-    }
-    if ((!isDebug && isKeyPressed(GLFW_KEY_A)) || (!isDebug && isKeyPressed(GLFW_KEY_D)))
-    {
-        velocityComponent->position = cameraComponent->right * 0.0f;
-    }
-    if ((!isDebug && isKeyPressed(GLFW_KEY_Q)) || (!isDebug && isKeyPressed(GLFW_KEY_E)))
-    {
-        velocityComponent->position = cameraComponent->up * 0.0f;
-    }
+//    if ((!isDebug && isKeyPressed(GLFW_KEY_W)) || (!isDebug && isKeyPressed(GLFW_KEY_S)))
+//    {
+//        velocityComponent->position = cameraComponent->front * 0.0f;
+//    }
+//    if ((!isDebug && isKeyPressed(GLFW_KEY_A)) || (!isDebug && isKeyPressed(GLFW_KEY_D)))
+//    {
+//        velocityComponent->position = cameraComponent->right * 0.0f;
+//    }
+//    if ((!isDebug && isKeyPressed(GLFW_KEY_Q)) || (!isDebug && isKeyPressed(GLFW_KEY_E)))
+//    {
+//        velocityComponent->position = cameraComponent->up * 0.0f;
+//    }
 
     if (!isDebug && isKeyDown(GLFW_KEY_Z))
     {

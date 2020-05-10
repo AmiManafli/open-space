@@ -35,6 +35,7 @@ Entity *UniverseEntityFactory::createEntities(Star &star) {
             ->withMesh(new IcoSphere(1, 3, star.color, 11, context.starProgram))
             ->withScale(star.radius)
             ->withPointLight(glm::vec3(0.2), star.color, glm::vec3(1.0), 1.0, 0.0014, 0.000007)
+            ->withSphereCollision(star.radius)
             ->isSelectable()
             ->build(&entityManager);
     return entity;
@@ -45,6 +46,7 @@ Entity *UniverseEntityFactory::createEntities(TransformComponent *parent, Planet
             ->withTransform(planet.position)
             ->withOrbit(parent, planet.semiMajorAxis, planet.semiMinorAxis, planet.orbitSpeed, planet.orbitAngle)
             ->withMesh(new IcoSphere(1.0, 3, planet.color, 11, context.planetProgram))
+            ->withSphereCollision(planet.radius)
             ->withScale(planet.radius)
             ->isSelectable()
             ->build(&entityManager);

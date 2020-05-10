@@ -32,32 +32,30 @@ void SpaceshipControl::processKeyboard(Entity *camera, CameraComponent::Directio
 
     if (direction == cameraComponent->Forward)
     {
-        velocityComponent->position = cameraComponent->front * speed;
+        velocityComponent->position += cameraComponent->front * speed;
     }
     else if (direction == cameraComponent->Backward)
     {
-        velocityComponent->position = -cameraComponent->front * speed;
+        velocityComponent->position -= cameraComponent->front * speed;
     }
 
     if (direction == cameraComponent->Left)
     {
-        velocityComponent->position = -cameraComponent->right * speed;
+        velocityComponent->position -= cameraComponent->right * speed;
     }
     else if (direction == cameraComponent->Right)
     {
-        velocityComponent->position = cameraComponent->right * speed;
+        velocityComponent->position += cameraComponent->right * speed;
     }
 
     if (direction == cameraComponent->Down)
     {
-        velocityComponent->position = -cameraComponent->up * speed;
+        velocityComponent->position -= cameraComponent->up * speed;
     }
     else if (direction == cameraComponent->Up)
     {
-        velocityComponent->position = cameraComponent->up * speed;
+        velocityComponent->position += cameraComponent->up * speed;
     }
-
-    cameraTransform->position = position;
 }
 
 void SpaceshipControl::processInput()
