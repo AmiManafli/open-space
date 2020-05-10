@@ -95,12 +95,13 @@ void Application::init() {
             ->withTransform(playerPosition)
             ->withVelocity(new VelocityComponent())
             ->withMesh(sky)
+            ->withMass(10)
             ->withCamera(CameraComponent::Mode::FirstPersonShip, CameraComponent::Type::Perspective, glm::vec3(0, 0, 0), glm::normalize(-playerPosition), glm::vec3(0, 1, 0), context->getAspect())
             ->build(entityManager);
     context->setActiveCamera(context->player);
 
     createCameras();
-    BoundingSphere playerBoundingSphere = BoundingSphere(0.1f, *entityManager->getComponent<TransformComponent>(context->player));
+    BoundingSphere playerBoundingSphere = BoundingSphere(0.01f, *entityManager->getComponent<TransformComponent>(context->player));
 
     gravitySystem = new GravitySystem(entityManager, context->player);
     collisionSystem = new CollisionSystem(entityManager, context->player, playerBoundingSphere);
@@ -126,7 +127,7 @@ void Application::init() {
         ->withPointLight(glm::vec3(0.2), glm::vec3(1.0), glm::vec3(1.0), 1.0, 0.07, 0.017)
 		->isSelectable()
 		->withScale(1.0)
-		->withMass(1000.0)
+//		->withMass(1000.0)
 		->withVelocity(sunVelocity)
 		->build(entityManager);
 	auto sunTransform = entityManager->getComponent<TransformComponent>(sun);
@@ -139,7 +140,7 @@ void Application::init() {
             ->withPointLight(glm::vec3(0.2), glm::vec3(1.0), glm::vec3(1.0), 1.0, 0.07, 0.017)
             ->isSelectable()
             ->withScale(1.0)
-            ->withMass(1000.0)
+//            ->withMass(1000.0)
             ->withVelocity(sunVelocity)
             ->build(entityManager);
     auto sunTransform2 = entityManager->getComponent<TransformComponent>(sun2);
@@ -147,12 +148,12 @@ void Application::init() {
 
     auto planetScale = 0.4;
 	auto planetVelocity = new VelocityComponent();
-	planetVelocity->rotation = glm::vec3(0, -0.8, 0);
+//	planetVelocity->rotation = glm::vec3(0, -0.8, 0);
     auto planet1 = EntityBuilder::create()
         ->withMesh(new IcoSphere(1.0, 2, color, 11, meshTextureShaderProgram))
         ->withTransform(0, 0, 0)
         ->isSelectable()
-        ->withMass(200)
+//        ->withMass(200)
         ->withScale(planetScale )
         ->withOrbit(sunTransform, 4.2, 4, 0.0, 0.0)
         ->withVelocity(planetVelocity)
@@ -161,38 +162,30 @@ void Application::init() {
     auto planetTransform = entityManager->getComponent<TransformComponent>(planet1);
     auto moonScale = 0.1;
     auto moonVelocity = new VelocityComponent();
-    moonVelocity->rotation = glm::vec3(0, -3.2, 0);
+//    moonVelocity->rotation = glm::vec3(0, -3.2, 0);
     auto moon1 = EntityBuilder::create()
             ->withMesh(new IcoSphere(1.0, 1, glm::vec3(1.0), 11, meshTextureShaderProgram))
             ->withTransform(0, 0, 0)
             ->isSelectable()
-            ->withMass(200)
+//            ->withMass(200)
             ->withScale(moonScale)
-            ->withOrbit(planetTransform, 1.1, 1.0, 1.4, 0.0)
+            ->withOrbit(planetTransform, 1.1, 1.0, 0.0, 0.0)
             ->withVelocity(moonVelocity)
             ->build(entityManager);
 
     color = glm::vec3(0.886, 0.576, 1.0);
     planetScale = 0.6;
     planetVelocity = new VelocityComponent();
-    planetVelocity->rotation = glm::vec3(0, -0.9, 0);
+//    planetVelocity->rotation = glm::vec3(0, -0.9, 0);
     auto planet2 = EntityBuilder::create()
             ->withMesh(new IcoSphere(1.0, 2, color, 11, meshTextureShaderProgram))
             ->withTransform(0, 0, 0)
             ->isSelectable()
             ->withMass(200)
             ->withScale(planetScale)
-            ->withOrbit(sunTransform2, 5, 5, 0.8, 1.0)
+            ->withOrbit(sunTransform2, 5, 5, 0.0, 1.0)
             ->withVelocity(planetVelocity)
-            ->withSphereCollision(0.7f)
-            ->build(entityManager);
-
-    auto airplane = EntityBuilder::create()
-            ->withMesh("./assets/models/airplaneUdemy.obj", meshTextureShaderProgram)
-            ->withTransform(1, 0, 0)
-            ->isSelectable()
-            ->withScale(0.3)
-            ->withSphereCollision(2.0f)
+            ->withSphereCollision(planetScale)
             ->build(entityManager);
 
 //    auto terrainMesh = Terrain::generate(10, 10, meshWithLightShaderProgram, GL_TRIANGLES, NoiseType::OpenSimplex);

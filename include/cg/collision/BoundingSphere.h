@@ -8,6 +8,7 @@ public:
     BoundingSphere(float radius, TransformComponent &transformComponent);
     bool intersects(BoundingSphere boundingSphere);
     glm::vec3 getPosition() { return transformComponent.position; }
+    float getRadius() { return radius; }
 private:
     float radius;
     TransformComponent &transformComponent;
