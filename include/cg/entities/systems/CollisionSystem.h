@@ -1,7 +1,3 @@
-//
-// Created by amina on 5/8/2020.
-//
-
 #ifndef CG1_PROJECT_COLLISIONSYSTEM_H
 #define CG1_PROJECT_COLLISIONSYSTEM_H
 

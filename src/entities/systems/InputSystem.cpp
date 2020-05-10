@@ -48,11 +48,9 @@ void InputSystem::update() {
     auto camera = context->getCamera();
     auto cameraComponent = entityManager->getComponent<CameraComponent>(camera);
     auto velocityComponent = entityManager->getComponent<VelocityComponent>(camera);
-    double accelStart = 0;
 
     if (!isDebug && isKeyDown(GLFW_KEY_W)) {
         if (cameraComponent->mode == CameraComponent::FirstPersonShip) {
-            accelStart = context->getTime();
             spaceshipControl->processKeyboard(camera, CameraComponent::Direction::Forward, deltaTime);
         } else {
             moveCamera(camera, CameraComponent::Direction::Forward, deltaTime);

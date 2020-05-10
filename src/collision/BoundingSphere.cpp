@@ -1,7 +1,3 @@
-//
-// Created by amina on 5/8/2020.
-//
-
 #include "cg/collision/BoundingSphere.h"
 
 BoundingSphere::BoundingSphere(float radius, TransformComponent &transformComponent)

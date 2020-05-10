@@ -1,7 +1,3 @@
-//
-// Created by amina on 5/8/2020.
-//
-
 #include <cg/entities/components/CollisionComponent.h>
 #include "cg/entities/systems/CollisionSystem.h"
 
