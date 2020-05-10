@@ -15,11 +15,10 @@ void MovementSystem::update() {
         auto entity = pair.first;
         auto velocity = reinterpret_cast<VelocityComponent *>(pair.second);
         auto transform = entityManager->getComponent<TransformComponent>(entity);
-        auto mass = entityManager->getComponent<MassComponent>(entity);
 
 //add mass component and acceleration
         if (velocity && transform) {
-            velocity->position += velocity->acceleration * static_cast<float>(glm::pow(context->getDeltaTime(), 2)) / 2.0f;
+//            velocity->position += velocity->acceleration * static_cast<float>(glm::pow(context->getDeltaTime(), 2)) / 2.0f;
             auto translation = velocity->position;
             translation -= velocity->gravity;
             transform->move(translation * static_cast<float>(context->getDeltaTime()));

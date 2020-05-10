@@ -2,7 +2,6 @@
 
 VelocityComponent::VelocityComponent()
         : VelocityComponent(glm::vec3(0), glm::vec3(0), glm::vec3(0)) {
-    acceleration = glm::vec3(0.0, 0.0, 0.0);
 }
 
 VelocityComponent::VelocityComponent(glm::vec3 position)

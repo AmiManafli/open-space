@@ -26,10 +26,11 @@ void CollisionSystem::update() {
         if (foundCollision) {
             cameraComponent->movementSpeed = 0;
             auto getAwayVec = (transformComponent->position - entityCollisionComponent->boundingSphere.getPosition());
-            float getAwayVecLen = glm::length(getAwayVec) + 0.1;
+            float getAwayVecLen = glm::length(getAwayVec) + 0.01;
             getAwayVec = glm::normalize(getAwayVec) * getAwayVecLen;
 
             transformComponent->position = entityCollisionComponent->boundingSphere.getPosition() + getAwayVec;
+            cameraComponent->movementSpeed = 0.5;
             printf("Found collision with entity %d\n", entity->id);
         }
     }

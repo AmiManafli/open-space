@@ -100,7 +100,7 @@ void Application::init() {
     context->setActiveCamera(context->player);
 
     createCameras();
-    BoundingSphere playerBoundingSphere = BoundingSphere(0.01f, *entityManager->getComponent<TransformComponent>(context->player));
+    BoundingSphere playerBoundingSphere = BoundingSphere(0.1f, *entityManager->getComponent<TransformComponent>(context->player));
 
     gravitySystem = new GravitySystem(entityManager, context->player);
     collisionSystem = new CollisionSystem(entityManager, context->player, playerBoundingSphere);
@@ -156,7 +156,6 @@ void Application::init() {
         ->withScale(planetScale )
         ->withOrbit(sunTransform, 4.2, 4, 0.0, 0.0)
         ->withVelocity(planetVelocity)
-        ->withSphereCollision(0.4f)
         ->build(entityManager);
 
     auto planetTransform = entityManager->getComponent<TransformComponent>(planet1);
@@ -185,6 +184,7 @@ void Application::init() {
             ->withScale(planetScale)
             ->withOrbit(sunTransform2, 5, 5, 0.8, 1.0)
             ->withVelocity(planetVelocity)
+            ->withSphereCollision(0.7f)
             ->build(entityManager);
 
     auto airplane = EntityBuilder::create()

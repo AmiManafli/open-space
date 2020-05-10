@@ -51,7 +51,6 @@ void InputSystem::update() {
     double accelStart = 0;
 
     if (!isDebug && isKeyDown(GLFW_KEY_W)) {
-
         if (cameraComponent->mode == CameraComponent::FirstPersonShip) {
             accelStart = context->getTime();
             spaceshipControl->processKeyboard(camera, CameraComponent::Direction::Forward, deltaTime);
@@ -66,9 +65,16 @@ void InputSystem::update() {
         }
     }
 
-    if (!isDebug && isKeyPressed(GLFW_KEY_W)) {
-        printf("\nKey W was pressed and released, current acceleration = %s, velocity = %s\n", glm::to_string(velocityComponent->acceleration).c_str(), glm::to_string(velocityComponent->position).c_str());
+    if ((!isDebug && isKeyPressed(GLFW_KEY_W)) || (!isDebug && isKeyPressed(GLFW_KEY_S))) {
+        velocityComponent->position = cameraComponent->front * 0.0f;
     }
+    if ((!isDebug && isKeyPressed(GLFW_KEY_A)) || (!isDebug && isKeyPressed(GLFW_KEY_D))) {
+        velocityComponent->position = cameraComponent->right * 0.0f;
+    }
+    if ((!isDebug && isKeyPressed(GLFW_KEY_Q)) || (!isDebug && isKeyPressed(GLFW_KEY_E))) {
+        velocityComponent->position = cameraComponent->up * 0.0f;
+    }
+
 
     if (!isDebug && isKeyDown(GLFW_KEY_Z)) {
         spaceshipControl->processKeyboard(camera, CameraComponent::Direction::RollLeft, deltaTime);
@@ -192,8 +198,8 @@ void InputSystem::processMouseScroll(GLFWwindow *window, double xoffset, double 
     auto camera = context->getCamera();
     auto cameraComponent = inputSystem->entityManager->getComponent<CameraComponent>(camera);
 
-    auto speed = cameraComponent->movementSpeed + yoffset;
-    cameraComponent->movementSpeed = glm::clamp(speed, 0.0, speed);
+    auto speed = glm::clamp(cameraComponent->movementSpeed + yoffset/2, 0.0, 50.0);
+    cameraComponent->movementSpeed = speed;
     printf("Camera movement speed: %.1f\n", cameraComponent->movementSpeed);
 }
 

@@ -16,7 +16,7 @@ void SpaceshipControl::processMouseMovement(float offsetX, float offsetY) {
 
 void SpaceshipControl::processKeyboard(Entity* camera, CameraComponent::Direction direction, float deltaTime) {
     auto position = cameraTransform->position;
-    float velocity = cameraComponent->movementSpeed * deltaTime;
+    float speed = cameraComponent->movementSpeed / 2;
 
 
 
@@ -27,22 +27,21 @@ void SpaceshipControl::processKeyboard(Entity* camera, CameraComponent::Directio
     }
 
     if (direction == cameraComponent->Forward) {
-        velocityComponent->acceleration = cameraComponent->front * 2.0f;
-//        position += cameraComponent->front * velocity;
+        velocityComponent->position = cameraComponent->front * speed;
     } else if (direction == cameraComponent->Backward) {
-        position -= cameraComponent->front * velocity;
+        velocityComponent->position = -cameraComponent->front * speed;
     }
 
     if (direction == cameraComponent->Left) {
-        position -= cameraComponent->right * velocity;
+        velocityComponent->position = -cameraComponent->right * speed;
     } else if (direction == cameraComponent->Right) {
-        position += cameraComponent->right * velocity;
+        velocityComponent->position = cameraComponent->right * speed;
     }
 
     if (direction == cameraComponent->Down) {
-        position -= cameraComponent->up * velocity;
+        velocityComponent->position = -cameraComponent->up * speed;
     } else if (direction == cameraComponent->Up) {
-        position += cameraComponent->up * velocity;
+        velocityComponent->position = cameraComponent->up * speed;
     }
 
     cameraTransform->position = position;
