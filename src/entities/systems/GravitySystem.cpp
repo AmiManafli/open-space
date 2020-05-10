@@ -15,6 +15,8 @@ void GravitySystem::init() {
 void GravitySystem::update() {
     auto totalForce = glm::vec3(0);
 
+    if (!objectMass) return;
+
     for (auto& pair : entityManager->getComponents<MassComponent>()) {
         auto entity = pair.first;
         if (entity->id == object->id) continue;

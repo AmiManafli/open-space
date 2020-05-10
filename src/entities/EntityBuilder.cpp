@@ -1,3 +1,5 @@
+#include <cg/collision/BoundingSphere.h>
+#include <cg/entities/components/CollisionComponent.h>
 #include "cg/entities/EntityBuilder.h"
 
 
@@ -36,6 +38,10 @@ Entity *EntityBuilder::build(EntityManager *entityManager) {
 
     if (selectableComponent != nullptr) {
         entityManager->addComponent<SelectableComponent>(entity, selectableComponent);
+    }
+
+    if (collisionComponent != nullptr) {
+        entityManager->addComponent<CollisionComponent>(entity, collisionComponent);
     }
 
     return entity;
@@ -170,5 +176,14 @@ EntityBuilder* EntityBuilder::isSelectable() {
         throw std::runtime_error("entity is already selectable");
     }
     selectableComponent = new SelectableComponent();
+    return this;
+}
+
+EntityBuilder *EntityBuilder::withSphereCollision(float radius) {
+    if(transformComponent == nullptr) {
+        throw std::runtime_error("need a position to create a bounding sphere");
+    }
+    BoundingSphere boundingSphere = BoundingSphere(radius, *transformComponent);
+    collisionComponent = new CollisionComponent(CollisionComponent::Sphere, boundingSphere);
     return this;
 }

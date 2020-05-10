@@ -6,6 +6,8 @@
 #include <cg/entities/components/LightComponent.h>
 #include <cg/entities/components/MassComponent.h>
 #include <cg/entities/components/SelectableComponent.h>
+#include <cg/entities/components/CollisionComponent.h>
+
 
 class EntityBuilder {
 public:
@@ -44,6 +46,8 @@ public:
     EntityBuilder* withOrbit(TransformComponent *parentTransform, double semiMajorAxis, double semiMinorAxis, double speed, double startTheta);
     EntityBuilder* withOrbit(OrbitComponent *component);
 
+    EntityBuilder* withSphereCollision(float radius);
+
     EntityBuilder* isSelectable();
 
 private:
@@ -56,6 +60,7 @@ private:
     MassComponent *massComponent = nullptr;
     OrbitComponent *orbitComponent = nullptr;
     SelectableComponent *selectableComponent = nullptr;
+    CollisionComponent *collisionComponent = nullptr;
 };
 
 #endif //CG1_PROJECT_ENTITYBUILDER_H

@@ -9,6 +9,7 @@
 #include <cg/entities/systems/MovementSystem.h>
 #include <cg/entities/systems/GravitySystem.h>
 #include <cg/entities/systems/OrbitSystem.h>
+#include <cg/entities/systems/CollisionSystem.h>
 
 
 class Application {
@@ -44,6 +45,7 @@ private:
     MovementSystem *movementSystem;
     GravitySystem *gravitySystem;
     OrbitSystem *orbitSystem;
+    CollisionSystem *collisionSystem;
 
     std::vector<glm::vec3> instanceTransformations;
 

@@ -53,6 +53,7 @@ void EntityWindow::render() {
     renderMeshComponents(meshComponents);
     renderLightComponent(entityManager->getComponent<LightComponent>(entity));
     renderHighlightComponent(entityManager->getComponent<HighlightComponent>(entity));
+    renderCollisionComponent(entityManager->getComponent<CollisionComponent>(entity));
 
     ImGui::End();
 }
@@ -220,6 +221,20 @@ void EntityWindow::renderHighlightComponent(HighlightComponent *component) {
 
     if (ImGui::CollapsingHeader("Highlight Component")) {
         ImGui::DragFloat("Size", &component->size, 0.1, 0, 100);
+    }
+}
+
+void EntityWindow::renderCollisionComponent(CollisionComponent *component) {
+    if (!component) return;
+
+    if (ImGui::CollapsingHeader("Collision Component")) {
+        std::string type;
+        if (component->type == CollisionComponent::Sphere) {
+            type = "Sphere";
+        } else if (component->type == CollisionComponent::Box) {
+            type = "Box";
+        }
+        ImGui::Text("Collision Type: %s", type.c_str());
     }
 }
 

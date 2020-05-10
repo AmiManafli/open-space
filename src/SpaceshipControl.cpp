@@ -3,19 +3,22 @@
 SpaceshipControl::SpaceshipControl(Entity* spaceship, Entity* camera, EntityManager* entityManager) {
     this->cameraTransform = entityManager->getComponent<TransformComponent>(camera);
     this->cameraComponent = entityManager->getComponent<CameraComponent>(camera);
+    this->velocityComponent = entityManager->getComponent<VelocityComponent>(camera);
     this->entityManager = entityManager;
 }
 
 void SpaceshipControl::processMouseMovement(float offsetX, float offsetY) {    
     offsetX *= cameraComponent->mouseSensitivity;
     offsetY *= cameraComponent->mouseSensitivity;
-    cameraComponent->pitch += offsetY;
+    cameraComponent->pitch = glm::clamp(cameraComponent->pitch + offsetY, -89.0f, 89.0f);
     cameraComponent->yaw -= offsetX;
 }
 
 void SpaceshipControl::processKeyboard(Entity* camera, CameraComponent::Direction direction, float deltaTime) {
     auto position = cameraTransform->position;
-    float velocity = cameraComponent->movementSpeed * deltaTime;
+    float speed = cameraComponent->movementSpeed / 2;
+
+
 
     if(direction == cameraComponent->RollLeft) {
         cameraComponent->roll -= deltaTime * 50.0f;
@@ -24,21 +27,21 @@ void SpaceshipControl::processKeyboard(Entity* camera, CameraComponent::Directio
     }
 
     if (direction == cameraComponent->Forward) {
-        position += cameraComponent->front * velocity;
+        velocityComponent->position = cameraComponent->front * speed;
     } else if (direction == cameraComponent->Backward) {
-        position -= cameraComponent->front * velocity;
+        velocityComponent->position = -cameraComponent->front * speed;
     }
 
     if (direction == cameraComponent->Left) {
-        position -= cameraComponent->right * velocity;
+        velocityComponent->position = -cameraComponent->right * speed;
     } else if (direction == cameraComponent->Right) {
-        position += cameraComponent->right * velocity;
+        velocityComponent->position = cameraComponent->right * speed;
     }
 
     if (direction == cameraComponent->Down) {
-        position -= cameraComponent->up * velocity;
+        velocityComponent->position = -cameraComponent->up * speed;
     } else if (direction == cameraComponent->Up) {
-        position += cameraComponent->up * velocity;
+        velocityComponent->position = cameraComponent->up * speed;
     }
 
     cameraTransform->position = position;

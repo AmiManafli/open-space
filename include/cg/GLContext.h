@@ -25,7 +25,7 @@ public:
 
     double getDeltaTime() { return deltaTime; }
     double getFrameTime() { return timePerFrame; }
-
+    double getTime() { return glfwGetTime(); }
     void init();
 
     bool shouldClose();

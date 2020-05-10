@@ -2,6 +2,7 @@
 #define CG1_PROJECT_ENTITYWINDOW_H
 
 #include <cg/GLContext.h>
+#include <cg/entities/components/CollisionComponent.h>
 
 class EntityWindow {
 public:
@@ -31,6 +32,7 @@ private:
     void renderMeshComponents(std::vector<MeshComponent *> components);
     void renderLightComponent(LightComponent *component);
     void renderHighlightComponent(HighlightComponent *component);
+    void renderCollisionComponent(CollisionComponent *component);
 };
 
 
