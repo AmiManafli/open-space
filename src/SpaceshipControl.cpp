@@ -19,9 +19,9 @@ void SpaceshipControl::processKeyboard(Entity *camera, CameraComponent::Directio
     float speed = cameraComponent->getSpeed() * deltaTime;
 
     if (direction == cameraComponent->RollLeft) {
-        cameraComponent->roll -= deltaTime * 50.0f;
-    } else if (direction == cameraComponent->RollRight) {
         cameraComponent->roll += deltaTime * 50.0f;
+    } else if (direction == cameraComponent->RollRight) {
+        cameraComponent->roll -= deltaTime * 50.0f;
     }
 
     if (direction == cameraComponent->Forward) {
@@ -58,13 +58,22 @@ void SpaceshipControl::processInput() {
 
     auto yawRad = glm::radians(cameraComponent->yaw);
     auto pitchRad = glm::radians(cameraComponent->pitch);
+    auto rollRad = glm::radians(cameraComponent->roll);
 
     glm::vec3 direction;
     direction.x = glm::cos(yawRad) * glm::cos(pitchRad);
     direction.y = glm::sin(pitchRad);
     direction.z = glm::sin(yawRad) * glm::cos(pitchRad);
 
+    glm::vec3 newWorldUp;
+    newWorldUp.x = glm::cos(rollRad + PI / 2.0);
+    newWorldUp.y = glm::sin(rollRad + PI / 2.0);
+    newWorldUp.z = 0;
+    cameraComponent->worldUp = newWorldUp;
+
     cameraComponent->front = glm::normalize(direction);
-    cameraComponent->right = glm::normalize(glm::cross(cameraComponent->front, cameraComponent->worldUp));
+    cameraComponent->right = glm::normalize(glm::cross(cameraComponent->front, newWorldUp));
     cameraComponent->up = glm::normalize(glm::cross(cameraComponent->right, cameraComponent->front));
+
+    printf("World: %s\n   Up: %s\nRight: %s\n\n", glm::to_string(cameraComponent->worldUp).c_str(), glm::to_string(cameraComponent->up).c_str(), glm::to_string(cameraComponent->right).c_str());
 }
