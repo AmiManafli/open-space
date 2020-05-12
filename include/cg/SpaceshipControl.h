@@ -10,7 +10,7 @@ public:
 
     void processMouseMovement(float offsetX, float offsetY);
     void processKeyboard(Entity* camera, CameraComponent::Direction direction, float deltaTime);
-    void processInput();
+    void processInput(float deltaTime);
 
 private:
     TransformComponent* cameraTransform;
@@ -19,5 +19,6 @@ private:
     VelocityComponent* velocityComponent;
     EntityManager* entityManager;
 
+    glm::vec3 velocity;
 };
 

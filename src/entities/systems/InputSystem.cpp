@@ -49,8 +49,6 @@ void InputSystem::update() {
     auto cameraComponent = entityManager->getComponent<CameraComponent>(camera);
     auto velocityComponent = entityManager->getComponent<VelocityComponent>(camera);
 
-    velocityComponent->velocity = glm::vec3(0);
-
     if (!isDebug && isKeyDown(GLFW_KEY_W)) {
         if (cameraComponent->mode == CameraComponent::FirstPersonShip) {
             spaceshipControl->processKeyboard(camera, CameraComponent::Direction::Forward, deltaTime);
@@ -130,7 +128,7 @@ void InputSystem::update() {
         }
     }
 
-    spaceshipControl->processInput();
+    spaceshipControl->processInput(deltaTime);
 }
 
 bool InputSystem::isKeyDown(int key) {
