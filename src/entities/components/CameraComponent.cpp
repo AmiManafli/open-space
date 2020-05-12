@@ -1,6 +1,7 @@
 #include "cg/entities/components/CameraComponent.h"
 
-CameraComponent::CameraComponent(CameraComponent::Mode mode, CameraComponent::Type type, glm::vec3 target, glm::vec3 front, glm::vec3 up, TransformComponent *positionComponent)
+CameraComponent::CameraComponent(CameraComponent::Mode mode, CameraComponent::Type type, glm::vec3 target,
+                                 glm::vec3 front, glm::vec3 up, TransformComponent *positionComponent)
         : mode(mode), type(type), target(target), zoom(1.0f), mouseSensitivity(0.1f), movementSpeedTick(30) {
     // Initialize vectors
     this->worldUp = glm::normalize(up);
@@ -9,13 +10,12 @@ CameraComponent::CameraComponent(CameraComponent::Mode mode, CameraComponent::Ty
     this->up = glm::normalize(glm::cross(this->right, this->front));
 
     auto position = positionComponent->position;
-    if(mode == FirstPersonShip) {
-        yaw = glm::degrees(glm::atan((position.x - target.x) / (position.z - target.z)));   
-    }
-    else {
+    if (mode == FirstPersonShip) {
+        yaw = glm::degrees(glm::atan((position.x - target.x) / (position.z - target.z)));
+    } else {
         yaw = 180.0f + glm::degrees(glm::atan((position.z - target.z) / (position.x - target.x)));
     }
-    
+
     if (isnan(yaw)) {
         yaw = 0.0f;
     }
@@ -45,7 +45,8 @@ glm::mat4 CameraComponent::getView(TransformComponent *positionComponent) {
 glm::mat4 CameraComponent::getProjection(float aspectRatio) {
     if (type == Orthographic) {
         auto orthoZoom = zoom;
-        return glm::ortho(-aspectRatio * orthoZoom, aspectRatio * orthoZoom, -1.0f * orthoZoom, 1.0f * orthoZoom, -1000.0f, 100.0f);
+        return glm::ortho(-aspectRatio * orthoZoom, aspectRatio * orthoZoom, -1.0f * orthoZoom, 1.0f * orthoZoom,
+                          -1000.0f, 100.0f);
     } else if (type == Perspective) {
         auto fov = 45.0f / zoom;
         return glm::perspective(glm::radians(fov), aspectRatio, 0.01f, 10000000.0f);
@@ -56,7 +57,8 @@ glm::mat4 CameraComponent::getProjection(float aspectRatio) {
     }
 }
 
-void CameraComponent::processKeyboard(CameraComponent::Direction direction, float deltaTime, TransformComponent *transformComponent) {
+void CameraComponent::processKeyboard(CameraComponent::Direction direction, float deltaTime,
+                                      TransformComponent *transformComponent) {
     auto position = transformComponent->position;
     float velocity = movementSpeedTick * deltaTime;
     if (direction == Forward) {

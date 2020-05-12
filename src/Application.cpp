@@ -9,15 +9,13 @@
 #include <cg/collision/BoundingSphere.h>
 #include "cg/Application.h"
 
-bool onUpdateTerrain(Terrain *terrain, TerrainSettings &settings)
-{
+bool onUpdateTerrain(Terrain *terrain, TerrainSettings &settings) {
     bool success = terrain->update(settings);
 
     return success;
 }
 
-Application::Application(std::string title, int width, int height)
-{
+Application::Application(std::string title, int width, int height) {
     entityManager = new EntityManager();
     context = new GLContext(entityManager, title, width, height);
 
@@ -29,8 +27,7 @@ Application::Application(std::string title, int width, int height)
     orbitSystem = new OrbitSystem(entityManager, context);
 }
 
-Application::~Application()
-{
+Application::~Application() {
     delete inputSystem;
     delete renderSystem;
     delete movementSystem;
@@ -39,8 +36,7 @@ Application::~Application()
     delete entityManager;
 }
 
-void Application::init()
-{
+void Application::init() {
     context->init();
 
     context->meshProgram = new ShaderProgram();
@@ -91,16 +87,18 @@ void Application::init()
     sky = new Skybox(10000, 100000, 20, "./assets/textures/skybox1", context->skyboxProgram);
     auto playerPosition = glm::vec3(100, 50, 250);
     context->player = EntityBuilder::create()
-                          ->withTransform(playerPosition)
-                          ->withVelocity(new VelocityComponent())
-                          ->withMesh(sky)
-                          ->withMass(10)
-                          ->withCamera(CameraComponent::Mode::FirstPersonShip, CameraComponent::Type::Perspective, glm::vec3(0, 0, 0), glm::normalize(-playerPosition), glm::vec3(0, 1, 0), context->getAspect())
-                          ->build(entityManager);
+            ->withTransform(playerPosition)
+            ->withVelocity(new VelocityComponent())
+            ->withMesh(sky)
+            ->withMass(10)
+            ->withCamera(CameraComponent::Mode::FirstPersonShip, CameraComponent::Type::Perspective, glm::vec3(0, 0, 0),
+                         glm::normalize(-playerPosition), glm::vec3(0, 1, 0), context->getAspect())
+            ->build(entityManager);
     context->setActiveCamera(context->player);
 
     createCameras();
-    BoundingSphere playerBoundingSphere = BoundingSphere(0.01f, *entityManager->getComponent<TransformComponent>(context->player));
+    BoundingSphere playerBoundingSphere = BoundingSphere(0.01f, *entityManager->getComponent<TransformComponent>(
+            context->player));
 
     gravitySystem = new GravitySystem(entityManager, context->player);
     collisionSystem = new CollisionSystem(entityManager, context->player, playerBoundingSphere);
@@ -126,7 +124,7 @@ void Application::init()
 //    }
     auto position = glm::vec3(0);
     auto planetRadius = 100;
-    Entity* sun = EntityBuilder::create()
+    Entity *sun = EntityBuilder::create()
             ->withTransform(glm::vec3(110, 0, 0))
             ->withMesh(new IcoSphere(1.0, 3, glm::vec3(1), 11, context->planetProgram))
             ->withSphereCollision(planetRadius)
@@ -135,22 +133,20 @@ void Application::init()
             ->withScale(10)
             ->isSelectable()
             ->build(entityManager);
-    Entity* entity = EntityBuilder::create()
+    Entity *entity = EntityBuilder::create()
             ->withTransform(position)
             ->withMesh(new IcoSphere(1.0, 4, glm::vec3(0.2, 0.2, 0.8), 11, context->planetProgram))
             ->withSphereCollision(planetRadius)
             ->withScale(planetRadius)
-            ->withMass(10)
+            ->withMass(800)
             ->isSelectable()
             ->build(entityManager);
 
     inputSystem->createSpaceshipControl(nullptr, context->player);
 }
 
-void Application::run()
-{
-    if (sky != nullptr)
-    {
+void Application::run() {
+    if (sky != nullptr) {
         auto skyboxEntityManager = new EntityManager();
         context->update();
 
@@ -166,18 +162,15 @@ void Application::run()
         glEnable(GL_CULL_FACE);
     }
 
-    while (!context->shouldClose())
-    {
+    while (!context->shouldClose()) {
         context->update();
 
         // Update shader with light info
         int index = 0;
         std::vector<std::pair<LightComponent *, TransformComponent *>> lights;
-        for (auto &pair : entityManager->getComponents<LightComponent>())
-        {
+        for (auto &pair : entityManager->getComponents<LightComponent>()) {
             // TODO: Take the MAX_LIGHTS closes to the camera
-            if (index++ >= MAX_LIGHTS)
-            {
+            if (index++ >= MAX_LIGHTS) {
                 break;
             }
             auto entity = pair.first;
@@ -197,29 +190,27 @@ void Application::run()
     }
 }
 
-void Application::createCameras()
-{
+void Application::createCameras() {
     auto target = glm::vec3(50, 50, 50);
 
     /// Spaceship camera
     auto position = glm::vec3(0, 200, 0);
 
     context->skyboxCamera = EntityBuilder::create()
-                                ->withTransform(0, 0, 0)
-                                ->withCamera(CameraComponent::Mode::CubeMap, CameraComponent::Type::CubeMapType, target, glm::normalize(-position), glm::vec3(0, 1, 0), 1)
-                                ->build(entityManager);
+            ->withTransform(0, 0, 0)
+            ->withCamera(CameraComponent::Mode::CubeMap, CameraComponent::Type::CubeMapType, target,
+                         glm::normalize(-position), glm::vec3(0, 1, 0), 1)
+            ->build(entityManager);
 }
 
-Entity *Application::createGrid(int width, int height, bool showYAxis)
-{
+Entity *Application::createGrid(int width, int height, bool showYAxis) {
     int startX = width / 2;
     int startZ = height / 2;
     std::vector<MeshComponent::Vertex> vertices;
     std::vector<uint32_t> indices;
     std::vector<MeshComponent::Texture> textures;
     uint32_t index = 0;
-    for (int i = 0; i < width; i++)
-    {
+    for (int i = 0; i < width; i++) {
         float step = 1.0f;
         auto start = MeshComponent::Vertex{step * glm::vec3(-startX + i, 0, -startZ)};
         auto end = MeshComponent::Vertex{step * glm::vec3(-startX + i, 0, -startZ + height)};
@@ -228,8 +219,7 @@ Entity *Application::createGrid(int width, int height, bool showYAxis)
         indices.push_back(index++);
         indices.push_back(index++);
     }
-    for (int i = 0; i < height; i++)
-    {
+    for (int i = 0; i < height; i++) {
         float step = 1.0f;
         auto start = MeshComponent::Vertex{step * glm::vec3(-startX, 0, -startZ + i)};
         auto end = MeshComponent::Vertex{step * glm::vec3(-startX + width, 0, -startZ + i)};
@@ -239,8 +229,7 @@ Entity *Application::createGrid(int width, int height, bool showYAxis)
         indices.push_back(index++);
     }
 
-    if (showYAxis)
-    {
+    if (showYAxis) {
         vertices.push_back(MeshComponent::Vertex{glm::vec3(0, 0, 0)});
         vertices.push_back(MeshComponent::Vertex{glm::vec3(0, 10, 0)});
         indices.push_back(index++);
@@ -248,40 +237,38 @@ Entity *Application::createGrid(int width, int height, bool showYAxis)
     }
 
     return EntityBuilder::create()
-        ->withMesh(vertices, indices, textures, context->gridProgram, GL_LINES)
-        ->build(entityManager);
+            ->withMesh(vertices, indices, textures, context->gridProgram, GL_LINES)
+            ->build(entityManager);
 }
 
-void Application::setLightUniforms(ShaderProgram *shaderProgram, std::vector<std::pair<LightComponent *, TransformComponent *>> lights)
-{
-    for (int i = 0; i < lights.size(); i++)
-    {
+void Application::setLightUniforms(ShaderProgram *shaderProgram,
+                                   std::vector<std::pair<LightComponent *, TransformComponent *>> lights) {
+    for (int i = 0; i < lights.size(); i++) {
         auto light = lights[i].first;
         auto transform = lights[i].second;
         std::string name = "lights[" + std::to_string(i) + "]";
-        switch (light->type)
-        {
-        case LightComponent::Direction:
-            shaderProgram->setUniform(name + ".type", light->type);
-            shaderProgram->setUniform(name + ".direction", light->direction);
-            shaderProgram->setUniform(name + ".ambient", light->ambient);
-            shaderProgram->setUniform(name + ".diffuse", light->diffuse);
-            shaderProgram->setUniform(name + ".specular", light->specular);
-            break;
-        case LightComponent::Point:
-            shaderProgram->setUniform(name + ".type", light->type);
-            shaderProgram->setUniform(name + ".position", transform->position);
+        switch (light->type) {
+            case LightComponent::Direction:
+                shaderProgram->setUniform(name + ".type", light->type);
+                shaderProgram->setUniform(name + ".direction", light->direction);
+                shaderProgram->setUniform(name + ".ambient", light->ambient);
+                shaderProgram->setUniform(name + ".diffuse", light->diffuse);
+                shaderProgram->setUniform(name + ".specular", light->specular);
+                break;
+            case LightComponent::Point:
+                shaderProgram->setUniform(name + ".type", light->type);
+                shaderProgram->setUniform(name + ".position", transform->position);
 
-            shaderProgram->setUniform(name + ".ambient", light->ambient);
-            shaderProgram->setUniform(name + ".diffuse", light->diffuse);
-            shaderProgram->setUniform(name + ".specular", light->specular);
+                shaderProgram->setUniform(name + ".ambient", light->ambient);
+                shaderProgram->setUniform(name + ".diffuse", light->diffuse);
+                shaderProgram->setUniform(name + ".specular", light->specular);
 
-            shaderProgram->setUniform(name + ".constant", light->constant);
-            shaderProgram->setUniform(name + ".linear", light->linear);
-            shaderProgram->setUniform(name + ".quadratic", light->quadratic);
-            break;
-        default:
-            throw std::runtime_error("Unsupported light type");
+                shaderProgram->setUniform(name + ".constant", light->constant);
+                shaderProgram->setUniform(name + ".linear", light->linear);
+                shaderProgram->setUniform(name + ".quadratic", light->quadratic);
+                break;
+            default:
+                throw std::runtime_error("Unsupported light type");
         }
     }
 }
