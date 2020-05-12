@@ -17,9 +17,18 @@ void SpaceshipControl::processMouseMovement(float offsetX, float offsetY) {
     cameraComponent->y += offsetX;
 }
 
+double calculateRollSpeed(double x) {
+    auto min = 10.0;
+    auto max = 50.0;
+    auto minX = 0.0;
+    auto maxX = 40.0;
+    auto k = (max - min) / (maxX - minX);
+    return k * x + min;
+}
+
 void SpaceshipControl::processKeyboard(Entity *camera, CameraComponent::Direction direction, float deltaTime) {
     auto position = cameraTransform->position;
-    float rollSpeed = 50.0 * deltaTime;
+    auto rollSpeed = calculateRollSpeed(cameraComponent->movementSpeedTick) * deltaTime;
 
     if (direction == cameraComponent->RollLeft) {
         cameraComponent->z += rollSpeed;
