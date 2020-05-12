@@ -2,7 +2,7 @@
 
 CameraComponent::CameraComponent(CameraComponent::Mode mode, CameraComponent::Type type, glm::vec3 target,
                                  glm::vec3 front, glm::vec3 up, TransformComponent *positionComponent)
-        : mode(mode), type(type), target(target), zoom(1.0f), mouseSensitivity(0.1f), movementSpeedTick(30) {
+        : mode(mode), type(type), target(target), zoom(1.0f), mouseSensitivity(0.1f), movementSpeedTick(30), x(0), y(0), z(0) {
     // Initialize vectors
     this->worldUp = glm::normalize(up);
     this->front = glm::normalize(front);
@@ -32,7 +32,10 @@ CameraComponent::CameraComponent(CameraComponent::Mode mode, CameraComponent::Ty
 glm::mat4 CameraComponent::getView(TransformComponent *positionComponent) {
     auto position = positionComponent->position;
     if (mode == FirstPersonShip) {
-        return glm::lookAt(position, position + front, up);
+//        return glm::lookAt(position, position + front, up);
+        auto view = glm::mat4_cast(glm::inverse(orientation));
+        view = glm::translate(view, position);
+        return view;
     } else if (mode == Free) {
         return glm::lookAt(position, position + front, up);
     } else if (mode == CubeMap) {

@@ -52,6 +52,8 @@ public:
     glm::vec3 front;
 
     float yaw, pitch, roll;
+    float x, y, z;
+    glm::quat orientation;
 
     uint32_t movementSpeedTick;
     float mouseSensitivity;
