@@ -31,11 +31,27 @@ void Cube::createMesh() {
     subdivide(subdivision);
 }
 
-MeshComponent::Vertex createVertex(glm::vec3 position) {
+glm::vec3 calculateFaceNormal(glm::vec3 a, glm::vec3 b, glm::vec3 c) {
+    return glm::normalize(glm::cross(a - b, a - c));
+}
+
+MeshComponent::Vertex createCubeVertex(glm::vec3 position, glm::vec3 normal) {
     MeshComponent::Vertex vertex {};
     vertex.position = mapCubeToSphere(position);
-    vertex.normal = glm::normalize(position);
+    vertex.normal = normal;
     return vertex;
+}
+
+void Cube::createTriangle(glm::vec3 a, glm::vec3 b, glm::vec3 c) {
+    a = mapCubeToSphere(a);
+    b = mapCubeToSphere(b);
+    c = mapCubeToSphere(c);
+
+    auto normal = calculateFaceNormal(a, b, c);
+
+    vertices.emplace_back(Vertex { a, normal });
+    vertices.emplace_back(Vertex { b, normal });
+    vertices.emplace_back(Vertex { c, normal });
 }
 
 void Cube::subdivide(uint16_t subdivisions) {
@@ -54,15 +70,8 @@ void Cube::subdivide(uint16_t subdivisions) {
             auto lower = glm::vec3(-start + (c + 0) * step, -start + (r + 0) * step, -start);
             auto lowerNext = glm::vec3(-start + (c + 1) * step, -start + (r + 0) * step, -start);
 
-            auto normal = glm::vec3(0, 0, 1);
-
-            vertices.emplace_back(Vertex { upper, normal });
-            vertices.emplace_back(Vertex { upperNext, normal });
-            vertices.emplace_back(Vertex { lower, normal });
-
-            vertices.emplace_back(Vertex { lower, normal });
-            vertices.emplace_back(Vertex { upperNext, normal });
-            vertices.emplace_back(Vertex { lowerNext, normal });
+            createTriangle(upper, upperNext, lower);
+            createTriangle(lower, upperNext, lowerNext);
         }
     }
 
@@ -74,15 +83,8 @@ void Cube::subdivide(uint16_t subdivisions) {
             auto lower = glm::vec3(-start + (c + 0) * step, -start + (r + 0) * step, start);
             auto lowerNext = glm::vec3(-start + (c + 1) * step, -start + (r + 0) * step, start);
 
-            auto normal = glm::vec3(0, 0, -1);
-
-            vertices.emplace_back(Vertex { upper, normal });
-            vertices.emplace_back(Vertex { lower, normal });
-            vertices.emplace_back(Vertex { upperNext, normal });
-
-            vertices.emplace_back(Vertex { lower, normal });
-            vertices.emplace_back(Vertex { lowerNext, normal });
-            vertices.emplace_back(Vertex { upperNext, normal });
+            createTriangle(upper, lower, upperNext);
+            createTriangle(lower, lowerNext, upperNext);
         }
     }
 
@@ -94,15 +96,8 @@ void Cube::subdivide(uint16_t subdivisions) {
             auto lower = glm::vec3(-start, -start + (r + 0) * step, -start + (c + 0) * step);
             auto lowerNext = glm::vec3(-start, -start + (r + 0) * step, -start + (c + 1) * step);
 
-            auto normal = glm::vec3(-1, 0, 0);
-
-            vertices.emplace_back(Vertex { upper, normal });
-            vertices.emplace_back(Vertex { lower, normal });
-            vertices.emplace_back(Vertex { upperNext, normal });
-
-            vertices.emplace_back(Vertex { lower, normal });
-            vertices.emplace_back(Vertex { lowerNext, normal });
-            vertices.emplace_back(Vertex { upperNext, normal });
+            createTriangle(upper, lower, upperNext);
+            createTriangle(lower, lowerNext, upperNext);
         }
     }
 
@@ -114,15 +109,8 @@ void Cube::subdivide(uint16_t subdivisions) {
             auto lower = glm::vec3(start, -start + (r + 0) * step, -start + (c + 0) * step);
             auto lowerNext = glm::vec3(start, -start + (r + 0) * step, -start + (c + 1) * step);
 
-            auto normal = glm::vec3(1, 0, 0);
-
-            vertices.emplace_back(Vertex { upper, normal });
-            vertices.emplace_back(Vertex { upperNext, normal });
-            vertices.emplace_back(Vertex { lower, normal });
-
-            vertices.emplace_back(Vertex { lower, normal });
-            vertices.emplace_back(Vertex { upperNext, normal });
-            vertices.emplace_back(Vertex { lowerNext, normal });
+            createTriangle(upper, upperNext, lower);
+            createTriangle(lower, upperNext, lowerNext);
         }
     }
 
@@ -134,15 +122,8 @@ void Cube::subdivide(uint16_t subdivisions) {
             auto lower = glm::vec3(-start + (r + 0) * step, start, -start + (c + 0) * step);
             auto lowerNext = glm::vec3(-start + (r + 0) * step, start, -start + (c + 1) * step);
 
-            auto normal = glm::vec3(0, 1, 0);
-
-            vertices.emplace_back(Vertex { upper, normal });
-            vertices.emplace_back(Vertex { lower, normal });
-            vertices.emplace_back(Vertex { upperNext, normal });
-
-            vertices.emplace_back(Vertex { lower, normal });
-            vertices.emplace_back(Vertex { lowerNext, normal });
-            vertices.emplace_back(Vertex { upperNext, normal });
+            createTriangle(upper, lower, upperNext);
+            createTriangle(lower, lowerNext, upperNext);
         }
     }
 
@@ -154,15 +135,8 @@ void Cube::subdivide(uint16_t subdivisions) {
             auto lower = glm::vec3(-start + (r + 0) * step, -start, -start + (c + 0) * step);
             auto lowerNext = glm::vec3(-start + (r + 0) * step, -start, -start + (c + 1) * step);
 
-            auto normal = glm::vec3(0, -1, 0);
-
-            vertices.emplace_back(Vertex { upper, normal });
-            vertices.emplace_back(Vertex { upperNext, normal });
-            vertices.emplace_back(Vertex { lower, normal });
-
-            vertices.emplace_back(Vertex { lower, normal });
-            vertices.emplace_back(Vertex { upperNext, normal });
-            vertices.emplace_back(Vertex { lowerNext, normal });
+            createTriangle(upper, upperNext, lower);
+            createTriangle(lower, upperNext, lowerNext);
         }
     }
 

@@ -13,6 +13,7 @@ public:
     void subdivide(uint16_t subdivisions) override;
 
 private:
+    void createTriangle(glm::vec3 a, glm::vec3 b, glm::vec3 c);
     void createMesh();
 };
 
