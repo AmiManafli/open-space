@@ -49,7 +49,7 @@ void InputSystem::update() {
     auto cameraComponent = entityManager->getComponent<CameraComponent>(camera);
     auto velocityComponent = entityManager->getComponent<VelocityComponent>(camera);
 
-    velocityComponent->position = glm::vec3(0);
+    velocityComponent->velocity = glm::vec3(0);
 
     if (!isDebug && isKeyDown(GLFW_KEY_W)) {
         if (cameraComponent->mode == CameraComponent::FirstPersonShip) {

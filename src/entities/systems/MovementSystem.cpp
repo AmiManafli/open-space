@@ -17,7 +17,7 @@ void MovementSystem::update() {
         auto transform = entityManager->getComponent<TransformComponent>(entity);
 
         if (velocity && transform) {
-            auto translation = velocity->position;
+            auto translation = velocity->velocity;
             translation -= velocity->gravity;
             transform->move(translation * static_cast<float>(context->getDeltaTime()));
 

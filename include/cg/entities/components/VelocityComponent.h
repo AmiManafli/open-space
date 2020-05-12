@@ -20,7 +20,7 @@ public:
 
     void update(EntityManager *entityManager, Entity *entity);
 
-    glm::vec3 position;
+    glm::vec3 velocity;
 
     glm::vec3 gravity;
 
