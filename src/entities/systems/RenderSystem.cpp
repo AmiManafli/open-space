@@ -23,9 +23,7 @@ void RenderSystem::init() {
 
 void RenderSystem::update() {
     /// Setup UI
-    if (context->displayGui || context->displayCursor) {
-        userInterface->render();
-    }
+    userInterface->render();
 
     /// Clear buffers
     glClearColor(clearColor.x, clearColor.y, clearColor.z, clearColor.w);
@@ -36,9 +34,7 @@ void RenderSystem::update() {
     renderEntities();
 
     /// Display UI
-    if (context->displayGui || context->displayCursor) {
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-    }
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
     context->swapBuffers();
 }

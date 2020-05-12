@@ -29,7 +29,7 @@ void GravitySystem::update() {
         auto unit = glm::normalize(distance);
 
         const double gravitationalConstant = 0.7;
-        auto force = -static_cast<float>(gravitationalConstant * objectMass->mass * mass->mass) * unit / pow(length, 2);
+        auto force = static_cast<float>(gravitationalConstant * objectMass->mass * mass->mass) * unit / pow(length, 2);
 
         totalForce += force;
     }

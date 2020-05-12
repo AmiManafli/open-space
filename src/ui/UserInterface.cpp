@@ -41,6 +41,8 @@ void UserInterface::render() {
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
+    renderSpaceDisplay();
+
     if (context->displayCursor) {
         renderMainMenu();
     }
@@ -350,4 +352,17 @@ void UserInterface::updateTerrain(Terrain *terrain, TerrainSettings& settings) {
     if (updateTerrainFunc) {
         updateTerrainFunc(terrain, settings);
     }
+}
+
+void UserInterface::renderSpaceDisplay() {
+    ImGui::Begin("Space Display", &showSpaceDisplay, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoBackground);
+    ImGui::SetWindowPos(ImVec2(0, 0));
+
+    auto player = context->player;
+    auto velocity = entityManager->getComponent<VelocityComponent>(player);
+
+    ImGui::Text("Speed: %.3f m/s", glm::length(velocity->velocity));
+    ImGui::Text("Gravity: %.3f", glm::length(velocity->gravity));
+
+    ImGui::End();
 }

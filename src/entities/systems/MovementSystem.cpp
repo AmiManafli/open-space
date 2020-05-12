@@ -18,7 +18,7 @@ void MovementSystem::update() {
 
         if (velocity && transform) {
             auto translation = velocity->velocity;
-            translation -= velocity->gravity;
+            translation += velocity->gravity;
             transform->move(translation * static_cast<float>(context->getDeltaTime()));
 
             auto rotation = velocity->rotation * static_cast<float>(context->getDeltaTime());
