@@ -13,9 +13,38 @@ Cube::Cube(uint16_t subdivisions, ShaderProgram &shaderProgram) {
 Cube::~Cube() {
 }
 
+glm::vec3 mapCubeToSphere(glm::vec3 position) {
+    auto sphere = position;
+
+    auto x2 = position.x * position.x;
+    auto y2 = position.y * position.y;
+    auto z2 = position.z * position.z;
+
+    sphere.x = position.x * glm::sqrt(1 - 0.5 * y2 - 0.5 * z2 + y2 * z2 / 3.0);
+    sphere.y = position.y * glm::sqrt(1 - 0.5 * z2 - 0.5 * x2 + z2 * x2 / 3.0);
+    sphere.z = position.z * glm::sqrt(1 - 0.5 * x2 - 0.5 * y2 + x2 * y2 / 3.0);
+
+    return sphere;
+}
+
 void Cube::createMesh() {
-    double start = 0.5;
-    double step = 1.0 / (subdivision + 1);
+    subdivide(subdivision);
+}
+
+MeshComponent::Vertex createVertex(glm::vec3 position) {
+    MeshComponent::Vertex vertex {};
+    vertex.position = mapCubeToSphere(position);
+    vertex.normal = glm::normalize(position);
+    return vertex;
+}
+
+void Cube::subdivide(uint16_t subdivisions) {
+    this->subdivision = subdivisions;
+
+    double start = 1.0;
+    double step = 2.0 / (subdivision + 1);
+
+    vertices.clear();
 
     // Front
     for (int r = 0; r < subdivision + 1; r++) {

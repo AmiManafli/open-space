@@ -144,7 +144,8 @@ void Application::init() {
 //            ->build(entityManager);
     auto test = EntityBuilder::create()
             ->withTransform(0, 0, 0)
-            ->withMesh(new Cube(4, *context->meshProgram))
+            ->withMesh(new Cube(0, *context->meshProgram))
+            ->isSelectable()
             ->build(entityManager);
 
     inputSystem->createSpaceshipControl(nullptr, context->player);

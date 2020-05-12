@@ -10,6 +10,8 @@ public:
     Cube(uint16_t subdivisions, ShaderProgram &shaderProgram);
     ~Cube() override;
 
+    void subdivide(uint16_t subdivisions) override;
+
 private:
     void createMesh();
 };
