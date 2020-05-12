@@ -7,6 +7,7 @@
 #include <cg/entities/components/OrbitComponent.h>
 #include <cg/skybox/SkyboxStar.h>
 #include <cg/collision/BoundingSphere.h>
+#include <cg/Cube.h>
 #include "cg/Application.h"
 
 bool onUpdateTerrain(Terrain *terrain, TerrainSettings &settings) {
@@ -85,11 +86,11 @@ void Application::init() {
     context->skyboxProgram->link();
 
     sky = new Skybox(10000, 100000, 20, "./assets/textures/skybox1", context->skyboxProgram);
-    auto playerPosition = glm::vec3(100, 50, 250);
+    auto playerPosition = glm::vec3(0.1, 1, 4);
     context->player = EntityBuilder::create()
             ->withTransform(playerPosition)
             ->withVelocity(new VelocityComponent())
-            ->withMesh(sky)
+//            ->withMesh(sky)
             ->withMass(10)
             ->withCamera(CameraComponent::Mode::FirstPersonShip, CameraComponent::Type::Perspective, glm::vec3(0, 0, 0),
                          glm::normalize(-playerPosition), glm::vec3(0, 1, 0), context->getAspect())
@@ -122,24 +123,28 @@ void Application::init() {
 //            universeEntityFactory->createEntities(galaxy.getSolarSystems(x, 0, z));
 //        }
 //    }
-    auto position = glm::vec3(0);
-    auto planetRadius = 100;
-    Entity *sun = EntityBuilder::create()
-            ->withTransform(glm::vec3(110, 0, 0))
-            ->withMesh(new IcoSphere(1.0, 3, glm::vec3(1), 11, context->planetProgram))
-            ->withSphereCollision(planetRadius)
-//            ->withPointLight(glm::vec3(0.2), glm::vec3(1), glm::vec3(1.0), 1.0, 0.0014, 0.000007)
-            ->withDirectionalLight(glm::vec3(-1, 0, 0), glm::vec3(0.3), glm::vec3(1.0), glm::vec3(1))
-            ->withScale(10)
-            ->isSelectable()
-            ->build(entityManager);
-    Entity *entity = EntityBuilder::create()
-            ->withTransform(position)
-            ->withMesh(new IcoSphere(1.0, 4, glm::vec3(0.2, 0.2, 0.8), 11, context->planetProgram))
-            ->withSphereCollision(planetRadius)
-            ->withScale(planetRadius)
-            ->withMass(2000)
-            ->isSelectable()
+//    auto position = glm::vec3(0);
+//    auto planetRadius = 100;
+//    Entity *sun = EntityBuilder::create()
+//            ->withTransform(glm::vec3(110, 0, 0))
+//            ->withMesh(new IcoSphere(1.0, 3, glm::vec3(1), 11, context->planetProgram))
+//            ->withSphereCollision(planetRadius)
+////            ->withPointLight(glm::vec3(0.2), glm::vec3(1), glm::vec3(1.0), 1.0, 0.0014, 0.000007)
+//            ->withDirectionalLight(glm::vec3(-1, 0, 0), glm::vec3(0.3), glm::vec3(1.0), glm::vec3(1))
+//            ->withScale(10)
+//            ->isSelectable()
+//            ->build(entityManager);
+//    Entity *entity = EntityBuilder::create()
+//            ->withTransform(position)
+//            ->withMesh(new IcoSphere(1.0, 4, glm::vec3(0.2, 0.2, 0.8), 11, context->planetProgram))
+//            ->withSphereCollision(planetRadius)
+//            ->withScale(planetRadius)
+//            ->withMass(2000)
+//            ->isSelectable()
+//            ->build(entityManager);
+    auto test = EntityBuilder::create()
+            ->withTransform(0, 0, 0)
+            ->withMesh(new Cube(4, *context->meshProgram))
             ->build(entityManager);
 
     inputSystem->createSpaceshipControl(nullptr, context->player);
