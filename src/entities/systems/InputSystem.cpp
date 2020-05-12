@@ -65,19 +65,6 @@ void InputSystem::update() {
         }
     }
 
-//    if ((!isDebug && isKeyPressed(GLFW_KEY_W)) || (!isDebug && isKeyPressed(GLFW_KEY_S)))
-//    {
-//        velocityComponent->position = cameraComponent->front * 0.0f;
-//    }
-//    if ((!isDebug && isKeyPressed(GLFW_KEY_A)) || (!isDebug && isKeyPressed(GLFW_KEY_D)))
-//    {
-//        velocityComponent->position = cameraComponent->right * 0.0f;
-//    }
-//    if ((!isDebug && isKeyPressed(GLFW_KEY_Q)) || (!isDebug && isKeyPressed(GLFW_KEY_E)))
-//    {
-//        velocityComponent->position = cameraComponent->up * 0.0f;
-//    }
-
     if (!isDebug && isKeyDown(GLFW_KEY_Z)) {
         spaceshipControl->processKeyboard(camera, CameraComponent::Direction::RollLeft, deltaTime);
     } else if (!isDebug && isKeyDown(GLFW_KEY_X)) {
