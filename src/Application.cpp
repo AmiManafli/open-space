@@ -138,7 +138,7 @@ void Application::init() {
             ->withMesh(new IcoSphere(1.0, 4, glm::vec3(0.2, 0.2, 0.8), 11, context->planetProgram))
             ->withSphereCollision(planetRadius)
             ->withScale(planetRadius)
-            ->withMass(800)
+            ->withMass(2000)
             ->isSelectable()
             ->build(entityManager);
 
