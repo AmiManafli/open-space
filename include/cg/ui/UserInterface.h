@@ -45,6 +45,9 @@ private:
     std::function<bool(Terrain *, TerrainSettings& settings)> updateTerrainFunc = nullptr;
     std::string generateTerrainButtonText;
 
+    bool showEntityNames = true;
+    void renderEntityNames();
+
     void updateTerrain(Terrain *terrain, TerrainSettings& settings);
 
     void renderSpaceDisplay();
