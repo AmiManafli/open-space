@@ -7,8 +7,11 @@ PlanetSettings getDefaultPlanetSettings() {
     settings.radius = 1;
     settings.subdivision = 0;
     settings.strength = 1;
-    settings.roughness = 1;
+    settings.baseRoughness = 1;
+    settings.roughness = 2;
+    settings.persistence = 0.5;
     settings.center = glm::vec3(0);
+    settings.layers = 0;
     return settings;
 }
 
@@ -164,7 +167,7 @@ void PlanetGenerator::updateNormals() {
 }
 
 Noise *PlanetGenerator::createNoise(PlanetSettings settings) {
-    return new OpenSimplexNoise(settings.seed, settings.strength, settings.roughness, settings.center);
+    return new OpenSimplexNoise(settings);
 }
 
 void PlanetGenerator::updateSettings(PlanetSettings &settings) {

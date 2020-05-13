@@ -2,12 +2,8 @@
 
 #include <OpenSimplexNoise.h>
 
-
-OpenSimplexNoise::OpenSimplexNoise() : OpenSimplexNoise(1, 1, 1, glm::vec3(0)) {
-}
-
-OpenSimplexNoise::OpenSimplexNoise(uint64_t seed, float strength, float roughness, glm::vec3 center)
-        : Noise(seed), noise(new osn::OpenSimplexNoise(seed)), strength(strength), roughness(roughness), center(center) {
+OpenSimplexNoise::OpenSimplexNoise(PlanetSettings &settings)
+        : Noise(settings.seed), noise(new osn::OpenSimplexNoise(seed)), settings(settings) {
 }
 
 void OpenSimplexNoise::reseed(uint64_t seed) {
@@ -21,9 +17,18 @@ double OpenSimplexNoise::evaluate(double x, double y) {
 }
 
 double OpenSimplexNoise::evaluate(double x, double y, double z) {
-    auto point = glm::vec3(x, y, z) * roughness + center;
-    auto value = (1.0 + noise->Evaluate(point.x, point.y, point.z)) * 0.5;
-    return value * strength;
+    double height = 0.0;
+    double frequency = settings.baseRoughness;
+    double amplitude = 1.0;
+
+    for (int layer = 0; layer < settings.layers; layer++) {
+        auto point = glm::vec3(x, y, z) * static_cast<float>(frequency) + settings.center;
+        auto value = (1.0 + noise->Evaluate(point.x, point.y, point.z)) * 0.5;
+        height += value * amplitude;
+        frequency *= settings.roughness;
+        amplitude *= settings.persistence;
+    }
+    return height * settings.strength;
 }
 
 glm::vec3 OpenSimplexNoise::normal(double x, double y, double zoom) {

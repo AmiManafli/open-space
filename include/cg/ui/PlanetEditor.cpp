@@ -24,11 +24,23 @@ void PlanetEditor::render() {
         updatePlanet(selected);
     }
 
+    if (ImGui::DragInt("Layers", &settings.layers, 1, 0, 20)) {
+        updatePlanet(selected);
+    }
+
     if (ImGui::DragFloat("Strength", &settings.strength, 0.1, 0.1, 10000.0)) {
         updatePlanet(selected);
     }
 
+    if (ImGui::DragFloat("Base Roughness", &settings.baseRoughness, 0.1, 0.1, 10000.0)) {
+        updatePlanet(selected);
+    }
+
     if (ImGui::DragFloat("Roughness", &settings.roughness, 0.1, 0.1, 10000.0)) {
+        updatePlanet(selected);
+    }
+
+    if (ImGui::DragFloat("Persistence", &settings.persistence, 0.1, 0.1, 10000.0)) {
         updatePlanet(selected);
     }
 

@@ -12,7 +12,10 @@ struct PlanetSettings {
     int seed;
 
     float strength;
+    float baseRoughness;
     float roughness;
+    float persistence;
+    int layers;
     glm::vec3 center;
 };
 

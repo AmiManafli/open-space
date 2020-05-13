@@ -3,6 +3,7 @@
 
 #include <cg/terrain/Noise.h>
 #include <cstdint>
+#include <cg/PlanetGenerator.h>
 
 
 namespace osn {
@@ -11,8 +12,7 @@ namespace osn {
 
 class OpenSimplexNoise : public Noise {
 public:
-    OpenSimplexNoise();
-    OpenSimplexNoise(uint64_t seed, float strength, float roughness, glm::vec3 center);
+    explicit OpenSimplexNoise(PlanetSettings &settings);
 
     void reseed(uint64_t seed) override;
 
@@ -22,12 +22,8 @@ public:
     glm::vec3 normal(double x, double y, double zoom) override;
 
 private:
-    uint64_t seed;
+    PlanetSettings &settings;
     osn::OpenSimplexNoise *noise;
-
-    float strength;
-    float roughness;
-    glm::vec3 center;
 };
 
 
