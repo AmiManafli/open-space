@@ -1,6 +1,6 @@
 #include "cg/entities/systems/GravitySystem.h"
 
-GravitySystem::GravitySystem(EntityManager *entityManager, Entity* object) : System(entityManager), object(object) {
+GravitySystem::GravitySystem(EntityManager *entityManager, Entity *object) : System(entityManager), object(object) {
 }
 
 GravitySystem::~GravitySystem() {
@@ -17,7 +17,7 @@ void GravitySystem::update() {
 
     if (!objectMass) return;
 
-    for (auto& pair : entityManager->getComponents<MassComponent>()) {
+    for (auto &pair : entityManager->getComponents<MassComponent>()) {
         auto entity = pair.first;
         if (entity->id == object->id) continue;
 
@@ -29,7 +29,7 @@ void GravitySystem::update() {
         auto unit = glm::normalize(distance);
 
         const double gravitationalConstant = 0.7;
-        auto force = -static_cast<float>(gravitationalConstant * objectMass->mass * mass->mass) * unit / pow(length, 2);
+        auto force = static_cast<float>(gravitationalConstant * objectMass->mass * mass->mass) * unit / pow(length, 2);
 
         totalForce += force;
     }

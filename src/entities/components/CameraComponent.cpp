@@ -1,7 +1,8 @@
 #include "cg/entities/components/CameraComponent.h"
 
-CameraComponent::CameraComponent(CameraComponent::Mode mode, CameraComponent::Type type, glm::vec3 target, glm::vec3 front, glm::vec3 up, TransformComponent *positionComponent)
-        : mode(mode), type(type), target(target), zoom(1.0f), mouseSensitivity(0.1f), movementSpeedTick(30) {
+CameraComponent::CameraComponent(CameraComponent::Mode mode, CameraComponent::Type type, glm::vec3 target,
+                                 glm::vec3 front, glm::vec3 up, TransformComponent *positionComponent)
+        : mode(mode), type(type), target(target), zoom(1.0f), mouseSensitivity(0.05f), movementSpeedTick(10), x(0), y(0), z(0) {
     // Initialize vectors
     this->worldUp = glm::normalize(up);
     this->front = glm::normalize(front);
@@ -9,13 +10,12 @@ CameraComponent::CameraComponent(CameraComponent::Mode mode, CameraComponent::Ty
     this->up = glm::normalize(glm::cross(this->right, this->front));
 
     auto position = positionComponent->position;
-    if(mode == FirstPersonShip) {
-        yaw = glm::degrees(glm::atan((position.x - target.x) / (position.z - target.z)));   
-    }
-    else {
+    if (mode == FirstPersonShip) {
+        yaw = glm::degrees(glm::atan((position.x - target.x) / (position.z - target.z)));
+    } else {
         yaw = 180.0f + glm::degrees(glm::atan((position.z - target.z) / (position.x - target.x)));
     }
-    
+
     if (isnan(yaw)) {
         yaw = 0.0f;
     }
@@ -32,7 +32,10 @@ CameraComponent::CameraComponent(CameraComponent::Mode mode, CameraComponent::Ty
 glm::mat4 CameraComponent::getView(TransformComponent *positionComponent) {
     auto position = positionComponent->position;
     if (mode == FirstPersonShip) {
-        return glm::lookAt(position, position + front, up);
+//        return glm::lookAt(position, position + front, up);
+        auto view = glm::mat4_cast(glm::inverse(orientation));
+        view = glm::translate(view, position);
+        return view;
     } else if (mode == Free) {
         return glm::lookAt(position, position + front, up);
     } else if (mode == CubeMap) {
@@ -45,10 +48,11 @@ glm::mat4 CameraComponent::getView(TransformComponent *positionComponent) {
 glm::mat4 CameraComponent::getProjection(float aspectRatio) {
     if (type == Orthographic) {
         auto orthoZoom = zoom;
-        return glm::ortho(-aspectRatio * orthoZoom, aspectRatio * orthoZoom, -1.0f * orthoZoom, 1.0f * orthoZoom, -1000.0f, 100.0f);
+        return glm::ortho(-aspectRatio * orthoZoom, aspectRatio * orthoZoom, -1.0f * orthoZoom, 1.0f * orthoZoom,
+                          -1000.0f, 100.0f);
     } else if (type == Perspective) {
         auto fov = 45.0f / zoom;
-        return glm::perspective(glm::radians(fov), aspectRatio, 0.01f, 10000.0f);
+        return glm::perspective(glm::radians(fov), aspectRatio, 0.01f, 10000000.0f);
     } else if (type == CubeMapType) {
         return glm::perspective(static_cast<float>(PI / 2.0), 1.0f, 0.000001f, 100000000.0f);
     } else {
@@ -56,7 +60,8 @@ glm::mat4 CameraComponent::getProjection(float aspectRatio) {
     }
 }
 
-void CameraComponent::processKeyboard(CameraComponent::Direction direction, float deltaTime, TransformComponent *transformComponent) {
+void CameraComponent::processKeyboard(CameraComponent::Direction direction, float deltaTime,
+                                      TransformComponent *transformComponent) {
     auto position = transformComponent->position;
     float velocity = movementSpeedTick * deltaTime;
     if (direction == Forward) {

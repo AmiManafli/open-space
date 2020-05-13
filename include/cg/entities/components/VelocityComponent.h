@@ -14,13 +14,13 @@ class EntityManager;
 class VelocityComponent : public Component {
 public:
     VelocityComponent();
-    explicit VelocityComponent(glm::vec3 position);
+    explicit VelocityComponent(glm::vec3 velocity);
     VelocityComponent(glm::vec3 rotation, glm::vec3 rotationPoint);
-    VelocityComponent(glm::vec3 position, glm::vec3 rotation, glm::vec3 rotationPoint);
+    VelocityComponent(glm::vec3 velocity, glm::vec3 rotation, glm::vec3 rotationPoint);
 
     void update(EntityManager *entityManager, Entity *entity);
 
-    glm::vec3 position;
+    glm::vec3 velocity;
 
     glm::vec3 gravity;
 

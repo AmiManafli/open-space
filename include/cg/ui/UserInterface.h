@@ -24,10 +24,11 @@ private:
 
     EntityWindow *entityWindow;
 
+    bool showSpaceDisplay = true;
     bool showDemoWindow = false;
     bool showTerrainGeneratorWindow = false;
     bool showWireframe = true;
-    bool showEntityWindow = true;
+    bool showEntityWindow = false;
 
     char* currentView = nullptr;
     std::vector<const char *> views;
@@ -44,8 +45,12 @@ private:
     std::function<bool(Terrain *, TerrainSettings& settings)> updateTerrainFunc = nullptr;
     std::string generateTerrainButtonText;
 
+    bool showEntityNames = true;
+    void renderEntityNames();
+
     void updateTerrain(Terrain *terrain, TerrainSettings& settings);
 
+    void renderSpaceDisplay();
     void renderMainMenu();
     void renderSceneInfoWindow();
     void renderCameraInfoWindow();

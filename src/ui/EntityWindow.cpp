@@ -113,7 +113,7 @@ void EntityWindow::renderVelocityComponent(VelocityComponent *component) {
     if (!component) return;
 
     if (ImGui::CollapsingHeader("Velocity Component")) {
-        ImGui::DragFloat3("Position", glm::value_ptr(component->position), 0.1, -10000, 10000);
+        ImGui::DragFloat3("Position", glm::value_ptr(component->velocity), 0.1, -10000, 10000);
         ImGui::DragFloat3("Gravity", glm::value_ptr(component->gravity), 0.1, -10000, 10000);
         ImGui::DragFloat3("Rotation", glm::value_ptr(component->rotation), 0.1, -10000, 10000);
         ImGui::DragFloat3("Rotation Point", glm::value_ptr(component->rotationPoint), 0.1, -10000, 10000);
