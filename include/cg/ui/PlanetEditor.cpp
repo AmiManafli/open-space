@@ -20,7 +20,7 @@ void PlanetEditor::render() {
         updatePlanet(selected);
     }
 
-    if (ImGui::DragInt("Subdivision", &settings.subdivision, 1, 0, 200)) {
+    if (ImGui::SliderInt("Subdivision", &settings.subdivision, 0, 200, "%d")) {
         updatePlanet(selected);
     }
 
@@ -41,6 +41,10 @@ void PlanetEditor::render() {
     }
 
     if (ImGui::DragFloat("Persistence", &settings.persistence, 0.1, 0.1, 10000.0)) {
+        updatePlanet(selected);
+    }
+
+    if (ImGui::DragFloat("Min value", &settings.minValue, 0.1, 0.1, 10000.0)) {
         updatePlanet(selected);
     }
 

@@ -15,6 +15,7 @@ struct PlanetSettings {
     float baseRoughness;
     float roughness;
     float persistence;
+    float minValue;
     int layers;
     glm::vec3 center;
 };

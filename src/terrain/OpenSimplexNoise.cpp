@@ -28,6 +28,7 @@ double OpenSimplexNoise::evaluate(double x, double y, double z) {
         frequency *= settings.roughness;
         amplitude *= settings.persistence;
     }
+    height = glm::max(0.0, height - settings.minValue);
     return height * settings.strength;
 }
 

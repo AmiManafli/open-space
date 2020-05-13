@@ -10,6 +10,7 @@ PlanetSettings getDefaultPlanetSettings() {
     settings.baseRoughness = 1;
     settings.roughness = 2;
     settings.persistence = 0.5;
+    settings.minValue = 0.1;
     settings.center = glm::vec3(0);
     settings.layers = 0;
     return settings;
