@@ -34,6 +34,7 @@ UserInterface::UserInterface(EntityManager *entityManager, GLContext *context)
     settings.redistribution = 1.0;
 
     entityWindow = new EntityWindow(entityManager, context);
+    planetEditor = new PlanetEditor(*entityManager, *context);
 }
 
 void UserInterface::render() {
@@ -58,6 +59,10 @@ void UserInterface::render() {
 
     if (showDemoWindow) {
         ImGui::ShowDemoWindow();
+    }
+
+    if (context->displayCursor && showPlanetEditor) {
+        planetEditor->render();
     }
 
     if (showTerrainGeneratorWindow) {

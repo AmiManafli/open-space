@@ -5,6 +5,7 @@
 #include <cg/GLContext.h>
 #include <cg/terrain/Terrain.h>
 #include "EntityWindow.h"
+#include "PlanetEditor.h"
 
 class UserInterface {
 public:
@@ -22,11 +23,13 @@ private:
     EntityManager *entityManager;
     GLContext *context;
 
+    PlanetEditor *planetEditor;
     EntityWindow *entityWindow;
 
     bool showSpaceDisplay = true;
     bool showDemoWindow = false;
     bool showTerrainGeneratorWindow = false;
+    bool showPlanetEditor = true;
     bool showWireframe = true;
     bool showEntityWindow = false;
 
