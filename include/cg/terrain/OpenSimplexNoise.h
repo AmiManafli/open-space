@@ -12,7 +12,7 @@ namespace osn {
 
 class OpenSimplexNoise : public Noise {
 public:
-    explicit OpenSimplexNoise(PlanetSettings &settings);
+    explicit OpenSimplexNoise(PlanetSettings &planetSettings, PlanetNoiseSettings &settings);
 
     void reseed(uint64_t seed) override;
 
@@ -22,8 +22,12 @@ public:
     glm::vec3 normal(double x, double y, double zoom) override;
 
 private:
-    PlanetSettings &settings;
+    PlanetSettings &planetSettings;
+    PlanetNoiseSettings &settings;
     osn::OpenSimplexNoise *noise;
+
+    double evaluateSimple(double x, double y, double z);
+    double evaluateRidged(double x, double y, double z);
 };
 
 

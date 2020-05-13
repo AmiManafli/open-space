@@ -6,25 +6,33 @@ PlanetSettings getDefaultPlanetSettings() {
     settings.seed = 0;
     settings.radius = 1;
     settings.subdivision = 0;
+    return settings;
+}
+
+PlanetNoiseSettings getDefaultPlanetNoiseSettings() {
+    PlanetNoiseSettings settings;
+    settings.noiseType = PlanetNoiseType::Simple;
+    settings.enabled = true;
+    settings.useFirstLayerAsMask = false;
     settings.strength = 1;
     settings.baseRoughness = 1;
     settings.roughness = 2;
     settings.persistence = 0.5;
     settings.minValue = 0.1;
+    settings.weightMultiplier = 0.8;
     settings.center = glm::vec3(0);
     settings.layers = 0;
     return settings;
 }
 
-PlanetGenerator::PlanetGenerator(uint16_t subdivisions, ShaderProgram &shaderProgram)
-        : settings(getDefaultPlanetSettings()), noise(createNoise(getDefaultPlanetSettings())) {
+PlanetGenerator::PlanetGenerator(uint16_t subdivisions, ShaderProgram &shaderProgram) {
     this->shaderProgram = &shaderProgram;
     this->subdivision = subdivisions;
     indexed = false;
     mode = GL_TRIANGLES;
     instances = 1;
 
-    createMesh();
+    updateSettings(getDefaultPlanetSettings());
 }
 
 PlanetGenerator::~PlanetGenerator() {
@@ -167,22 +175,41 @@ void PlanetGenerator::updateNormals() {
     }
 }
 
-Noise *PlanetGenerator::createNoise(PlanetSettings settings) {
-    return new OpenSimplexNoise(settings);
-}
-
-void PlanetGenerator::updateSettings(PlanetSettings &settings) {
+void PlanetGenerator::updateSettings(PlanetSettings settings) {
     this->settings = settings;
     subdivision = settings.subdivision;
-    delete noise;
-    noise = createNoise(settings);
+
+    for (int i = 0; i < noises.size(); i++) {
+        delete noises[i];
+    }
+    noises.clear();
+
+    for (auto &noiseSettings : settings.noiseSettings) {
+        noises.emplace_back(new OpenSimplexNoise(settings, noiseSettings));
+    }
 
     createMesh();
 }
 
 void PlanetGenerator::applyNoise() {
+    auto firstLayerHeight = 0.0;
     for (auto &vertex : vertices) {
-        float height = noise->evaluate(vertex.position.x, vertex.position.y, vertex.position.z);
-        vertex.position = vertex.position * (1 + height) * settings.radius;
+        double height = 0.0;
+
+        if (!noises.empty()) {
+            firstLayerHeight = noises[0]->evaluate(vertex.position.x, vertex.position.y, vertex.position.z);
+            if (settings.noiseSettings[0].enabled) {
+                height = firstLayerHeight;
+            }
+        }
+
+        for (int i = 1; i < noises.size(); i++) {
+            if (settings.noiseSettings[i].enabled) {
+                float mask = settings.noiseSettings[i].useFirstLayerAsMask ? firstLayerHeight : 1.0f;
+                height += noises[i]->evaluate(vertex.position.x, vertex.position.y, vertex.position.z) * mask;
+            }
+        }
+
+        vertex.position = vertex.position * (1 + static_cast<float>(height)) * settings.radius;
     }
 }

@@ -12,12 +12,18 @@ public:
     PlanetEditor(EntityManager &entityManager, GLContext &context);
 
     void render();
+    void renderNoise(int index);
 
 private:
     EntityManager &entityManager;
     GLContext &context;
 
+    int noiseFunctions;
     PlanetSettings settings;
+
+    bool autoUpdate = true;
+
+    std::vector<const char *> noiseTypes;
 
     void updatePlanet(Entity *entity);
 };
