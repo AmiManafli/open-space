@@ -57,7 +57,11 @@ void RenderSystem::renderEntities() {
         for (auto it = meshes.first; it != meshes.second; it++) {
             auto entity = it->first;
             auto mesh = dynamic_cast<MeshComponent *>(it->second);
-            triangleCount += (double) mesh->indices.size() / 3.0;
+            if (mesh->indexed) {
+                triangleCount += (double) mesh->indices.size() / 3.0;
+            } else {
+                triangleCount += (double) mesh->vertices.size() / 3.0;
+            }
             renderMesh(mesh, mesh->shaderProgram, transform->getModel());
         }
 
