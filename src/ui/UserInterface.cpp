@@ -376,7 +376,8 @@ void UserInterface::renderSpaceDisplay() {
 }
 
 void UserInterface::renderEntityNames() {
-    auto planet = entityManager->getEntity(4);
+//    auto planet = entityManager->getEntity(4);
+    auto planet = nullptr;
     if (planet) {
         auto transform = entityManager->getComponent<TransformComponent>(planet);
         auto mass = entityManager->getComponent<MassComponent>(planet);
@@ -395,7 +396,9 @@ void UserInterface::renderEntityNames() {
 
             ImGui::Text("Planet: ???");
             ImGui::Text("Position: (%.3f, %.3f, %.3f)", pos.x, pos.y, pos.z);
-            ImGui::Text("Mass: %.1f kg", mass->mass);
+            if (mass) {
+                ImGui::Text("Mass: %.1f kg", mass->mass);
+            }
 
             ImGui::End();
         }
