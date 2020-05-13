@@ -12,7 +12,7 @@ namespace osn {
 class OpenSimplexNoise : public Noise {
 public:
     OpenSimplexNoise();
-    OpenSimplexNoise(uint64_t seed);
+    OpenSimplexNoise(uint64_t seed, float strength, float roughness, glm::vec3 center);
 
     void reseed(uint64_t seed) override;
 
@@ -24,6 +24,10 @@ public:
 private:
     uint64_t seed;
     osn::OpenSimplexNoise *noise;
+
+    float strength;
+    float roughness;
+    glm::vec3 center;
 };
 
 

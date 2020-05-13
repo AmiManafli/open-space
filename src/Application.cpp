@@ -7,7 +7,7 @@
 #include <cg/entities/components/OrbitComponent.h>
 #include <cg/skybox/SkyboxStar.h>
 #include <cg/collision/BoundingSphere.h>
-#include <cg/Cube.h>
+#include <cg/PlanetGenerator.h>
 #include "cg/Application.h"
 
 bool onUpdateTerrain(Terrain *terrain, TerrainSettings &settings) {
@@ -144,7 +144,7 @@ void Application::init() {
 //            ->build(entityManager);
     auto test = EntityBuilder::create()
             ->withTransform(0, 0, 0)
-            ->withMesh(new Cube(0, *context->meshProgram))
+            ->withMesh(new PlanetGenerator(0, *context->meshProgram))
             ->isSelectable()
             ->build(entityManager);
 

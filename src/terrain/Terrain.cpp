@@ -9,7 +9,7 @@ Terrain::Terrain(uint32_t width, uint32_t height, std::vector<Vertex> &vertices,
         : MeshComponent(vertices, indices, textures, shaderProgram, mode),
           width(width), height(height), subdivisionsWidth(1), subdivisionsHeight(1), noiseType(noiseType) {
     perlinNoise = new PerlinNoise(1);
-    openSimplexNoise = new OpenSimplexNoise(1);
+    openSimplexNoise = new OpenSimplexNoise();
     testNoise = new TestNoise(1);
 }
 

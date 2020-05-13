@@ -1,6 +1,19 @@
-#include "Cube.h"
+#include <cg/terrain/OpenSimplexNoise.h>
+#include "PlanetGenerator.h"
 
-Cube::Cube(uint16_t subdivisions, ShaderProgram &shaderProgram) {
+PlanetSettings getDefaultPlanetSettings() {
+    PlanetSettings settings;
+    settings.seed = 0;
+    settings.radius = 1;
+    settings.subdivision = 0;
+    settings.strength = 1;
+    settings.roughness = 1;
+    settings.center = glm::vec3(0);
+    return settings;
+}
+
+PlanetGenerator::PlanetGenerator(uint16_t subdivisions, ShaderProgram &shaderProgram)
+        : settings(getDefaultPlanetSettings()), noise(createNoise(getDefaultPlanetSettings())) {
     this->shaderProgram = &shaderProgram;
     this->subdivision = subdivisions;
     indexed = false;
@@ -10,7 +23,7 @@ Cube::Cube(uint16_t subdivisions, ShaderProgram &shaderProgram) {
     createMesh();
 }
 
-Cube::~Cube() {
+PlanetGenerator::~PlanetGenerator() {
 }
 
 glm::vec3 mapCubeToSphere(glm::vec3 position) {
@@ -27,34 +40,29 @@ glm::vec3 mapCubeToSphere(glm::vec3 position) {
     return sphere;
 }
 
-void Cube::createMesh() {
-    subdivide(subdivision);
-}
-
 glm::vec3 calculateFaceNormal(glm::vec3 a, glm::vec3 b, glm::vec3 c) {
     return glm::normalize(glm::cross(a - b, a - c));
 }
 
-MeshComponent::Vertex createCubeVertex(glm::vec3 position, glm::vec3 normal) {
-    MeshComponent::Vertex vertex {};
-    vertex.position = mapCubeToSphere(position);
-    vertex.normal = normal;
-    return vertex;
-}
-
-void Cube::createTriangle(glm::vec3 a, glm::vec3 b, glm::vec3 c) {
+void PlanetGenerator::createTriangle(glm::vec3 a, glm::vec3 b, glm::vec3 c) {
     a = mapCubeToSphere(a);
     b = mapCubeToSphere(b);
     c = mapCubeToSphere(c);
 
-    auto normal = calculateFaceNormal(a, b, c);
-
-    vertices.emplace_back(Vertex { a, normal });
-    vertices.emplace_back(Vertex { b, normal });
-    vertices.emplace_back(Vertex { c, normal });
+    vertices.emplace_back(Vertex { a });
+    vertices.emplace_back(Vertex { b });
+    vertices.emplace_back(Vertex { c });
 }
 
-void Cube::subdivide(uint16_t subdivisions) {
+void PlanetGenerator::createMesh() {
+    subdivide(subdivision);
+    applyNoise();
+    updateNormals();
+
+    setupBuffers();
+}
+
+void PlanetGenerator::subdivide(uint16_t subdivisions) {
     this->subdivision = subdivisions;
 
     double start = 1.0;
@@ -139,6 +147,38 @@ void Cube::subdivide(uint16_t subdivisions) {
             createTriangle(lower, upperNext, lowerNext);
         }
     }
+}
 
-    setupBuffers();
+void PlanetGenerator::updateNormals() {
+    for (int i = 0; i < vertices.size(); i += 3) {
+        auto a = vertices[i];
+        auto b = vertices[i + 1];
+        auto c = vertices[i + 2];
+
+        auto normal = calculateFaceNormal(a.position, b.position, c.position);
+
+        vertices[i].normal = normal;
+        vertices[i + 1].normal = normal;
+        vertices[i + 2].normal = normal;
+    }
+}
+
+Noise *PlanetGenerator::createNoise(PlanetSettings settings) {
+    return new OpenSimplexNoise(settings.seed, settings.strength, settings.roughness, settings.center);
+}
+
+void PlanetGenerator::updateSettings(PlanetSettings &settings) {
+    this->settings = settings;
+    subdivision = settings.subdivision;
+    delete noise;
+    noise = createNoise(settings);
+
+    createMesh();
+}
+
+void PlanetGenerator::applyNoise() {
+    for (auto &vertex : vertices) {
+        float height = noise->evaluate(vertex.position.x, vertex.position.y, vertex.position.z);
+        vertex.position = vertex.position * (1 + height) * settings.radius;
+    }
 }

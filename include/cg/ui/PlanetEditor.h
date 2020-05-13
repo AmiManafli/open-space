@@ -4,24 +4,8 @@
 #include <cg/GLHeader.h>
 #include <cg/entities/EntityManager.h>
 #include <cg/GLContext.h>
+#include <cg/PlanetGenerator.h>
 
-
-enum PlanetNoiseType {
-    POpenSimplex,
-    PPerlin,
-};
-
-struct PlanetSettings {
-    double radius;
-    uint16_t subdivision;
-    int seed;
-    double maxAmplitude;
-    double frequency;
-    int octaves;
-    double persistence;
-    PlanetNoiseType noiseType;
-    double redistribution;
-};
 
 class PlanetEditor {
 public:
@@ -34,6 +18,8 @@ private:
     GLContext &context;
 
     PlanetSettings settings;
+
+    void updatePlanet(Entity *entity);
 };
 
 #endif //CG1_PROJECT_PLANETEDITOR_H

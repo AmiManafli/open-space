@@ -1,12 +1,48 @@
 #include "PlanetEditor.h"
 
-PlanetEditor::PlanetEditor(EntityManager &entityManager, GLContext &context) : entityManager(entityManager), context(context) {
+PlanetEditor::PlanetEditor(EntityManager &entityManager, GLContext &context)
+        : entityManager(entityManager), context(context) {
+    settings = getDefaultPlanetSettings();
 }
 
 void PlanetEditor::render() {
+    auto selected = context.selectedEntity;
+
+    if (!selected) return;
+
     ImGui::Begin("Planet Editor");
 
-    ImGui::DragInt("Seed", &settings.seed, 1, 0, UINT64_MAX);
+    if (ImGui::DragInt("Seed", &settings.seed, 1, 0, 10000)) {
+        updatePlanet(selected);
+    }
+
+    if (ImGui::DragFloat("Radius", &settings.radius, 0.1, 0.1, 10000.0)) {
+        updatePlanet(selected);
+    }
+
+    if (ImGui::DragInt("Subdivision", &settings.subdivision, 1, 0, 200)) {
+        updatePlanet(selected);
+    }
+
+    if (ImGui::DragFloat("Strength", &settings.strength, 0.1, 0.1, 10000.0)) {
+        updatePlanet(selected);
+    }
+
+    if (ImGui::DragFloat("Roughness", &settings.roughness, 0.1, 0.1, 10000.0)) {
+        updatePlanet(selected);
+    }
+
+    if (ImGui::DragFloat3("Center", glm::value_ptr(settings.center), 0.1, 0.1, 10000.0)) {
+        updatePlanet(selected);
+    }
 
     ImGui::End();
+}
+
+void PlanetEditor::updatePlanet(Entity *entity) {
+    auto meshes = entityManager.getMultiComponents<MeshComponent>(entity);
+    auto it = meshes.first;
+
+    auto planet = dynamic_cast<PlanetGenerator *>(it->second);
+    planet->updateSettings(settings);
 }
