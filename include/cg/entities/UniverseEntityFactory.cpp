@@ -47,6 +47,7 @@ Entity *UniverseEntityFactory::createEntities(TransformComponent *parent, Planet
         1.0,
         80,
         planet.planetSeed,
+        FrontFace,
         {
                 {
                     Simple,
@@ -80,11 +81,12 @@ Entity *UniverseEntityFactory::createEntities(TransformComponent *parent, Planet
     auto planetVelocity = new VelocityComponent();
     planetVelocity->rotation = planet.rotation;
 
+    PlanetGenerator planetGenerator(settings, *context.planetProgram);
     Entity* entity = EntityBuilder::create()
             ->withTransform(planet.position)
             ->withVelocity(planetVelocity)
             ->withOrbit(parent, planet.semiMajorAxis, planet.semiMinorAxis, planet.orbitSpeed, planet.orbitAngle)
-            ->withMesh(new PlanetGenerator(settings, *context.planetProgram))
+            ->withMesh(planetGenerator.getMeshes())
             ->withSphereCollision(planet.radius)
             ->withScale(planet.radius)
             ->withMass(planet.mass)

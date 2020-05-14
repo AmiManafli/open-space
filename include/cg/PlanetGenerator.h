@@ -4,57 +4,28 @@
 #include <cg/GLHeader.h>
 #include <cg/entities/components/MeshComponent.h>
 #include <cg/terrain/Noise.h>
+#include <cg/PlanetSettings.h>
+#include <cg/PlanetSide.h>
 
-enum PlanetNoiseType {
-    Simple,
-    Ridged,
-};
-
-struct PlanetNoiseSettings {
-    PlanetNoiseType noiseType;
-
-    bool enabled;
-    bool useFirstLayerAsMask;
-
-    float strength;
-    float baseRoughness;
-    float roughness;
-    float persistence;
-    float minValue;
-    float weightMultiplier;
-
-    int layers;
-    glm::vec3 center;
-};
-
-struct PlanetSettings {
-    float radius;
-    int subdivision;
-    int seed;
-    std::vector<PlanetNoiseSettings> noiseSettings;
-};
 
 PlanetSettings getDefaultPlanetSettings();
 PlanetNoiseSettings getDefaultPlanetNoiseSettings();
 
-class PlanetGenerator : public MeshComponent {
+class PlanetGenerator {
 public:
     PlanetGenerator(PlanetSettings settings, ShaderProgram &shaderProgram);
-    ~PlanetGenerator() override;
 
-    void subdivide(uint16_t subdivisions) override;
+    std::vector<MeshComponent *> getMeshes() { return meshes; }
 
     void updateSettings(PlanetSettings settings);
 
 private:
-    std::vector<Noise *> noises;
     PlanetSettings settings;
+    ShaderProgram &shaderProgram;
 
-    void createMesh();
-    void createTriangle(glm::vec3 a, glm::vec3 b, glm::vec3 c);
+    std::vector<MeshComponent *> meshes;
 
-    void applyNoise();
-    void updateNormals();
+    void createMeshes();
 };
 
 #endif //CG1_PROJECT_PLANETGENERATOR_H

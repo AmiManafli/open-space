@@ -127,8 +127,49 @@ void Application::init() {
 
     auto color = glm::vec3(0.576, 0.886, 1.0);
 
-    auto galaxy = universe.getGalaxy(0, 0, 0);
-    universeEntityFactory->createEntities(galaxy.getSolarSystems(0, 0, 0));
+//    auto galaxy = universe.getGalaxy(0, 0, 0);
+//    universeEntityFactory->createEntities(galaxy.getSolarSystems(0, 0, 0));
+
+    auto settings = PlanetSettings {
+            1.0,
+            80,
+            0,
+            FrontFace,
+            {
+                    {
+                            Simple,
+                            true,
+                            false,
+                            0.06,
+                            0.6,
+                            2.5,
+                            0.7,
+                            1.3,
+                            0.0,
+                            4,
+                            glm::vec3(0.7, 1.1, 1.8),
+                    },
+                    {
+                            Ridged,
+                            true,
+                            true,
+                            1.67,
+                            1.0,
+                            5.7,
+                            0.6,
+                            0.1,
+                            1.0,
+                            4,
+                            glm::vec3(0.7, 1.7, 0.7),
+                    },
+            }
+    };
+    auto planetGenerator = new PlanetGenerator(settings, *context->meshProgram);
+    auto test = EntityBuilder::create()
+            ->withTransform(0, 0, 0)
+            ->withMesh(planetGenerator->getMeshes())
+            ->isSelectable()
+            ->build(entityManager);
 
     inputSystem->createSpaceshipControl(nullptr, context->player);
 }
@@ -175,10 +216,6 @@ void Application::run() {
         movementSystem->update();
         collisionSystem->update();
         renderSystem->update();
-
-        auto cam = entityManager->getComponent<CameraComponent>(context->getCamera());
-        auto angles = glm::eulerAngles(cam->orientation);
-        printf("Quat:\n  x: %f \n  y: %f \n  z: %f \n\n", glm::degrees(angles.x), glm::degrees(angles.y), glm::degrees(angles.z));
     }
 }
 
