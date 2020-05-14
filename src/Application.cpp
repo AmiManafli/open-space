@@ -85,6 +85,11 @@ void Application::init() {
     context->skyboxProgram->attachShader("./assets/shaders/skybox.frag", ShaderType::FragmentShader);
     context->skyboxProgram->link();
 
+    context->bloomProgram = new ShaderProgram();
+    context->bloomProgram->attachShader("./assets/shaders/finalBloom.vert", ShaderType::VertexShader);
+    context->bloomProgram->attachShader("./assets/shaders/finalBloom.frag", ShaderType::FragmentShader);
+    context->bloomProgram->link();
+
     sky = new Skybox(10000, 100000, 20, "./assets/textures/skybox1", context->skyboxProgram);
     auto playerPosition = glm::vec3(0.1, 1, 4);
     context->player = EntityBuilder::create()

@@ -67,6 +67,7 @@ public:
     ShaderProgram *meshWithLightProgram;
     ShaderProgram *meshTestLightProgram;
     ShaderProgram *skyboxProgram;
+    ShaderProgram *bloomProgram;
 
     double startTime;
 
