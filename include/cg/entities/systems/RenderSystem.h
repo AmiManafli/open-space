@@ -25,6 +25,9 @@ private:
 
     glm::vec4 clearColor;
 
+    uint32_t bloomFramebuffer;
+    uint32_t bloomTextures[2];
+
 };
 
 #endif //CG1_PROJECT_RENDERSYSTEM_H

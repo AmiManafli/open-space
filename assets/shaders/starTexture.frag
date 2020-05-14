@@ -1,12 +1,10 @@
 #version 330 core
+layout (location = 0) out vec4 vFragColor;
+layout (location = 1) out vec4 vBrightColor;
+
 in vec3 vNormal;
 in vec2 vTextureCoord;
 in vec3 vFragPos;
-
-//layout (location = 0) out fragColor
-//layout (location = 1) out brightColor (will be the "in vec2 aTextureCoord" in gaussianBlur.vert)
-
-out vec4 fragColor;
 
 struct Material {
     sampler2D diffuse;
@@ -27,13 +25,12 @@ void main() {
 
     vec3 result = calculateColor(materialDiffuse, materialSpecular);
 
-    fragColor = vec4(result, 1.0);
+    vFragColor = vec4(result, 1.0);
 
-//    float brightness = dot(result, vec3(0.2126, 0.7152, 0.0722));
-//    if (brightness > 1.0) {
-//        brightColor = vec4(result, 1.0);
-//    }
-//    else {
-//        brightColor = vec4(0.0, 0.0, 0.0, 1.0);
-//    }
+    float brightness = dot(result, vec3(0.2126, 0.7152, 0.0722));
+    if (brightness > 1.0) {
+        vBrightColor = vec4(result, 1.0);
+    } else {
+        vBrightColor = vec4(0.0, 0.0, 0.0, 1.0);
+    }
 }

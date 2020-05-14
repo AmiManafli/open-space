@@ -19,6 +19,27 @@ void RenderSystem::init() {
     glEnable(GL_STENCIL_TEST);
     glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
     glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+
+    // Bloom buffers
+    glGenFramebuffers(1, &bloomFramebuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, bloomFramebuffer);
+
+    glGenTextures(2, bloomTextures);
+
+    for(int i = 0; i < 2; i++) {
+        glBindTexture(GL_TEXTURE_2D, bloomTextures[i]);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, context->width, context->height, 0, GL_RGB, GL_FLOAT, nullptr);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, bloomTextures[i], 0);
+    }
+
+    uint32_t attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1};
+    glDrawBuffers(2, attachments);
+
+
 }
 
 void RenderSystem::update() {
