@@ -123,7 +123,14 @@ void InputSystem::update() {
         context->setActiveCamera(context->sideCamera);
     }
 
-    if (isKeyPressed(GLFW_KEY_GRAVE_ACCENT)) {
+    if(!isDebug && isKeyDown(GLFW_KEY_8)) {
+        cameraComponent->mode = CameraComponent::FirstPersonShip;
+    } else if (!isDebug && isKeyDown(GLFW_KEY_9)) {
+        cameraComponent->mode = CameraComponent::Free;
+    }
+
+    if (isKeyPressed(GLFW_KEY_GRAVE_ACCENT))
+    {
         context->displayCursor = !context->displayCursor;
         if (context->displayCursor) {
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);

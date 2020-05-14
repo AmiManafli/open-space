@@ -47,7 +47,7 @@ void RenderSystem::renderEntities() {
         auto transform = dynamic_cast<TransformComponent *>(pair.second);
         auto meshes = entityManager->getMultiComponents<MeshComponent>(entity);
         auto highlight = entityManager->getComponent<HighlightComponent>(entity);
-
+        auto bloom = true;
         if (highlight) {
             glStencilFunc(GL_ALWAYS, 1, 0xFF);
             glStencilMask(0xFF);
