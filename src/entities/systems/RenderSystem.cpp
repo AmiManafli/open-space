@@ -149,6 +149,7 @@ void RenderSystem::renderEntities() {
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         context->bloomProgram->use();
+        context->bloomProgram->setUniform("scene", 0);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, bloomTextures[0]);
         renderQuad();
