@@ -101,6 +101,10 @@ void InputSystem::update() {
         }
     }
 
+    if(!isDebug && isKeyPressed(GLFW_KEY_H)) {
+        context->bloomEnabled = !context->bloomEnabled;
+    }
+
     if (isKeyPressed(GLFW_KEY_BACKSLASH)) {
         context->displayGui = !context->displayGui;
     }

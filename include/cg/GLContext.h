@@ -38,7 +38,7 @@ public:
 
     bool displayCursor = false;
     bool displayGui = false;
-    bool bloomEnabled = true;
+    bool bloomEnabled = false;
 
     uint32_t triangleCount = 0;
 

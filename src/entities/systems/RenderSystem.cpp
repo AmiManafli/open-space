@@ -95,8 +95,10 @@ void RenderSystem::update() {
 void RenderSystem::renderEntities() {
     uint32_t triangleCount = 0;
 
-    glBindFramebuffer(GL_FRAMEBUFFER, bloomFramebuffer);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    if(context->bloomEnabled) {
+        glBindFramebuffer(GL_FRAMEBUFFER, bloomFramebuffer);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    }
 
     for (auto& pair : entityManager->getComponents<TransformComponent>()) {
         auto entity = pair.first;
@@ -141,15 +143,16 @@ void RenderSystem::renderEntities() {
 
     context->triangleCount = triangleCount;
 
-    //bloom framebuffer
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    if(context->bloomEnabled) {
+        //bloom framebuffer
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    context->bloomProgram->use();
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, bloomTextures[0]);
-    renderQuad();
-    
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        context->bloomProgram->use();
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, bloomTextures[0]);
+        renderQuad();
+    }
 }
 
 void RenderSystem::renderMesh(MeshComponent *mesh, ShaderProgram *shaderProgram, glm::mat4 model) {
