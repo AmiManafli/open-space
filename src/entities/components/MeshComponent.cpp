@@ -26,11 +26,11 @@ void MeshComponent::createInstances(std::vector<glm::vec3>& transformations) {
     glBufferData(GL_ARRAY_BUFFER, transformations.size() * sizeof(glm::vec3), transformations.data(), GL_STATIC_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-    glEnableVertexAttribArray(3);
+    glEnableVertexAttribArray(AttributeInstances);
     glBindBuffer(GL_ARRAY_BUFFER, instanceVbo);
-    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), nullptr);
+    glVertexAttribPointer(AttributeInstances, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), nullptr);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glVertexAttribDivisor(3, 1);
+    glVertexAttribDivisor(AttributeInstances, 1);
 
     printf("%d instance(s) created!\n", instances);
 }
@@ -77,14 +77,17 @@ void MeshComponent::setupBuffers() {
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint32_t), &indices[0], GL_STATIC_DRAW);
     }
 
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), nullptr);
+    glEnableVertexAttribArray(AttributePosition);
+    glVertexAttribPointer(AttributePosition, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), nullptr);
 
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) offsetof(Vertex, normal));
+    glEnableVertexAttribArray(AttributeNormal);
+    glVertexAttribPointer(AttributeNormal, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) offsetof(Vertex, normal));
 
-    glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) offsetof(Vertex, textureCoord));
+    glEnableVertexAttribArray(AttributeTextureCoord);
+    glVertexAttribPointer(AttributeTextureCoord, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) offsetof(Vertex, textureCoord));
+
+    glEnableVertexAttribArray(AttributeHeight);
+    glVertexAttribPointer(AttributeHeight, 1, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) offsetof(Vertex, height));
 }
 
 std::vector<MeshComponent::Texture> MeshComponent::loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName)

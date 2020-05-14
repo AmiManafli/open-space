@@ -149,23 +149,25 @@ void PlanetSide::updateNormals() {
 void PlanetSide::applyNoise() {
     auto firstLayerHeight = 0.0;
     for (auto &vertex : vertices) {
-        double height = 0.0;
+        double noiseValue = 0.0;
 
         if (!noises.empty()) {
             firstLayerHeight = noises[0]->evaluate(vertex.position.x, vertex.position.y, vertex.position.z);
             if (settings.noiseSettings[0].enabled) {
-                height = firstLayerHeight;
+                noiseValue = firstLayerHeight;
             }
         }
 
         for (int i = 1; i < noises.size(); i++) {
             if (settings.noiseSettings[i].enabled) {
                 float mask = settings.noiseSettings[i].useFirstLayerAsMask ? firstLayerHeight : 1.0f;
-                height += noises[i]->evaluate(vertex.position.x, vertex.position.y, vertex.position.z) * mask;
+                noiseValue += noises[i]->evaluate(vertex.position.x, vertex.position.y, vertex.position.z) * mask;
             }
         }
 
-        vertex.position = vertex.position * (1 + static_cast<float>(height));// * settings.radius;
+        auto oldPosition = vertex.position;
+        vertex.position = vertex.position * (1 + static_cast<float>(noiseValue));// * settings.radius;
+        vertex.height = glm::length(oldPosition - vertex.position);
     }
 }
 

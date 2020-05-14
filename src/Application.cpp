@@ -164,7 +164,7 @@ void Application::init() {
                     },
             }
     };
-    auto planetGenerator = new PlanetGenerator(settings, *context->meshProgram);
+    auto planetGenerator = new PlanetGenerator(settings, *context->planetProgram);
     auto test = EntityBuilder::create()
             ->withTransform(0, 0, 0)
             ->withMesh(planetGenerator->getMeshes())

@@ -12,10 +12,19 @@
 
 class MeshComponent : public Component {
 public:
+    enum {
+        AttributePosition = 0,
+        AttributeNormal = 1,
+        AttributeTextureCoord = 2,
+        AttributeInstances = 3,
+        AttributeHeight = 4,
+    };
+
     struct Vertex {
         glm::vec3 position;
         glm::vec3 normal;
         glm::vec2 textureCoord;
+        float height;
     };
 
     struct Texture {
