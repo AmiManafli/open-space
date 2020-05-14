@@ -80,16 +80,27 @@ void main() {
 
     vec3 waterColor = vec3(23.0 / 255.0, 130.0 / 255.0, 233.0 / 255.0);
     vec3 grassColor = vec3(130.0 / 255.0, 233.0 / 255.0, 23.0 / 255.0);
+    vec3 peakColor = vec3(1.0, 1.0, 1.0);
 
     vec3 waterSpecular = vec3(0.5, 0.5, 0.5);
     vec3 grassSpecular = vec3(0.1, 0.1, 0.1);
 
     float shoreHeight = maxHeight * 0.1;
+    float lowPeakHeight = maxHeight * 0.6;
+    float peakHeight = maxHeight * 0.9;
 
-    float value = clamp(vHeight, 0, shoreHeight) / shoreHeight;
-    vec3 diffuse = mix(waterColor, grassColor, value);
-
-    vec3 specular = mix(waterSpecular, grassSpecular, value);
+    vec3 diffuse;
+    vec3 specular = vec3(0.1, 0.1, 0.1);
+    if (vHeight <= shoreHeight) {
+        float value = clamp(vHeight, 0, shoreHeight) / shoreHeight;
+        specular = mix(waterSpecular, grassSpecular, value);
+        diffuse = mix(waterColor, grassColor, value);
+    } else if (vHeight < lowPeakHeight) {
+        diffuse = grassColor;
+    } else {
+        float value = clamp(vHeight - lowPeakHeight, 0, maxHeight - lowPeakHeight) / (maxHeight - lowPeakHeight);
+        diffuse = mix(grassColor, peakColor, value);
+    }
 
     vec3 materialDiffuse = diffuse;
     vec3 materialSpecular = specular;
