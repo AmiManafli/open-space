@@ -43,6 +43,63 @@ Entity *UniverseEntityFactory::createEntities(Star &star) {
 }
 
 Entity *UniverseEntityFactory::createEntities(TransformComponent *parent, Planet &planet) {
+    std::vector<PlanetNoiseSettings> noisePresets[2];
+    noisePresets[0] = {
+                    {
+                            Simple,
+                            true,
+                            false,
+                            0.06,
+                            0.6,
+                            2.5,
+                            0.7,
+                            1.3,
+                            0.0,
+                            4,
+                            glm::vec3(0.7, 1.1, 1.8),
+                    },
+                    {
+                            Ridged,
+                            true,
+                            true,
+                            planet.noiseStrength,
+                            1.0,
+                            5.7,
+                            0.6,
+                            0.1,
+                            1.0,
+                            4,
+                            glm::vec3(0.7, 1.7, 0.7),
+                    },
+    };
+    noisePresets[1] = {
+                {
+                        Simple,
+                        true,
+                        false,
+                        0.8f * planet.noiseStrength,
+                        2.3,
+                        2.1,
+                        0.4,
+                        1.0,
+                        0.0,
+                        6,
+                        glm::vec3(0, 0, 0),
+                },
+                {
+                        Ridged,
+                        true,
+                        true,
+                        0.9f * planet.noiseStrength,
+                        1.0,
+                        2.0,
+                        0.5,
+                        0.1,
+                        0.0,
+                        1,
+                        glm::vec3(0, 0, 0),
+                },
+    };
     auto settings = PlanetSettings {
         1.0,
         80,
@@ -63,34 +120,7 @@ Entity *UniverseEntityFactory::createEntities(TransformComponent *parent, Planet
                 8,
         },
         FrontFace,
-        {
-                {
-                    Simple,
-                    true,
-                    false,
-                    0.06,
-                    0.6,
-                    2.5,
-                    0.7,
-                    1.3,
-                    0.0,
-                    4,
-                    glm::vec3(0.7, 1.1, 1.8),
-                },
-                {
-                    Ridged,
-                    true,
-                    true,
-                    1.67,
-                    1.0,
-                    5.7,
-                    0.6,
-                    0.1,
-                    1.0,
-                    4,
-                    glm::vec3(0.7, 1.7, 0.7),
-                },
-        }
+        noisePresets[planet.noisePreset],
     };
 
     auto planetVelocity = new VelocityComponent();

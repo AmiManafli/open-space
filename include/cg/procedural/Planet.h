@@ -28,6 +28,10 @@ public:
     glm::vec3 groundColor;
     glm::vec3 peakColor;
 
+    int noisePreset;
+
+    float noiseStrength;
+
     std::vector<Moon> moons;
 
 private:

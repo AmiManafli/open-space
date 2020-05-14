@@ -47,6 +47,10 @@ Planet::Planet(std::vector<SeedType> seed, Star &star, SeedType index) : seed(se
     g = limit(random(), 0.0, 1.0);
     b = limit(random(), 0.0, 1.0);
     peakColor = glm::vec3(r, g, b);
+
+    noisePreset = static_cast<int>(glm::round(normalized(random())));
+
+    noiseStrength = limit(random(), 1.05, 1.7);
 }
 
 Moon Planet::getMoon(int index) {
