@@ -24,11 +24,11 @@ void GravitySystem::update() {
         auto mass = dynamic_cast<MassComponent *>(pair.second);
         auto transform = entityManager->getComponent<TransformComponent>(entity);
 
-        auto distance = transform->position - objectTransform->position;
+        auto distance = objectTransform->position - transform->position;
         auto length = glm::length(distance);
         auto unit = glm::normalize(distance);
 
-        const double gravitationalConstant = 0.7;
+        const double gravitationalConstant = 2.0;
         auto force = static_cast<float>(gravitationalConstant * objectMass->mass * mass->mass) * unit / pow(length, 2);
 
         totalForce += force;

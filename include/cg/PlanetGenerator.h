@@ -39,7 +39,7 @@ PlanetNoiseSettings getDefaultPlanetNoiseSettings();
 
 class PlanetGenerator : public MeshComponent {
 public:
-    PlanetGenerator(uint16_t subdivisions, ShaderProgram &shaderProgram);
+    PlanetGenerator(PlanetSettings settings, ShaderProgram &shaderProgram);
     ~PlanetGenerator() override;
 
     void subdivide(uint16_t subdivisions) override;

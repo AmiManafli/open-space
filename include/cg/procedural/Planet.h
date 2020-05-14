@@ -21,6 +21,9 @@ public:
     float semiMinorAxis;
     float orbitSpeed;
     float orbitAngle;
+    SeedType planetSeed;
+    uint32_t mass;
+    glm::vec3 rotation;
 
     std::vector<Moon> moons;
 

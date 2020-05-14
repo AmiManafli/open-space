@@ -43,13 +43,51 @@ Entity *UniverseEntityFactory::createEntities(Star &star) {
 }
 
 Entity *UniverseEntityFactory::createEntities(TransformComponent *parent, Planet &planet) {
+    auto settings = PlanetSettings {
+        1.0,
+        80,
+        planet.planetSeed,
+        {
+                {
+                    Simple,
+                    true,
+                    false,
+                    0.06,
+                    0.6,
+                    2.5,
+                    0.7,
+                    1.3,
+                    0.0,
+                    4,
+                    glm::vec3(0.7, 1.1, 1.8),
+                },
+                {
+                    Ridged,
+                    true,
+                    true,
+                    1.67,
+                    1.0,
+                    5.7,
+                    0.6,
+                    0.1,
+                    1.0,
+                    4,
+                    glm::vec3(0.7, 1.7, 0.7),
+                },
+        }
+    };
+
+    auto planetVelocity = new VelocityComponent();
+    planetVelocity->rotation = planet.rotation;
+
     Entity* entity = EntityBuilder::create()
             ->withTransform(planet.position)
+            ->withVelocity(planetVelocity)
             ->withOrbit(parent, planet.semiMajorAxis, planet.semiMinorAxis, planet.orbitSpeed, planet.orbitAngle)
-            ->withMesh(new PlanetGenerator(0, *context.planetProgram))
+            ->withMesh(new PlanetGenerator(settings, *context.planetProgram))
             ->withSphereCollision(planet.radius)
             ->withScale(planet.radius)
-            ->withMass(10)
+            ->withMass(planet.mass)
             ->isSelectable()
             ->build(&entityManager);
     return entity;

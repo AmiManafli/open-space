@@ -25,14 +25,13 @@ PlanetNoiseSettings getDefaultPlanetNoiseSettings() {
     return settings;
 }
 
-PlanetGenerator::PlanetGenerator(uint16_t subdivisions, ShaderProgram &shaderProgram) {
+PlanetGenerator::PlanetGenerator(PlanetSettings settings, ShaderProgram &shaderProgram) : settings(settings) {
     this->shaderProgram = &shaderProgram;
-    this->subdivision = subdivisions;
     indexed = false;
     mode = GL_TRIANGLES;
     instances = 1;
 
-    updateSettings(getDefaultPlanetSettings());
+    updateSettings(settings);
 }
 
 PlanetGenerator::~PlanetGenerator() {

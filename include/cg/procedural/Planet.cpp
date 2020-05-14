@@ -10,7 +10,7 @@ Planet::Planet(std::vector<SeedType> seed, Star &star, SeedType index) : seed(se
     auto distance = 5.0 * star.radius * (index + 1);
 
     position = glm::dvec3(distance, star.position.y, star.position.z);
-    radius = star.radius * 0.1;
+    radius = star.radius * 0.2;
 
     auto r = limit(random(), 0.2, 1.0);
     auto g = limit(random(), 0.2, 1.0);
@@ -28,6 +28,10 @@ Planet::Planet(std::vector<SeedType> seed, Star &star, SeedType index) : seed(se
     for (int i = 0; i < numMoons; i++) {
         moons.emplace_back(getMoon(i));
     }
+
+    planetSeed = random();
+    mass = limit(random(), 100, 2000);
+    rotation = glm::vec3(limit(random(), 0, 0.05), limit(random(), 0, 0.05), limit(random(), 0, 0.05));
 }
 
 Moon Planet::getMoon(int index) {

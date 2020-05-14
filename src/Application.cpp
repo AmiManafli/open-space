@@ -129,6 +129,7 @@ void Application::init() {
 
     auto galaxy = universe.getGalaxy(0, 0, 0);
     universeEntityFactory->createEntities(galaxy.getSolarSystems(0, 0, 0));
+
     inputSystem->createSpaceshipControl(nullptr, context->player);
 }
 
