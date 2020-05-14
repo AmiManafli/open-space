@@ -18,7 +18,8 @@ void main()
     if (bloom) {
         hdrColor += bloomColor;
     }
-    vec3 result = vec3(1.0) - exp(-hdrColor * exposure);
-    result = pow(result, vec3(1.0 / gamma));
+//    vec3 result = vec3(1.0) - exp(-hdrColor * exposure);
+//    result = pow(result, vec3(1.0 / gamma));
+    vec3 result = hdrColor;
     fragColor = vec4(result, 1.0);
 }

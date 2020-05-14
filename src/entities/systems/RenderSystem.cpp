@@ -38,7 +38,7 @@ RenderSystem::~RenderSystem() {
 }
 
 void RenderSystem::init() {
-    clearColor = glm::vec4(0.2, 0.2, 0.2, 1.0);
+    clearColor = glm::vec4(0, 0, 0, 1);
 
     // Depth buffer
     glEnable(GL_DEPTH_TEST);
@@ -133,6 +133,7 @@ void RenderSystem::renderEntities() {
 
         for (int i = 0; i < blurIterations; i++) {
             glBindFramebuffer(GL_FRAMEBUFFER, blurFramebuffers[horizontal]);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
             context->blurProgram->setUniform("horizontal", horizontal);
             glBindTexture(GL_TEXTURE_2D, firstIteration ? bloomTextures[1] : blurTextures[!horizontal]);
             renderQuad();
@@ -145,7 +146,7 @@ void RenderSystem::renderEntities() {
         //bloom framebuffer
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
         context->bloomProgram->use();
 
@@ -236,6 +237,12 @@ void RenderSystem::initBloomBuffers() {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, bloomTextures[i], 0);
     }
+
+    unsigned int rboDepth;
+    glGenRenderbuffers(1, &rboDepth);
+    glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, context->width, context->height);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth);
 
     uint32_t attachments[2] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1};
     glDrawBuffers(2, attachments);
