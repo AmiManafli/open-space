@@ -30,14 +30,13 @@ CameraComponent::CameraComponent(CameraComponent::Mode mode, CameraComponent::Ty
         pitch = 0.0f;
     }
 
-    glm::vec3 angles(glm::radians(170.0), glm::radians(-5.0), 0);
+    glm::vec3 angles(glm::radians(0.0), glm::radians(0.0), 0);
     this->orientation = glm::quat(angles);
 }
 
 glm::mat4 CameraComponent::getView(TransformComponent *positionComponent) {
     auto position = positionComponent->position;
     if (mode == FirstPersonShip) {
-//        return glm::lookAt(position, position + front, up);
         auto view = glm::mat4_cast(glm::inverse(orientation));
         view = glm::translate(view, position);
         return view;
