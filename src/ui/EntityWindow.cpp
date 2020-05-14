@@ -188,7 +188,7 @@ void EntityWindow::renderMeshComponents(std::vector<MeshComponent *> components)
                 ImGui::Text("Textures: %llu", mesh->textures.size());
 
                 int subdivisions = mesh->subdivision;
-                if (ImGui::SliderInt("Subdivisions", &subdivisions, 0, 7)) {
+                if (ImGui::SliderInt("Subdivisions", &subdivisions, 0, 50)) {
                     mesh->subdivision = subdivisions;
                     mesh->subdivide(subdivisions);
                 }

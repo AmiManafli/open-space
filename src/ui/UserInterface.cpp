@@ -34,6 +34,7 @@ UserInterface::UserInterface(EntityManager *entityManager, GLContext *context)
     settings.redistribution = 1.0;
 
     entityWindow = new EntityWindow(entityManager, context);
+    planetEditor = new PlanetEditor(*entityManager, *context);
 }
 
 void UserInterface::render() {
@@ -58,6 +59,10 @@ void UserInterface::render() {
 
     if (showDemoWindow) {
         ImGui::ShowDemoWindow();
+    }
+
+    if (context->displayCursor && showPlanetEditor) {
+        planetEditor->render();
     }
 
     if (showTerrainGeneratorWindow) {
@@ -371,26 +376,31 @@ void UserInterface::renderSpaceDisplay() {
 }
 
 void UserInterface::renderEntityNames() {
-    auto planet = entityManager->getEntity(4);
-    auto transform = entityManager->getComponent<TransformComponent>(planet);
-    auto mass = entityManager->getComponent<MassComponent>(planet);
-    auto pos = glm::vec4(transform->position, 1.0);
+//    auto planet = entityManager->getEntity(4);
+    auto planet = nullptr;
+    if (planet) {
+        auto transform = entityManager->getComponent<TransformComponent>(planet);
+        auto mass = entityManager->getComponent<MassComponent>(planet);
+        auto pos = glm::vec4(transform->position, 1.0);
 
-    auto clipSpace = context->getProjection() * context->getView() * pos;
-    auto normalizedDeviceSpace = glm::vec3(clipSpace) / clipSpace.w;
+        auto clipSpace = context->getProjection() * context->getView() * pos;
+        auto normalizedDeviceSpace = glm::vec3(clipSpace) / clipSpace.w;
 
-    auto screen = glm::vec2(normalizedDeviceSpace);
-    screen.x = (screen.x + 1.0) / 2.0 * context->getWidth();
-    screen.y = (1.0 - screen.y) / 2.0 * context->getHeight();
+        auto screen = glm::vec2(normalizedDeviceSpace);
+        screen.x = (screen.x + 1.0) / 2.0 * context->getWidth();
+        screen.y = (1.0 - screen.y) / 2.0 * context->getHeight();
 
-    if (screen.x >= 0.0 && screen.x <= context->getWidth() && screen.y >= 0.0 && screen.y <= context->getHeight()) {
-        ImGui::Begin("Planet", &showSpaceDisplay, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoBackground);
-        ImGui::SetWindowPos(ImVec2(screen.x, screen.y));
+        if (screen.x >= 0.0 && screen.x <= context->getWidth() && screen.y >= 0.0 && screen.y <= context->getHeight()) {
+            ImGui::Begin("Planet", &showSpaceDisplay, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoBackground);
+            ImGui::SetWindowPos(ImVec2(screen.x, screen.y));
 
-        ImGui::Text("Planet: ???");
-        ImGui::Text("Position: (%.3f, %.3f, %.3f)", pos.x, pos.y, pos.z);
-        ImGui::Text("Mass: %.1f kg", mass->mass);
+            ImGui::Text("Planet: ???");
+            ImGui::Text("Position: (%.3f, %.3f, %.3f)", pos.x, pos.y, pos.z);
+            if (mass) {
+                ImGui::Text("Mass: %.1f kg", mass->mass);
+            }
 
-        ImGui::End();
+            ImGui::End();
+        }
     }
 }

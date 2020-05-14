@@ -72,7 +72,8 @@ void SpaceshipControl::processInput(float deltaTime) {
         velocity = normalizedVelocity * speed;
     }
 
-    velocityComponent->velocity += velocity;
+//    velocityComponent->velocity += velocity;
+    velocityComponent->velocity = velocity;
 
     // Reset rotations
     velocity = glm::vec3(0);

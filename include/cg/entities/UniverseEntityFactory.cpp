@@ -1,4 +1,5 @@
 #include <cg/IcoSphere.h>
+#include <cg/PlanetGenerator.h>
 #include "UniverseEntityFactory.h"
 #include "EntityBuilder.h"
 
@@ -34,7 +35,7 @@ Entity *UniverseEntityFactory::createEntities(Star &star) {
             ->withTransform(star.position)
             ->withMesh(new IcoSphere(1, 3, star.color, 11, context.starProgram))
             ->withScale(star.radius)
-            ->withPointLight(glm::vec3(0.2), star.color, glm::vec3(1.0), 1.0, 0.0014, 0.000007)
+            ->withPointLight(glm::vec3(0.05), star.color, glm::vec3(1.0), 1.0, 0.0014, 0.000007)
             ->withSphereCollision(star.radius)
             ->isSelectable()
             ->build(&entityManager);
@@ -45,7 +46,7 @@ Entity *UniverseEntityFactory::createEntities(TransformComponent *parent, Planet
     Entity* entity = EntityBuilder::create()
             ->withTransform(planet.position)
             ->withOrbit(parent, planet.semiMajorAxis, planet.semiMinorAxis, planet.orbitSpeed, planet.orbitAngle)
-            ->withMesh(new IcoSphere(1.0, 3, planet.color, 11, context.planetProgram))
+            ->withMesh(new PlanetGenerator(0, *context.planetProgram))
             ->withSphereCollision(planet.radius)
             ->withScale(planet.radius)
             ->withMass(10)

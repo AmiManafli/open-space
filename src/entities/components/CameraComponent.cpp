@@ -9,6 +9,10 @@ CameraComponent::CameraComponent(CameraComponent::Mode mode, CameraComponent::Ty
     this->right = glm::normalize(glm::cross(this->front, worldUp));
     this->up = glm::normalize(glm::cross(this->right, this->front));
 
+    x = 0;
+    y = 0;
+    z = 0;
+
     auto position = positionComponent->position;
     if (mode == FirstPersonShip) {
         yaw = glm::degrees(glm::atan((position.x - target.x) / (position.z - target.z)));
@@ -26,13 +30,13 @@ CameraComponent::CameraComponent(CameraComponent::Mode mode, CameraComponent::Ty
         pitch = 0.0f;
     }
 
-    roll = 0.0f;
+    glm::vec3 angles(glm::radians(0.0), glm::radians(0.0), 0);
+    this->orientation = glm::quat(angles);
 }
 
 glm::mat4 CameraComponent::getView(TransformComponent *positionComponent) {
     auto position = positionComponent->position;
     if (mode == FirstPersonShip) {
-//        return glm::lookAt(position, position + front, up);
         auto view = glm::mat4_cast(glm::inverse(orientation));
         view = glm::translate(view, position);
         return view;
