@@ -90,6 +90,11 @@ void Application::init() {
     context->bloomProgram->attachShader("./assets/shaders/finalBloom.frag", ShaderType::FragmentShader);
     context->bloomProgram->link();
 
+    context->blurProgram = new ShaderProgram();
+    context->blurProgram->attachShader("./assets/shaders/gaussianBlur.vert", ShaderType::VertexShader);
+    context->blurProgram->attachShader("./assets/shaders/gaussianBlur.frag", ShaderType::FragmentShader);
+    context->blurProgram->link();
+
     sky = new Skybox(10000, 100000, 20, "./assets/textures/skybox1", context->skyboxProgram);
     auto playerPosition = glm::vec3(0.1, 1, 4);
     context->player = EntityBuilder::create()

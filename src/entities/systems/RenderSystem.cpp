@@ -2,15 +2,14 @@
 
 unsigned int quadVAO = 0;
 unsigned int quadVBO;
-void renderQuad()
-{
-    if (quadVAO == 0)
-    {
+
+void renderQuad() {
+    if (quadVAO == 0) {
         float quadVertices[] = {
                 // positions        // texture Coords
-                -1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
+                -1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
                 -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
-                1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
+                1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
                 1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
         };
         // setup plane VAO
@@ -20,9 +19,9 @@ void renderQuad()
         glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
         glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
         glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *) 0);
         glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *) (3 * sizeof(float)));
     }
     glBindVertexArray(quadVAO);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
@@ -49,29 +48,7 @@ void RenderSystem::init() {
     glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
     glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
-    // Bloom buffers
-    glGenFramebuffers(1, &bloomFramebuffer);
-    glBindFramebuffer(GL_FRAMEBUFFER, bloomFramebuffer);
-
-    glGenTextures(2, bloomTextures);
-
-    for(int i = 0; i < 2; i++) {
-        glBindTexture(GL_TEXTURE_2D, bloomTextures[i]);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, context->width, context->height, 0, GL_RGB, GL_FLOAT, nullptr);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, bloomTextures[i], 0);
-    }
-
-    uint32_t attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1};
-    glDrawBuffers(2, attachments);
-
-    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-       throw std::runtime_error("Incomplete framebuffer");
-    }
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    initBloomBuffers();
 }
 
 void RenderSystem::update() {
@@ -95,12 +72,12 @@ void RenderSystem::update() {
 void RenderSystem::renderEntities() {
     uint32_t triangleCount = 0;
 
-    if(context->bloomEnabled) {
+    if (context->bloomEnabled) {
         glBindFramebuffer(GL_FRAMEBUFFER, bloomFramebuffer);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     }
 
-    for (auto& pair : entityManager->getComponents<TransformComponent>()) {
+    for (auto &pair : entityManager->getComponents<TransformComponent>()) {
         auto entity = pair.first;
         auto transform = dynamic_cast<TransformComponent *>(pair.second);
         auto meshes = entityManager->getMultiComponents<MeshComponent>(entity);
@@ -129,7 +106,8 @@ void RenderSystem::renderEntities() {
             glDisable(GL_DEPTH_TEST);
 
             auto cameraPosition = entityManager->getComponent<TransformComponent>(context->getCamera())->position;
-            auto highlightModel = highlight->getModel(transform->getModel(), glm::length(transform->position - cameraPosition));
+            auto highlightModel = highlight->getModel(transform->getModel(),
+                                                      glm::length(transform->position - cameraPosition));
             for (auto it = meshes.first; it != meshes.second; it++) {
                 auto mesh = dynamic_cast<MeshComponent *>(it->second);
                 renderMesh(mesh, highlight->shaderProgram, highlightModel);
@@ -143,15 +121,43 @@ void RenderSystem::renderEntities() {
 
     context->triangleCount = triangleCount;
 
-    if(context->bloomEnabled) {
+    if (context->bloomEnabled) {
+        //apply two-pass Gaussian blur
+        bool horizontal = true;
+        bool firstIteration = true;
+        uint16_t blurIterations = 10;
+        context->blurProgram->use();
+        context->blurProgram->setUniform("image", 0);
+
+
+        for (int i = 0; i < blurIterations; i++) {
+            glBindFramebuffer(GL_FRAMEBUFFER, blurFramebuffers[horizontal]);
+            context->blurProgram->setUniform("horizontal", horizontal);
+            glBindTexture(GL_TEXTURE_2D, firstIteration ? bloomTextures[1] : blurTextures[!horizontal]);
+            renderQuad();
+            horizontal = !horizontal;
+            if (firstIteration) {
+                firstIteration = false;
+            }
+        }
         //bloom framebuffer
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
         context->bloomProgram->use();
-        context->bloomProgram->setUniform("scene", 0);
+
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, bloomTextures[0]);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, blurTextures[!horizontal]);
+
+        context->bloomProgram->setUniform("scene", 0);
+        context->bloomProgram->setUniform("bloomBlur", 1);
+        context->bloomProgram->setUniform("bloom", context->bloomEnabled);
+        context->bloomProgram->setUniform("exposure", 1);
+
         renderQuad();
     }
 }
@@ -164,7 +170,8 @@ void RenderSystem::renderMesh(MeshComponent *mesh, ShaderProgram *shaderProgram,
     shaderProgram->setUniform("objectColor", glm::vec3(0.5, 0.5, 0.5));
     shaderProgram->setUniform("lightColor", glm::vec3(1, 1, 1));
 //    shaderProgram->setUniform("lightPos", entityManager->getComponent<TransformComponent>(context->light)->position);
-    shaderProgram->setUniform("viewPos", entityManager->getComponent<TransformComponent>(context->getCamera())->position);
+    shaderProgram->setUniform("viewPos",
+                              entityManager->getComponent<TransformComponent>(context->getCamera())->position);
 
     if (mesh->textures.size() > 0) {
         renderTexture(mesh, shaderProgram);
@@ -185,30 +192,75 @@ void RenderSystem::renderMesh(MeshComponent *mesh, ShaderProgram *shaderProgram,
         }
     }
 
-	//cleanup
-	glBindVertexArray(0);
-	glActiveTexture(GL_TEXTURE0);
+    //cleanup
+    glBindVertexArray(0);
+    glActiveTexture(GL_TEXTURE0);
 }
 
 void RenderSystem::renderTexture(MeshComponent *mesh, ShaderProgram *shaderProgram) {
-	for (unsigned int i = 0; i < mesh->textures.size(); i++) {
-		glActiveTexture(GL_TEXTURE0 + i);
-		auto texture = mesh->textures[i];
-		std::string name = texture.type;
-		if (name == "texture_diffuse") {
-		    shaderProgram->setUniform("material.diffuse", static_cast<int>(i));
-		} else if (name == "texture_specular") {
+    for (unsigned int i = 0; i < mesh->textures.size(); i++) {
+        glActiveTexture(GL_TEXTURE0 + i);
+        auto texture = mesh->textures[i];
+        std::string name = texture.type;
+        if (name == "texture_diffuse") {
+            shaderProgram->setUniform("material.diffuse", static_cast<int>(i));
+        } else if (name == "texture_specular") {
             shaderProgram->setUniform("material.specular", static_cast<int>(i));
-		} else if (name == "texture_normal") {
+        } else if (name == "texture_normal") {
 //            shaderProgram->setUniform("material.normal", i);
         } else if (name == "texture_height") {
 //            shaderProgram->setUniform("material.height", i);
-		}
+        }
 
-		if (texture.isCubeMap) {
+        if (texture.isCubeMap) {
             glBindTexture(GL_TEXTURE_CUBE_MAP, texture.id);
-		} else {
+        } else {
             glBindTexture(GL_TEXTURE_2D, texture.id);
-		}
-	}
+        }
+    }
+}
+
+void RenderSystem::initBloomBuffers() {
+    glGenFramebuffers(1, &bloomFramebuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, bloomFramebuffer);
+
+    glGenTextures(2, bloomTextures);
+
+    for (int i = 0; i < 2; i++) {
+        glBindTexture(GL_TEXTURE_2D, bloomTextures[i]);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, context->width, context->height, 0, GL_RGB, GL_FLOAT, nullptr);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, bloomTextures[i], 0);
+    }
+
+    uint32_t attachments[2] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1};
+    glDrawBuffers(2, attachments);
+
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+        throw std::runtime_error("Incomplete Bloom Framebuffer");
+    }
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    //Gaussian blur buffers
+    glGenFramebuffers(2, blurFramebuffers);
+    glGenTextures(2, blurTextures);
+
+    for (int i = 0; i < 2; i++) {
+        glBindFramebuffer(GL_FRAMEBUFFER, blurFramebuffers[i]);
+        glBindTexture(GL_TEXTURE_2D, blurTextures[i]);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, context->width, context->height, 0, GL_RGB, GL_FLOAT, nullptr);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, blurTextures[i], 0);
+
+        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+            throw std::runtime_error("Incomplete Blur Framebuffer");
+        }
+    }
+
 }

@@ -28,6 +28,10 @@ private:
     uint32_t bloomFramebuffer;
     uint32_t bloomTextures[2];
 
+    uint32_t blurFramebuffers[2];
+    uint32_t blurTextures[2];
+
+    void initBloomBuffers();
 };
 
 #endif //CG1_PROJECT_RENDERSYSTEM_H
