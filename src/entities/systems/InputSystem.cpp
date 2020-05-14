@@ -107,10 +107,8 @@ void InputSystem::update() {
 
     if (!isDebug && isKeyDown(GLFW_KEY_EQUAL)) {
         cameraComponent->movementSpeedTick += 0.1;
-        printf("Camera movement speed: %.1f\n", cameraComponent->movementSpeedTick);
     } else if (!isDebug && isKeyDown(GLFW_KEY_MINUS)) {
         cameraComponent->movementSpeedTick -= 0.1;
-        printf("Camera movement speed: %.1f\n", cameraComponent->movementSpeedTick);
     }
 
     if (!isDebug && isKeyDown(GLFW_KEY_1)) {

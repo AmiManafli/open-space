@@ -48,8 +48,6 @@ void RenderSystem::renderEntities() {
         auto meshes = entityManager->getMultiComponents<MeshComponent>(entity);
         auto highlight = entityManager->getComponent<HighlightComponent>(entity);
 
-        auto bloom = false;
-
         if (highlight) {
             glStencilFunc(GL_ALWAYS, 1, 0xFF);
             glStencilMask(0xFF);
