@@ -41,9 +41,21 @@ void PlanetGenerator::createMeshes() {
 
     auto directions = { FrontFace, BackFace, LeftFace, RightFace, UpFace, DownFace };
 
+    float maxHeight = 0.0f;
+
     for (auto &direction : directions) {
         settings.direction = direction;
-        meshes.emplace_back(new PlanetSide(settings, shaderProgram));
+        auto mesh = new PlanetSide(settings, shaderProgram);
+        meshes.emplace_back(mesh);
+
+        if (mesh->maxHeight > maxHeight) {
+            maxHeight = mesh->maxHeight;
+        }
+    }
+
+    for (auto &mesh : meshes) {
+        auto planetSide = dynamic_cast<PlanetSide *>(mesh);
+        planetSide->maxHeight = maxHeight;
     }
 }
 

@@ -58,6 +58,8 @@ public:
     uint16_t subdivision;
     glm::vec3 color;
 
+    float maxHeight;
+
     void setupBuffers();
 
 protected:

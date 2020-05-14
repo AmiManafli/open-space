@@ -38,6 +38,8 @@ void PlanetSide::createTriangle(glm::vec3 a, glm::vec3 b, glm::vec3 c) {
 }
 
 void PlanetSide::createMesh() {
+    maxHeight = 0.0f;
+
     subdivide(subdivision);
     applyNoise();
     updateNormals();
@@ -166,8 +168,12 @@ void PlanetSide::applyNoise() {
         }
 
         auto oldPosition = vertex.position;
-        vertex.position = vertex.position * (1 + static_cast<float>(noiseValue));// * settings.radius;
+        vertex.position = vertex.position * (1 + static_cast<float>(noiseValue)) * settings.radius;
         vertex.height = glm::length(oldPosition - vertex.position);
+
+        if (vertex.height > maxHeight) {
+            maxHeight = vertex.height;
+        }
     }
 }
 

@@ -174,6 +174,7 @@ void RenderSystem::renderMesh(MeshComponent *mesh, ShaderProgram *shaderProgram,
 //    shaderProgram->setUniform("lightPos", entityManager->getComponent<TransformComponent>(context->light)->position);
     shaderProgram->setUniform("viewPos",
                               entityManager->getComponent<TransformComponent>(context->getCamera())->position);
+    shaderProgram->setUniform("maxHeight", mesh->maxHeight);
 
     if (mesh->textures.size() > 0) {
         renderTexture(mesh, shaderProgram);

@@ -34,6 +34,7 @@ struct Light {
 uniform Material material;
 uniform Light lights[MAX_LIGHTS];
 uniform vec3 viewPos;
+uniform float maxHeight;
 
 vec3 calculateDirectionalLight(Light light, vec3 normal, vec3 viewDirection, vec3 materialDiffuse, vec3 materialSpecular) {
     vec3 lightDirection = normalize(-light.direction);
@@ -46,7 +47,7 @@ vec3 calculateDirectionalLight(Light light, vec3 normal, vec3 viewDirection, vec
 
     // Specular
     vec3 reflectDirection = reflect(-lightDirection, normal);
-    float specularValue = pow(max(dot(viewDirection, reflectDirection), 0.0), 64);
+    float specularValue = pow(max(dot(viewDirection, reflectDirection), 0.0), 16);
     vec3 specular = light.specular * specularValue * materialSpecular;
 
     return ambient + diffuse + specular;
@@ -66,7 +67,7 @@ vec3 calculatePointLight(Light light, vec3 normal, vec3 viewDirection, vec3 mate
 
     // Specular
     vec3 reflectDirection = reflect(-lightDirection, normal);
-    float specularValue = pow(max(dot(viewDirection, reflectDirection), 0.0), 64);
+    float specularValue = pow(max(dot(viewDirection, reflectDirection), 0.0), 8);
     vec3 specular = light.specular * specularValue * materialSpecular;
 
     return (ambient + diffuse + specular) * attenuation;
@@ -77,15 +78,21 @@ void main() {
 
     vec3 viewDirection = normalize(viewPos - vFragPos);
 
-//    vec3 materialDiffuse = vec3(texture(material.diffuse, vTextureCoord));
-    vec3 materialSpecular = vec3(texture(material.specular, vTextureCoord));
+    vec3 waterColor = vec3(23.0 / 255.0, 130.0 / 255.0, 233.0 / 255.0);
+    vec3 grassColor = vec3(130.0 / 255.0, 233.0 / 255.0, 23.0 / 255.0);
 
-    vec3 materialDiffuse;
-    if (vHeight > 0) {
-        materialDiffuse = vec3(47.0 / 255.0, 182.0 / 255.0, 87.0 / 255.0);
-    } else {
-        materialDiffuse = vec3(23.0 / 255.0, 93.0 / 255.0, 133.0 / 255.0);
-    }
+    vec3 waterSpecular = vec3(0.5, 0.5, 0.5);
+    vec3 grassSpecular = vec3(0.1, 0.1, 0.1);
+
+    float shoreHeight = maxHeight * 0.1;
+
+    float value = clamp(vHeight, 0, shoreHeight) / shoreHeight;
+    vec3 diffuse = mix(waterColor, grassColor, value);
+
+    vec3 specular = mix(waterSpecular, grassSpecular, value);
+
+    vec3 materialDiffuse = diffuse;
+    vec3 materialSpecular = specular;
 
     vec3 color;
     for (int i = 0; i < lights.length(); i++) {
