@@ -16,6 +16,12 @@ struct Material {
     float shininess;
 };
 
+struct MaterialColor {
+    vec3 diffuse;
+    vec3 specular;
+    float shininess;
+};
+
 struct Light {
     int type;
 
@@ -32,6 +38,7 @@ struct Light {
 };
 
 uniform Material material;
+uniform MaterialColor materialColor[3];
 uniform Light lights[MAX_LIGHTS];
 uniform vec3 viewPos;
 uniform float maxHeight;
@@ -78,12 +85,12 @@ void main() {
 
     vec3 viewDirection = normalize(viewPos - vFragPos);
 
-    vec3 waterColor = vec3(23.0 / 255.0, 130.0 / 255.0, 233.0 / 255.0);
-    vec3 grassColor = vec3(130.0 / 255.0, 233.0 / 255.0, 23.0 / 255.0);
-    vec3 peakColor = vec3(1.0, 1.0, 1.0);
+    vec3 waterColor = materialColor[0].diffuse;
+    vec3 grassColor = materialColor[1].diffuse;
+    vec3 peakColor = materialColor[2].diffuse;
 
-    vec3 waterSpecular = vec3(0.5, 0.5, 0.5);
-    vec3 grassSpecular = vec3(0.1, 0.1, 0.1);
+    vec3 waterSpecular = materialColor[0].specular;
+    vec3 grassSpecular = materialColor[1].specular;
 
     float shoreHeight = maxHeight * 0.1;
     float lowPeakHeight = maxHeight * 0.6;

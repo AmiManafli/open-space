@@ -34,6 +34,12 @@ public:
 		bool isCubeMap;
     };
 
+    struct Material {
+        glm::vec3 diffuse;
+        glm::vec3 specular;
+        float shininess;
+    };
+
 public:
     MeshComponent() {}
     MeshComponent(std::vector<Vertex>& vertices, std::vector<uint32_t>& indices, std::vector<Texture>& textures, ShaderProgram *shaderProgram, GLenum mode);
@@ -54,6 +60,7 @@ public:
     std::vector<Texture> textures;
     uint32_t instances;
     bool indexed;
+    std::vector<Material> materials;
 
     uint16_t subdivision;
     glm::vec3 color;

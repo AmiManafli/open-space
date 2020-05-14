@@ -17,6 +17,7 @@ public:
     void renderEntities();
     void renderMesh(MeshComponent *mesh, ShaderProgram *shaderProgram, glm::mat4 model);
     void renderTexture(MeshComponent* mesh, ShaderProgram* shader);
+    void renderMaterials(MeshComponent *mesh, ShaderProgram *shader);
 
 private:
     GLContext *context;

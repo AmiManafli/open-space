@@ -32,6 +32,21 @@ Planet::Planet(std::vector<SeedType> seed, Star &star, SeedType index) : seed(se
     planetSeed = random();
     mass = limit(random(), 100, 2000);
     rotation = glm::vec3(limit(random(), 0, 0.05), limit(random(), 0, 0.05), limit(random(), 0, 0.05));
+
+    r = limit(random(), 0.0, 1.0);
+    g = limit(random(), 0.0, 1.0);
+    b = limit(random(), 0.0, 1.0);
+    groundColor = glm::vec3(r, g, b);
+
+    r = limit(random(), 0.0, 1.0);
+    g = limit(random(), 0.0, 1.0);
+    b = limit(random(), 0.0, 1.0);
+    waterColor = glm::vec3(r, g, b);
+
+    r = limit(random(), 0.0, 1.0);
+    g = limit(random(), 0.0, 1.0);
+    b = limit(random(), 0.0, 1.0);
+    peakColor = glm::vec3(r, g, b);
 }
 
 Moon Planet::getMoon(int index) {

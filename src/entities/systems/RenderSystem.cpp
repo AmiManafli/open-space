@@ -180,6 +180,10 @@ void RenderSystem::renderMesh(MeshComponent *mesh, ShaderProgram *shaderProgram,
         renderTexture(mesh, shaderProgram);
     }
 
+    if (!mesh->materials.empty()) {
+        renderMaterials(mesh, shaderProgram);
+    }
+
     glBindVertexArray(mesh->vao);
     if (mesh->instances > 1) {
         if (mesh->indexed) {
@@ -271,5 +275,17 @@ void RenderSystem::initBloomBuffers() {
             throw std::runtime_error("Incomplete Blur Framebuffer");
         }
     }
+}
 
+void RenderSystem::renderMaterials(MeshComponent *mesh, ShaderProgram *shader) {
+    shader->use();
+
+    for (int i = 0; i < mesh->materials.size(); i++) {
+        auto material = mesh->materials[i];
+
+        std::string name = "materialColor[" + std::to_string(i) + "]";
+        shader->setUniform(name + ".diffuse", material.diffuse);
+        shader->setUniform(name + ".specular", material.specular);
+        shader->setUniform(name + ".shininess", material.shininess);
+    }
 }

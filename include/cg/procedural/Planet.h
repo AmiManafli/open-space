@@ -24,6 +24,9 @@ public:
     SeedType planetSeed;
     uint32_t mass;
     glm::vec3 rotation;
+    glm::vec3 waterColor;
+    glm::vec3 groundColor;
+    glm::vec3 peakColor;
 
     std::vector<Moon> moons;
 

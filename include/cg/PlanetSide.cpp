@@ -44,6 +44,10 @@ void PlanetSide::createMesh() {
     applyNoise();
     updateNormals();
 
+    materials.emplace_back(settings.waterMaterial);
+    materials.emplace_back(settings.groundMaterial);
+    materials.emplace_back(settings.peakMaterial);
+
     setupBuffers();
 }
 
