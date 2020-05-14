@@ -119,6 +119,8 @@ void RenderSystem::renderEntities() {
         }
     }
 
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
     context->triangleCount = triangleCount;
 
     if (context->bloomEnabled) {
@@ -128,7 +130,6 @@ void RenderSystem::renderEntities() {
         uint16_t blurIterations = 10;
         context->blurProgram->use();
         context->blurProgram->setUniform("image", 0);
-
 
         for (int i = 0; i < blurIterations; i++) {
             glBindFramebuffer(GL_FRAMEBUFFER, blurFramebuffers[horizontal]);
@@ -140,11 +141,11 @@ void RenderSystem::renderEntities() {
                 firstIteration = false;
             }
         }
+
         //bloom framebuffer
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 
         context->bloomProgram->use();
 
@@ -156,7 +157,7 @@ void RenderSystem::renderEntities() {
         context->bloomProgram->setUniform("scene", 0);
         context->bloomProgram->setUniform("bloomBlur", 1);
         context->bloomProgram->setUniform("bloom", context->bloomEnabled);
-        context->bloomProgram->setUniform("exposure", 1);
+        context->bloomProgram->setUniform("exposure", 1.0f);
 
         renderQuad();
     }
