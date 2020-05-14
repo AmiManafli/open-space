@@ -164,12 +164,25 @@ void Application::init() {
                     },
             }
     };
+    auto sun = EntityBuilder::create()
+            ->withTransform(0, 0, 10)
+            ->withPointLight(glm::vec3(0.05), glm::vec3(0.95), glm::vec3(1.0), 1.0, 0.0014, 0.000007)
+            ->isSelectable()
+            ->build(entityManager);
+
     auto planetGenerator = new PlanetGenerator(settings, *context->planetProgram);
     auto test = EntityBuilder::create()
             ->withTransform(0, 0, 0)
             ->withMesh(planetGenerator->getMeshes())
             ->isSelectable()
             ->build(entityManager);
+
+//    auto planetGenerator2 = new PlanetGenerator(settings, *context->meshProgram);
+//    auto test2 = EntityBuilder::create()
+//            ->withTransform(3, 0, 0)
+//            ->withMesh(planetGenerator2->getMeshes())
+//            ->isSelectable()
+//            ->build(entityManager);
 
     inputSystem->createSpaceshipControl(nullptr, context->player);
 }

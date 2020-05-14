@@ -2,6 +2,7 @@
 in vec3 vNormal;
 in vec2 vTextureCoord;
 in vec3 vFragPos;
+in float vHeight;
 
 out vec4 fragColor;
 
@@ -76,8 +77,15 @@ void main() {
 
     vec3 viewDirection = normalize(viewPos - vFragPos);
 
-    vec3 materialDiffuse = vec3(texture(material.diffuse, vTextureCoord));
+//    vec3 materialDiffuse = vec3(texture(material.diffuse, vTextureCoord));
     vec3 materialSpecular = vec3(texture(material.specular, vTextureCoord));
+
+    vec3 materialDiffuse;
+    if (vHeight > 0) {
+        materialDiffuse = vec3(47.0 / 255.0, 182.0 / 255.0, 87.0 / 255.0);
+    } else {
+        materialDiffuse = vec3(23.0 / 255.0, 93.0 / 255.0, 133.0 / 255.0);
+    }
 
     vec3 color;
     for (int i = 0; i < lights.length(); i++) {
