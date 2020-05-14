@@ -1,6 +1,7 @@
 #ifndef CG1_PROJECT_PLANETEDITOR_H
 #define CG1_PROJECT_PLANETEDITOR_H
 
+#include <optional>
 #include <cg/GLHeader.h>
 #include <cg/entities/EntityManager.h>
 #include <cg/GLContext.h>
@@ -19,13 +20,15 @@ private:
     GLContext &context;
 
     int noiseFunctions;
+
+    Entity *selected = nullptr;
     PlanetSettings settings;
 
     bool autoUpdate = true;
 
     std::vector<const char *> noiseTypes;
 
-    void updatePlanet(Entity *entity);
+    void updatePlanet(Entity *entity, ShaderProgram &shaderProgram);
 };
 
 #endif //CG1_PROJECT_PLANETEDITOR_H

@@ -6,9 +6,18 @@ PlanetEditor::PlanetEditor(EntityManager &entityManager, GLContext &context)
 }
 
 void PlanetEditor::render() {
-    auto selected = context.selectedEntity;
+    auto selectedEntity = context.selectedEntity;
 
-    if (!selected) return;
+    if (!selectedEntity) return;
+
+    auto meshes = entityManager.getMultiComponents<MeshComponent>(selectedEntity);
+    auto pair = meshes.first;
+    auto mesh = dynamic_cast<PlanetSide *>(pair->second);
+
+    if (selected != selectedEntity) {
+        settings = mesh->getSettings();
+        selected = selectedEntity;
+    }
 
     ImGui::Begin("Planet Editor");
 
@@ -16,6 +25,8 @@ void PlanetEditor::render() {
     ImGui::DragInt("Seed", &settings.seed, 1, 0, 10000);
     ImGui::SliderInt("Subdivision", &settings.subdivision, 0, 200, "%d");
     ImGui::DragFloat("Radius", &settings.radius, 0.1, 0.1, 10000.0);
+
+    noiseFunctions = settings.noiseSettings.size();
     if (ImGui::SliderInt("Noise functions", &noiseFunctions, 0, 4, "%d")) {
         auto count = settings.noiseSettings.size();
         settings.noiseSettings.resize(noiseFunctions);
@@ -31,7 +42,7 @@ void PlanetEditor::render() {
     }
 
     if (ImGui::Button("Generate")) {
-        updatePlanet(selected);
+        updatePlanet(selected, *mesh->shaderProgram);
     }
 
     ImGui::End();
@@ -100,10 +111,13 @@ void PlanetEditor::renderNoise(int index) {
     }
 }
 
-void PlanetEditor::updatePlanet(Entity *entity) {
+void PlanetEditor::updatePlanet(Entity *entity, ShaderProgram &shaderProgram) {
     auto meshes = entityManager.getMultiComponents<MeshComponent>(entity);
-    auto it = meshes.first;
-
-    auto planet = dynamic_cast<PlanetGenerator *>(it->second);
-    planet->updateSettings(settings);
+    FaceDirection directions[] = { FrontFace, BackFace, LeftFace, RightFace, UpFace, DownFace };
+    int i = 0;
+    for (auto it = meshes.first; it != meshes.second; it++) {
+        settings.direction = directions[i++];
+        auto planetSide = dynamic_cast<PlanetSide *>(it->second);
+        planetSide->updateSettings(settings);
+    }
 }

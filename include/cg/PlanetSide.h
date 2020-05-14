@@ -11,6 +11,8 @@ public:
     PlanetSide(PlanetSettings settings, ShaderProgram &shaderProgram);
     ~PlanetSide() override;
 
+    PlanetSettings getSettings() { return settings; }
+
     void subdivide(uint16_t subdivisions) override;
 
     void updateSettings(PlanetSettings settings);
