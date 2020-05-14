@@ -13,22 +13,9 @@ CameraComponent::CameraComponent(CameraComponent::Mode mode, CameraComponent::Ty
     y = 0;
     z = 0;
 
-    auto position = positionComponent->position;
-    if (mode == FirstPersonShip) {
-        yaw = glm::degrees(glm::atan((position.x - target.x) / (position.z - target.z)));
-    } else {
-        yaw = 180.0f + glm::degrees(glm::atan((position.z - target.z) / (position.x - target.x)));
-    }
-
-    if (isnan(yaw)) {
-        yaw = 0.0f;
-    }
-
-    auto q = glm::vec3(position.x, 0, position.z);
-    pitch = -glm::degrees(glm::acos(glm::dot(position, q) / (glm::length(position) * glm::length(q))));
-    if (isnan(pitch)) {
-        pitch = 0.0f;
-    }
+    yaw = 0;
+    pitch = 0;
+    roll = 0;
 
     glm::vec3 angles(glm::radians(0.0), glm::radians(0.0), 0);
     this->orientation = glm::quat(angles);
@@ -38,8 +25,7 @@ glm::mat4 CameraComponent::getView(TransformComponent *positionComponent) {
     auto position = positionComponent->position;
     if (mode == FirstPersonShip) {
         auto view = glm::mat4_cast(glm::inverse(orientation));
-        view = glm::translate(view, position);
-        return view;
+        return glm::translate(view, -position);
     } else if (mode == Free) {
         return glm::lookAt(position, position + front, up);
     } else if (mode == CubeMap) {

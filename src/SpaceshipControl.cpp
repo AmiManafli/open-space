@@ -37,26 +37,26 @@ void SpaceshipControl::processKeyboard(Entity *camera, CameraComponent::Directio
     }
 
     if (direction == cameraComponent->Forward) {
-        auto translation = glm::vec3(0, 0, 1);
+        auto translation = glm::vec3(0, 0, -1);
         velocity += translation * glm::inverse(cameraComponent->orientation);
     } else if (direction == cameraComponent->Backward) {
-        auto translation = glm::vec3(0, 0, -1);
+        auto translation = glm::vec3(0, 0, 1);
         velocity += translation * glm::inverse(cameraComponent->orientation);
     }
 
     if (direction == cameraComponent->Left) {
-        auto translation = glm::vec3(1, 0, 0);
+        auto translation = glm::vec3(-1, 0, 0);
         velocity += translation * glm::inverse(cameraComponent->orientation);
     } else if (direction == cameraComponent->Right) {
-        auto translation = glm::vec3(-1, 0, 0);
+        auto translation = glm::vec3(1, 0, 0);
         velocity += translation * glm::inverse(cameraComponent->orientation);
     }
 
     if (direction == cameraComponent->Down) {
-        auto translation = glm::vec3(0, 1, 0);
+        auto translation = glm::vec3(0, -1, 0);
         velocity += translation * glm::inverse(cameraComponent->orientation);
     } else if (direction == cameraComponent->Up) {
-        auto translation = glm::vec3(0, -1, 0);
+        auto translation = glm::vec3(0, 1, 0);
         velocity += translation * glm::inverse(cameraComponent->orientation);
     }
 }

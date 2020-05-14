@@ -96,12 +96,12 @@ void Application::init() {
     context->blurProgram->link();
 
     sky = new Skybox(10000, 100000, 20, "./assets/textures/skybox1", context->skyboxProgram);
-    auto playerPosition = glm::vec3(0.1, 1, 4);
+    auto playerPosition = glm::vec3(0, 0, 0);
     context->player = EntityBuilder::create()
             ->withTransform(playerPosition)
             ->withVelocity(new VelocityComponent())
             ->withMesh(sky)
-            ->withMass(10)
+//            ->withMass(10)
             ->withCamera(CameraComponent::Mode::FirstPersonShip, CameraComponent::Type::Perspective, glm::vec3(0, 0, 0),
                          glm::normalize(-playerPosition), glm::vec3(0, 1, 0), context->getAspect())
             ->build(entityManager);
@@ -175,6 +175,10 @@ void Application::run() {
         movementSystem->update();
         collisionSystem->update();
         renderSystem->update();
+
+        auto cam = entityManager->getComponent<CameraComponent>(context->getCamera());
+        auto angles = glm::eulerAngles(cam->orientation);
+        printf("Quat:\n  x: %f \n  y: %f \n  z: %f \n\n", glm::degrees(angles.x), glm::degrees(angles.y), glm::degrees(angles.z));
     }
 }
 
