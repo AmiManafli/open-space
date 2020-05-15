@@ -40,6 +40,8 @@ public:
     bool displayGui = false;
     bool bloomEnabled = false;
 
+    bool showEntityNames = true;
+
     uint32_t triangleCount = 0;
 
     Entity *skybox = nullptr;

@@ -126,6 +126,10 @@ void InputSystem::update() {
         context->setActiveCamera(context->sideCamera);
     }
 
+    if (!isDebug && isKeyPressed(GLFW_KEY_N)) {
+        context->showEntityNames = !context->showEntityNames;
+    }
+
     if(!isDebug && isKeyDown(GLFW_KEY_8)) {
         cameraComponent->mode = CameraComponent::FirstPersonShip;
     } else if (!isDebug && isKeyDown(GLFW_KEY_9)) {
