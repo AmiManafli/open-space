@@ -102,7 +102,7 @@ add_executable(${CMAKE_PROJECT_NAME}
 
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     glfw
-    assimp::assimp
+#    assimp::assimp
     ${PROJECT_LIBRARIES}
     ${GLFW_LIBRARIES}
     ${ASSIMP_LIBRARIES}

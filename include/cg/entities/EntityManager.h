@@ -72,7 +72,7 @@ public:
     template<class T>
     void removeMultiComponent(Entity *entity) {
         auto key = typeid(T).name();
-        auto component = getMultiComponent<T>(entity);
+        auto component = getMultiComponents<T>(entity);
         multiComponents[key].erase(entity);
         delete component;
     }
