@@ -19,7 +19,7 @@ void SpaceshipControl::processMouseMovement(float offsetX, float offsetY) {
 
 double calculateRollSpeed(double x) {
     auto min = 10.0;
-    auto max = 50.0;
+    auto max = 30.0;
     auto minX = 0.0;
     auto maxX = 40.0;
     auto k = (max - min) / (maxX - minX);
