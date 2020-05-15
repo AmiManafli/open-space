@@ -29,8 +29,8 @@ private:
     bool showSpaceDisplay = true;
     bool showDemoWindow = false;
     bool showTerrainGeneratorWindow = false;
-    bool showPlanetEditor = true;
-    bool showWireframe = true;
+    bool showPlanetEditor = false;
+    bool showWireframe = false;
     bool showEntityWindow = false;
 
     char* currentView = nullptr;
