@@ -13,7 +13,7 @@ public:
     PlanetEditor(EntityManager &entityManager, GLContext &context);
 
     void render();
-    void renderNoise(int index);
+    void renderNoise(int index, PlanetSide *pSide);
 
 private:
     EntityManager &entityManager;
@@ -28,7 +28,7 @@ private:
 
     std::vector<const char *> noiseTypes;
 
-    void updatePlanet(Entity *entity, ShaderProgram &shaderProgram);
+    void updatePlanet(Entity *entity, ShaderProgram &shaderProgram, bool force);
 };
 
 #endif //CG1_PROJECT_PLANETEDITOR_H
