@@ -4,6 +4,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=leak -fno-omit-frame-pointer -g")
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -g")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 
 include_directories(${CMAKE_SOURCE_DIR}/include)
 include_directories(${CMAKE_SOURCE_DIR}/src)
@@ -25,7 +26,7 @@ endif(OPENGL_FOUND)
 # Assimp
 if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     find_package(assimp CONFIG REQUIRED)
-    include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/lib/assimp")
+#    include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/lib/assimp")
 else()
     find_package(assimp REQUIRED)
     link_directories(${ASSIMP_LIBRARY_DIRS})

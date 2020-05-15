@@ -12,5 +12,5 @@ Star::Star(std::vector<SeedType> seed, SeedType index, double x, double y, doubl
     radius = SOLAR_SYSTEM_CELL_SIZE / 30.0;
 
     // Star color
-    color = glm::vec3(0.95);
+    color = glm::vec3(0.949, 0.863, 0.424);
 }
