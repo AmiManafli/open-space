@@ -4,11 +4,12 @@
 #include <cg/GLHeader.h>
 #include <cg/entities/System.h>
 #include "cg/SpaceshipControl.h"
+#include "RenderSystem.h"
 
 
 class InputSystem : public System {
 public:
-    InputSystem(EntityManager *entityManager, GLContext *context);
+    InputSystem(EntityManager *entityManager, GLContext *context, RenderSystem *renderSystem);
 
     void init() override;
     void update() override;
@@ -21,6 +22,7 @@ public:
 
 private:
     GLContext *context;
+    RenderSystem *renderSystem;
 
     SpaceshipControl* spaceshipControl;
     bool processedMouse = false;

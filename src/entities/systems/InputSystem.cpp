@@ -2,8 +2,8 @@
 #include "cg/entities/systems/InputSystem.h"
 #include "cg/SpaceshipControl.h"
 
-InputSystem::InputSystem(EntityManager *entityManager, GLContext *context)
-        : System(entityManager), context(context), lastMouseX(-1), lastMouseY(-1) {
+InputSystem::InputSystem(EntityManager *entityManager, GLContext *context, RenderSystem *renderSystem)
+        : System(entityManager), context(context), renderSystem(renderSystem), lastMouseX(-1), lastMouseY(-1) {
 }
 
 void InputSystem::createSpaceshipControl(Entity *spaceship, Entity *camera) {
@@ -328,4 +328,5 @@ void InputSystem::framebufferSizeCallback(GLFWwindow *window, int width, int hei
     context->width = width;
     context->height = height;
     glViewport(0, 0, width, height);
+    inputSystem->renderSystem->initBloomBuffers();
 }

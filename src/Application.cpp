@@ -23,7 +23,7 @@ Application::Application(std::string title, int width, int height) {
     universeEntityFactory = new UniverseEntityFactory(*entityManager, universe, *context);
 
     renderSystem = new RenderSystem(entityManager, context);
-    inputSystem = new InputSystem(entityManager, context);
+    inputSystem = new InputSystem(entityManager, context, renderSystem);
     movementSystem = new MovementSystem(entityManager, context);
     orbitSystem = new OrbitSystem(entityManager, context);
 }

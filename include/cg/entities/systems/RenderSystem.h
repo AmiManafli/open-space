@@ -12,6 +12,8 @@ public:
     UserInterface* getUserInterface() { return userInterface; }
 
     void init() override;
+    void initBloomBuffers();
+
     void update() override;
 
     void renderEntities();
@@ -31,8 +33,6 @@ private:
 
     uint32_t blurFramebuffers[2];
     uint32_t blurTextures[2];
-
-    void initBloomBuffers();
 };
 
 #endif //CG1_PROJECT_RENDERSYSTEM_H
