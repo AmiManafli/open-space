@@ -4,7 +4,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=leak -fno-omit-frame-pointer -g")
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -g")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 
 include_directories(${CMAKE_SOURCE_DIR}/include)
 include_directories(${CMAKE_SOURCE_DIR}/src)
@@ -22,16 +22,6 @@ if(OPENGL_FOUND)
     include_directories(SYSTEM ${OPENGL_INCLUDE_DIR})
     set(PROJECT_LIBRARIES ${PROJECT_LIBRARIES} ${OPENGL_LIBRARIES})
 endif(OPENGL_FOUND)
-
-# Assimp
-if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-    find_package(assimp CONFIG REQUIRED)
-#    include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/lib/assimp")
-else()
-    find_package(assimp REQUIRED)
-    link_directories(${ASSIMP_LIBRARY_DIRS})
-    include_directories(${ASSIMP_INCLUDE_DIRS})
-endif()
 
 # GLAD
 include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/lib/glad")
@@ -103,9 +93,7 @@ add_executable(${CMAKE_PROJECT_NAME}
 
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     glfw
-    assimp::assimp
     ${PROJECT_LIBRARIES}
     ${GLFW_LIBRARIES}
-    ${ASSIMP_LIBRARIES}
     ${IMGUI_LIBRARIES}
 )

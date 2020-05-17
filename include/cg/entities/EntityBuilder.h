@@ -23,7 +23,6 @@ public:
 
     EntityBuilder* withMesh(MeshComponent *mesh) { meshComponents.push_back(mesh); return this; }
     EntityBuilder* withMesh(std::vector<MeshComponent *> meshes) { meshComponents = meshes; return this; }
-    EntityBuilder* withMesh(std::string filename, ShaderProgram *shaderProgram);
     EntityBuilder* withMesh(std::vector<MeshComponent::Vertex>& vertices, std::vector<uint32_t>& indices, std::vector<MeshComponent::Texture>& textures, ShaderProgram *shaderProgram, GLenum mode);
     EntityBuilder* withInstances(std::vector<glm::vec3>& transformations);
 

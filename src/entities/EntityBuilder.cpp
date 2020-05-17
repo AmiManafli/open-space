@@ -75,14 +75,6 @@ EntityBuilder* EntityBuilder::withScale(float scale) {
     return this;
 }
 
-EntityBuilder *EntityBuilder::withMesh(std::string filename, ShaderProgram *shaderProgram) {
-    auto meshes = MeshComponent::createMeshComponentsFromFile(filename, shaderProgram);
-    for (auto& mesh : meshes) {
-        meshComponents.push_back(mesh);
-    }
-    return this;
-}
-
 EntityBuilder *EntityBuilder::withMesh(std::vector<MeshComponent::Vertex> &vertices, std::vector<uint32_t> &indices,
                                        std::vector<MeshComponent::Texture> &textures, ShaderProgram *shaderProgram, GLenum mode) {
     meshComponents.push_back(new MeshComponent(vertices, indices, textures, shaderProgram, mode));

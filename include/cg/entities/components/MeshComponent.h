@@ -5,10 +5,6 @@
 #include <cg/shaders/ShaderProgram.h>
 #include <cg/entities/Component.h>
 
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
-
 
 class MeshComponent : public Component {
 public:
@@ -68,13 +64,6 @@ public:
     float maxHeight;
 
     void setupBuffers();
-
-protected:
-	static std::vector<Texture> loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
-	static uint32_t textureFromFile(const char* path, const std::string& directory);
-	
-	static void processNode(std::vector<MeshComponent *>& meshes, aiNode *node, const aiScene *scene, ShaderProgram *shaderProgram);
-    static MeshComponent* processMesh(std::vector<MeshComponent *>& meshes, aiMesh *mesh, const aiScene *scene, ShaderProgram *shaderProgram);
 };
 
 #endif //CG1_PROJECT_MESHCOMPONENT_H
