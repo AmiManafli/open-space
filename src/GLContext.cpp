@@ -5,12 +5,23 @@ GLContext::GLContext(EntityManager *entityManager, std::string title, uint16_t w
 }
 
 GLContext::~GLContext() {
+    delete meshProgram;
+    delete meshTextureProgram;
+    delete starProgram;
+    delete planetProgram;
+    delete gridProgram;
+    delete highlightProgram;
+    delete meshWithLightProgram;
+    delete meshTestLightProgram;
+    delete skyboxProgram;
+    delete bloomProgram;
+    delete blurProgram;
+
     glfwTerminate();
 }
 
 glm::mat4 GLContext::getView() {
     auto camera = getCamera();
-    auto cameraId = camera->id;
     auto cameraComponent = entityManager->getComponent<CameraComponent>(camera);
     auto transformComponent = entityManager->getComponent<TransformComponent>(camera);
     return cameraComponent->getView(transformComponent);

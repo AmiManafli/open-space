@@ -25,6 +25,10 @@ PlanetSide::PlanetSide(PlanetSettings settings, ShaderProgram &shaderProgram) : 
 }
 
 PlanetSide::~PlanetSide() {
+    for (auto &noise : noises) {
+        delete noise;
+    }
+    noises.clear();
 }
 
 void PlanetSide::createTriangle(glm::vec3 a, glm::vec3 b, glm::vec3 c) {

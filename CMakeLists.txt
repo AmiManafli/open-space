@@ -42,6 +42,9 @@ include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/lib/glm")
 aux_source_directory("${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui" PROJECT_SRCS)
 include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui")
 
+include_directories(SYSTEM "C:/Program Files (x86)/Visual Leak Detector/include")
+link_directories(SYSTEM "C:/Program Files (x86)/Visual Leak Detector/lib/Win64")
+
 add_executable(${CMAKE_PROJECT_NAME}
         ${PROJECT_SRCS}
         src/main.cpp

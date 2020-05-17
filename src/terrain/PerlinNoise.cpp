@@ -7,6 +7,10 @@ PerlinNoise::PerlinNoise() : PerlinNoise(1) {
 PerlinNoise::PerlinNoise(uint64_t seed) : Noise(seed), noise(new siv::PerlinNoise(static_cast<uint32_t>(seed))) {
 }
 
+PerlinNoise::~PerlinNoise() {
+    delete noise;
+}
+
 void PerlinNoise::reseed(uint64_t seed) {
     this->seed = seed;
     noise->reseed(static_cast<uint32_t>(seed));

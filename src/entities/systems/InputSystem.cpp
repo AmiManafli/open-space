@@ -6,6 +6,10 @@ InputSystem::InputSystem(EntityManager *entityManager, GLContext *context, Rende
         : System(entityManager), context(context), renderSystem(renderSystem), lastMouseX(-1), lastMouseY(-1) {
 }
 
+InputSystem::~InputSystem() {
+    delete spaceshipControl;
+}
+
 void InputSystem::createSpaceshipControl(Entity *spaceship, Entity *camera) {
     spaceshipControl = new SpaceshipControl(spaceship, camera, entityManager);
 }

@@ -37,6 +37,11 @@ UserInterface::UserInterface(EntityManager *entityManager, GLContext *context)
     planetEditor = new PlanetEditor(*entityManager, *context);
 }
 
+UserInterface::~UserInterface() {
+    delete entityWindow;
+    delete planetEditor;
+}
+
 void UserInterface::render() {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
@@ -364,7 +369,7 @@ void UserInterface::updateTerrain(Terrain *terrain, TerrainSettings& settings) {
 
 void UserInterface::renderSpaceDisplay() {
     ImGui::Begin("Space Display", &showSpaceDisplay, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoBackground);
-    ImGui::SetWindowPos(ImVec2(0, 0));
+//    ImGui::SetWindowPos(ImVec2(0, 0)); // TODO: causes memory leak??
 
     auto player = context->player;
     auto velocity = entityManager->getComponent<VelocityComponent>(player);

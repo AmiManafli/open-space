@@ -11,6 +11,7 @@ class PerlinNoise : public Noise {
 public:
     PerlinNoise();
     PerlinNoise(uint64_t seed);
+    ~PerlinNoise() override;
     
     void reseed(uint64_t seed) override;
 

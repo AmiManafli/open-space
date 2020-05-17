@@ -12,6 +12,7 @@ public:
     static const uint16_t MAX_PROFILE_LENGTH = 32;
 
     explicit UserInterface(EntityManager *entityManager, GLContext *context);
+    ~UserInterface();
 
     void render();
 

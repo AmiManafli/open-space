@@ -10,6 +10,7 @@
 class InputSystem : public System {
 public:
     InputSystem(EntityManager *entityManager, GLContext *context, RenderSystem *renderSystem);
+    ~InputSystem();
 
     void init() override;
     void update() override;

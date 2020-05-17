@@ -15,9 +15,11 @@ Entity *UniverseEntityFactory::createEntities(std::vector<SolarSystem> solarSyst
 }
 
 Entity *UniverseEntityFactory::createEntities(SolarSystem &system) {
-    auto entity = EntityBuilder::create()
+    auto builder = EntityBuilder::create();
+    auto entity = builder
             ->withTransform(system.getPosition())
             ->build(&entityManager);
+    delete builder;
 
     Entity *parent = nullptr;
     for (auto& star : system.getStars()) {
@@ -31,7 +33,8 @@ Entity *UniverseEntityFactory::createEntities(SolarSystem &system) {
 }
 
 Entity *UniverseEntityFactory::createEntities(Star &star) {
-    Entity* entity = EntityBuilder::create()
+    auto builder = EntityBuilder::create();
+    Entity* entity = builder
             ->withTransform(star.position)
             ->withMesh(new IcoSphere(1, 3, star.color, 11, context.starProgram))
             ->withScale(star.radius)
@@ -39,6 +42,7 @@ Entity *UniverseEntityFactory::createEntities(Star &star) {
             ->withSphereCollision(star.radius)
             ->isSelectable()
             ->build(&entityManager);
+    delete builder;
     return entity;
 }
 
@@ -127,7 +131,8 @@ Entity *UniverseEntityFactory::createEntities(TransformComponent *parent, Planet
     planetVelocity->rotation = planet.rotation;
 
     PlanetGenerator planetGenerator(settings, *context.planetProgram);
-    Entity* entity = EntityBuilder::create()
+    auto builder = EntityBuilder::create();
+    Entity* entity = builder
             ->withTransform(planet.position)
             ->withVelocity(planetVelocity)
             ->withOrbit(parent, planet.semiMajorAxis, planet.semiMinorAxis, planet.orbitSpeed, planet.orbitAngle)
@@ -137,6 +142,7 @@ Entity *UniverseEntityFactory::createEntities(TransformComponent *parent, Planet
             ->withMass(planet.mass)
             ->isSelectable()
             ->build(&entityManager);
+    delete builder;
     return entity;
 }
 

@@ -6,6 +6,10 @@ OpenSimplexNoise::OpenSimplexNoise(PlanetSettings &planetSettings, PlanetNoiseSe
         : Noise(planetSettings.seed), noise(new osn::OpenSimplexNoise(seed)), planetSettings(planetSettings), settings(settings) {
 }
 
+OpenSimplexNoise::~OpenSimplexNoise() {
+    delete noise;
+}
+
 void OpenSimplexNoise::reseed(uint64_t seed) {
     this->seed = seed;
     delete noise;

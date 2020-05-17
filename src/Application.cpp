@@ -29,10 +29,16 @@ Application::Application(std::string title, int width, int height) {
 }
 
 Application::~Application() {
-    delete inputSystem;
+    // Systems
     delete renderSystem;
+    delete inputSystem;
     delete movementSystem;
+    delete gravitySystem;
+    delete orbitSystem;
+    delete collisionSystem;
 
+    // Factories and contexts
+    delete universeEntityFactory;
     delete context;
     delete entityManager;
 }
@@ -97,7 +103,8 @@ void Application::init() {
 
     sky = new Skybox(10000, 100000, 20, "./assets/textures/skybox1", context->skyboxProgram);
     auto playerPosition = glm::vec3(0, 0, 0);
-    context->player = EntityBuilder::create()
+    auto playerBuilder = EntityBuilder::create();
+    context->player = playerBuilder
             ->withTransform(playerPosition)
             ->withVelocity(new VelocityComponent())
             ->withMesh(sky)
@@ -105,6 +112,7 @@ void Application::init() {
             ->withCamera(CameraComponent::Mode::FirstPersonShip, CameraComponent::Type::Perspective, glm::vec3(0, 0, 0),
                          glm::normalize(-playerPosition), glm::vec3(0, 1, 0), context->getAspect())
             ->build(entityManager);
+    delete playerBuilder;
     context->setActiveCamera(context->player);
 
     createCameras();
@@ -123,101 +131,28 @@ void Application::init() {
 
     context->grid = createGrid(62, 62, false);
 
-    auto ui = renderSystem->getUserInterface();
-
-    auto color = glm::vec3(0.576, 0.886, 1.0);
-
     auto galaxy = universe.getGalaxy(0, 0, 0);
     universeEntityFactory->createEntities(galaxy.getSolarSystems(0, 0, 0));
-
-//    auto settings = PlanetSettings {
-//            1.0,
-//            80,
-//            0,
-//            MeshComponent::Material {
-//                    planet.waterColor,
-//                    glm::vec3(0.9),
-//                    8,
-//            },
-//            MeshComponent::Material {
-//                    planet.groundColor,
-//                    glm::vec3(0.1),
-//                    8,
-//            },
-//            MeshComponent::Material {
-//                    planet.peakColor,
-//                    glm::vec3(0.1),
-//                    8,
-//            },
-//            FrontFace,
-//            {
-//                    {
-//                            Simple,
-//                            true,
-//                            false,
-//                            0.06,
-//                            0.6,
-//                            2.5,
-//                            0.7,
-//                            1.3,
-//                            0.0,
-//                            4,
-//                            glm::vec3(0.7, 1.1, 1.8),
-//                    },
-//                    {
-//                            Ridged,
-//                            true,
-//                            true,
-//                            1.67,
-//                            1.0,
-//                            5.7,
-//                            0.6,
-//                            0.1,
-//                            1.0,
-//                            4,
-//                            glm::vec3(0.7, 1.7, 0.7),
-//                    },
-//            }
-//    };
-//    auto sun = EntityBuilder::create()
-//            ->withTransform(0, 0, 10)
-//            ->withPointLight(glm::vec3(0.05), glm::vec3(0.95), glm::vec3(1.0), 1.0, 0.0014, 0.000007)
-//            ->isSelectable()
-//            ->build(entityManager);
-//
-//    auto planetGenerator = new PlanetGenerator(settings, *context->planetProgram);
-//    auto test = EntityBuilder::create()
-//            ->withTransform(0, 0, 0)
-//            ->withMesh(planetGenerator->getMeshes())
-//            ->isSelectable()
-//            ->build(entityManager);
-
-//    auto planetGenerator2 = new PlanetGenerator(settings, *context->meshProgram);
-//    auto test2 = EntityBuilder::create()
-//            ->withTransform(3, 0, 0)
-//            ->withMesh(planetGenerator2->getMeshes())
-//            ->isSelectable()
-//            ->build(entityManager);
 
     inputSystem->createSpaceshipControl(nullptr, context->player);
 }
 
 void Application::run() {
-    if (sky != nullptr) {
-        auto skyboxEntityManager = new EntityManager();
-        context->update();
+    //if (sky != nullptr) {
+    //    auto skyboxEntityManager = new EntityManager();
+    //    context->update();
 
-        glDisable(GL_CULL_FACE);
-        context->setActiveCamera(context->skyboxCamera);
-        auto camera = entityManager->getComponent<CameraComponent>(context->skyboxCamera);
-        sky->render(renderSystem, skyboxEntityManager, camera);
+    //    glDisable(GL_CULL_FACE);
+    //    context->setActiveCamera(context->skyboxCamera);
+    //    auto camera = entityManager->getComponent<CameraComponent>(context->skyboxCamera);
+    //    sky->render(renderSystem, skyboxEntityManager, camera);
 
-        // Cleanup
-        delete skyboxEntityManager;
-        context->setActiveCamera(context->player);
-        glViewport(0, 0, context->getWidth(), context->getHeight());
-        glEnable(GL_CULL_FACE);
-    }
+    //    // Cleanup
+    //    delete skyboxEntityManager;
+    //    context->setActiveCamera(context->player);
+    //    glViewport(0, 0, context->getWidth(), context->getHeight());
+    //    glEnable(GL_CULL_FACE);
+    //}
 
     while (!context->shouldClose()) {
         context->update();
@@ -253,11 +188,13 @@ void Application::createCameras() {
     /// Spaceship camera
     auto position = glm::vec3(0, 200, 0);
 
-    context->skyboxCamera = EntityBuilder::create()
+    auto builder = EntityBuilder::create();
+    context->skyboxCamera = builder
             ->withTransform(0, 0, 0)
             ->withCamera(CameraComponent::Mode::CubeMap, CameraComponent::Type::CubeMapType, target,
                          glm::normalize(-position), glm::vec3(0, 1, 0), 1)
             ->build(entityManager);
+    delete builder;
 }
 
 Entity *Application::createGrid(int width, int height, bool showYAxis) {
@@ -293,9 +230,12 @@ Entity *Application::createGrid(int width, int height, bool showYAxis) {
         indices.push_back(index++);
     }
 
-    return EntityBuilder::create()
+    auto builder = EntityBuilder::create();
+    auto entity = builder
             ->withMesh(vertices, indices, textures, context->gridProgram, GL_LINES)
             ->build(entityManager);
+    delete builder;
+    return entity;
 }
 
 void Application::setLightUniforms(ShaderProgram *shaderProgram,

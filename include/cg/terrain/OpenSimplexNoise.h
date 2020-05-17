@@ -13,6 +13,7 @@ namespace osn {
 class OpenSimplexNoise : public Noise {
 public:
     explicit OpenSimplexNoise(PlanetSettings &planetSettings, PlanetNoiseSettings &settings);
+    ~OpenSimplexNoise() override;
 
     void reseed(uint64_t seed) override;
 
