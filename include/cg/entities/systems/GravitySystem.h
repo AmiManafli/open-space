@@ -15,9 +15,9 @@ public:
 
 private:
     Entity *object;
-    TransformComponent *objectTransform;
-    VelocityComponent *objectVelocity;
-    MassComponent *objectMass;
+    TransformComponent *objectTransform = nullptr;
+    VelocityComponent *objectVelocity = nullptr;
+    MassComponent *objectMass = nullptr;
 };
 
 #endif //CG1_PROJECT_GRAVITYSYSTEM_H

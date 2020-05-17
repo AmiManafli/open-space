@@ -80,8 +80,13 @@ void RenderSystem::renderEntities() {
     for (auto &pair : entityManager->getComponents<TransformComponent>()) {
         auto entity = pair.first;
         auto transform = dynamic_cast<TransformComponent *>(pair.second);
+
         auto meshes = entityManager->getMultiComponents<MeshComponent>(entity);
-        auto highlight = entityManager->getComponent<HighlightComponent>(entity);
+
+        HighlightComponent *highlight = nullptr;
+        if (entityManager->hasComponent<HighlightComponent>(entity)) {
+            highlight = entityManager->getComponent<HighlightComponent>(entity);
+        }
 
         if (highlight) {
             glStencilFunc(GL_ALWAYS, 1, 0xFF);
@@ -90,7 +95,6 @@ void RenderSystem::renderEntities() {
 
         // Render meshes
         for (auto it = meshes.first; it != meshes.second; it++) {
-            auto entity = it->first;
             auto mesh = dynamic_cast<MeshComponent *>(it->second);
             if (mesh->indexed) {
                 triangleCount += (double) mesh->indices.size() / 3.0;

@@ -7,9 +7,15 @@ GravitySystem::~GravitySystem() {
 }
 
 void GravitySystem::init() {
-    objectTransform = entityManager->getComponent<TransformComponent>(object);
-    objectVelocity = entityManager->getComponent<VelocityComponent>(object);
-    objectMass = entityManager->getComponent<MassComponent>(object);
+    if (entityManager->hasComponent<TransformComponent>(object)) {
+        objectTransform = entityManager->getComponent<TransformComponent>(object);
+    }
+    if (entityManager->hasComponent<VelocityComponent>(object)) {
+        objectVelocity = entityManager->getComponent<VelocityComponent>(object);
+    }
+    if (entityManager->hasComponent<MassComponent>(object)) {
+        objectMass = entityManager->getComponent<MassComponent>(object);
+    }
 }
 
 void GravitySystem::update() {

@@ -51,13 +51,15 @@ public:
     }
 
     template<class T>
+    bool hasComponent(Entity *entity) {
+        auto key = typeid(T).name();
+        return components[key].find(entity) != components[key].end();
+    }
+
+    template<class T>
     T* getComponent(Entity *entity) {
         auto key = typeid(T).name();
-        try {
-            return reinterpret_cast<T *>(components[key].at(entity));
-        } catch (std::out_of_range &e) {
-            return nullptr;
-        }
+        return reinterpret_cast<T *>(components[key].at(entity));
     }
 
     template<class T>
@@ -75,6 +77,12 @@ public:
         auto component = getMultiComponent<T>(entity);
         multiComponents[key].erase(entity);
         delete component;
+    }
+
+    template<class T>
+    bool hasMultiComponent(Entity *entity) {
+        auto key = typeid(T).name();
+        return multiComponents[key].find(entity) != multiComponents[key].end();
     }
 
     template<class T>
