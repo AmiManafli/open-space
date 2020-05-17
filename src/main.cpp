@@ -1,4 +1,6 @@
+#ifdef CHECK_MEMORY_LEAKS
 #include <vld.h>
+#endif
 #include <cg/Application.h>
 
 int main() {

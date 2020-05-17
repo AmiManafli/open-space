@@ -316,7 +316,10 @@ void InputSystem::selectEntity(Entity *entity) {
             entityManager->addComponent(entity, new HighlightComponent(highlightScale, context->highlightProgram));
         }
     } else if (entity) {
-        auto highlight = entityManager->getComponent<HighlightComponent>(entity);
+        HighlightComponent *highlight = nullptr;
+        if (entityManager->hasComponent<HighlightComponent>(entity)) {
+            highlight = entityManager->getComponent<HighlightComponent>(entity);
+        }
 
         if (!highlight) {
             entityManager->addComponent(entity, new HighlightComponent(highlightScale, context->highlightProgram));

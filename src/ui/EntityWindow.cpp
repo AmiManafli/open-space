@@ -45,15 +45,33 @@ void EntityWindow::render() {
         meshComponents.emplace_back(mesh);
     }
 
-    renderTransformComponent(entityManager->getComponent<TransformComponent>(entity));
-    renderMassComponent(entityManager->getComponent<MassComponent>(entity));
-    renderOrbitComponent(entityManager->getComponent<OrbitComponent>(entity));
-    renderVelocityComponent(entityManager->getComponent<VelocityComponent>(entity));
-    renderCameraComponent(entityManager->getComponent<CameraComponent>(entity));
-    renderMeshComponents(meshComponents);
-    renderLightComponent(entityManager->getComponent<LightComponent>(entity));
-    renderHighlightComponent(entityManager->getComponent<HighlightComponent>(entity));
-    renderCollisionComponent(entityManager->getComponent<CollisionComponent>(entity));
+    if (entityManager->hasComponent<TransformComponent>(entity)) {
+        renderTransformComponent(entityManager->getComponent<TransformComponent>(entity));
+    }
+    if (entityManager->hasComponent<MassComponent>(entity)) {
+        renderMassComponent(entityManager->getComponent<MassComponent>(entity));
+    }
+    if (entityManager->hasComponent<OrbitComponent>(entity)) {
+        renderOrbitComponent(entityManager->getComponent<OrbitComponent>(entity));
+    }
+    if (entityManager->hasComponent<VelocityComponent>(entity)) {
+        renderVelocityComponent(entityManager->getComponent<VelocityComponent>(entity));
+    }
+    if (entityManager->hasComponent<CameraComponent>(entity)) {
+        renderCameraComponent(entityManager->getComponent<CameraComponent>(entity));
+    }
+    if (entityManager->hasMultiComponent<MeshComponent>(entity)) {
+        renderMeshComponents(meshComponents);
+    }
+    if (entityManager->hasComponent<LightComponent>(entity)) {
+        renderLightComponent(entityManager->getComponent<LightComponent>(entity));
+    }
+    if (entityManager->hasComponent<HighlightComponent>(entity)) {
+        renderHighlightComponent(entityManager->getComponent<HighlightComponent>(entity));
+    }
+    if (entityManager->hasComponent<CollisionComponent>(entity)) {
+        renderCollisionComponent(entityManager->getComponent<CollisionComponent>(entity));
+    }
 
     ImGui::End();
 }
