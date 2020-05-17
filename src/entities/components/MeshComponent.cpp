@@ -31,8 +31,6 @@ void MeshComponent::createInstances(std::vector<glm::vec3>& transformations) {
     glVertexAttribPointer(AttributeInstances, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), nullptr);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glVertexAttribDivisor(AttributeInstances, 1);
-
-    printf("%d instance(s) created!\n", instances);
 }
 
 void MeshComponent::setupBuffers() {

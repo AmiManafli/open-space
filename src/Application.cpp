@@ -101,7 +101,7 @@ void Application::init() {
     context->blurProgram->attachShader("./assets/shaders/gaussianBlur.frag", ShaderType::FragmentShader);
     context->blurProgram->link();
 
-    sky = new Skybox(10000, 100000, 20, "./assets/textures/skybox1", context->skyboxProgram);
+    sky = new Skybox(2, 4, 1, "./assets/textures/skybox1", context->skyboxProgram);
     auto playerPosition = glm::vec3(0, 0, 0);
     auto playerBuilder = EntityBuilder::create();
     context->player = playerBuilder
@@ -138,21 +138,21 @@ void Application::init() {
 }
 
 void Application::run() {
-    //if (sky != nullptr) {
-    //    auto skyboxEntityManager = new EntityManager();
-    //    context->update();
+    if (sky != nullptr) {
+        auto skyboxEntityManager = new EntityManager();
+        context->update();
 
-    //    glDisable(GL_CULL_FACE);
-    //    context->setActiveCamera(context->skyboxCamera);
-    //    auto camera = entityManager->getComponent<CameraComponent>(context->skyboxCamera);
-    //    sky->render(renderSystem, skyboxEntityManager, camera);
+        glDisable(GL_CULL_FACE);
+        context->setActiveCamera(context->skyboxCamera);
+        auto camera = entityManager->getComponent<CameraComponent>(context->skyboxCamera);
+        sky->render(renderSystem, skyboxEntityManager, camera);
 
-    //    // Cleanup
-    //    delete skyboxEntityManager;
-    //    context->setActiveCamera(context->player);
-    //    glViewport(0, 0, context->getWidth(), context->getHeight());
-    //    glEnable(GL_CULL_FACE);
-    //}
+        // Cleanup
+        delete skyboxEntityManager;
+        context->setActiveCamera(context->player);
+        glViewport(0, 0, context->getWidth(), context->getHeight());
+        glEnable(GL_CULL_FACE);
+    }
 
     while (!context->shouldClose()) {
         context->update();

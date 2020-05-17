@@ -207,6 +207,8 @@ void Skybox::render(RenderSystem *renderSystem, EntityManager *entityManager, Ca
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glDeleteFramebuffers(1, &framebuffer);
+
+    delete starShaderProgram;
 }
 
 glm::vec3 getStarRotation(glm::vec3 position) {
@@ -222,15 +224,15 @@ void Skybox::createStars(EntityManager *entityManager, ShaderProgram *shaderProg
     std::vector<glm::vec3> transformations;
     for (int i = 0; i < count; i++) {
         auto position = distance * glm::normalize(glm::sphericalRand(1.0f));
-        auto transform = new TransformComponent(position);
-        transform->rotate(getStarRotation(position));
         transformations.emplace_back(position);
     }
-    EntityBuilder::create()
+    auto builder = EntityBuilder::create();
+    builder
             ->withTransform(0, 0, 0)
             ->withMesh(new IcoSphere(starSize, subdivisions, glm::vec3(1), 11, shaderProgram))
             ->withInstances(transformations)
             ->build(entityManager);
+    delete builder;
 }
 
 void Skybox::renderEntities(RenderSystem *renderSystem, EntityManager *entityManager, ShaderProgram *shaderProgram) {
