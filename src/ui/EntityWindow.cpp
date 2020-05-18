@@ -87,6 +87,12 @@ void EntityWindow::renderEmpty() {
 
 void EntityWindow::renderInfo(Entity *entity) {
     ImGui::Text("ID: %d", entity->id);
+
+    auto view = context->viewFrustum;
+    if (view && entityManager->hasComponent<CollisionComponent>(entity)) {
+        auto collision = entityManager->getComponent<CollisionComponent>(entity);
+        ImGui::Text("In view: %s", view->isInside(collision->boundingSphere) ? "Yes" : "No");
+    }
 }
 
 void EntityWindow::renderTransformComponent(TransformComponent *component) {
@@ -246,13 +252,11 @@ void EntityWindow::renderCollisionComponent(CollisionComponent *component) {
     if (!component) return;
 
     if (ImGui::CollapsingHeader("Collision Component")) {
-        std::string type;
         if (component->type == CollisionComponent::Sphere) {
-            type = "Sphere";
-        } else if (component->type == CollisionComponent::Box) {
-            type = "Box";
+            ImGui::Text("Collision Type: Sphere");
+            ImGui::Text("Position: %s", glm::to_string(component->boundingSphere.getPosition()).c_str());
+            ImGui::Text("Radius: %f", component->boundingSphere.getRadius());
         }
-        ImGui::Text("Collision Type: %s", type.c_str());
     }
 }
 

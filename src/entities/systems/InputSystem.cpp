@@ -11,7 +11,7 @@ InputSystem::~InputSystem() {
 }
 
 void InputSystem::createSpaceshipControl(Entity *spaceship, Entity *camera) {
-    spaceshipControl = new SpaceshipControl(spaceship, camera, entityManager);
+    spaceshipControl = new SpaceshipControl(spaceship, camera, entityManager, *context);
 }
 
 void InputSystem::init() {
@@ -97,8 +97,7 @@ void InputSystem::update() {
     }
 
     if (!isDebug && isKeyPressed(GLFW_KEY_G)) {
-        auto transform = entityManager->getComponent<TransformComponent>(context->grid);
-        if (transform) {
+        if (entityManager->hasComponent<TransformComponent>(context->grid)) {
             entityManager->removeComponent<TransformComponent>(context->grid);
         } else {
             entityManager->addComponent(context->grid, new TransformComponent(glm::vec3(0, 0, 0)));

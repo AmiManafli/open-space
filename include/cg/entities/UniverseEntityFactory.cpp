@@ -131,13 +131,14 @@ Entity *UniverseEntityFactory::createEntities(TransformComponent *parent, Planet
     planetVelocity->rotation = planet.rotation;
 
     PlanetGenerator planetGenerator(settings, *context.planetProgram);
+    auto meshes = planetGenerator.getMeshes();
     auto builder = EntityBuilder::create();
     Entity* entity = builder
             ->withTransform(planet.position)
             ->withVelocity(planetVelocity)
             ->withOrbit(parent, planet.semiMajorAxis, planet.semiMinorAxis, planet.orbitSpeed, planet.orbitAngle)
-            ->withMesh(planetGenerator.getMeshes())
-            ->withSphereCollision(planet.radius)
+            ->withMesh(meshes)
+            ->withSphereCollision(planet.radius + meshes[0]->maxHeight)
             ->withScale(planet.radius)
             ->withMass(planet.mass)
             ->isSelectable()

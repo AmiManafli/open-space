@@ -1,10 +1,15 @@
 #include "cg/SpaceshipControl.h"
 
-SpaceshipControl::SpaceshipControl(Entity *spaceship, Entity *camera, EntityManager *entityManager) : velocity(glm::vec3(0)) {
+SpaceshipControl::SpaceshipControl(Entity *spaceship, Entity *camera, EntityManager *entityManager, GLContext &context) : velocity(glm::vec3(0)), context(context) {
     this->cameraTransform = entityManager->getComponent<TransformComponent>(camera);
     this->cameraComponent = entityManager->getComponent<CameraComponent>(camera);
     this->velocityComponent = entityManager->getComponent<VelocityComponent>(camera);
     this->entityManager = entityManager;
+    viewFrustum = new ViewFrustum(*cameraComponent, *cameraTransform);
+}
+
+SpaceshipControl::~SpaceshipControl() {
+    delete viewFrustum;
 }
 
 void SpaceshipControl::processMouseMovement(float offsetX, float offsetY) {
@@ -65,6 +70,9 @@ void SpaceshipControl::processInput(float deltaTime) {
     glm::vec3 angles(glm::radians(cameraComponent->x), glm::radians(cameraComponent->y), glm::radians(cameraComponent->z));
     glm::quat rotation(angles);
     cameraComponent->orientation = glm::normalize(cameraComponent->orientation * rotation);
+    cameraComponent->front = cameraComponent->orientation * glm::vec3(0, 0, -1);
+    cameraComponent->up = cameraComponent->orientation * glm::vec3(0, 1, 0);
+    cameraComponent->right = cameraComponent->orientation * glm::vec3(1, 0, 0);
 
     auto normalizedVelocity = glm::normalize(velocity);
     if (!(glm::isnan(normalizedVelocity.x) || glm::isnan(normalizedVelocity.y) || glm::isnan(normalizedVelocity.z))) {
@@ -72,7 +80,8 @@ void SpaceshipControl::processInput(float deltaTime) {
         velocity = normalizedVelocity * speed;
     }
 
-//    velocityComponent->velocity += velocity;
+    viewFrustum->update(context.getAspect());
+
     velocityComponent->velocity = velocity;
 
     // Reset rotations

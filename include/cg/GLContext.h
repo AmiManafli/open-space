@@ -5,6 +5,7 @@
 #include <cg/entities/Entity.h>
 #include <cg/entities/EntityManager.h>
 #include <cg/shaders/Shader.h>
+#include "ViewFrustum.h"
 
 class GLContext {
 public:
@@ -18,7 +19,7 @@ public:
     GLFWwindow* getWindow() { return window; }
 
     Entity* getCamera() { return activeCamera; }
-    void setActiveCamera(Entity *entity) { activeCamera = entity; }
+    void setActiveCamera(Entity *entity);
 
     glm::mat4 getProjection();
     glm::mat4 getView();
@@ -33,6 +34,8 @@ public:
 
     void swapBuffers();
 
+    void updateViewFrustum() { if (viewFrustum) { viewFrustum->update(getAspect()); } }
+
     uint16_t width;
     uint16_t height;
 
@@ -41,6 +44,8 @@ public:
     bool bloomEnabled = false;
 
     bool showEntityNames = true;
+
+    ViewFrustum *viewFrustum;
 
     uint32_t triangleCount = 0;
 

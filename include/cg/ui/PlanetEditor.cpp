@@ -165,5 +165,5 @@ void PlanetEditor::updatePlanet(Entity *entity, ShaderProgram &shaderProgram, bo
     for (int i = 0; i < 6; i++) {
         sides[i]->setupBuffers();
     }
-    printf("Finished processing planet!\n");
+    printf("Finished processing planet!\n", sides[0]->maxHeight);
 }

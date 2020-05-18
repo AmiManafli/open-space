@@ -2,7 +2,7 @@
 
 CameraComponent::CameraComponent(CameraComponent::Mode mode, CameraComponent::Type type, glm::vec3 target,
                                  glm::vec3 front, glm::vec3 up, TransformComponent *positionComponent)
-        : mode(mode), type(type), target(target), zoom(1.0f), mouseSensitivity(0.05f), movementSpeedTick(10), x(0), y(0), z(0) {
+        : mode(mode), type(type), target(target), zoom(1.0f), mouseSensitivity(0.05f), movementSpeedTick(10), x(0), y(0), z(0), nearDistance(0.01f), farDistance(10000000.0f) {
     // Initialize vectors
     this->worldUp = glm::normalize(up);
     this->front = glm::normalize(front);
@@ -42,7 +42,7 @@ glm::mat4 CameraComponent::getProjection(float aspectRatio) {
                           -1000.0f, 100.0f);
     } else if (type == Perspective) {
         auto fov = 45.0f / zoom;
-        return glm::perspective(glm::radians(fov), aspectRatio, 0.01f, 10000000.0f);
+        return glm::perspective(glm::radians(fov), aspectRatio, nearDistance, farDistance);
     } else if (type == CubeMapType) {
         return glm::perspective(static_cast<float>(PI / 2.0), 1.0f, 0.000001f, 100000000.0f);
     } else {

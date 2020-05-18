@@ -1,7 +1,7 @@
 #include "cg/GLContext.h"
 
 GLContext::GLContext(EntityManager *entityManager, std::string title, uint16_t width, uint16_t height)
-        : entityManager(entityManager), title(title), width(width), height(height) {
+        : entityManager(entityManager), title(title), width(width), height(height), viewFrustum(nullptr) {
 }
 
 GLContext::~GLContext() {
@@ -106,4 +106,17 @@ void GLContext::update() {
 
 void GLContext::swapBuffers() {
     glfwSwapBuffers(window);
+}
+
+void GLContext::setActiveCamera(Entity *entity) {
+    activeCamera = entity;
+    if (viewFrustum) {
+        delete viewFrustum;
+    }
+    if (entity) {
+        auto camera = entityManager->getComponent<CameraComponent>(entity);
+        auto cameraTransform = entityManager->getComponent<TransformComponent>(entity);
+        viewFrustum = new ViewFrustum(*camera, *cameraTransform);
+        updateViewFrustum();
+    }
 }

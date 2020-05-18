@@ -176,6 +176,7 @@ void Application::run() {
         gravitySystem->update();
         orbitSystem->update();
         inputSystem->update();
+        context->updateViewFrustum();
         movementSystem->update();
         collisionSystem->update();
         renderSystem->update();

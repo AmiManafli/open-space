@@ -58,6 +58,9 @@ public:
     uint32_t movementSpeedTick;
     float mouseSensitivity;
 
+    float nearDistance;
+    float farDistance;
+
     //private:
     void updateVectors();
 };
