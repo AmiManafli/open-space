@@ -8,7 +8,7 @@
 #include "TransformComponent.h"
 #include "LightComponent.h"
 
-class Entity;
+struct Entity;
 class EntityManager;
 
 class VelocityComponent : public Component {

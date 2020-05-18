@@ -22,6 +22,7 @@ PlanetSide::PlanetSide(PlanetSettings settings, ShaderProgram &shaderProgram) : 
     instances = 1;
 
     updateSettings(settings);
+    setupBuffers();
 }
 
 PlanetSide::~PlanetSide() {
@@ -51,8 +52,6 @@ void PlanetSide::createMesh() {
     materials.emplace_back(settings.waterMaterial);
     materials.emplace_back(settings.groundMaterial);
     materials.emplace_back(settings.peakMaterial);
-
-    setupBuffers();
 }
 
 void PlanetSide::subdivide(uint16_t subdivisions) {
@@ -197,6 +196,10 @@ void PlanetSide::updateSettings(PlanetSettings settings) {
     for (auto &noiseSettings : settings.noiseSettings) {
         noises.emplace_back(new OpenSimplexNoise(settings, noiseSettings));
     }
+
+    vertices.clear();
+    materials.clear();
+    textures.clear();
 
     createMesh();
 }

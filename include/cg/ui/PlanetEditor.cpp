@@ -1,3 +1,4 @@
+#include <omp.h>
 #include "PlanetEditor.h"
 
 PlanetEditor::PlanetEditor(EntityManager &entityManager, GLContext &context)
@@ -60,8 +61,9 @@ void PlanetEditor::renderNoise(int index, PlanetSide *planetSide) {
     PlanetNoiseSettings noiseSettings = settings.noiseSettings[index];
 
     std::string name = "Noise " + std::to_string(index);
+    auto i = index * 100;
     if (ImGui::CollapsingHeader(name.c_str())) {
-        ImGui::PushID(index * 100 + -2);
+        ImGui::PushID(i++);
         if (ImGui::RadioButton("Simple noise", noiseSettings.noiseType == Simple)) {
             settings.noiseSettings[index].noiseType = Simple;
             updatePlanet(selected, *planetSide->shaderProgram, false);
@@ -70,70 +72,70 @@ void PlanetEditor::renderNoise(int index, PlanetSide *planetSide) {
 
         ImGui::SameLine();
 
-        ImGui::PushID(index * 100 + -1);
+        ImGui::PushID(i++);
         if (ImGui::RadioButton("Ridged noise", noiseSettings.noiseType == Ridged)) {
             settings.noiseSettings[index].noiseType = Ridged;
             updatePlanet(selected, *planetSide->shaderProgram, false);
         }
         ImGui::PopID();
 
-        ImGui::PushID(index * 100 + 0);
+        ImGui::PushID(i++);
         if (ImGui::Checkbox("Enabled", &settings.noiseSettings[index].enabled)) {
             updatePlanet(selected, *planetSide->shaderProgram, false);
         }
         ImGui::PopID();
 
-        ImGui::PushID(index * 100 + 1);
+        ImGui::PushID(i++);
         if (ImGui::Checkbox("Use first layer as mask", &settings.noiseSettings[index].useFirstLayerAsMask)) {
             updatePlanet(selected, *planetSide->shaderProgram, false);
         }
         ImGui::PopID();
 
-        ImGui::PushID(index * 100 + 2);
+        ImGui::PushID(i++);
         if (ImGui::DragFloat("Strength", &settings.noiseSettings[index].strength, 0.01, 0.01, 10000.0)) {
             updatePlanet(selected, *planetSide->shaderProgram, false);
         }
         ImGui::PopID();
 
-        ImGui::PushID(index * 100 + 3);
+        ImGui::PushID(i++);
         if (ImGui::DragInt("Layers", &settings.noiseSettings[index].layers, 1, 0, 20)) {
             updatePlanet(selected, *planetSide->shaderProgram, false);
         }
         ImGui::PopID();
 
-        ImGui::PushID(index * 100 + 4);
+        ImGui::PushID(i++);
         if (ImGui::DragFloat("Base Roughness", &settings.noiseSettings[index].baseRoughness, 0.1, 0.1, 10000.0)) {
             updatePlanet(selected, *planetSide->shaderProgram, false);
         }
         ImGui::PopID();
 
-        ImGui::PushID(index * 100 + 5);
+        ImGui::PushID(i++);
         if (ImGui::DragFloat("Roughness", &settings.noiseSettings[index].roughness, 0.1, 0.1, 10000.0)) {
             updatePlanet(selected, *planetSide->shaderProgram, false);
         }
         ImGui::PopID();
 
-        ImGui::PushID(index * 100 + 6);
+        ImGui::PushID(i++);
         if (ImGui::DragFloat("Persistence", &settings.noiseSettings[index].persistence, 0.1, 0.1, 10000.0)) {
             updatePlanet(selected, *planetSide->shaderProgram, false);
         }
         ImGui::PopID();
 
-        ImGui::PushID(index * 100 + 7);
+        ImGui::PushID(i++);
         if (ImGui::DragFloat("Min value", &settings.noiseSettings[index].minValue, 0.1, 0.1, 10000.0)) {
             updatePlanet(selected, *planetSide->shaderProgram, false);
         }
         ImGui::PopID();
 
         if (settings.noiseSettings[index].noiseType == Ridged) {
-            ImGui::PushID(index * 100 + 8);
+            ImGui::PushID(i++);
             if (ImGui::DragFloat("Weight multiplier", &settings.noiseSettings[index].weightMultiplier, 0.1, 0.1, 10000.0)) {
                 updatePlanet(selected, *planetSide->shaderProgram, false);
             }
             ImGui::PopID();
         }
 
-        ImGui::PushID(index * 100 + 9);
+        ImGui::PushID(i++);
         if (ImGui::DragFloat3("Center", glm::value_ptr(settings.noiseSettings[index].center), 0.1, 0.1, 10000.0)) {
             updatePlanet(selected, *planetSide->shaderProgram, false);
         }
@@ -144,12 +146,24 @@ void PlanetEditor::renderNoise(int index, PlanetSide *planetSide) {
 void PlanetEditor::updatePlanet(Entity *entity, ShaderProgram &shaderProgram, bool force) {
     if (!force && !autoUpdate) return;
 
-    auto meshes = entityManager.getMultiComponents<MeshComponent>(entity);
     FaceDirection directions[] = {FrontFace, BackFace, LeftFace, RightFace, UpFace, DownFace};
-    int i = 0;
-    for (auto it = meshes.first; it != meshes.second; it++) {
-        settings.direction = directions[i++];
-        auto planetSide = dynamic_cast<PlanetSide *>(it->second);
-        planetSide->updateSettings(settings);
+    auto meshPairs = entityManager.getMultiComponents<MeshComponent>(entity);
+    auto it = meshPairs.first;
+    PlanetSide* sides[6];
+    sides[0] = dynamic_cast<PlanetSide *>(it->second); it++;
+    sides[1] = dynamic_cast<PlanetSide *>(it->second); it++;
+    sides[2] = dynamic_cast<PlanetSide *>(it->second); it++;
+    sides[3] = dynamic_cast<PlanetSide *>(it->second); it++;
+    sides[4] = dynamic_cast<PlanetSide *>(it->second); it++;
+    sides[5] = dynamic_cast<PlanetSide *>(it->second);
+#pragma omp parallel for
+    for (int i = 0; i < 6; i++) {
+        printf("Processing planet side %d in thread %d/%d...\n", i, omp_get_thread_num(), omp_get_max_threads());
+        settings.direction = directions[i];
+        sides[i]->updateSettings(settings);
     }
+    for (int i = 0; i < 6; i++) {
+        sides[i]->setupBuffers();
+    }
+    printf("Finished processing planet!\n");
 }

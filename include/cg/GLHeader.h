@@ -22,4 +22,11 @@
 
 #include <cg/Math.h>
 
+#ifdef CHECK_MEMORY_LEAKS
+#include <vld.h>
+#endif
+#ifdef ENABLE_OPENMP
+#include <omp.h>
+#endif
+
 #endif //CG1_PROJECT_GLHEADER_H
