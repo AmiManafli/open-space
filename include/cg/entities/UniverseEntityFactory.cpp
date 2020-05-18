@@ -108,6 +108,7 @@ Entity *UniverseEntityFactory::createEntities(TransformComponent *parent, Planet
         1.0,
         80,
         planet.planetSeed,
+        1.0,
         MeshComponent::Material {
             planet.waterColor,
             glm::vec3(0.9),

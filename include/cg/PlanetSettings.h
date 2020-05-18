@@ -36,6 +36,7 @@ struct PlanetSettings {
     float radius;
     int subdivision;
     int seed;
+    float sphereFactor;
     MeshComponent::Material waterMaterial;
     MeshComponent::Material groundMaterial;
     MeshComponent::Material peakMaterial;

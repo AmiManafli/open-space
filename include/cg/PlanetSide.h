@@ -25,6 +25,8 @@ private:
     void createTriangle(glm::vec3 a, glm::vec3 b, glm::vec3 c);
     void applyNoise();
     void updateNormals();
+
+    glm::vec3 mapCubeToSphere(glm::vec3 position);
 };
 
 

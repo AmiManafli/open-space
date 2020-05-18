@@ -1,16 +1,20 @@
 #include <cg/terrain/OpenSimplexNoise.h>
 
 
-glm::vec3 mapCubeToSphere(glm::vec3 position) {
+glm::vec3 PlanetSide::mapCubeToSphere(glm::vec3 position) {
     auto sphere = position;
 
     auto x2 = position.x * position.x;
     auto y2 = position.y * position.y;
     auto z2 = position.z * position.z;
 
-    sphere.x = position.x * glm::sqrt(1 - 0.5 * y2 - 0.5 * z2 + y2 * z2 / 3.0);
-    sphere.y = position.y * glm::sqrt(1 - 0.5 * z2 - 0.5 * x2 + z2 * x2 / 3.0);
-    sphere.z = position.z * glm::sqrt(1 - 0.5 * x2 - 0.5 * y2 + x2 * y2 / 3.0);
+    auto xFactor = glm::mix(1.0, glm::sqrt(1 - 0.5 * y2 - 0.5 * z2 + y2 * z2 / 3.0), settings.sphereFactor);
+    auto yFactor = glm::mix(1.0, glm::sqrt(1 - 0.5 * z2 - 0.5 * x2 + z2 * x2 / 3.0), settings.sphereFactor);
+    auto zFactor = glm::mix(1.0, glm::sqrt(1 - 0.5 * x2 - 0.5 * y2 + x2 * y2 / 3.0), settings.sphereFactor);
+
+    sphere.x = position.x * xFactor;
+    sphere.y = position.y * yFactor;
+    sphere.z = position.z * zFactor;
 
     return sphere;
 }
@@ -174,8 +178,9 @@ void PlanetSide::applyNoise() {
             }
         }
 
+        auto radius = glm::mix(1.0f, settings.radius, settings.sphereFactor);
         auto oldPosition = vertex.position;
-        vertex.position = vertex.position * (1 + static_cast<float>(noiseValue)) * settings.radius;
+        vertex.position = vertex.position * (1 + static_cast<float>(noiseValue)) * radius;
         vertex.height = glm::length(oldPosition - vertex.position);
 
         if (vertex.height > maxHeight) {

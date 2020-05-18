@@ -34,6 +34,9 @@ void PlanetEditor::render() {
     if (ImGui::DragFloat("Radius", &settings.radius, 0.1, 0.1, 10000.0)) {
         updatePlanet(selected, *mesh->shaderProgram, false);
     }
+    if (ImGui::DragFloat("Spherical", &settings.sphereFactor, 0.01, 0.0, 1.0)) {
+        updatePlanet(selected, *mesh->shaderProgram, false);
+    }
 
     noiseFunctions = settings.noiseSettings.size();
     if (ImGui::SliderInt("Noise functions", &noiseFunctions, 0, 4, "%d")) {

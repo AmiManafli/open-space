@@ -6,6 +6,7 @@ PlanetSettings getDefaultPlanetSettings() {
     settings.seed = 0;
     settings.radius = 1;
     settings.subdivision = 0;
+    settings.sphereFactor = 1.0;
     return settings;
 }
 
