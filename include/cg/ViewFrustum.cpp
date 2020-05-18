@@ -5,12 +5,12 @@ ViewFrustum::ViewFrustum(CameraComponent &camera, TransformComponent &cameraTran
 }
 
 void ViewFrustum::update(float ratio) {
-    auto fov = 45.0f / camera.zoom;
+    auto angle = glm::radians(45.0f / camera.zoom);
 
-    nearHeight = 2 * glm::tan(fov / 2) * camera.nearDistance;
+    nearHeight = 2 * glm::tan(angle / 2.0) * camera.nearDistance;
     nearWidth = nearHeight * ratio;
 
-    farHeight = 2 * glm::tan(fov / 2) * camera.farDistance;
+    farHeight = 2 * glm::tan(angle / 2.0) * camera.farDistance;
     farWidth = farHeight * ratio;
 
     auto nearCenter = cameraTransform.position + camera.front * camera.nearDistance;
@@ -41,13 +41,6 @@ void ViewFrustum::update(float ratio) {
 }
 
 bool ViewFrustum::isInside(BoundingSphere &sphere) {
-    float distanceNear = planes[0].distance(sphere);
-    float distanceFar = planes[1].distance(sphere);
-    float distanceLeft = planes[2].distance(sphere);
-    float distanceRight = planes[3].distance(sphere);
-    float distanceTop = planes[4].distance(sphere);
-    float distanceBottom = planes[5].distance(sphere);
-    printf("Distances:\n  near: %f\n  far: %f\n  left: %f\n  right: %f\n  top: %f\n  bottom: %f\n\n", distanceNear, distanceFar, distanceLeft, distanceRight, distanceTop, distanceBottom);
     for (int i = 0; i < 6; i++) {
         auto distance = planes[i].distance(sphere);
         if (distance < -sphere.getRadius()) {

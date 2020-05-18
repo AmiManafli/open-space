@@ -2,7 +2,7 @@
 
 CameraComponent::CameraComponent(CameraComponent::Mode mode, CameraComponent::Type type, glm::vec3 target,
                                  glm::vec3 front, glm::vec3 up, TransformComponent *positionComponent)
-        : mode(mode), type(type), target(target), zoom(1.0f), mouseSensitivity(0.05f), movementSpeedTick(10), x(0), y(0), z(0), nearDistance(0.01f), farDistance(10000000.0f) {
+        : mode(mode), type(type), target(target), zoom(1.0f), mouseSensitivity(0.05f), movementSpeedTick(10), x(0), y(0), z(0), nearDistance(0.01f), farDistance(10000.0f) {
     // Initialize vectors
     this->worldUp = glm::normalize(up);
     this->front = glm::normalize(front);
