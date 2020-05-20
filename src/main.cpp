@@ -1,3 +1,4 @@
+#define ENABLE_OPENMP
 #include <cg/Application.h>
 
 int main() {

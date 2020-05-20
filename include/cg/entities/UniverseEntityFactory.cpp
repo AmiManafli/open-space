@@ -131,7 +131,7 @@ Entity *UniverseEntityFactory::createEntities(TransformComponent *parent, Planet
     auto planetVelocity = new VelocityComponent();
     planetVelocity->rotation = planet.rotation;
 
-    PlanetGenerator planetGenerator(settings, *context.planetProgram);
+    PlanetGenerator planetGenerator(settings, *context.meshProgram);
     auto meshes = planetGenerator.getMeshes();
     auto builder = EntityBuilder::create();
     Entity* entity = builder

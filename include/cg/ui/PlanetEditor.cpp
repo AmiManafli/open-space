@@ -6,21 +6,36 @@ PlanetEditor::PlanetEditor(EntityManager &entityManager, GLContext &context)
     noiseTypes = {"Simple", "Ridged"};
 }
 
+void PlanetEditor::renderEmpty() {
+    ImGui::Text("No planet selected.");
+    ImGui::End();
+}
+
 void PlanetEditor::render() {
     auto selectedEntity = context.selectedEntity;
 
-    if (!selectedEntity) return;
+    PlanetSide *mesh;
+    if (selectedEntity) {
+        auto meshes = entityManager.getMultiComponents<MeshComponent>(selectedEntity);
+        auto pair = meshes.first;
+        mesh = dynamic_cast<PlanetSide *>(pair->second);
 
-    auto meshes = entityManager.getMultiComponents<MeshComponent>(selectedEntity);
-    auto pair = meshes.first;
-    auto mesh = dynamic_cast<PlanetSide *>(pair->second);
-
-    if (selected != selectedEntity) {
-        settings = mesh->getSettings();
-        selected = selectedEntity;
+        if (selected != selectedEntity) {
+            if (mesh) {
+                settings = mesh->getSettings();
+                selected = selectedEntity;
+            } else {
+                selected = nullptr;
+                selectedEntity = nullptr;
+            }
+        }
     }
 
     ImGui::Begin("Planet Editor");
+
+    if (!selectedEntity) return renderEmpty();
+
+    ImGui::Text("Entity ID: %d", selectedEntity->id);
 
     if (ImGui::Checkbox("Auto Update", &autoUpdate)) {
         updatePlanet(selected, *mesh->shaderProgram, autoUpdate);

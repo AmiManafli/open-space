@@ -29,6 +29,8 @@ private:
     std::vector<const char *> noiseTypes;
 
     void updatePlanet(Entity *entity, ShaderProgram &shaderProgram, bool force);
+
+    void renderEmpty();
 };
 
 #endif //CG1_PROJECT_PLANETEDITOR_H
