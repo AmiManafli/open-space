@@ -50,7 +50,7 @@ void PlanetSide::createMesh() {
     maxHeight = 0.0f;
 
     subdivide(subdivision);
-//    applyNoise();
+    applyNoise();
     updateNormals();
 
     materials.emplace_back(settings.waterMaterial);

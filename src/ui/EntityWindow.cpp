@@ -86,12 +86,20 @@ void EntityWindow::renderEmpty() {
 }
 
 void EntityWindow::renderInfo(Entity *entity) {
-    ImGui::Text("ID: %d", entity->id);
+    ImGui::Text("ID:");
+    ImGui::PushFont(context->uiBlackFont);
+    ImGui::SameLine();
+    ImGui::Text("%d", entity->id);
+    ImGui::PopFont();
 
     auto view = context->viewFrustum;
     if (view && entityManager->hasComponent<CollisionComponent>(entity)) {
         auto collision = entityManager->getComponent<CollisionComponent>(entity);
-        ImGui::Text("In view: %s", view->isInside(collision->boundingSphere) ? "Yes" : "No");
+        ImGui::Text("In view:");
+        ImGui::PushFont(context->uiBlackFont);
+        ImGui::SameLine();
+        ImGui::Text("%s", view->isInside(collision->boundingSphere) ? "Yes" : "No");
+        ImGui::PopFont();
     }
 }
 

@@ -10,8 +10,8 @@ using json = nlohmann::json;
 
 UserInterface::UserInterface(EntityManager *entityManager, GLContext *context)
         : entityManager(entityManager), context(context), settingsFilename("settings.json"), terrainProfileName("") {
-    views = { "Spaceship", "Perspective", "Top", "Side" };
-    noiseFunctions = { "Open Simplex", "Perlin", "Test" };
+    views = {"Spaceship", "Perspective", "Top", "Side"};
+    noiseFunctions = {"Open Simplex", "Perlin", "Test"};
 
     loadTerrainProfiles();
 
@@ -42,16 +42,36 @@ UserInterface::~UserInterface() {
     delete planetEditor;
 }
 
+void UserInterface::init() {
+    ImGuiIO& io = ImGui::GetIO();
+
+    auto lightFontPath = std::filesystem::absolute("./assets/fonts/Roboto-Light.ttf");
+    auto thinFontPath = std::filesystem::absolute("./assets/fonts/Roboto-Thin.ttf");
+    auto regularFontPath = std::filesystem::absolute("./assets/fonts/Roboto-Regular.ttf");
+    auto blackFontPath = std::filesystem::absolute("./assets/fonts/Roboto-Black.ttf");
+
+    context->uiRegularFont = io.Fonts->AddFontFromFileTTF(regularFontPath.string().c_str(), 13.0f);
+    context->uiBlackFont = io.Fonts->AddFontFromFileTTF(blackFontPath.string().c_str(), 13.0f);
+    context->uiEntityTitleFont = io.Fonts->AddFontFromFileTTF(blackFontPath.string().c_str(), 14.0f);
+    context->uiEntityFont = io.Fonts->AddFontFromFileTTF(lightFontPath.string().c_str(), 13.0f);
+
+    setupTheme(true, 0.9);
+}
+
 void UserInterface::render() {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
+
+    ImGui::PushFont(context->uiEntityFont);
 
     renderSpaceDisplay();
 
     if (context->showEntityNames) {
         renderEntityNames();
     }
+
+    ImGui::PopFont();
 
     if (context->displayCursor) {
         renderMainMenu();
@@ -97,10 +117,10 @@ void UserInterface::renderMainMenu() {
                 showWireframe = !showWireframe;
                 if (showWireframe) {
                     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-                } else { 
-                    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); 
+                } else {
+                    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
                 }
-            } 
+            }
             ImGui::EndMenu();
         }
         ImGui::EndMainMenuBar();
@@ -133,8 +153,7 @@ void UserInterface::renderCameraInfoWindow() {
                     context->setActiveCamera(context->spaceshipCamera);
                 } else if (n == 1) {
                     context->setActiveCamera(context->perspectiveCamera);
-                }
-                else if (n == 2) {
+                } else if (n == 2) {
                     context->setActiveCamera(context->topCamera);
                 } else if (n == 3) {
                     context->setActiveCamera(context->sideCamera);
@@ -152,10 +171,11 @@ void UserInterface::renderCameraInfoWindow() {
     ImGui::Text("Direction: (x=%.3f, y=%.3f, z=%.3f)", direction.x, direction.y, direction.z);
     ImGui::Text("Yaw: %.3f deg.", camera->yaw);
     ImGui::Text("Pitch: %.3f deg.", camera->pitch);
-    ImGui::Text("Zoom: %.2f x", camera->zoom); ImGui::SameLine();
+    ImGui::Text("Zoom: %.2f x", camera->zoom);
+    ImGui::SameLine();
     if (ImGui::Button("Reset")) {
         camera->zoom = 1.0f;
-	}
+    }
     ImGui::End();
 }
 
@@ -165,7 +185,7 @@ void UserInterface::renderTerrainGeneratorWindow() {
     ImGui::InputText("Profile name", terrainProfileName, IM_ARRAYSIZE(terrainProfileName));
 
     if (ImGui::BeginCombo("Profiles", currentProfile)) {
-        for (auto& profile : availableProfiles) {
+        for (auto &profile : availableProfiles) {
             auto profileStr = profile.c_str();
             bool isSelected = currentProfile == profileStr;
             if (ImGui::Selectable(profileStr, isSelected)) {
@@ -200,7 +220,7 @@ void UserInterface::renderTerrainGeneratorWindow() {
     int minSize = 0;
     int maxSize = 200;
 
-    if (ImGui::SliderScalar("Size", ImGuiDataType_S32, &settings.width, &minSize, &maxSize,"%d")) {
+    if (ImGui::SliderScalar("Size", ImGuiDataType_S32, &settings.width, &minSize, &maxSize, "%d")) {
         settings.height = settings.width;
         updateTerrain(terrain, settings);
     }
@@ -208,7 +228,8 @@ void UserInterface::renderTerrainGeneratorWindow() {
     int minSubdivisions = 1;
     int maxSubdivisions = 400;
 
-    if (ImGui::SliderScalar("Subdivisions", ImGuiDataType_S32, &settings.subdivisionWidth, &minSubdivisions, &maxSubdivisions,"%d")) {
+    if (ImGui::SliderScalar("Subdivisions", ImGuiDataType_S32, &settings.subdivisionWidth, &minSubdivisions,
+                            &maxSubdivisions, "%d")) {
         settings.subdivisionHeight = settings.subdivisionWidth;
         updateTerrain(terrain, settings);
     }
@@ -216,24 +237,26 @@ void UserInterface::renderTerrainGeneratorWindow() {
     int minOctaves = 0;
     int maxOctaves = 32;
 
-    if (ImGui::SliderScalar("Octaves", ImGuiDataType_S32, &settings.octaves, &minOctaves, &maxOctaves,"%d")) {
+    if (ImGui::SliderScalar("Octaves", ImGuiDataType_S32, &settings.octaves, &minOctaves, &maxOctaves, "%d")) {
         updateTerrain(terrain, settings);
     }
 
     int minSeed = 0;
     int maxSeed = 100000;
-    if (ImGui::SliderScalar("Seed", ImGuiDataType_S32, &settings.seed, &minSeed, &maxSeed,"%d")) {
+    if (ImGui::SliderScalar("Seed", ImGuiDataType_S32, &settings.seed, &minSeed, &maxSeed, "%d")) {
         settings.subdivisionHeight = settings.subdivisionWidth;
         updateTerrain(terrain, settings);
     }
     double minFrequency = 0.0;
     double maxFrequency = 2.0;
-    if (ImGui::SliderScalar("Frequency", ImGuiDataType_Double, &settings.frequency, &minFrequency, &maxFrequency,"%f", 1.0f)) {
+    if (ImGui::SliderScalar("Frequency", ImGuiDataType_Double, &settings.frequency, &minFrequency, &maxFrequency, "%f",
+                            1.0f)) {
         updateTerrain(terrain, settings);
     }
     double minPersistence = 0.0;
     double maxPersistence = 2.0;
-    if (ImGui::SliderScalar("Persistence", ImGuiDataType_Double, &settings.persistence, &minPersistence, &maxPersistence,"%f", 1.0f)) {
+    if (ImGui::SliderScalar("Persistence", ImGuiDataType_Double, &settings.persistence, &minPersistence,
+                            &maxPersistence, "%f", 1.0f)) {
         updateTerrain(terrain, settings);
     }
 
@@ -245,7 +268,8 @@ void UserInterface::renderTerrainGeneratorWindow() {
 
     double minMaxHeight = 0.0;
     double maxMaxHeight = 30.0;
-    if (ImGui::SliderScalar("Max height", ImGuiDataType_Double, &settings.maxAmplitude, &minMaxHeight, &maxMaxHeight, "%f", 1.0f)) {
+    if (ImGui::SliderScalar("Max height", ImGuiDataType_Double, &settings.maxAmplitude, &minMaxHeight, &maxMaxHeight,
+                            "%f", 1.0f)) {
         updateTerrain(terrain, settings);
     }
 
@@ -256,7 +280,8 @@ void UserInterface::renderTerrainGeneratorWindow() {
     ImGui::End();
 }
 
-void UserInterface::onUpdateTerrain(Terrain *terrain, std::function<bool(Terrain *, TerrainSettings& settings)> updateTerrainFunc) {
+void UserInterface::onUpdateTerrain(Terrain *terrain,
+                                    std::function<bool(Terrain *, TerrainSettings &settings)> updateTerrainFunc) {
     this->terrain = terrain;
     this->updateTerrainFunc = updateTerrainFunc;
 }
@@ -310,7 +335,7 @@ void UserInterface::saveTerrainSettings() {
         settingsFile.close();
     } else {
         jsonSettings["terrain"] = {
-            {"profiles", {}}
+                {"profiles", {}}
         };
     }
 
@@ -349,7 +374,7 @@ void UserInterface::loadTerrainProfiles() {
     if (settingsFile.is_open()) {
         settingsFile >> jsonSettings;
         settingsFile.close();
-        for (auto& profile : jsonSettings["terrain"]["profiles"].items()) {
+        for (auto &profile : jsonSettings["terrain"]["profiles"].items()) {
             std::string name = profile.key();
             availableProfiles.push_back(name);
             if (!selectedProfile) {
@@ -361,31 +386,49 @@ void UserInterface::loadTerrainProfiles() {
     }
 }
 
-void UserInterface::updateTerrain(Terrain *terrain, TerrainSettings& settings) {
+void UserInterface::updateTerrain(Terrain *terrain, TerrainSettings &settings) {
     if (updateTerrainFunc) {
         updateTerrainFunc(terrain, settings);
     }
 }
 
 void UserInterface::renderSpaceDisplay() {
-    ImGui::Begin("Space Display", &showSpaceDisplay, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoBackground);
-    ImGui::SetWindowPos(ImVec2(0, 0));
+    ImGui::PushFont(context->uiEntityTitleFont);
+    ImGui::Begin("Space Display", &showSpaceDisplay,
+                 ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
+                 ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoInputs |
+                 ImGuiWindowFlags_NoBackground);
+    ImGui::SetWindowPos(ImVec2(0, context->displayCursor ? 15 : 0));
 
     auto player = context->player;
     auto velocity = entityManager->getComponent<VelocityComponent>(player);
 
-    ImGui::Text("Speed: %.3f m/s", glm::length(velocity->velocity));
-    ImGui::Text("Gravity: %.3f", glm::length(velocity->gravity));
+    ImGui::Text("Speed: %.1f m/s", glm::length(velocity->velocity));
+    ImGui::Text("Gravity: %.1f", glm::length(velocity->gravity));
 
     ImGui::End();
+    ImGui::PopFont();
 }
 
 void UserInterface::renderEntityNames() {
-    auto planet = entityManager->getEntity(5);
-    if (planet) {
-        auto transform = entityManager->getComponent<TransformComponent>(planet);
-        auto mass = entityManager->getComponent<MassComponent>(planet);
+    auto entity = context->selectedEntity;
+
+    if (entity) {
+        auto transform = entityManager->getComponent<TransformComponent>(entity);
+        auto cameraTransform = entityManager->getComponent<TransformComponent>(context->getCamera());
+        auto camera = entityManager->getComponent<CameraComponent>(context->getCamera());
         auto pos = glm::vec4(transform->position, 1.0);
+
+        if (entityManager->hasComponent<CollisionComponent>(entity)) {
+            auto collision = entityManager->getComponent<CollisionComponent>(entity);
+            float radius = collision->boundingSphere.getRadius();
+            pos = glm::vec4(transform->position + camera->right * radius * 1.2f, 1);
+        }
+
+        const static float MAX_DISTANCE = 100.0;
+        auto distance = glm::length(transform->position - cameraTransform->position);
+
+        if (distance < MAX_DISTANCE) return;
 
         auto clipSpace = context->getProjection() * context->getView() * pos;
         auto normalizedDeviceSpace = glm::vec3(clipSpace) / clipSpace.w;
@@ -395,16 +438,101 @@ void UserInterface::renderEntityNames() {
         screen.y = (1.0 - screen.y) / 2.0 * context->getHeight();
 
         if (screen.x >= 0.0 && screen.x <= context->getWidth() && screen.y >= 0.0 && screen.y <= context->getHeight()) {
-            ImGui::Begin("Planet", &showSpaceDisplay, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoBackground);
+            ImGui::Begin("Planet", &showSpaceDisplay,
+                         ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
+                         ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoInputs |
+                         ImGuiWindowFlags_NoBackground);
             ImGui::SetWindowPos(ImVec2(screen.x, screen.y));
 
-            ImGui::Text("Planet 5");
-            ImGui::Text("Position: (%.3f, %.3f, %.3f)", pos.x, pos.y, pos.z);
-            if (mass) {
+            ImGui::PushFont(context->uiEntityTitleFont);
+            ImGui::Text("Entity %d", entity->id);
+            ImGui::PopFont();
+            ImGui::Text("Position: (%.1f, %.1f, %.1f)", pos.x, pos.y, pos.z);
+            if (entityManager->hasComponent<MassComponent>(entity)) {
+                auto mass = entityManager->getComponent<MassComponent>(entity);
                 ImGui::Text("Mass: %.1f", mass->mass);
             }
 
+            ImGui::Text("Distance: %.1f", distance);
+
             ImGui::End();
+        }
+    }
+}
+
+void UserInterface::setupTheme(bool styleDark, float alpha) {
+    ImGuiStyle &style = ImGui::GetStyle();
+
+    // light style from Pacôme Danhiez (user itamago) https://github.com/ocornut/imgui/pull/511#issuecomment-175719267
+    style.Alpha = 1.0f;
+    style.FrameRounding = 3.0f;
+    style.Colors[ImGuiCol_Text] = ImVec4(0.00f, 0.00f, 0.00f, 1.00f);
+    style.Colors[ImGuiCol_TextDisabled] = ImVec4(0.60f, 0.60f, 0.60f, 1.00f);
+    style.Colors[ImGuiCol_WindowBg] = ImVec4(0.94f, 0.94f, 0.94f, 0.94f);
+//    style.Colors[ImGuiCol_ChildWindowBg] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
+    style.Colors[ImGuiCol_PopupBg] = ImVec4(1.00f, 1.00f, 1.00f, 0.94f);
+    style.Colors[ImGuiCol_Border] = ImVec4(0.00f, 0.00f, 0.00f, 0.39f);
+    style.Colors[ImGuiCol_BorderShadow] = ImVec4(1.00f, 1.00f, 1.00f, 0.10f);
+    style.Colors[ImGuiCol_FrameBg] = ImVec4(1.00f, 1.00f, 1.00f, 0.94f);
+    style.Colors[ImGuiCol_FrameBgHovered] = ImVec4(0.26f, 0.59f, 0.98f, 0.40f);
+    style.Colors[ImGuiCol_FrameBgActive] = ImVec4(0.26f, 0.59f, 0.98f, 0.67f);
+    style.Colors[ImGuiCol_TitleBg] = ImVec4(0.96f, 0.96f, 0.96f, 1.00f);
+    style.Colors[ImGuiCol_TitleBgCollapsed] = ImVec4(1.00f, 1.00f, 1.00f, 0.51f);
+    style.Colors[ImGuiCol_TitleBgActive] = ImVec4(0.82f, 0.82f, 0.82f, 1.00f);
+    style.Colors[ImGuiCol_MenuBarBg] = ImVec4(0.86f, 0.86f, 0.86f, 1.00f);
+    style.Colors[ImGuiCol_ScrollbarBg] = ImVec4(0.98f, 0.98f, 0.98f, 0.53f);
+    style.Colors[ImGuiCol_ScrollbarGrab] = ImVec4(0.69f, 0.69f, 0.69f, 1.00f);
+    style.Colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(0.59f, 0.59f, 0.59f, 1.00f);
+    style.Colors[ImGuiCol_ScrollbarGrabActive] = ImVec4(0.49f, 0.49f, 0.49f, 1.00f);
+//    style.Colors[ImGuiCol_ComboBg] = ImVec4(0.86f, 0.86f, 0.86f, 0.99f);
+    style.Colors[ImGuiCol_CheckMark] = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
+    style.Colors[ImGuiCol_SliderGrab] = ImVec4(0.24f, 0.52f, 0.88f, 1.00f);
+    style.Colors[ImGuiCol_SliderGrabActive] = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
+    style.Colors[ImGuiCol_Button] = ImVec4(0.26f, 0.59f, 0.98f, 0.40f);
+    style.Colors[ImGuiCol_ButtonHovered] = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
+    style.Colors[ImGuiCol_ButtonActive] = ImVec4(0.06f, 0.53f, 0.98f, 1.00f);
+    style.Colors[ImGuiCol_Header] = ImVec4(0.26f, 0.59f, 0.98f, 0.31f);
+    style.Colors[ImGuiCol_HeaderHovered] = ImVec4(0.26f, 0.59f, 0.98f, 0.80f);
+    style.Colors[ImGuiCol_HeaderActive] = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
+//    style.Colors[ImGuiCol_Column] = ImVec4(0.39f, 0.39f, 0.39f, 1.00f);
+//    style.Colors[ImGuiCol_ColumnHovered] = ImVec4(0.26f, 0.59f, 0.98f, 0.78f);
+//    style.Colors[ImGuiCol_ColumnActive] = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
+    style.Colors[ImGuiCol_ResizeGrip] = ImVec4(1.00f, 1.00f, 1.00f, 0.50f);
+    style.Colors[ImGuiCol_ResizeGripHovered] = ImVec4(0.26f, 0.59f, 0.98f, 0.67f);
+    style.Colors[ImGuiCol_ResizeGripActive] = ImVec4(0.26f, 0.59f, 0.98f, 0.95f);
+//    style.Colors[ImGuiCol_CloseButton] = ImVec4(0.59f, 0.59f, 0.59f, 0.50f);
+//    style.Colors[ImGuiCol_CloseButtonHovered] = ImVec4(0.98f, 0.39f, 0.36f, 1.00f);
+//    style.Colors[ImGuiCol_CloseButtonActive] = ImVec4(0.98f, 0.39f, 0.36f, 1.00f);
+    style.Colors[ImGuiCol_PlotLines] = ImVec4(0.39f, 0.39f, 0.39f, 1.00f);
+    style.Colors[ImGuiCol_PlotLinesHovered] = ImVec4(1.00f, 0.43f, 0.35f, 1.00f);
+    style.Colors[ImGuiCol_PlotHistogram] = ImVec4(0.90f, 0.70f, 0.00f, 1.00f);
+    style.Colors[ImGuiCol_PlotHistogramHovered] = ImVec4(1.00f, 0.60f, 0.00f, 1.00f);
+    style.Colors[ImGuiCol_TextSelectedBg] = ImVec4(0.26f, 0.59f, 0.98f, 0.35f);
+    style.Colors[ImGuiCol_ModalWindowDarkening] = ImVec4(0.20f, 0.20f, 0.20f, 0.35f);
+
+    if (styleDark) {
+        for (int i = 0; i <= ImGuiCol_COUNT; i++) {
+            ImVec4 &col = style.Colors[i];
+            float H, S, V;
+            ImGui::ColorConvertRGBtoHSV(col.x, col.y, col.z, H, S, V);
+
+            if (S < 0.1f) {
+                V = 1.0f - V;
+            }
+            ImGui::ColorConvertHSVtoRGB(H, S, V, col.x, col.y, col.z);
+            if (col.w < 1.00f) {
+                col.w *= alpha;
+            }
+        }
+    } else {
+        for (int i = 0; i <= ImGuiCol_COUNT; i++) {
+            ImVec4 &col = style.Colors[i];
+            if (col.w < 1.00f) {
+                col.x *= alpha;
+                col.y *= alpha;
+                col.z *= alpha;
+                col.w *= alpha;
+            }
         }
     }
 }

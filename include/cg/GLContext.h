@@ -45,6 +45,11 @@ public:
 
     bool showEntityNames = true;
 
+    ImFont *uiRegularFont;
+    ImFont *uiBlackFont;
+    ImFont *uiEntityTitleFont;
+    ImFont *uiEntityFont;
+
     ViewFrustum *viewFrustum;
 
     uint32_t triangleCount = 0;

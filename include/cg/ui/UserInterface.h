@@ -14,9 +14,13 @@ public:
     explicit UserInterface(EntityManager *entityManager, GLContext *context);
     ~UserInterface();
 
+    void init();
+
     void render();
 
     void onUpdateTerrain(Terrain *terrain, std::function<bool(Terrain *, TerrainSettings& settings)> updateTerrain);
+
+    void setupTheme(bool styleDark, float alpha);
 
     TerrainSettings settings;
 

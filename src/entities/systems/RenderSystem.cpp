@@ -49,6 +49,8 @@ void RenderSystem::init() {
     glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
     initBloomBuffers();
+
+    userInterface->init();
 }
 
 void RenderSystem::update() {
