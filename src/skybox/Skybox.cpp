@@ -120,7 +120,8 @@ void Skybox::createTriangle(glm::vec3 a, glm::vec3 b, glm::vec3 c) {
 void Skybox::generate(uint64_t seed) {
 }
 
-void Skybox::render(RenderSystem *renderSystem, EntityManager *entityManager, CameraComponent *camera) {
+void
+Skybox::render(RenderSystem *renderSystem, EntityManager *entityManager, CameraComponent *camera, bool saveToDisk) {
     std::vector<std::vector<glm::vec3>> directions = {
             // Front, right, up
             // X - pos / neg
@@ -184,7 +185,6 @@ void Skybox::render(RenderSystem *renderSystem, EntityManager *entityManager, Ca
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, texture, 0);
 
         float diff = 5.0 / 255.0;
-//        auto clearColor = glm::vec4(i * diff, i * diff, i * diff, 1.0);
         auto clearColor = glm::vec4(0, 0, 0, 1.0);
         glClearColor(clearColor.x, clearColor.y, clearColor.z, clearColor.w);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -192,10 +192,12 @@ void Skybox::render(RenderSystem *renderSystem, EntityManager *entityManager, Ca
         renderEntities(renderSystem, entityManager, starShaderProgram);
 
         /// Save the cubemap texture to files
-//        auto data = new uint8_t[resolution][resolution][3];
-//        glReadPixels(0, 0, resolution, resolution, GL_RGB, GL_UNSIGNED_BYTE, data);
-//        stbi_write_png(filenames[i], resolution, resolution, 3, data, 0);
-//        delete[] data;
+        if (saveToDisk) {
+            auto data = new uint8_t[resolution][resolution][3];
+            glReadPixels(0, 0, resolution, resolution, GL_RGB, GL_UNSIGNED_BYTE, data);
+            stbi_write_png(filenames[i], resolution, resolution, 3, data, 0);
+            delete[] data;
+        }
     }
 
     textures[0].id = texture;

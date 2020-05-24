@@ -13,7 +13,7 @@ public:
     Skybox(uint32_t size, uint32_t numStars, uint32_t numBigStars, glm::vec3 position, ShaderProgram *shaderProgram);
 
     void generate(uint64_t seed);
-    void render(RenderSystem *renderSystem, EntityManager *entityManager, CameraComponent *camera);
+    void render(RenderSystem *renderSystem, EntityManager *entityManager, CameraComponent *camera, bool saveToDisk);
 
     uint32_t numStars;
     uint32_t numBigStars;
