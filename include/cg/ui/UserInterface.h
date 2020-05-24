@@ -59,6 +59,7 @@ private:
     void updateTerrain(Terrain *terrain, TerrainSettings& settings);
 
     void renderSpaceDisplay();
+    void renderAppInfoDisplay();
     void renderMainMenu();
     void renderSceneInfoWindow();
     void renderCameraInfoWindow();

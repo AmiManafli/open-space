@@ -38,17 +38,6 @@ void InputSystem::update() {
         glfwSetWindowShouldClose(context->getWindow(), GLFW_TRUE);
     }
 
-    if (!isDebug && isKeyPressed(GLFW_KEY_UP)) {
-        printf("Camera view: Top\n");
-        context->setActiveCamera(context->topCamera);
-    } else if (!isDebug && isKeyPressed(GLFW_KEY_LEFT)) {
-        printf("Camera view: Side\n");
-        context->setActiveCamera(context->sideCamera);
-    } else if (!isDebug && isKeyPressed(GLFW_KEY_DOWN)) {
-        printf("Camera view: Perspective\n");
-        context->setActiveCamera(context->perspectiveCamera);
-    }
-
     auto camera = context->getCamera();
     auto cameraComponent = entityManager->getComponent<CameraComponent>(camera);
     auto velocityComponent = entityManager->getComponent<VelocityComponent>(camera);
@@ -120,13 +109,9 @@ void InputSystem::update() {
     }
 
     if (!isDebug && isKeyDown(GLFW_KEY_1)) {
-        context->setActiveCamera(context->spaceshipCamera);
+        context->renderWireframe(false);
     } else if (!isDebug && isKeyDown(GLFW_KEY_2)) {
-        context->setActiveCamera(context->perspectiveCamera);
-    } else if (!isDebug && isKeyDown(GLFW_KEY_3)) {
-        context->setActiveCamera(context->topCamera);
-    } else if (!isDebug && isKeyDown(GLFW_KEY_4)) {
-        context->setActiveCamera(context->sideCamera);
+        context->renderWireframe(true);
     }
 
     if (!isDebug && isKeyPressed(GLFW_KEY_N)) {

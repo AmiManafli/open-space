@@ -66,6 +66,7 @@ void UserInterface::render() {
     ImGui::PushFont(context->uiEntityFont);
 
     renderSpaceDisplay();
+    renderAppInfoDisplay();
 
     if (context->showEntityNames) {
         renderEntityNames();
@@ -393,7 +394,8 @@ void UserInterface::updateTerrain(Terrain *terrain, TerrainSettings &settings) {
 }
 
 void UserInterface::renderSpaceDisplay() {
-    ImGui::PushFont(context->uiEntityTitleFont);
+    ImGui::PushFont(context->uiEntityFont);
+
     ImGui::Begin("Space Display", &showSpaceDisplay,
                  ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
                  ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoInputs |
@@ -407,6 +409,7 @@ void UserInterface::renderSpaceDisplay() {
     ImGui::Text("Gravity: %.1f", glm::length(velocity->gravity));
 
     ImGui::End();
+
     ImGui::PopFont();
 }
 
@@ -421,13 +424,15 @@ void UserInterface::renderEntityNames() {
 
         if (entityManager->hasComponent<CollisionComponent>(entity)) {
             auto collision = entityManager->getComponent<CollisionComponent>(entity);
+            if (!context->viewFrustum->isInside(collision->boundingSphere)) {
+                return;
+            }
             float radius = collision->boundingSphere.getRadius();
             pos = glm::vec4(transform->position + camera->right * radius * 1.2f, 1);
         }
 
         const static float MAX_DISTANCE = 100.0;
         auto distance = glm::length(transform->position - cameraTransform->position);
-
         if (distance < MAX_DISTANCE) return;
 
         auto clipSpace = context->getProjection() * context->getView() * pos;
@@ -535,4 +540,30 @@ void UserInterface::setupTheme(bool styleDark, float alpha) {
             }
         }
     }
+}
+
+void UserInterface::renderAppInfoDisplay() {
+    ImGui::PushFont(context->uiEntityFont);
+
+    ImGui::Begin("Application Info", &showSpaceDisplay,
+                 ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
+                 ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoInputs |
+                 ImGuiWindowFlags_NoBackground);
+    ImGui::SetWindowPos(ImVec2(context->width - 120, context->displayCursor ? 15 : 0));
+
+    ImGui::PushFont(context->uiEntityTitleFont);
+    ImGui::Text("Mode");
+    ImGui::PopFont();
+    ImGui::SameLine();
+    ImGui::Text("%s", context->displayWireframe ? "Wireframe" : "Shaded");
+
+    ImGui::PushFont(context->uiEntityTitleFont);
+    ImGui::Text("Bloom");
+    ImGui::PopFont();
+    ImGui::SameLine();
+    ImGui::Text("%s", context->bloomEnabled ? "Enabled" : "Disabled");
+
+    ImGui::End();
+
+    ImGui::PopFont();
 }

@@ -59,7 +59,7 @@ void GLContext::init() {
         throw std::runtime_error("failed to initialize GLAD");
     }
 
-//    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    renderWireframe(displayWireframe);
 
     startTime = glfwGetTime();
     lastTime = startTime;
@@ -119,4 +119,9 @@ void GLContext::setActiveCamera(Entity *entity) {
         viewFrustum = new ViewFrustum(*camera, *cameraTransform);
         updateViewFrustum();
     }
+}
+
+void GLContext::renderWireframe(bool enable) {
+    glPolygonMode(GL_FRONT_AND_BACK, enable ? GL_LINE : GL_FILL);
+    displayWireframe = enable;
 }
