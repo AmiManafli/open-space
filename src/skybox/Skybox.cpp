@@ -15,7 +15,11 @@ Skybox::Skybox(uint32_t size, uint32_t numStars, uint32_t numBigStars, ShaderPro
     instances = 1;
     this->shaderProgram = shaderProgram;
 
-    createMesh();
+    this->vertices.clear();
+    auto vertices = createCubeMesh(size);
+    for (auto vertex : vertices) {
+        this->vertices.emplace_back(vertex);
+    }
 }
 
 Skybox::Skybox(uint32_t size, uint32_t numStars, uint32_t numBigStars, std::string textureFilename, ShaderProgram *shaderProgram) : Skybox(size, numStars, numBigStars, shaderProgram) {
@@ -30,7 +34,9 @@ Skybox::Skybox(uint32_t size, uint32_t numStars, uint32_t numBigStars, glm::vec3
     setupBuffers();
 }
 
-void Skybox::createMesh() {
+std::vector<MeshComponent::Vertex> Skybox::createCubeMesh(float size) {
+    std::vector<MeshComponent::Vertex> vertices;
+
     float x = size / 2.0f;
     float y = size / 2.0f;
     float z = size / 2.0f;
@@ -45,28 +51,30 @@ void Skybox::createMesh() {
     auto h =  glm::vec3(x, -y, -z);
 
     // Front
-    createTriangle(a, b, c);
-    createTriangle(b, d, c);
+    createTriangle(vertices, a, b, c);
+    createTriangle(vertices, b, d, c);
 
     // Top
-    createTriangle(a, e, b);
-    createTriangle(b, e, f);
+    createTriangle(vertices, a, e, b);
+    createTriangle(vertices, b, e, f);
 
     // Left side
-    createTriangle(a, g, e);
-    createTriangle(a, c, g);
+    createTriangle(vertices, a, g, e);
+    createTriangle(vertices, a, c, g);
 
     // Right side
-    createTriangle(b, h, d);
-    createTriangle(b, f, h);
+    createTriangle(vertices, b, h, d);
+    createTriangle(vertices, b, f, h);
 
     // Back side
-    createTriangle(f, e, g);
-    createTriangle(f, g, h);
+    createTriangle(vertices, f, e, g);
+    createTriangle(vertices, f, g, h);
 
     // Under side
-    createTriangle(c, h, g);
-    createTriangle(c, d, h);
+    createTriangle(vertices, c, h, g);
+    createTriangle(vertices, c, d, h);
+
+    return vertices;
 }
 
 void Skybox::createTexture(glm::vec3 position) {
@@ -106,7 +114,7 @@ void Skybox::createTexture(std::string filename) {
     textures.emplace_back(texture);
 }
 
-void Skybox::createTriangle(glm::vec3 a, glm::vec3 b, glm::vec3 c) {
+void Skybox::createTriangle(std::vector<MeshComponent::Vertex> &vertices, glm::vec3 a, glm::vec3 b, glm::vec3 c) {
     auto normal = glm::normalize(glm::cross(b - a, c - a));
 
     vertices.emplace_back(Vertex { a, normal });
@@ -150,6 +158,11 @@ Skybox::render(RenderSystem *renderSystem, EntityManager *entityManager, CameraC
     starShaderProgram->attachShader("./assets/shaders/skyboxStar.frag", ShaderType::FragmentShader);
     starShaderProgram->link();
 
+    auto nebularShaderProgram = new ShaderProgram();
+    nebularShaderProgram->attachShader("./assets/shaders/nebula.vert", ShaderType::VertexShader);
+    nebularShaderProgram->attachShader("./assets/shaders/nebula.frag", ShaderType::FragmentShader);
+    nebularShaderProgram->link();
+
     // Normal stars
     createStars(entityManager, starShaderProgram, 0.92 * numStars, 0.03, 110, 1);
     createStars(entityManager, starShaderProgram, 0.06 * numStars, 0.05, 100, 1);
@@ -157,6 +170,9 @@ Skybox::render(RenderSystem *renderSystem, EntityManager *entityManager, CameraC
 
     // Big stars
     createStars(entityManager, starShaderProgram, numBigStars, 0.05, 40, 1);
+
+    // Nebulas
+    createNebulae(entityManager, nebularShaderProgram);
 
     const char *filenames[] = {
             "right.png",
@@ -189,7 +205,7 @@ Skybox::render(RenderSystem *renderSystem, EntityManager *entityManager, CameraC
         glClearColor(clearColor.x, clearColor.y, clearColor.z, clearColor.w);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        renderEntities(renderSystem, entityManager, starShaderProgram);
+        renderEntities(renderSystem, entityManager);
 
         /// Save the cubemap texture to files
         if (saveToDisk) {
@@ -210,16 +226,8 @@ Skybox::render(RenderSystem *renderSystem, EntityManager *entityManager, CameraC
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glDeleteFramebuffers(1, &framebuffer);
 
+    delete nebularShaderProgram;
     delete starShaderProgram;
-}
-
-glm::vec3 getStarRotation(glm::vec3 position) {
-    auto pos = glm::normalize(position);
-    auto forward = glm::vec3(0, 0, -1);
-    auto angle = glm::acos(glm::dot(glm::normalize(pos), forward));
-
-    auto up = glm::normalize(glm::cross(forward, pos));
-    return up * angle;
 }
 
 void Skybox::createStars(EntityManager *entityManager, ShaderProgram *shaderProgram, uint32_t count, float starSize, float distance, uint16_t subdivisions) {
@@ -237,7 +245,7 @@ void Skybox::createStars(EntityManager *entityManager, ShaderProgram *shaderProg
     delete builder;
 }
 
-void Skybox::renderEntities(RenderSystem *renderSystem, EntityManager *entityManager, ShaderProgram *shaderProgram) {
+void Skybox::renderEntities(RenderSystem *renderSystem, EntityManager *entityManager) {
     for (auto& pair : entityManager->getComponents<TransformComponent>()) {
         auto entity = pair.first;
         auto transform = dynamic_cast<TransformComponent *>(pair.second);
@@ -245,7 +253,43 @@ void Skybox::renderEntities(RenderSystem *renderSystem, EntityManager *entityMan
 
         for (auto it = meshes.first; it != meshes.second; it++) {
             auto mesh = dynamic_cast<MeshComponent *>(it->second);
-            renderSystem->renderMesh(mesh, shaderProgram, transform->getModel());
+            mesh->shaderProgram->use();
+            mesh->shaderProgram->setUniform("uColor", glm::vec3(1, 0, 0));
+            mesh->shaderProgram->setUniform("uOffset", glm::vec3(0));
+            mesh->shaderProgram->setUniform("uScale", 0.25f);
+            mesh->shaderProgram->setUniform("uIntensity", 0.9f);
+            mesh->shaderProgram->setUniform("uFalloff", 3.0f);
+            renderSystem->renderMesh(mesh, mesh->shaderProgram, transform->getModel());
         }
     }
+}
+
+void Skybox::createNebulae(EntityManager *entityManager, ShaderProgram *shaderProgram) {
+    struct NebulaParams {
+        glm::vec3 color;
+        glm::vec3 offset;
+        float scale;
+        float intensity;
+        float falloff;
+    };
+    std::vector<NebulaParams> nebulae;
+
+    nebulae.push_back({
+        glm::vec3(1, 0, 0),
+        glm::vec3(0, 0, 0),
+        0.25f,
+        0.9f,
+        3.0f,
+    });
+
+    auto nebulaVertices = createCubeMesh(size);
+    std::vector<uint32_t> nebulaIndices;
+    std::vector<MeshComponent::Texture> nebulaTextures;
+
+    auto builder = EntityBuilder::create();
+    auto entity = builder
+            ->withTransform(glm::vec3(10, 0, 0))
+            ->withMesh(nebulaVertices, nebulaIndices, nebulaTextures, shaderProgram, GL_TRIANGLES)
+            ->build(entityManager);
+    delete builder;
 }

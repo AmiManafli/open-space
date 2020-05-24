@@ -19,15 +19,16 @@ public:
     uint32_t numBigStars;
 
 private:
-    void createMesh();
+    static std::vector<MeshComponent::Vertex> createCubeMesh(float size);
+    static void createTriangle(std::vector<MeshComponent::Vertex> &vertices, glm::vec3 a, glm::vec3 b, glm::vec3 c);
 
     void createTexture(glm::vec3 position);
     void createTexture(std::string filename);
 
-    void createTriangle(glm::vec3 a, glm::vec3 b, glm::vec3 c);
-
     void createStars(EntityManager *entityManager, ShaderProgram *shaderProgram, uint32_t count, float starSize, float distance, uint16_t subdivisions);
-    void renderEntities(RenderSystem *renderSystem, EntityManager *entityManager, ShaderProgram *shaderProgram);
+    void createNebulae(EntityManager *entityManager, ShaderProgram *shaderProgram);
+
+    void renderEntities(RenderSystem *renderSystem, EntityManager *entityManager);
 
     uint32_t size;
 
