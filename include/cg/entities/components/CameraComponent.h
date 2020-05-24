@@ -37,9 +37,6 @@ public:
     glm::mat4 getView(TransformComponent *component);
     glm::mat4 getProjection(float aspectRatio);
 
-    void processKeyboard(CameraComponent::Direction direction, float deltaTime, TransformComponent *transformComponent);
-    void processMouseMovement(float offsetX, float offsetY);
-
     double getSpeed() { return 0.07855 * glm::exp(0.22455 * movementSpeedTick); }
 
     Mode mode;
@@ -51,7 +48,6 @@ public:
     glm::vec3 worldUp;
     glm::vec3 front;
 
-    float yaw, pitch, roll;
     float x, y, z;
     glm::quat orientation;
 
@@ -60,9 +56,6 @@ public:
 
     float nearDistance;
     float farDistance;
-
-    //private:
-    void updateVectors();
 };
 
 #endif //CG1_PROJECT_CAMERACOMPONENT_H

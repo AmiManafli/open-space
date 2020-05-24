@@ -138,21 +138,21 @@ void Application::init() {
 }
 
 void Application::run() {
-//    if (sky != nullptr) {
-//        auto skyboxEntityManager = new EntityManager();
-//        context->update();
-//
-//        glDisable(GL_CULL_FACE);
-//        context->setActiveCamera(context->skyboxCamera);
-//        auto camera = entityManager->getComponent<CameraComponent>(context->skyboxCamera);
-//        sky->render(renderSystem, skyboxEntityManager, camera);
-//
-//        // Cleanup
-//        delete skyboxEntityManager;
-//        context->setActiveCamera(context->player);
-//        glViewport(0, 0, context->getWidth(), context->getHeight());
-//        glEnable(GL_CULL_FACE);
-//    }
+    if (sky != nullptr) {
+        auto skyboxEntityManager = new EntityManager();
+        context->update();
+
+        glDisable(GL_CULL_FACE);
+        context->setActiveCamera(context->skyboxCamera);
+        auto camera = entityManager->getComponent<CameraComponent>(context->skyboxCamera);
+        sky->render(renderSystem, skyboxEntityManager, camera, false);
+
+        // Cleanup
+        delete skyboxEntityManager;
+        context->setActiveCamera(context->player);
+        glViewport(0, 0, context->getWidth(), context->getHeight());
+        glEnable(GL_CULL_FACE);
+    }
 
     while (!context->shouldClose()) {
         context->update();

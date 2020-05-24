@@ -13,10 +13,6 @@ CameraComponent::CameraComponent(CameraComponent::Mode mode, CameraComponent::Ty
     y = 0;
     z = 0;
 
-    yaw = 0;
-    pitch = 0;
-    roll = 0;
-
     glm::vec3 angles(glm::radians(0.0), glm::radians(0.0), 0);
     this->orientation = glm::quat(angles);
 }
@@ -48,46 +44,4 @@ glm::mat4 CameraComponent::getProjection(float aspectRatio) {
     } else {
         throw std::runtime_error("failed to get projection: unknown projection mode");
     }
-}
-
-void CameraComponent::processKeyboard(CameraComponent::Direction direction, float deltaTime,
-                                      TransformComponent *transformComponent) {
-    auto position = transformComponent->position;
-    float velocity = movementSpeedTick * deltaTime;
-    if (direction == Forward) {
-        position += front * velocity;
-    } else if (direction == Backward) {
-        position -= front * velocity;
-    } else if (direction == Left) {
-        position -= right * velocity;
-    } else if (direction == Right) {
-        position += right * velocity;
-    }
-    transformComponent->position = position;
-}
-
-void CameraComponent::processMouseMovement(float offsetX, float offsetY) {
-    if (type == Orthographic) return;
-
-    offsetX *= mouseSensitivity;
-    offsetY *= mouseSensitivity;
-
-    yaw += offsetX;
-    pitch = glm::clamp(pitch + offsetY, -89.0f, 89.0f);
-
-    updateVectors();
-}
-
-void CameraComponent::updateVectors() {
-    auto yawRad = glm::radians(yaw);
-    auto pitchRad = glm::radians(pitch);
-
-    glm::vec3 direction;
-    direction.x = glm::cos(yawRad) * glm::cos(pitchRad);
-    direction.y = glm::sin(pitchRad);
-    direction.z = glm::sin(yawRad) * glm::cos(pitchRad);
-
-    front = glm::normalize(direction);
-    right = glm::normalize(glm::cross(front, worldUp));
-    up = glm::normalize(glm::cross(right, front));
 }

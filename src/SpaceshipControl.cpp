@@ -15,8 +15,6 @@ SpaceshipControl::~SpaceshipControl() {
 void SpaceshipControl::processMouseMovement(float offsetX, float offsetY) {
     offsetX *= cameraComponent->mouseSensitivity;
     offsetY *= cameraComponent->mouseSensitivity;
-    cameraComponent->pitch = glm::clamp(cameraComponent->pitch + offsetY, -89.0f, 89.0f);
-    cameraComponent->yaw -= offsetX;
 
     cameraComponent->x += offsetY;
     cameraComponent->y += offsetX;

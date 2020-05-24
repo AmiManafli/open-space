@@ -31,7 +31,6 @@ private:
     std::unordered_map<uint32_t, uint32_t> keysDown;
     std::unordered_map<uint32_t, uint32_t> mouseButtonsDown;
 
-    void moveCamera(Entity *camera, CameraComponent::Direction direction, float deltaTime);
     Entity* getClickedEntity(double mouseX, double mouseY);
 
     bool isRayInSphere(TransformComponent *transform, glm::vec3 origin, glm::vec3 ray);

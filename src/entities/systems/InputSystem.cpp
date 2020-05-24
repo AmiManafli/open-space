@@ -49,14 +49,10 @@ void InputSystem::update() {
     if (!isDebug && isKeyDown(GLFW_KEY_W)) {
         if (cameraComponent->mode == CameraComponent::FirstPersonShip) {
             spaceshipControl->processKeyboard(camera, CameraComponent::Direction::Forward, deltaTime);
-        } else {
-            moveCamera(camera, CameraComponent::Direction::Forward, deltaTime);
         }
     } else if (!isDebug && isKeyDown(GLFW_KEY_S)) {
         if (cameraComponent->mode == CameraComponent::FirstPersonShip) {
             spaceshipControl->processKeyboard(camera, CameraComponent::Direction::Backward, deltaTime);
-        } else {
-            moveCamera(camera, CameraComponent::Direction::Backward, deltaTime);
         }
     }
 
@@ -69,14 +65,10 @@ void InputSystem::update() {
     if (!isDebug && isKeyDown(GLFW_KEY_A)) {
         if (cameraComponent->mode == CameraComponent::FirstPersonShip) {
             spaceshipControl->processKeyboard(camera, CameraComponent::Direction::Left, deltaTime);
-        } else {
-            moveCamera(camera, CameraComponent::Direction::Left, deltaTime);
         }
     } else if (!isDebug && isKeyDown(GLFW_KEY_D)) {
         if (cameraComponent->mode == CameraComponent::FirstPersonShip) {
             spaceshipControl->processKeyboard(camera, CameraComponent::Direction::Right, deltaTime);
-        } else {
-            moveCamera(camera, CameraComponent::Direction::Right, deltaTime);
         }
     }
     if (!isDebug && !isKeyDown(GLFW_KEY_LEFT_CONTROL) && isKeyDown(GLFW_KEY_Q)) {
@@ -179,8 +171,6 @@ void InputSystem::mousePositionCallback(GLFWwindow *window, double x, double y) 
 
     if (cameraComponent->mode == CameraComponent::FirstPersonShip) {
         inputSystem->spaceshipControl->processMouseMovement(-offsetX, offsetY);
-    } else {
-        cameraComponent->processMouseMovement(offsetX, offsetY);
     }
 }
 
@@ -197,12 +187,6 @@ void InputSystem::processMouseScroll(GLFWwindow *window, double xOffset, double 
     } else {
         cameraComponent->movementSpeedTick = glm::clamp(cameraComponent->movementSpeedTick - 1.0, 0.0, 1000000.0);
     }
-}
-
-void InputSystem::moveCamera(Entity *camera, CameraComponent::Direction direction, float deltaTime) {
-    auto cameraComponent = entityManager->getComponent<CameraComponent>(camera);
-    auto transformComponent = entityManager->getComponent<TransformComponent>(camera);
-    cameraComponent->processKeyboard(direction, deltaTime, transformComponent);
 }
 
 void InputSystem::processMouseButton(GLFWwindow *window, int button, int action, int mods) {

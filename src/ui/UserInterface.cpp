@@ -170,8 +170,6 @@ void UserInterface::renderCameraInfoWindow() {
     auto direction = camera->front;
     ImGui::Text("Position: (x=%.3f, y=%.3f, z=%.3f)", pos.x, pos.y, pos.z);
     ImGui::Text("Direction: (x=%.3f, y=%.3f, z=%.3f)", direction.x, direction.y, direction.z);
-    ImGui::Text("Yaw: %.3f deg.", camera->yaw);
-    ImGui::Text("Pitch: %.3f deg.", camera->pitch);
     ImGui::Text("Zoom: %.2f x", camera->zoom);
     ImGui::SameLine();
     if (ImGui::Button("Reset")) {

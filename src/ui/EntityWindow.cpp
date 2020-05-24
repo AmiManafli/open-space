@@ -182,10 +182,6 @@ void EntityWindow::renderCameraComponent(CameraComponent *component) {
         ImGui::Text("Up: %s", glm::to_string(component->up).c_str());
         ImGui::Text("Right: %s", glm::to_string(component->right).c_str());
 
-        ImGui::DragFloat("Yaw", &component->yaw, 0.1, -10000, 10000);
-        ImGui::DragFloat("Pitch", &component->pitch, 0.1, -10000, 10000);
-        ImGui::DragFloat("Roll", &component->roll, 0.1, -10000, 10000);
-
         ImGui::DragFloat("Mouse sensitivity", &component->mouseSensitivity, 0.1, -10000, 10000);
         ImGui::DragInt("Movement speed", reinterpret_cast<int *>(&component->movementSpeedTick), 1.0f, 0, 10000);
     }
