@@ -101,13 +101,11 @@ void Application::init() {
     context->blurProgram->attachShader("./assets/shaders/gaussianBlur.frag", ShaderType::FragmentShader);
     context->blurProgram->link();
 
-    sky = new Skybox(DEFAULT_SKYBOX_SETTINGS, "./assets/textures/skybox1", context->skyboxProgram);
     auto playerPosition = glm::vec3(0, 0, 0);
     auto playerBuilder = EntityBuilder::create();
     context->player = playerBuilder
             ->withTransform(playerPosition)
             ->withVelocity(new VelocityComponent())
-            ->withMesh(sky)
 //            ->withMass(10)
             ->withCamera(CameraComponent::Mode::FirstPersonShip, CameraComponent::Type::Perspective, glm::vec3(0, 0, 0),
                          glm::normalize(-playerPosition), glm::vec3(0, 1, 0), context->getAspect())
@@ -135,26 +133,38 @@ void Application::init() {
     universeEntityFactory->createEntities(galaxy.getSolarSystems(0, 0, 0));
 
     inputSystem->createSpaceshipControl(nullptr, context->player);
+
+    context->generateSkybox = true;
+    context->skyboxSettings = DEFAULT_SKYBOX_SETTINGS;
 }
 
 void Application::run() {
-    if (sky != nullptr) {
-        auto skyboxEntityManager = new EntityManager();
-        context->update();
-
-        glDisable(GL_CULL_FACE);
-        context->setActiveCamera(context->skyboxCamera);
-        auto camera = entityManager->getComponent<CameraComponent>(context->skyboxCamera);
-        sky->render(renderSystem, skyboxEntityManager, camera, false);
-
-        // Cleanup
-        delete skyboxEntityManager;
-        context->setActiveCamera(context->player);
-        glViewport(0, 0, context->getWidth(), context->getHeight());
-        glEnable(GL_CULL_FACE);
-    }
-
     while (!context->shouldClose()) {
+        if (context->generateSkybox) {
+            if (entityManager->hasMultiComponent<MeshComponent>(context->player)) {
+                entityManager->removeMultiComponents<MeshComponent>(context->player);
+            }
+            sky = new Skybox(context->skyboxSettings, "./assets/textures/skybox1", context->skyboxProgram);
+            entityManager->addMultiComponent<MeshComponent>(context->player, sky);
+
+            auto skyboxEntityManager = new EntityManager();
+            context->update();
+
+            glDisable(GL_CULL_FACE);
+            context->setActiveCamera(context->skyboxCamera);
+            auto camera = entityManager->getComponent<CameraComponent>(context->skyboxCamera);
+            sky->render(renderSystem, skyboxEntityManager, camera, false);
+
+            // Cleanup
+            delete skyboxEntityManager;
+            context->setActiveCamera(context->player);
+            glViewport(0, 0, context->getWidth(), context->getHeight());
+            glEnable(GL_CULL_FACE);
+
+            context->generateSkybox = false;
+            printf("Finished generating skybox!\n");
+        }
+
         context->update();
 
         // Update shader with light info

@@ -16,8 +16,6 @@ public:
 private:
     EntityManager &entityManager;
     GLContext &context;
-
-    SkyboxSettings settings;
 };
 
 

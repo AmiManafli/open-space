@@ -5,6 +5,7 @@
 #include <cg/entities/Entity.h>
 #include <cg/entities/EntityManager.h>
 #include <cg/shaders/Shader.h>
+#include <cg/skybox/SkyboxSettings.h>
 #include "ViewFrustum.h"
 
 class GLContext {
@@ -71,6 +72,9 @@ public:
     Entity *light = nullptr;
 
     Entity *selectedEntity = nullptr;
+
+    bool generateSkybox = false;
+    SkyboxSettings skyboxSettings;
 
     // Shaders
     ShaderProgram *meshProgram;

@@ -72,11 +72,11 @@ public:
     }
 
     template<class T>
-    void removeMultiComponent(Entity *entity) {
+    void removeMultiComponents(Entity *entity) {
         auto key = typeid(T).name();
-        auto component = getMultiComponent<T>(entity);
-        multiComponents[key].erase(entity);
-        delete component;
+        auto it = multiComponents[key].find(entity);
+        // TODO: check memory leak
+        multiComponents[key].erase(it);
     }
 
     template<class T>
