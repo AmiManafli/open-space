@@ -20,6 +20,8 @@ Skybox::Skybox(SkyboxSettings settings, ShaderProgram *shaderProgram) : settings
     for (auto vertex : vertices) {
         this->vertices.emplace_back(vertex);
     }
+
+    srand(settings.seed);
 }
 
 Skybox::Skybox(SkyboxSettings settings, std::string textureFilename, ShaderProgram *shaderProgram) : Skybox(settings, shaderProgram) {
@@ -172,7 +174,9 @@ Skybox::render(RenderSystem *renderSystem, EntityManager *entityManager, CameraC
     createStars(entityManager, starShaderProgram, settings.numBrightStars, 0.05, 40, 1);
 
     // Nebulas
-    createNebulae(entityManager, nebularShaderProgram);
+    if (settings.enableNebulae) {
+        createNebulae(entityManager, nebularShaderProgram);
+    }
 
     const char *filenames[] = {
             "right.png",

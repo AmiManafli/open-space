@@ -106,7 +106,6 @@ void Application::init() {
     context->player = playerBuilder
             ->withTransform(playerPosition)
             ->withVelocity(new VelocityComponent())
-//            ->withMass(10)
             ->withCamera(CameraComponent::Mode::FirstPersonShip, CameraComponent::Type::Perspective, glm::vec3(0, 0, 0),
                          glm::normalize(-playerPosition), glm::vec3(0, 1, 0), context->getAspect())
             ->build(entityManager);

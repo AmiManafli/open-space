@@ -10,6 +10,7 @@ struct NebulaSettings {
 };
 
 struct SkyboxSettings {
+    int seed;
     int resolution;
     int size;
 
@@ -27,6 +28,7 @@ struct SkyboxSettings {
 };
 
 static SkyboxSettings DEFAULT_SKYBOX_SETTINGS = {
+        1,
         3072,
         5000,
 
