@@ -5,6 +5,10 @@ HighlightComponent::HighlightComponent(float size, ShaderProgram *shaderProgram)
 }
 
 glm::mat4 HighlightComponent::getModel(glm::mat4 translated, float distance) {
-    float scale = size + (0.0005 * distance);
-    return glm::scale(translated, glm::vec3(scale, scale, scale));
+    float normSize = glm::max(size, 1.04f);
+    auto minSize = 1.03;
+    auto delta = (normSize - minSize) / 1450.0;
+    auto scale = minSize + delta * distance;
+    printf("s=%f, d=%f, scale: %f\n", size, distance, scale);
+    return glm::scale(translated, glm::vec3(scale));
 }

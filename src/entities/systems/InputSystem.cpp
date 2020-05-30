@@ -267,11 +267,12 @@ Entity *InputSystem::getClickedEntity(double mouseX, double mouseY) {
 void InputSystem::selectEntity(Entity *entity) {
     auto previousEntity = context->selectedEntity;
 
-    double highlightSize = 0.01;
+    double highlightSize = 5;
     double highlightScale;
     if (entity) {
         auto transform = entityManager->getComponent<TransformComponent>(entity);
-        auto radius = transform->scaling.x / 2.0;
+        auto radius = transform->scaling.x;
+        highlightSize = 5 + 0.015 * radius;
         highlightScale = (radius + highlightSize) / radius;
     } else {
         highlightScale = 1.1;

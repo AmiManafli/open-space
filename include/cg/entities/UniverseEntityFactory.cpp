@@ -34,11 +34,12 @@ Entity *UniverseEntityFactory::createEntities(SolarSystem &system) {
 
 Entity *UniverseEntityFactory::createEntities(Star &star) {
     auto builder = EntityBuilder::create();
+    printf("Star radius: %f\n", star.radius);
     Entity* entity = builder
             ->withTransform(star.position)
             ->withMesh(new IcoSphere(1, 3, star.color, 11, context.starProgram))
             ->withScale(star.radius)
-            ->withPointLight(glm::vec3(0.05), glm::vec3(0.96), glm::vec3(1.0), 1.0, 0.0014, 0.000007)
+            ->withPointLight(glm::vec3(0.05), glm::vec3(0.96), glm::vec3(1.0), 1.0, 0.0, 0.0)
             ->withSphereCollision(star.radius)
             ->isSelectable()
             ->build(&entityManager);
@@ -48,6 +49,7 @@ Entity *UniverseEntityFactory::createEntities(Star &star) {
 
 Entity *UniverseEntityFactory::createEntities(TransformComponent *parent, Planet &planet) {
     std::vector<PlanetNoiseSettings> noisePresets[2];
+    printf("Planet radius: %f\n", planet.radius);
     noisePresets[0] = {
                     {
                             Simple,
