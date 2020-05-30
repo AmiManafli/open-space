@@ -200,7 +200,6 @@ Skybox::render(RenderSystem *renderSystem, EntityManager *entityManager, CameraC
 
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, texture, 0);
 
-        float diff = 5.0 / 255.0;
         auto clearColor = glm::vec4(0, 0, 0, 1.0);
         glClearColor(clearColor.x, clearColor.y, clearColor.z, clearColor.w);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -268,14 +267,7 @@ void Skybox::renderEntities(RenderSystem *renderSystem, EntityManager *entityMan
 }
 
 void Skybox::createNebulae(EntityManager *entityManager, ShaderProgram *shaderProgram) {
-    struct NebulaParams {
-        glm::vec3 color;
-        glm::vec3 offset;
-        float scale;
-        float intensity;
-        float falloff;
-    };
-    std::vector<NebulaParams> nebulae;
+    std::vector<NebulaSettings> nebulae;
 
     nebulae.push_back({
         glm::vec3(1, 0, 0),

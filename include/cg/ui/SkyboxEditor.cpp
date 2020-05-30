@@ -2,15 +2,17 @@
 
 SkyboxEditor::SkyboxEditor(EntityManager &entityManager, GLContext &context)
         : entityManager(entityManager), context(context) {
-//    settings = Skybox::getDefaultSettings();
+    settings = DEFAULT_SKYBOX_SETTINGS;
 }
 
 void SkyboxEditor::render() {
     ImGui::Begin("Skybox Editor");
 
-//    if (ImGui::SliderInt("Resolution", &settings.resolution, 32, 8192)) {
-//        printf("Resolution changed to %d!\n", settings.resolution);
-//    }
+    ImGui::SliderInt("Resolution", &settings.resolution, 1, 8192);
+
+    if (ImGui::Button("Generate")) {
+        printf("Generating skybox...\n");
+    }
 
     ImGui::End();
 }

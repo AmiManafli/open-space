@@ -4,7 +4,7 @@
 #include <cg/GLHeader.h>
 #include <cg/entities/EntityManager.h>
 #include <cg/GLContext.h>
-#include <cg/skybox/Skybox.h>
+#include <cg/skybox/SkyboxSettings.h>
 
 
 class SkyboxEditor {
@@ -17,7 +17,7 @@ private:
     EntityManager &entityManager;
     GLContext &context;
 
-//    SkyboxSettings settings;
+    SkyboxSettings settings;
 };
 
 

@@ -5,6 +5,7 @@
 #include <cg/entities/EntityManager.h>
 #include <cg/entities/components/MeshComponent.h>
 #include <cg/entities/systems/RenderSystem.h>
+#include <cg/skybox/SkyboxSettings.h>
 
 class Skybox : public MeshComponent {
 public:
