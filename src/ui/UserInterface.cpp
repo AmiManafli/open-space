@@ -35,11 +35,13 @@ UserInterface::UserInterface(EntityManager *entityManager, GLContext *context)
 
     entityWindow = new EntityWindow(entityManager, context);
     planetEditor = new PlanetEditor(*entityManager, *context);
+    skyboxEditor = new SkyboxEditor(*entityManager, *context);
 }
 
 UserInterface::~UserInterface() {
     delete entityWindow;
     delete planetEditor;
+    delete skyboxEditor;
 }
 
 void UserInterface::init() {
@@ -93,6 +95,10 @@ void UserInterface::render() {
 
     if (showTerrainGeneratorWindow) {
         renderTerrainGeneratorWindow();
+    }
+
+    if (showSkyboxEditor) {
+        skyboxEditor->render();
     }
 
     if (showEntityWindow) {

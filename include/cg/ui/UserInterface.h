@@ -6,6 +6,7 @@
 #include <cg/terrain/Terrain.h>
 #include "EntityWindow.h"
 #include "PlanetEditor.h"
+#include "SkyboxEditor.h"
 
 class UserInterface {
 public:
@@ -30,6 +31,7 @@ private:
 
     PlanetEditor *planetEditor;
     EntityWindow *entityWindow;
+    SkyboxEditor *skyboxEditor;
 
     bool showSpaceDisplay = true;
     bool showDemoWindow = false;
@@ -37,6 +39,7 @@ private:
     bool showPlanetEditor = false;
     bool showWireframe = false;
     bool showEntityWindow = false;
+    bool showSkyboxEditor = true;
 
     char* currentView = nullptr;
     std::vector<const char *> views;
