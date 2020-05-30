@@ -14,12 +14,11 @@ void SkyboxEditor::render() {
     ImGui::SliderInt("Resolution", &context.skyboxSettings.resolution, 1, 8192);
     ImGui::SliderInt("Size", &context.skyboxSettings.size, 1, 100000);
 
-    ImGui::SliderInt("Point stars", &context.skyboxSettings.numPointStars, 0, 1000000);
-    ImGui::SliderFloat("Small point stars (%)", &context.skyboxSettings.smallPointStars, 0, 1);
-    ImGui::SliderFloat("Medium point stars (%)", &context.skyboxSettings.mediumPointStars, 0, 1);
-    ImGui::SliderFloat("Large point stars (%)", &context.skyboxSettings.largePointStars, 0, 1);
+    ImGui::SliderInt("Small point stars", &context.skyboxSettings.numSmallPointStars, 0, 100000);
+    ImGui::SliderInt("Medium point stars", &context.skyboxSettings.numMediumPointStars, 0, 100000);
+    ImGui::SliderInt("Large point stars", &context.skyboxSettings.numLargePointStars, 0, 100000);
 
-    ImGui::SliderInt("Bright stars", &context.skyboxSettings.numBrightStars, 0, 1000000);
+    ImGui::SliderInt("Bright stars", &context.skyboxSettings.numBrightStars, 0, 100000);
 
     ImGui::Checkbox("Enable nebula", &context.skyboxSettings.enableNebulae);
     ImGui::ColorPicker3("Color", glm::value_ptr(context.skyboxSettings.nebulaSettings.color));

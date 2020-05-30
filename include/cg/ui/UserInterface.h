@@ -39,7 +39,7 @@ private:
     bool showPlanetEditor = false;
     bool showWireframe = false;
     bool showEntityWindow = false;
-    bool showSkyboxEditor = true;
+    bool showSkyboxEditor = false;
 
     char* currentView = nullptr;
     std::vector<const char *> views;

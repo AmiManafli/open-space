@@ -14,10 +14,7 @@ public:
     Skybox(SkyboxSettings settings, glm::vec3 position, ShaderProgram *shaderProgram);
 
     void generate(uint64_t seed);
-    void render(RenderSystem *renderSystem, EntityManager *entityManager, CameraComponent *camera, bool saveToDisk);
-//
-//    uint32_t numStars;
-//    uint32_t numBigStars;
+    void render(RenderSystem *renderSystem, EntityManager *entityManager, CameraComponent *camera);
 
     SkyboxSettings settings;
 
@@ -32,10 +29,6 @@ private:
     void createNebulae(EntityManager *entityManager, ShaderProgram *shaderProgram);
 
     void renderEntities(RenderSystem *renderSystem, EntityManager *entityManager);
-
-//    uint32_t size;
-
-//    static constexpr uint32_t resolution = 3072;
 };
 
 #endif //CG1_PROJECT_SKYBOX_H

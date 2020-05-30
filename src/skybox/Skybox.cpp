@@ -131,7 +131,7 @@ void Skybox::generate(uint64_t seed) {
 }
 
 void
-Skybox::render(RenderSystem *renderSystem, EntityManager *entityManager, CameraComponent *camera, bool saveToDisk) {
+Skybox::render(RenderSystem *renderSystem, EntityManager *entityManager, CameraComponent *camera) {
     std::vector<std::vector<glm::vec3>> directions = {
             // Front, right, up
             // X - pos / neg
@@ -166,9 +166,9 @@ Skybox::render(RenderSystem *renderSystem, EntityManager *entityManager, CameraC
     nebularShaderProgram->link();
 
     // Normal stars
-    createStars(entityManager, starShaderProgram, 0.92 * settings.numPointStars, 0.03, 110, 1);
-    createStars(entityManager, starShaderProgram, 0.06 * settings.numPointStars, 0.05, 100, 1);
-    createStars(entityManager, starShaderProgram, 0.02 * settings.numPointStars, 0.05, 90, 1);
+    createStars(entityManager, starShaderProgram, settings.numSmallPointStars, 0.03, 110, 1);
+    createStars(entityManager, starShaderProgram, settings.numMediumPointStars, 0.05, 100, 1);
+    createStars(entityManager, starShaderProgram, settings.numLargePointStars, 0.05, 90, 1);
 
     // Big stars
     createStars(entityManager, starShaderProgram, settings.numBrightStars, 0.05, 40, 1);
@@ -259,11 +259,11 @@ void Skybox::renderEntities(RenderSystem *renderSystem, EntityManager *entityMan
         for (auto it = meshes.first; it != meshes.second; it++) {
             auto mesh = dynamic_cast<MeshComponent *>(it->second);
             mesh->shaderProgram->use();
-            mesh->shaderProgram->setUniform("uColor", glm::vec3(1, 0, 0));
-            mesh->shaderProgram->setUniform("uOffset", glm::vec3(0));
-            mesh->shaderProgram->setUniform("uScale", 0.25f);
-            mesh->shaderProgram->setUniform("uIntensity", 0.9f);
-            mesh->shaderProgram->setUniform("uFalloff", 3.0f);
+            mesh->shaderProgram->setUniform("uColor", settings.nebulaSettings.color);
+            mesh->shaderProgram->setUniform("uOffset", settings.nebulaSettings.offset);
+            mesh->shaderProgram->setUniform("uScale", settings.nebulaSettings.scale);
+            mesh->shaderProgram->setUniform("uIntensity", settings.nebulaSettings.intensity);
+            mesh->shaderProgram->setUniform("uFalloff", settings.nebulaSettings.falloff);
             renderSystem->renderMesh(mesh, mesh->shaderProgram, transform->getModel());
         }
     }

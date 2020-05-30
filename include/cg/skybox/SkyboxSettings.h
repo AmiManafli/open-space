@@ -14,10 +14,9 @@ struct SkyboxSettings {
     int resolution;
     int size;
 
-    int numPointStars;
-    float smallPointStars;
-    float mediumPointStars;
-    float largePointStars;
+    int numSmallPointStars;
+    int numMediumPointStars;
+    int numLargePointStars;
 
     int numBrightStars;
 
@@ -32,20 +31,19 @@ static SkyboxSettings DEFAULT_SKYBOX_SETTINGS = {
         3072,
         5000,
 
-        100000,
-        0.92,
-        0.06,
-        0.02,
+        92000,
+        6000,
+        2000,
 
         20,
 
         true,
         {
-            glm::vec3(1, 0, 0),
+            glm::vec3(1, 0.05, 0),
             glm::vec3(0, 0, 0),
-            0.25f,
-            0.9f,
-            3.0f,
+            1.486f,
+            0.8f,
+            3.311f,
         },
 
         false,

@@ -152,7 +152,7 @@ void Application::run() {
             glDisable(GL_CULL_FACE);
             context->setActiveCamera(context->skyboxCamera);
             auto camera = entityManager->getComponent<CameraComponent>(context->skyboxCamera);
-            sky->render(renderSystem, skyboxEntityManager, camera, false);
+            sky->render(renderSystem, skyboxEntityManager, camera);
 
             // Cleanup
             delete skyboxEntityManager;
