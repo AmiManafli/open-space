@@ -29,7 +29,7 @@ struct SkyboxSettings {
 static SkyboxSettings DEFAULT_SKYBOX_SETTINGS = {
         1,
         3072,
-        5000,
+        100000,
 
         92000,
         6000,

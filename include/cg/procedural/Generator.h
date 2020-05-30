@@ -17,7 +17,7 @@ const SeedType STAR_SEED = 1;
 
 /// Solar systems
 const int SOLAR_SYSTEM_GRID_SIZE = 1;
-const int SOLAR_SYSTEM_CELL_SIZE = 500;
+const int SOLAR_SYSTEM_CELL_SIZE = 5000;
 
 /// Moon configuration
 const int MAX_MOONS = 3;
