@@ -137,7 +137,7 @@ Skybox::render(RenderSystem *renderSystem, EntityManager *entityManager, CameraC
             { glm::vec3(-1, 0, 0), glm::vec3(0, 0, 1), glm::vec3(0, -1, 0) },
             // Y - pos / neg
             { glm::vec3(0, 1, 0), glm::vec3(1, 0, 0), glm::vec3(0, 0, 1) },
-            { glm::vec3(0, -1, 0), glm::vec3(-1, 0, 0), glm::vec3(0, 0, 1) },
+            { glm::vec3(0, -1, 0), glm::vec3(1, 0, 0), glm::vec3(0, 0, -1) },
             // Z - pos / neg
             { glm::vec3(0, 0, 1), glm::vec3(1, 0, 0), glm::vec3(0, -1, 0) },
             { glm::vec3(0, 0, -1), glm::vec3(-1, 0, 0), glm::vec3(0, -1, 0) },
@@ -246,6 +246,8 @@ void Skybox::createStars(EntityManager *entityManager, ShaderProgram *shaderProg
 }
 
 void Skybox::renderEntities(RenderSystem *renderSystem, EntityManager *entityManager) {
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     for (auto& pair : entityManager->getComponents<TransformComponent>()) {
         auto entity = pair.first;
         auto transform = dynamic_cast<TransformComponent *>(pair.second);
@@ -262,6 +264,7 @@ void Skybox::renderEntities(RenderSystem *renderSystem, EntityManager *entityMan
             renderSystem->renderMesh(mesh, mesh->shaderProgram, transform->getModel());
         }
     }
+    glDisable(GL_BLEND);
 }
 
 void Skybox::createNebulae(EntityManager *entityManager, ShaderProgram *shaderProgram) {

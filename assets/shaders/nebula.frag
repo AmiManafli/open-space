@@ -336,5 +336,4 @@ void main() {
     float c = min(1.0, nebula(posn + uOffset) * uIntensity);
     c = pow(c, uFalloff);
     gl_FragColor = vec4(uColor, c);
-//    gl_FragColor = vec4(1, 0, 0, 0.9);
 }
