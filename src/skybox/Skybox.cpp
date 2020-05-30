@@ -8,7 +8,7 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
 
-Skybox::Skybox(uint32_t size, uint32_t numStars, uint32_t numBigStars, ShaderProgram *shaderProgram) : size(size), numStars(numStars), numBigStars(numBigStars) {
+Skybox::Skybox(SkyboxSettings settings, ShaderProgram *shaderProgram) : settings(settings) {
     indexed = false;
     mode = GL_TRIANGLES;
     indexed = false;
@@ -16,19 +16,19 @@ Skybox::Skybox(uint32_t size, uint32_t numStars, uint32_t numBigStars, ShaderPro
     this->shaderProgram = shaderProgram;
 
     this->vertices.clear();
-    auto vertices = createCubeMesh(size);
+    auto vertices = createCubeMesh(settings.size);
     for (auto vertex : vertices) {
         this->vertices.emplace_back(vertex);
     }
 }
 
-Skybox::Skybox(uint32_t size, uint32_t numStars, uint32_t numBigStars, std::string textureFilename, ShaderProgram *shaderProgram) : Skybox(size, numStars, numBigStars, shaderProgram) {
+Skybox::Skybox(SkyboxSettings settings, std::string textureFilename, ShaderProgram *shaderProgram) : Skybox(settings, shaderProgram) {
     createTexture(textureFilename);
 
     setupBuffers();
 }
 
-Skybox::Skybox(uint32_t size, uint32_t numStars, uint32_t numBigStars, glm::vec3 position, ShaderProgram *shaderProgram) : Skybox(size, numStars, numBigStars, shaderProgram) {
+Skybox::Skybox(SkyboxSettings settings, glm::vec3 position, ShaderProgram *shaderProgram) : Skybox(settings, shaderProgram) {
     createTexture(position);
 
     setupBuffers();
@@ -147,7 +147,7 @@ Skybox::render(RenderSystem *renderSystem, EntityManager *entityManager, CameraC
     glGenFramebuffers(1, &framebuffer);
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 
-    glViewport(0, 0, resolution, resolution);
+    glViewport(0, 0, settings.resolution, settings.resolution);
 
     uint32_t texture;
     glGenTextures(1, &texture);
@@ -164,12 +164,12 @@ Skybox::render(RenderSystem *renderSystem, EntityManager *entityManager, CameraC
     nebularShaderProgram->link();
 
     // Normal stars
-    createStars(entityManager, starShaderProgram, 0.92 * numStars, 0.03, 110, 1);
-    createStars(entityManager, starShaderProgram, 0.06 * numStars, 0.05, 100, 1);
-    createStars(entityManager, starShaderProgram, 0.02 * numStars, 0.05, 90, 1);
+    createStars(entityManager, starShaderProgram, 0.92 * settings.numPointStars, 0.03, 110, 1);
+    createStars(entityManager, starShaderProgram, 0.06 * settings.numPointStars, 0.05, 100, 1);
+    createStars(entityManager, starShaderProgram, 0.02 * settings.numPointStars, 0.05, 90, 1);
 
     // Big stars
-    createStars(entityManager, starShaderProgram, numBigStars, 0.05, 40, 1);
+    createStars(entityManager, starShaderProgram, settings.numBrightStars, 0.05, 40, 1);
 
     // Nebulas
     createNebulae(entityManager, nebularShaderProgram);
@@ -190,7 +190,7 @@ Skybox::render(RenderSystem *renderSystem, EntityManager *entityManager, CameraC
         camera->right = directions[i][1];
         camera->up = directions[i][2];
 
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, resolution, resolution, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, settings.resolution, settings.resolution, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
 
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -207,12 +207,12 @@ Skybox::render(RenderSystem *renderSystem, EntityManager *entityManager, CameraC
         renderEntities(renderSystem, entityManager);
 
         /// Save the cubemap texture to files
-        if (saveToDisk) {
-            auto data = new uint8_t[resolution][resolution][3];
-            glReadPixels(0, 0, resolution, resolution, GL_RGB, GL_UNSIGNED_BYTE, data);
-            stbi_write_png(filenames[i], resolution, resolution, 3, data, 0);
-            delete[] data;
-        }
+//        if (saveToDisk) {
+//            auto data = new uint8_t[settings.resolution][settings.resolution][3];
+//            glReadPixels(0, 0, settings.resolution, settings.resolution, GL_RGB, GL_UNSIGNED_BYTE, data);
+//            stbi_write_png(filenames[i], settings.resolution, settings.resolution, 3, data, 0);
+//            delete[] data;
+//        }
     }
 
     textures[0].id = texture;
@@ -269,15 +269,9 @@ void Skybox::renderEntities(RenderSystem *renderSystem, EntityManager *entityMan
 void Skybox::createNebulae(EntityManager *entityManager, ShaderProgram *shaderProgram) {
     std::vector<NebulaSettings> nebulae;
 
-    nebulae.push_back({
-        glm::vec3(1, 0, 0),
-        glm::vec3(0, 0, 0),
-        0.25f,
-        0.9f,
-        3.0f,
-    });
+    nebulae.push_back(settings.nebulaSettings);
 
-    auto nebulaVertices = createCubeMesh(size);
+    auto nebulaVertices = createCubeMesh(settings.size);
     std::vector<uint32_t> nebulaIndices;
     std::vector<MeshComponent::Texture> nebulaTextures;
 

@@ -101,7 +101,7 @@ void Application::init() {
     context->blurProgram->attachShader("./assets/shaders/gaussianBlur.frag", ShaderType::FragmentShader);
     context->blurProgram->link();
 
-    sky = new Skybox(5000, 100000, 20, "./assets/textures/skybox1", context->skyboxProgram);
+    sky = new Skybox(DEFAULT_SKYBOX_SETTINGS, "./assets/textures/skybox1", context->skyboxProgram);
     auto playerPosition = glm::vec3(0, 0, 0);
     auto playerBuilder = EntityBuilder::create();
     context->player = playerBuilder
