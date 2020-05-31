@@ -34,7 +34,6 @@ Entity *UniverseEntityFactory::createEntities(SolarSystem &system) {
 
 Entity *UniverseEntityFactory::createEntities(Star &star) {
     auto builder = EntityBuilder::create();
-    printf("Star radius: %f\n", star.radius);
     Entity* entity = builder
             ->withTransform(star.position)
             ->withMesh(new IcoSphere(1, 3, star.color, 11, context.starProgram))
@@ -49,7 +48,6 @@ Entity *UniverseEntityFactory::createEntities(Star &star) {
 
 Entity *UniverseEntityFactory::createEntities(TransformComponent *parent, Planet &planet) {
     std::vector<PlanetNoiseSettings> noisePresets[2];
-    printf("Planet radius: %f\n", planet.radius);
     noisePresets[0] = {
                     {
                             Simple,
@@ -130,16 +128,16 @@ Entity *UniverseEntityFactory::createEntities(TransformComponent *parent, Planet
         noisePresets[planet.noisePreset],
     };
 
-    auto planetVelocity = new VelocityComponent();
-    planetVelocity->rotation = planet.rotation;
+//    auto planetVelocity = new VelocityComponent();
+//    planetVelocity->rotation = planet.rotation;
 
     PlanetGenerator planetGenerator(settings, *context.planetProgram);
     auto meshes = planetGenerator.getMeshes();
     auto builder = EntityBuilder::create();
     Entity* entity = builder
             ->withTransform(planet.position)
-            ->withVelocity(planetVelocity)
-            ->withOrbit(parent, planet.semiMajorAxis, planet.semiMinorAxis, planet.orbitSpeed, planet.orbitAngle)
+//            ->withVelocity(planetVelocity)
+            ->withOrbit(parent, planet.semiMajorAxis, planet.semiMinorAxis, 0/*planet.orbitSpeed*/, planet.orbitAngle)
             ->withMesh(meshes)
             ->withSphereCollision(planet.radius + meshes[0]->maxHeight)
             ->withScale(planet.radius)

@@ -105,6 +105,7 @@ void Application::init() {
     auto playerBuilder = EntityBuilder::create();
     context->player = playerBuilder
             ->withTransform(playerPosition)
+            ->withSphereCollision(0.01f)
             ->withVelocity(new VelocityComponent())
             ->withMass(10)
             ->withCamera(CameraComponent::Mode::FirstPersonShip, CameraComponent::Type::Perspective, glm::vec3(0, 0, 0),
@@ -114,11 +115,9 @@ void Application::init() {
     context->setActiveCamera(context->player);
 
     createCameras();
-    BoundingSphere playerBoundingSphere = BoundingSphere(0.01f, *entityManager->getComponent<TransformComponent>(
-            context->player));
 
     gravitySystem = new GravitySystem(entityManager, context->player);
-    collisionSystem = new CollisionSystem(entityManager, context->player, playerBoundingSphere);
+    collisionSystem = new CollisionSystem(entityManager, context->player);
 
     collisionSystem->init();
     renderSystem->init();
@@ -134,7 +133,7 @@ void Application::init() {
 
     inputSystem->createSpaceshipControl(nullptr, context->player);
 
-    context->generateSkybox = true;
+    context->generateSkybox = false;
     context->skyboxSettings = DEFAULT_SKYBOX_SETTINGS;
 }
 

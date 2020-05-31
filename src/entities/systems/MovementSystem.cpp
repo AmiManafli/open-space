@@ -1,3 +1,4 @@
+#include <cg/entities/components/CollisionComponent.h>
 #include "cg/entities/systems/MovementSystem.h"
 #include "cg/entities/components/VelocityComponent.h"
 
@@ -15,6 +16,14 @@ void MovementSystem::update() {
         auto entity = pair.first;
         auto velocity = reinterpret_cast<VelocityComponent *>(pair.second);
         auto transform = entityManager->getComponent<TransformComponent>(entity);
+
+        if (entity->id == context->player->id) {
+            if (entityManager->hasComponent<CollisionComponent>(entity)) {
+                auto collision = dynamic_cast<CollisionComponent *>(entityManager->getComponent<CollisionComponent>(entity));
+                if (collision->isColliding) {
+                }
+            }
+        }
 
         if (velocity && transform) {
             auto translation = velocity->velocity;

@@ -16,6 +16,7 @@ public:
 
     Type type;
     BoundingSphere boundingSphere;
+    bool isColliding;
 };
 
 

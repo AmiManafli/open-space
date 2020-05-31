@@ -30,7 +30,7 @@ Planet::Planet(std::vector<SeedType> seed, Star &star, SeedType index) : seed(se
     }
 
     planetSeed = random();
-    mass = limit(random(), 100, 2000);
+    mass = limit(random(), 1000, 2000);
     rotation = glm::vec3(limit(random(), 0, 0.05), limit(random(), 0, 0.05), limit(random(), 0, 0.05));
 
     r = limit(random(), 0.0, 1.0);

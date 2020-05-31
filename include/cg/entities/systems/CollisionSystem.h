@@ -8,15 +8,15 @@
 
 class CollisionSystem : public System {
 public:
-    CollisionSystem(EntityManager *entityManager, Entity *object, BoundingSphere boundingSphere);
+    CollisionSystem(EntityManager *entityManager, Entity *object);
 
     void init() override;
     void update() override;
 
 private:
     Entity *object;
-    BoundingSphere objectBoundingSphere;
     CameraComponent *cameraComponent;
+    CollisionComponent *collisionComponent;
     TransformComponent *transformComponent;
 };
 
