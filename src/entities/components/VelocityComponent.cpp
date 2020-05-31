@@ -13,7 +13,7 @@ VelocityComponent::VelocityComponent(glm::vec3 rotation, glm::vec3 rotationPoint
 }
 
 VelocityComponent::VelocityComponent(glm::vec3 velocity, glm::vec3 rotation, glm::vec3 rotationPoint)
-        : velocity(velocity), rotation(rotation), rotationPoint(rotationPoint), scaling(glm::vec3(0)), gravity(glm::vec3(0)) {
+        : velocity(velocity), rotation(rotation), rotationPoint(rotationPoint), scaling(glm::vec3(0)), gravity(glm::vec3(0)), attachedTo(nullptr) {
 }
 
 void VelocityComponent::update(EntityManager *entityManager, Entity *entity) {

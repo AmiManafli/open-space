@@ -14,7 +14,7 @@ void CollisionSystem::init() {
 void CollisionSystem::update() {
     auto objectBoundingSphere = collisionComponent->boundingSphere;
 
-    auto foundAnyCollision = false;
+    Entity *collidingWith = nullptr;
 
     for(auto& pair : entityManager->getComponents<CollisionComponent>()) {
         auto entity = pair.first;
@@ -23,16 +23,16 @@ void CollisionSystem::update() {
         auto entityCollisionComponent = dynamic_cast<CollisionComponent *>(pair.second);
         bool foundCollision = objectBoundingSphere.intersects(entityCollisionComponent->boundingSphere);
 
-        foundAnyCollision = foundAnyCollision | foundCollision;
-
         if (foundCollision) {
             // Calculate how much we need to move away to not be stuck inside the mesh
             auto position = transformComponent->position - entityCollisionComponent->boundingSphere.getPosition();
             float distance = objectBoundingSphere.getRadius() + entityCollisionComponent->boundingSphere.getRadius();
 
             transformComponent->position = entityCollisionComponent->boundingSphere.getPosition() + glm::normalize(position) * distance;
+
+            collidingWith = entity;
         }
     }
 
-    collisionComponent->isColliding = foundAnyCollision;
+    collisionComponent->collidingWith = collidingWith;
 }

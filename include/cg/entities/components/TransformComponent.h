@@ -21,6 +21,8 @@ public:
     glm::vec3 scaling;
     glm::vec3 rotation;
 
+    glm::vec3 previousPosition;
+
     glm::mat4 getModel();
 };
 

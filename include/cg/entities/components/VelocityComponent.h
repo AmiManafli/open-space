@@ -30,6 +30,8 @@ public:
     glm::vec3 scaling;
 
     std::optional<std::function<void(EntityManager *, Entity *)>> customUpdate;
+
+    Entity *attachedTo;
 };
 
 

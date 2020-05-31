@@ -137,7 +137,7 @@ Entity *UniverseEntityFactory::createEntities(TransformComponent *parent, Planet
     Entity* entity = builder
             ->withTransform(planet.position)
 //            ->withVelocity(planetVelocity)
-            ->withOrbit(parent, planet.semiMajorAxis, planet.semiMinorAxis, 0/*planet.orbitSpeed*/, planet.orbitAngle)
+            ->withOrbit(parent, planet.semiMajorAxis, planet.semiMinorAxis, planet.orbitSpeed, planet.orbitAngle)
             ->withMesh(meshes)
             ->withSphereCollision(planet.radius + meshes[0]->maxHeight)
             ->withScale(planet.radius)

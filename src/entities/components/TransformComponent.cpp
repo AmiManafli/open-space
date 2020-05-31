@@ -22,6 +22,7 @@ void TransformComponent::move(float x, float y, float z) {
 }
 
 void TransformComponent::move(glm::vec3 diff) {
+    previousPosition = position;
     position += diff;
 }
 

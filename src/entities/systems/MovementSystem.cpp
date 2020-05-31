@@ -20,12 +20,19 @@ void MovementSystem::update() {
         if (entity->id == context->player->id) {
             if (entityManager->hasComponent<CollisionComponent>(entity)) {
                 auto collision = dynamic_cast<CollisionComponent *>(entityManager->getComponent<CollisionComponent>(entity));
-                if (collision->isColliding) {
+                if (collision->collidingWith) {
+                    // 1. Check if player is already attached to colliding with
+                    // 2. If not, attach it
+                    // 3. Implement follow for both position and rotation
+                    velocity->attachedTo = collision->collidingWith;
+
+                    auto collisionTransform = entityManager->getComponent<TransformComponent>(velocity->attachedTo);
+                    transform->position += collisionTransform->position - collisionTransform->previousPosition;
                 }
             }
         }
 
-        if (velocity && transform) {
+        if (transform) {
             auto translation = velocity->velocity;
             translation -= velocity->gravity;
             transform->move(translation * static_cast<float>(context->getDeltaTime()));

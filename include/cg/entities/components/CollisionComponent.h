@@ -4,6 +4,7 @@
 
 #include <cg/entities/Component.h>
 #include <cg/collision/BoundingSphere.h>
+#include <cg/entities/Entity.h>
 
 class CollisionComponent : public Component {
 public:
@@ -16,7 +17,7 @@ public:
 
     Type type;
     BoundingSphere boundingSphere;
-    bool isColliding;
+    Entity *collidingWith;
 };
 
 

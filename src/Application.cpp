@@ -133,7 +133,7 @@ void Application::init() {
 
     inputSystem->createSpaceshipControl(nullptr, context->player);
 
-    context->generateSkybox = false;
+    context->generateSkybox = true;
     context->skyboxSettings = DEFAULT_SKYBOX_SETTINGS;
 }
 
