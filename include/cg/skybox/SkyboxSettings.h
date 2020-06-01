@@ -39,7 +39,7 @@ static SkyboxSettings DEFAULT_SKYBOX_SETTINGS = {
 
         true,
         {
-            glm::vec3(1, 0.05, 0),
+            glm::vec3(1, 0.36, 0.69),
             glm::vec3(0, 0, 0),
             1.486f,
             0.8f,
