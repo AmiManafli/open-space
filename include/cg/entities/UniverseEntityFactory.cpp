@@ -26,7 +26,12 @@ Entity *UniverseEntityFactory::createEntities(SolarSystem &system) {
         parent = createEntities(star);
     }
     auto transform = entityManager.getComponent<TransformComponent>(parent);
+    auto planets = system.getPlanets();
+    auto planetIndex = 0;
     for (auto& planet : system.getPlanets()) {
+        if (planetIndex++ == planets.size() - 1) {
+            planet.rotation = glm::vec3(0);
+        }
         createEntities(transform, planet);
     }
     return entity;
@@ -128,15 +133,15 @@ Entity *UniverseEntityFactory::createEntities(TransformComponent *parent, Planet
         noisePresets[planet.noisePreset],
     };
 
-//    auto planetVelocity = new VelocityComponent();
-//    planetVelocity->rotation = planet.rotation;
+    auto planetVelocity = new VelocityComponent();
+    planetVelocity->rotation = planet.rotation;
 
     PlanetGenerator planetGenerator(settings, *context.planetProgram);
     auto meshes = planetGenerator.getMeshes();
     auto builder = EntityBuilder::create();
     Entity* entity = builder
             ->withTransform(planet.position)
-//            ->withVelocity(planetVelocity)
+            ->withVelocity(planetVelocity)
             ->withOrbit(parent, planet.semiMajorAxis, planet.semiMinorAxis, planet.orbitSpeed, planet.orbitAngle)
             ->withMesh(meshes)
             ->withSphereCollision(planet.radius + meshes[0]->maxHeight)
