@@ -87,7 +87,6 @@ void InputSystem::update() {
 
     if(!isDebug && isKeyPressed(GLFW_KEY_H)) {
         context->bloomEnabled = !context->bloomEnabled;
-        printf("Bloom enabled: %d\n", context->bloomEnabled);
     }
 
     if (isKeyPressed(GLFW_KEY_BACKSLASH)) {
