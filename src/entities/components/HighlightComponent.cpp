@@ -9,6 +9,5 @@ glm::mat4 HighlightComponent::getModel(glm::mat4 translated, float distance) {
     auto minSize = 1.03;
     auto delta = (normSize - minSize) / 1450.0;
     auto scale = minSize + delta * distance;
-    printf("s=%f, d=%f, scale: %f\n", size, distance, scale);
     return glm::scale(translated, glm::vec3(scale));
 }

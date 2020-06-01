@@ -16,6 +16,7 @@ GLContext::~GLContext() {
     delete skyboxProgram;
     delete bloomProgram;
     delete blurProgram;
+    delete viewFrustum;
 
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
