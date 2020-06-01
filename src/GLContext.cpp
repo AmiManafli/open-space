@@ -50,7 +50,7 @@ void GLContext::init() {
     glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_FALSE);
 #endif
 
-    window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
+    window = glfwCreateWindow(width, height, title.c_str(), glfwGetPrimaryMonitor(), nullptr);
     if (window == nullptr) {
         glfwTerminate();
         throw std::runtime_error("failed to create window");

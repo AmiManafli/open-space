@@ -32,6 +32,11 @@ void SkyboxEditor::render() {
     if (ImGui::Button("Generate")) {
         context.generateSkybox = true;
     }
+    ImGui::SameLine();
+    if (ImGui::Button("Reset")) {
+        context.skyboxSettings = DEFAULT_SKYBOX_SETTINGS;
+        context.generateSkybox = true;
+    }
 
     ImGui::End();
 }
