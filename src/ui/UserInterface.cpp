@@ -119,6 +119,7 @@ void UserInterface::renderMainMenu() {
         if (ImGui::BeginMenu("Tools")) {
             ImGui::MenuItem("Entity Window", nullptr, &showEntityWindow);
             ImGui::MenuItem("Planet Editor", nullptr, &showPlanetEditor);
+            ImGui::MenuItem("Skybox Editor", nullptr, &showSkyboxEditor);
             ImGui::MenuItem("ImGui Demo", nullptr, &showDemoWindow);
             if (ImGui::MenuItem("Turn on/offc wireframe mode")) {
                 showWireframe = !showWireframe;

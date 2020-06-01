@@ -303,6 +303,6 @@ void InputSystem::framebufferSizeCallback(GLFWwindow *window, int width, int hei
     auto context = inputSystem->context;
     context->width = width;
     context->height = height;
-    glViewport(0, 0, width, height);
+    glViewport(0, 0, context->width, context->height);
     inputSystem->renderSystem->initBloomBuffers();
 }

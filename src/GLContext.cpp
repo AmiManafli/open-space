@@ -47,6 +47,7 @@ void GLContext::init() {
     glfwWindowHint(GLFW_SAMPLES, 4);
 #ifdef __APPLE__
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_FALSE);
 #endif
 
     window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
@@ -70,6 +71,12 @@ void GLContext::init() {
     timePerFrame = 0.0;
 
     setupImgui();
+
+    printf("Size: %dx%d\n", width, height);
+
+    int w, h;
+    glfwGetWindowSize(window, &w, &h);
+    printf("Real Size: %dx%d\n", w, h);
 }
 
 void GLContext::setupImgui() {
