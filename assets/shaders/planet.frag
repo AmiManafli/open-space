@@ -43,7 +43,7 @@ uniform Light lights[MAX_LIGHTS];
 uniform vec3 viewPos;
 uniform float maxHeight;
 
-vec3 calculateDirectionalLight(Light light, vec3 normal, vec3 viewDirection, vec3 materialDiffuse, vec3 materialSpecular) {
+vec3 calculateDirectionalLight(Light light, vec3 normal, vec3 viewDirection, vec3 materialDiffuse, vec3 materialSpecular, float power) {
     vec3 lightDirection = normalize(-light.direction);
 
     // Ambient
@@ -54,13 +54,13 @@ vec3 calculateDirectionalLight(Light light, vec3 normal, vec3 viewDirection, vec
 
     // Specular
     vec3 reflectDirection = reflect(-lightDirection, normal);
-    float specularValue = pow(max(dot(viewDirection, reflectDirection), 0.0), 16);
+    float specularValue = pow(max(dot(viewDirection, reflectDirection), 0.0), power) * 0.3;
     vec3 specular = light.specular * specularValue * materialSpecular;
 
     return ambient + diffuse + specular;
 }
 
-vec3 calculatePointLight(Light light, vec3 normal, vec3 viewDirection, vec3 materialDiffuse, vec3 materialSpecular) {
+vec3 calculatePointLight(Light light, vec3 normal, vec3 viewDirection, vec3 materialDiffuse, vec3 materialSpecular, float power) {
     float distance = length(light.position - vFragPos);
     float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
 
@@ -74,7 +74,7 @@ vec3 calculatePointLight(Light light, vec3 normal, vec3 viewDirection, vec3 mate
 
     // Specular
     vec3 reflectDirection = reflect(-lightDirection, normal);
-    float specularValue = pow(max(dot(viewDirection, reflectDirection), 0.0), 8);
+    float specularValue = pow(max(dot(viewDirection, reflectDirection), 0.0), power) * 0.3;
     vec3 specular = light.specular * specularValue * materialSpecular;
 
     return (ambient + diffuse + specular) * attenuation;
@@ -98,15 +98,19 @@ void main() {
 
     vec3 diffuse;
     vec3 specular = vec3(0.1, 0.1, 0.1);
+    float power;
     if (vHeight <= shoreHeight) {
         float value = clamp(vHeight, 0, shoreHeight) / shoreHeight;
         specular = mix(waterSpecular, grassSpecular, value);
         diffuse = mix(waterColor, grassColor, value);
+        power = 2;
     } else if (vHeight < lowPeakHeight) {
         diffuse = grassColor;
+        power = 2;
     } else {
         float value = clamp(vHeight - lowPeakHeight, 0, maxHeight - lowPeakHeight) / (maxHeight - lowPeakHeight);
         diffuse = mix(grassColor, peakColor, value);
+        power = 1;
     }
 
     vec3 materialDiffuse = diffuse;
@@ -118,9 +122,9 @@ void main() {
 
         vec3 result;
         if (light.type == LIGHT_TYPE_DIRECTIONAL) {
-            result = calculateDirectionalLight(light, normal, viewDirection, materialDiffuse, materialSpecular);
+            result = calculateDirectionalLight(light, normal, viewDirection, materialDiffuse, materialSpecular, power);
         } else {
-            result = calculatePointLight(light, normal, viewDirection, materialDiffuse, materialSpecular);
+            result = calculatePointLight(light, normal, viewDirection, materialDiffuse, materialSpecular, power);
         }
         color += result;
     }

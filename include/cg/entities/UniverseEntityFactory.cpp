@@ -43,7 +43,7 @@ Entity *UniverseEntityFactory::createEntities(Star &star) {
             ->withTransform(star.position)
             ->withMesh(new IcoSphere(1, 3, star.color, 11, context.starProgram))
             ->withScale(star.radius)
-            ->withPointLight(glm::vec3(0.05), glm::vec3(0.96), glm::vec3(1.0), 1.0, 0.0, 0.0)
+            ->withPointLight(glm::vec3(0.05), glm::vec3(0.96), glm::vec3(1.0), 1.0, 0.00005, 0.00000001)
             ->withSphereCollision(star.radius)
             ->isSelectable()
             ->build(&entityManager);
