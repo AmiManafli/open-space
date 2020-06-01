@@ -4,7 +4,8 @@ set(CMAKE_CXX_STANDARD 17)
 
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=leak -fno-omit-frame-pointer -g")
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -g")
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -fopenmp")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -L/usr/local/opt/libomp/lib/ -fopenmp")
 
 include_directories(${CMAKE_SOURCE_DIR}/include)
 include_directories(${CMAKE_SOURCE_DIR}/src)
@@ -42,8 +43,8 @@ include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/lib/glm")
 aux_source_directory("${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui" PROJECT_SRCS)
 include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui")
 
-include_directories(SYSTEM "C:/Program Files (x86)/Visual Leak Detector/include")
-link_directories(SYSTEM "C:/Program Files (x86)/Visual Leak Detector/lib/Win64")
+#include_directories(SYSTEM "C:/Program Files (x86)/Visual Leak Detector/include")
+#link_directories(SYSTEM "C:/Program Files (x86)/Visual Leak Detector/lib/Win64")
 
 add_executable(${CMAKE_PROJECT_NAME}
         ${PROJECT_SRCS}
