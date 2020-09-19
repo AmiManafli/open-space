@@ -2,57 +2,22 @@ cmake_minimum_required(VERSION 3.15)
 project(cg1_project)
 set(CMAKE_CXX_STANDARD 17)
 
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=leak -fno-omit-frame-pointer -g")
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -g")
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -fopenmp")
+add_library(pch include/cg/GLHeader.cpp include/cg/GLHeader.h)
 
-if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -std=c++17 -L/usr/local/opt/libomp/lib/ -fopenmp")
-endif()
+include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+conan_basic_setup()
 
+include_directories(${CMAKE_SOURCE_DIR}/bindings)
 include_directories(${CMAKE_SOURCE_DIR}/include)
 include_directories(${CMAKE_SOURCE_DIR}/src)
 
-# GLFW
-set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/lib/glfw" ${CMAKE_CURRENT_BINARY_DIR}/glfw)
-include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/lib/glfw/include")
-
 set(PROJECT_LIBRARIES)
 
-# OpenGL
-find_package(OpenGL REQUIRED)
-if(OPENGL_FOUND)
-    include_directories(SYSTEM ${OPENGL_INCLUDE_DIR})
-    set(PROJECT_LIBRARIES ${PROJECT_LIBRARIES} ${OPENGL_LIBRARIES})
-endif(OPENGL_FOUND)
-
-# GLAD
-include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/lib/glad")
-
-# stb image
-include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/lib/stb")
-
-# Noise libraries
 include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/lib/noise")
-
-# JSON library
-include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/lib/json")
-
-# GLM
-include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/lib/glm")
-
-# ImGui
-aux_source_directory("${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui" PROJECT_SRCS)
-include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui")
-
-#include_directories(SYSTEM "C:/Program Files (x86)/Visual Leak Detector/include")
-#link_directories(SYSTEM "C:/Program Files (x86)/Visual Leak Detector/lib/Win64")
 
 add_executable(${CMAKE_PROJECT_NAME}
         ${PROJECT_SRCS}
         src/main.cpp
-        lib/glad/glad.c
         src/GLContext.cpp
         include/cg/GLContext.h
         include/cg/GLHeader.h
@@ -104,7 +69,6 @@ add_executable(${CMAKE_PROJECT_NAME}
         include/cg/terrain/OpenSimplexNoise.h
         src/terrain/PerlinNoise.cpp
         include/cg/terrain/PerlinNoise.h
-        lib/json/json.hpp
         include/cg/terrain/TestNoise.h
         include/cg/IcoSphere.cpp
         include/cg/IcoSphere.h
@@ -163,11 +127,11 @@ add_executable(${CMAKE_PROJECT_NAME}
         include/cg/ui/SkyboxEditor.cpp
         include/cg/ui/SkyboxEditor.h
         include/cg/skybox/SkyboxSettings.h
+        bindings/imgui_impl_glfw.cpp
+        bindings/imgui_impl_opengl3.cpp
 )
 
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
-    glfw
-    ${PROJECT_LIBRARIES}
-    ${GLFW_LIBRARIES}
-    ${IMGUI_LIBRARIES}
+        ${PROJECT_LIBRARIES}
+        ${CONAN_LIBS}
 )

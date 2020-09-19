@@ -1,5 +1,5 @@
 #include "cg/ui/UserInterface.h"
-#include <json.hpp>
+#include <nlohmann/json.hpp>
 #include <fstream>
 #include <string>
 #include <iomanip>

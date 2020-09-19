@@ -523,3 +523,4 @@ lib/assimp/*
 imgui.json
 
 _vs
+bindings/
