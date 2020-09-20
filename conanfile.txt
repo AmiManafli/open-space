@@ -7,6 +7,9 @@ stb/20200203
 nlohmann_json/3.9.1
 di/1.2.0
 
+[options]
+di:with_extensions = True
+
 [generators]
 cmake
 
