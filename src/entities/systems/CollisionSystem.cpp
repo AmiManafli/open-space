@@ -1,14 +1,15 @@
 #include <cg/entities/components/CollisionComponent.h>
 #include "cg/entities/systems/CollisionSystem.h"
 
-CollisionSystem::CollisionSystem(EntityManager *entityManager, Entity *object)
-        : System(entityManager), object(object) {
+CollisionSystem::CollisionSystem(EntityManager &entityManager) : System(entityManager) {
 }
 
-void CollisionSystem::init() {
-    cameraComponent = entityManager->getComponent<CameraComponent>(object);
-    collisionComponent = entityManager->getComponent<CollisionComponent>(object);
-    transformComponent = entityManager->getComponent<TransformComponent>(object);
+void CollisionSystem::init(Entity *object) {
+    this->object = object;
+
+    cameraComponent = entityManager.getComponent<CameraComponent>(object);
+    collisionComponent = entityManager.getComponent<CollisionComponent>(object);
+    transformComponent = entityManager.getComponent<TransformComponent>(object);
 }
 
 void CollisionSystem::update() {
@@ -16,7 +17,7 @@ void CollisionSystem::update() {
 
     Entity *collidingWith = nullptr;
 
-    for(auto& pair : entityManager->getComponents<CollisionComponent>()) {
+    for(auto& pair : entityManager.getComponents<CollisionComponent>()) {
         auto entity = pair.first;
         if (entity->id == object->id) continue;
 

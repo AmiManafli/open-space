@@ -1,17 +1,12 @@
 #include <cg/entities/components/SelectableComponent.h>
 #include "cg/entities/systems/InputSystem.h"
-#include "cg/SpaceshipControl.h"
 
-InputSystem::InputSystem(EntityManager *entityManager, GLContext *context, RenderSystem *renderSystem)
-        : System(entityManager), context(context), renderSystem(renderSystem), lastMouseX(-1), lastMouseY(-1) {
-}
-
-InputSystem::~InputSystem() {
-    delete spaceshipControl;
+InputSystem::InputSystem(EntityManager &entityManager, GLContext &context, RenderSystem &renderSystem, SpaceshipControl &spaceshipControl)
+        : System(entityManager), context(&context), renderSystem(renderSystem), spaceshipControl(spaceshipControl), lastMouseX(-1), lastMouseY(-1) {
 }
 
 void InputSystem::createSpaceshipControl(Entity *spaceship, Entity *camera) {
-    spaceshipControl = new SpaceshipControl(spaceship, camera, entityManager, *context);
+    spaceshipControl.setCamera(camera);
 }
 
 void InputSystem::init() {
@@ -39,8 +34,8 @@ void InputSystem::update() {
     }
 
     auto camera = context->getCamera();
-    auto cameraComponent = entityManager->getComponent<CameraComponent>(camera);
-    auto velocityComponent = entityManager->getComponent<VelocityComponent>(camera);
+    auto cameraComponent = entityManager.getComponent<CameraComponent>(camera);
+    auto velocityComponent = entityManager.getComponent<VelocityComponent>(camera);
 
     if (!isDebug && isKeyPressed(GLFW_KEY_0)) {
         velocityComponent->velocity = glm::vec3(0);
@@ -48,40 +43,40 @@ void InputSystem::update() {
 
     if (!isDebug && isKeyDown(GLFW_KEY_W)) {
         if (cameraComponent->mode == CameraComponent::FirstPersonShip) {
-            spaceshipControl->processKeyboard(camera, CameraComponent::Direction::Forward, deltaTime);
+            spaceshipControl.processKeyboard(camera, CameraComponent::Direction::Forward, deltaTime);
         }
     } else if (!isDebug && isKeyDown(GLFW_KEY_S)) {
         if (cameraComponent->mode == CameraComponent::FirstPersonShip) {
-            spaceshipControl->processKeyboard(camera, CameraComponent::Direction::Backward, deltaTime);
+            spaceshipControl.processKeyboard(camera, CameraComponent::Direction::Backward, deltaTime);
         }
     }
 
     if (!isDebug && isKeyDown(GLFW_KEY_Z)) {
-        spaceshipControl->processKeyboard(camera, CameraComponent::Direction::RollLeft, deltaTime);
+        spaceshipControl.processKeyboard(camera, CameraComponent::Direction::RollLeft, deltaTime);
     } else if (!isDebug && isKeyDown(GLFW_KEY_X)) {
-        spaceshipControl->processKeyboard(camera, CameraComponent::Direction::RollRight, deltaTime);
+        spaceshipControl.processKeyboard(camera, CameraComponent::Direction::RollRight, deltaTime);
     }
 
     if (!isDebug && isKeyDown(GLFW_KEY_A)) {
         if (cameraComponent->mode == CameraComponent::FirstPersonShip) {
-            spaceshipControl->processKeyboard(camera, CameraComponent::Direction::Left, deltaTime);
+            spaceshipControl.processKeyboard(camera, CameraComponent::Direction::Left, deltaTime);
         }
     } else if (!isDebug && isKeyDown(GLFW_KEY_D)) {
         if (cameraComponent->mode == CameraComponent::FirstPersonShip) {
-            spaceshipControl->processKeyboard(camera, CameraComponent::Direction::Right, deltaTime);
+            spaceshipControl.processKeyboard(camera, CameraComponent::Direction::Right, deltaTime);
         }
     }
     if (!isDebug && !isKeyDown(GLFW_KEY_LEFT_CONTROL) && isKeyDown(GLFW_KEY_Q)) {
-        spaceshipControl->processKeyboard(camera, CameraComponent::Direction::Down, deltaTime);
+        spaceshipControl.processKeyboard(camera, CameraComponent::Direction::Down, deltaTime);
     } else if (!isDebug && isKeyDown(GLFW_KEY_E)) {
-        spaceshipControl->processKeyboard(camera, CameraComponent::Direction::Up, deltaTime);
+        spaceshipControl.processKeyboard(camera, CameraComponent::Direction::Up, deltaTime);
     }
 
     if (!isDebug && isKeyPressed(GLFW_KEY_G)) {
-        if (entityManager->hasComponent<TransformComponent>(context->grid)) {
-            entityManager->removeComponent<TransformComponent>(context->grid);
+        if (entityManager.hasComponent<TransformComponent>(context->grid)) {
+            entityManager.removeComponent<TransformComponent>(context->grid);
         } else {
-            entityManager->addComponent(context->grid, new TransformComponent(glm::vec3(0, 0, 0)));
+            entityManager.addComponent(context->grid, new TransformComponent(glm::vec3(0, 0, 0)));
         }
     }
 
@@ -125,7 +120,7 @@ void InputSystem::update() {
         }
     }
 
-    spaceshipControl->processInput(deltaTime);
+    spaceshipControl.processInput(deltaTime);
 }
 
 bool InputSystem::isKeyDown(int key) {
@@ -160,7 +155,7 @@ void InputSystem::mousePositionCallback(GLFWwindow *window, double x, double y) 
         return;
 
     auto camera = context->getCamera();
-    auto cameraComponent = inputSystem->entityManager->getComponent<CameraComponent>(camera);
+    auto cameraComponent = inputSystem->entityManager.getComponent<CameraComponent>(camera);
 
     if (!inputSystem->processedMouse) {
         inputSystem->lastMouseX = x;
@@ -169,7 +164,7 @@ void InputSystem::mousePositionCallback(GLFWwindow *window, double x, double y) 
     }
 
     if (cameraComponent->mode == CameraComponent::FirstPersonShip) {
-        inputSystem->spaceshipControl->processMouseMovement(-offsetX, offsetY);
+        inputSystem->spaceshipControl.processMouseMovement(-offsetX, offsetY);
     }
 }
 
@@ -179,7 +174,7 @@ void InputSystem::processMouseScroll(GLFWwindow *window, double xOffset, double 
     if (context->displayCursor)
         return;
     auto camera = context->getCamera();
-    auto cameraComponent = inputSystem->entityManager->getComponent<CameraComponent>(camera);
+    auto cameraComponent = inputSystem->entityManager.getComponent<CameraComponent>(camera);
 
     if (yOffset > 0) {
         cameraComponent->movementSpeedTick += 1;
@@ -221,8 +216,8 @@ bool InputSystem::isRayInSphere(TransformComponent *transform, glm::vec3 origin,
 Entity *InputSystem::getClickedEntity(double mouseX, double mouseY) {
     Entity *foundEntity = nullptr;
 
-    auto camera = entityManager->getComponent<CameraComponent>(context->getCamera());
-    auto cameraTransform = entityManager->getComponent<TransformComponent>(context->getCamera());
+    auto camera = entityManager.getComponent<CameraComponent>(context->getCamera());
+    auto cameraTransform = entityManager.getComponent<TransformComponent>(context->getCamera());
 
     // Normalized device coordinates
     double x = (2.0 * mouseX) / context->getWidth() - 1.0;
@@ -244,9 +239,9 @@ Entity *InputSystem::getClickedEntity(double mouseX, double mouseY) {
     auto origin = cameraTransform->position;
 
     double entityDistance = DBL_MAX;
-    for (auto &pair : entityManager->getComponents<SelectableComponent>()) {
+    for (auto &pair : entityManager.getComponents<SelectableComponent>()) {
         auto entity = pair.first;
-        auto transform = entityManager->getComponent<TransformComponent>(entity);
+        auto transform = entityManager.getComponent<TransformComponent>(entity);
 
         if (entity->id == context->getCamera()->id)
             continue;
@@ -269,7 +264,7 @@ void InputSystem::selectEntity(Entity *entity) {
     double highlightSize = 5;
     double highlightScale;
     if (entity) {
-        auto transform = entityManager->getComponent<TransformComponent>(entity);
+        auto transform = entityManager.getComponent<TransformComponent>(entity);
         auto radius = transform->scaling.x;
         highlightSize = 5 + 0.015 * radius;
         highlightScale = (radius + highlightSize) / radius;
@@ -278,19 +273,19 @@ void InputSystem::selectEntity(Entity *entity) {
     }
 
     if (previousEntity) {
-        entityManager->removeComponent<HighlightComponent>(previousEntity);
+        entityManager.removeComponent<HighlightComponent>(previousEntity);
         context->selectedEntity = entity;
         if (entity) {
-            entityManager->addComponent(entity, new HighlightComponent(highlightScale, context->highlightProgram));
+            entityManager.addComponent(entity, new HighlightComponent(highlightScale, context->highlightProgram));
         }
     } else if (entity) {
         HighlightComponent *highlight = nullptr;
-        if (entityManager->hasComponent<HighlightComponent>(entity)) {
-            highlight = entityManager->getComponent<HighlightComponent>(entity);
+        if (entityManager.hasComponent<HighlightComponent>(entity)) {
+            highlight = entityManager.getComponent<HighlightComponent>(entity);
         }
 
         if (!highlight) {
-            entityManager->addComponent(entity, new HighlightComponent(highlightScale, context->highlightProgram));
+            entityManager.addComponent(entity, new HighlightComponent(highlightScale, context->highlightProgram));
         }
     }
 
@@ -303,5 +298,5 @@ void InputSystem::framebufferSizeCallback(GLFWwindow *window, int width, int hei
     context->width = width;
     context->height = height;
     glViewport(0, 0, context->width, context->height);
-    inputSystem->renderSystem->initBloomBuffers();
+    inputSystem->renderSystem.initBloomBuffers();
 }

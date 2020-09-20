@@ -8,9 +8,9 @@
 
 class CollisionSystem : public System {
 public:
-    CollisionSystem(EntityManager *entityManager, Entity *object);
+    CollisionSystem(EntityManager &entityManager);
 
-    void init() override;
+    void init(Entity *object);
     void update() override;
 
 private:

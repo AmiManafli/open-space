@@ -5,14 +5,14 @@
 
 class OrbitSystem : public System {
 public:
-    OrbitSystem(EntityManager *entityManager, GLContext *context);
+    OrbitSystem(EntityManager &entityManager, GLContext &context);
     ~OrbitSystem() override;
 
-    void init() override;
+    void init();
     void update() override;
 
 private:
-    GLContext *context;
+    GLContext &context;
 };
 
 #endif //CG1_PROJECT_ORBITSYSTEM_H

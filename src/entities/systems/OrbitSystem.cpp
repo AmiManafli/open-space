@@ -1,6 +1,6 @@
 #include "cg/entities/systems/OrbitSystem.h"
 
-OrbitSystem::OrbitSystem(EntityManager *entityManager, GLContext *context)
+OrbitSystem::OrbitSystem(EntityManager &entityManager, GLContext &context)
         : System(entityManager), context(context) {
 }
 
@@ -11,14 +11,14 @@ void OrbitSystem::init() {
 }
 
 void OrbitSystem::update() {
-    for (auto& pair : entityManager->getComponents<OrbitComponent>()) {
+    for (auto& pair : entityManager.getComponents<OrbitComponent>()) {
         auto entity = pair.first;
         auto orbit = dynamic_cast<OrbitComponent *>(pair.second);
-        auto transform = entityManager->getComponent<TransformComponent>(entity);
+        auto transform = entityManager.getComponent<TransformComponent>(entity);
 
         auto diff = orbit->getPosition() - transform->position;
         transform->move(diff);
 
-        orbit->theta += orbit->speed * context->getDeltaTime();
+        orbit->theta += orbit->speed * context.getDeltaTime();
     }
 }

@@ -1,19 +1,15 @@
-#ifndef CG1_PROJECT_SYSTEM_H
-#define CG1_PROJECT_SYSTEM_H
+#pragma once
 
 #include <cg/GLContext.h>
 #include "EntityManager.h"
 
 class System {
 public:
-    System(EntityManager *entityManager);
+    System(EntityManager &entityManager) : entityManager(entityManager) {}
     virtual ~System() {}
 
-    virtual void init() = 0;
     virtual void update() = 0;
 
 protected:
-    EntityManager *entityManager;
+    EntityManager &entityManager;
 };
-
-#endif //CG1_PROJECT_SYSTEM_H

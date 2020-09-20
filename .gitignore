@@ -521,6 +521,7 @@ lib/assimp/*
 !/assets/models/**/*.obj
 
 imgui.json
+imgui.ini
 
 _vs
 bindings/

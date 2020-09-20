@@ -22,7 +22,6 @@ add_executable(${CMAKE_PROJECT_NAME}
         src/Axis.cpp
         src/entities/Entity.cpp
         src/entities/Component.cpp
-        src/entities/System.cpp
         src/entities/EntityManager.cpp
         src/entities/systems/MovementSystem.cpp
         src/entities/systems/RenderSystem.cpp

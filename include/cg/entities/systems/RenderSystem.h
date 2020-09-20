@@ -6,12 +6,12 @@
 
 class RenderSystem : public System {
 public:
-    RenderSystem(EntityManager *entityManager, GLContext *context);
+    RenderSystem(EntityManager &, GLContext &, UserInterface &);
     ~RenderSystem();
 
-    UserInterface* getUserInterface() { return userInterface; }
+    UserInterface* getUserInterface() { return &userInterface; }
 
-    void init() override;
+    void init();
     void initBloomBuffers();
 
     void update() override;
@@ -22,9 +22,9 @@ public:
     void renderMaterials(MeshComponent *mesh, ShaderProgram *shader);
 
 private:
-    GLContext *context;
+    GLContext &context;
 
-    UserInterface *userInterface;
+    UserInterface &userInterface;
 
     glm::vec4 clearColor;
 

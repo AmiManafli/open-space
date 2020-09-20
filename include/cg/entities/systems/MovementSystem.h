@@ -5,14 +5,14 @@
 
 class MovementSystem : public System {
 public:
-    MovementSystem(EntityManager *entityManager, GLContext *context);
+    MovementSystem(EntityManager &entityManager, GLContext &context);
     ~MovementSystem() override;
 
-    void init() override;
+    void init();
     void update() override;
 
 private:
-    GLContext *context;
+    GLContext &context;
 };
 
 #endif //CG1_PROJECT_MOVEMENTSYSTEM_H

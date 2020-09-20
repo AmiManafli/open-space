@@ -1,5 +1,4 @@
-#ifndef CG1_PROJECT_GLHEADER_H
-#define CG1_PROJECT_GLHEADER_H
+#pragma once
 
 #include <iostream>
 #include <vector>
@@ -29,4 +28,6 @@
 #include <omp.h>
 #endif
 
-#endif //CG1_PROJECT_GLHEADER_H
+#include <boost/di.hpp>
+
+namespace di = boost::di;

@@ -1,20 +1,22 @@
 #include "cg/entities/systems/GravitySystem.h"
 
-GravitySystem::GravitySystem(EntityManager *entityManager, Entity *object) : System(entityManager), object(object) {
+GravitySystem::GravitySystem(EntityManager &entityManager) : System(entityManager) {
 }
 
 GravitySystem::~GravitySystem() {
 }
 
-void GravitySystem::init() {
-    if (entityManager->hasComponent<TransformComponent>(object)) {
-        objectTransform = entityManager->getComponent<TransformComponent>(object);
+void GravitySystem::init(Entity *object) {
+    this->object = object;
+
+    if (entityManager.hasComponent<TransformComponent>(object)) {
+        objectTransform = entityManager.getComponent<TransformComponent>(object);
     }
-    if (entityManager->hasComponent<VelocityComponent>(object)) {
-        objectVelocity = entityManager->getComponent<VelocityComponent>(object);
+    if (entityManager.hasComponent<VelocityComponent>(object)) {
+        objectVelocity = entityManager.getComponent<VelocityComponent>(object);
     }
-    if (entityManager->hasComponent<MassComponent>(object)) {
-        objectMass = entityManager->getComponent<MassComponent>(object);
+    if (entityManager.hasComponent<MassComponent>(object)) {
+        objectMass = entityManager.getComponent<MassComponent>(object);
     }
 }
 
@@ -23,12 +25,12 @@ void GravitySystem::update() {
 
     if (!objectMass) return;
 
-    for (auto &pair : entityManager->getComponents<MassComponent>()) {
+    for (auto &pair : entityManager.getComponents<MassComponent>()) {
         auto entity = pair.first;
         if (entity->id == object->id) continue;
 
         auto mass = dynamic_cast<MassComponent *>(pair.second);
-        auto transform = entityManager->getComponent<TransformComponent>(entity);
+        auto transform = entityManager.getComponent<TransformComponent>(entity);
 
         auto distance = objectTransform->position - transform->position;
         auto length = glm::length(distance);
