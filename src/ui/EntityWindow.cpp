@@ -22,13 +22,13 @@ std::string meshModeEnumToString(GLenum mode) {
     throw std::runtime_error("Invalid mesh mode");
 }
 
-EntityWindow::EntityWindow(EntityManager *entityManager, GLContext *context)
+EntityWindow::EntityWindow(EntityManager &entityManager, GLContext &context)
         : entityManager(entityManager), context(context), width(300), height(0) {
     meshModes = { "Triangles", "Lines", "Points" };
 }
 
 void EntityWindow::render() {
-    Entity *entity = context->selectedEntity;
+    Entity *entity = context.selectedEntity;
 
     if (!entity) return renderEmpty();
 
@@ -39,38 +39,38 @@ void EntityWindow::render() {
 
     // Components
     std::vector<MeshComponent *> meshComponents;
-    auto meshes = entityManager->getMultiComponents<MeshComponent>(entity);
+    auto meshes = entityManager.getMultiComponents<MeshComponent>(entity);
     for (auto it = meshes.first; it != meshes.second; it++) {
         auto mesh = dynamic_cast<MeshComponent *>(it->second);
         meshComponents.emplace_back(mesh);
     }
 
-    if (entityManager->hasComponent<TransformComponent>(entity)) {
-        renderTransformComponent(entityManager->getComponent<TransformComponent>(entity));
+    if (entityManager.hasComponent<TransformComponent>(entity)) {
+        renderTransformComponent(entityManager.getComponent<TransformComponent>(entity));
     }
-    if (entityManager->hasComponent<MassComponent>(entity)) {
-        renderMassComponent(entityManager->getComponent<MassComponent>(entity));
+    if (entityManager.hasComponent<MassComponent>(entity)) {
+        renderMassComponent(entityManager.getComponent<MassComponent>(entity));
     }
-    if (entityManager->hasComponent<OrbitComponent>(entity)) {
-        renderOrbitComponent(entityManager->getComponent<OrbitComponent>(entity));
+    if (entityManager.hasComponent<OrbitComponent>(entity)) {
+        renderOrbitComponent(entityManager.getComponent<OrbitComponent>(entity));
     }
-    if (entityManager->hasComponent<VelocityComponent>(entity)) {
-        renderVelocityComponent(entityManager->getComponent<VelocityComponent>(entity));
+    if (entityManager.hasComponent<VelocityComponent>(entity)) {
+        renderVelocityComponent(entityManager.getComponent<VelocityComponent>(entity));
     }
-    if (entityManager->hasComponent<CameraComponent>(entity)) {
-        renderCameraComponent(entityManager->getComponent<CameraComponent>(entity));
+    if (entityManager.hasComponent<CameraComponent>(entity)) {
+        renderCameraComponent(entityManager.getComponent<CameraComponent>(entity));
     }
-    if (entityManager->hasMultiComponent<MeshComponent>(entity)) {
+    if (entityManager.hasMultiComponent<MeshComponent>(entity)) {
         renderMeshComponents(meshComponents);
     }
-    if (entityManager->hasComponent<LightComponent>(entity)) {
-        renderLightComponent(entityManager->getComponent<LightComponent>(entity));
+    if (entityManager.hasComponent<LightComponent>(entity)) {
+        renderLightComponent(entityManager.getComponent<LightComponent>(entity));
     }
-    if (entityManager->hasComponent<HighlightComponent>(entity)) {
-        renderHighlightComponent(entityManager->getComponent<HighlightComponent>(entity));
+    if (entityManager.hasComponent<HighlightComponent>(entity)) {
+        renderHighlightComponent(entityManager.getComponent<HighlightComponent>(entity));
     }
-    if (entityManager->hasComponent<CollisionComponent>(entity)) {
-        renderCollisionComponent(entityManager->getComponent<CollisionComponent>(entity));
+    if (entityManager.hasComponent<CollisionComponent>(entity)) {
+        renderCollisionComponent(entityManager.getComponent<CollisionComponent>(entity));
     }
 
     ImGui::End();
@@ -87,16 +87,16 @@ void EntityWindow::renderEmpty() {
 
 void EntityWindow::renderInfo(Entity *entity) {
     ImGui::Text("ID:");
-    ImGui::PushFont(context->uiBlackFont);
+    ImGui::PushFont(context.uiBlackFont);
     ImGui::SameLine();
     ImGui::Text("%d", entity->id);
     ImGui::PopFont();
 
-    auto view = context->viewFrustum;
-    if (view && entityManager->hasComponent<CollisionComponent>(entity)) {
-        auto collision = entityManager->getComponent<CollisionComponent>(entity);
+    auto view = context.viewFrustum;
+    if (view && entityManager.hasComponent<CollisionComponent>(entity)) {
+        auto collision = entityManager.getComponent<CollisionComponent>(entity);
         ImGui::Text("In view:");
-        ImGui::PushFont(context->uiBlackFont);
+        ImGui::PushFont(context.uiBlackFont);
         ImGui::SameLine();
         ImGui::Text("%s", view->isInside(collision->boundingSphere) ? "Yes" : "No");
         ImGui::PopFont();

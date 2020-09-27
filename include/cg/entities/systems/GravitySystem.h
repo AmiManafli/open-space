@@ -7,10 +7,10 @@ class GravitySystem : public System {
 public:
     constexpr static const double NEWTON_G = 6.6743e-11;
 
-    GravitySystem(EntityManager *entityManager, Entity *object);
+    GravitySystem(EntityManager &entityManager);
     ~GravitySystem() override;
 
-    void init() override;
+    void init(Entity *object);
     void update() override;
 
 private:

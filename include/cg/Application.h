@@ -1,5 +1,4 @@
-#ifndef CG1_PROJECT_APPLICATION_H
-#define CG1_PROJECT_APPLICATION_H
+#pragma once
 
 #include <cg/GLHeader.h>
 #include <cg/skybox/Skybox.h>
@@ -18,28 +17,28 @@ class Application
 public:
     const uint16_t MAX_LIGHTS = 2;
 
-    Application(std::string title, int width, int height);
-    ~Application();
+    Application(EntityManager &, GLContext &, UniverseEntityFactory &, RenderSystem &, MovementSystem &,
+                OrbitSystem &, InputSystem &, GravitySystem &, CollisionSystem &);
 
-    void init();
+    void init(std::string title, uint16_t width, uint16_t height);
     void run();
 
 private:
-    EntityManager *entityManager;
-    UniverseEntityFactory *universeEntityFactory;
-    GLContext *context;
+    EntityManager &entityManager;
+    UniverseEntityFactory &universeEntityFactory;
+    GLContext &context;
 
     Universe universe;
 
     Skybox *sky = nullptr;
 
     // Systems
-    RenderSystem *renderSystem;
-    InputSystem *inputSystem;
-    MovementSystem *movementSystem;
-    GravitySystem *gravitySystem;
-    OrbitSystem *orbitSystem;
-    CollisionSystem *collisionSystem;
+    RenderSystem &renderSystem;
+    InputSystem &inputSystem;
+    MovementSystem &movementSystem;
+    GravitySystem &gravitySystem;
+    OrbitSystem &orbitSystem;
+    CollisionSystem &collisionSystem;
 
     std::vector<glm::vec3> instanceTransformations;
 
@@ -48,5 +47,3 @@ private:
 
     void setLightUniforms(ShaderProgram *meshTextureShaderProgram, std::vector<std::pair<LightComponent *, TransformComponent *>> lights);
 };
-
-#endif //CG1_PROJECT_APPLICATION_H

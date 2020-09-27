@@ -9,10 +9,9 @@
 
 class InputSystem : public System {
 public:
-    InputSystem(EntityManager *entityManager, GLContext *context, RenderSystem *renderSystem);
-    ~InputSystem();
+    InputSystem(EntityManager &, GLContext &, RenderSystem &, SpaceshipControl &);
 
-    void init() override;
+    void init();
     void update() override;
     void createSpaceshipControl(Entity* spaceship, Entity* camera);
 
@@ -23,9 +22,9 @@ public:
 
 private:
     GLContext *context;
-    RenderSystem *renderSystem;
+    RenderSystem &renderSystem;
 
-    SpaceshipControl* spaceshipControl;
+    SpaceshipControl &spaceshipControl;
     bool processedMouse = false;
     double lastMouseX, lastMouseY;
     std::unordered_map<uint32_t, uint32_t> keysDown;

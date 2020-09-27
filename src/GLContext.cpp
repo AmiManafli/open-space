@@ -1,7 +1,7 @@
 #include "cg/GLContext.h"
 
-GLContext::GLContext(EntityManager *entityManager, std::string title, uint16_t width, uint16_t height)
-        : entityManager(entityManager), title(title), width(width), height(height), viewFrustum(nullptr) {
+GLContext::GLContext(EntityManager &entityManager)
+        : entityManager(entityManager), viewFrustum(nullptr) {
 }
 
 GLContext::~GLContext() {
@@ -28,17 +28,20 @@ GLContext::~GLContext() {
 
 glm::mat4 GLContext::getView() {
     auto camera = getCamera();
-    auto cameraComponent = entityManager->getComponent<CameraComponent>(camera);
-    auto transformComponent = entityManager->getComponent<TransformComponent>(camera);
+    auto cameraComponent = entityManager.getComponent<CameraComponent>(camera);
+    auto transformComponent = entityManager.getComponent<TransformComponent>(camera);
     return cameraComponent->getView(transformComponent);
 }
 
 glm::mat4 GLContext::getProjection() {
-    auto cameraComponent = entityManager->getComponent<CameraComponent>(getCamera());
+    auto cameraComponent = entityManager.getComponent<CameraComponent>(getCamera());
     return cameraComponent->getProjection(getAspect());
 }
 
-void GLContext::init() {
+void GLContext::init(std::string title, uint16_t width, uint16_t height) {
+    this->width = width;
+    this->height = height;
+
     glfwInit();
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -122,8 +125,8 @@ void GLContext::setActiveCamera(Entity *entity) {
         delete viewFrustum;
     }
     if (entity) {
-        auto camera = entityManager->getComponent<CameraComponent>(entity);
-        auto cameraTransform = entityManager->getComponent<TransformComponent>(entity);
+        auto camera = entityManager.getComponent<CameraComponent>(entity);
+        auto cameraTransform = entityManager.getComponent<TransformComponent>(entity);
         viewFrustum = new ViewFrustum(*camera, *cameraTransform);
         updateViewFrustum();
     }

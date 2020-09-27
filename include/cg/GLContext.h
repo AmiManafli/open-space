@@ -10,7 +10,7 @@
 
 class GLContext {
 public:
-    GLContext(EntityManager *entityManager, std::string title, uint16_t width, uint16_t height);
+    GLContext(EntityManager &entityManager);
     ~GLContext();
 
     float getAspect() { return (float) width / (float) height; }
@@ -28,7 +28,7 @@ public:
     double getDeltaTime() { return deltaTime; }
     double getFrameTime() { return timePerFrame; }
     double getTime() { return glfwGetTime(); }
-    void init();
+    void init(std::string title, uint16_t width, uint16_t height);
 
     bool shouldClose();
     void update();
@@ -92,7 +92,7 @@ public:
     double startTime;
 
 private:
-    EntityManager *entityManager;
+    EntityManager &entityManager;
     const std::string title;
 
     GLFWwindow *window;

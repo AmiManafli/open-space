@@ -1,18 +1,17 @@
-#ifndef CG1_PROJECT_ENTITYWINDOW_H
-#define CG1_PROJECT_ENTITYWINDOW_H
+#pragma once
 
 #include <cg/GLContext.h>
 #include <cg/entities/components/CollisionComponent.h>
 
 class EntityWindow {
 public:
-    EntityWindow(EntityManager *entityManager, GLContext *context);
+    EntityWindow(EntityManager &entityManager, GLContext &context);
 
     void render();
 
 private:
-    EntityManager *entityManager;
-    GLContext *context;
+    EntityManager &entityManager;
+    GLContext &context;
 
     uint16_t width;
     uint16_t height;
@@ -34,6 +33,3 @@ private:
     void renderHighlightComponent(HighlightComponent *component);
     void renderCollisionComponent(CollisionComponent *component);
 };
-
-
-#endif //CG1_PROJECT_ENTITYWINDOW_H

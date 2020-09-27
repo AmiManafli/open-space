@@ -28,13 +28,11 @@ void renderQuad() {
     glBindVertexArray(0);
 }
 
-RenderSystem::RenderSystem(EntityManager *entityManager, GLContext *context)
-        : System(entityManager), context(context) {
-    userInterface = new UserInterface(entityManager, context);
+RenderSystem::RenderSystem(EntityManager &entityManager, GLContext &context, UserInterface &userInterface)
+        : System(entityManager), context(context), userInterface(userInterface) {
 }
 
 RenderSystem::~RenderSystem() {
-    delete userInterface;
 }
 
 void RenderSystem::init() {
@@ -50,12 +48,12 @@ void RenderSystem::init() {
 
     initBloomBuffers();
 
-    userInterface->init();
+    userInterface.init();
 }
 
 void RenderSystem::update() {
     /// Setup UI
-    userInterface->render();
+    userInterface.render();
 
     /// Clear buffers
     glClearColor(clearColor.x, clearColor.y, clearColor.z, clearColor.w);
@@ -68,26 +66,26 @@ void RenderSystem::update() {
     /// Display UI
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-    context->swapBuffers();
+    context.swapBuffers();
 }
 
 void RenderSystem::renderEntities() {
     uint32_t triangleCount = 0;
 
-    if (context->bloomEnabled) {
+    if (context.bloomEnabled) {
         glBindFramebuffer(GL_FRAMEBUFFER, bloomFramebuffer);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     }
 
-    for (auto &pair : entityManager->getComponents<TransformComponent>()) {
+    for (auto &pair : entityManager.getComponents<TransformComponent>()) {
         auto entity = pair.first;
         auto transform = dynamic_cast<TransformComponent *>(pair.second);
 
-        auto meshes = entityManager->getMultiComponents<MeshComponent>(entity);
+        auto meshes = entityManager.getMultiComponents<MeshComponent>(entity);
 
         HighlightComponent *highlight = nullptr;
-        if (entityManager->hasComponent<HighlightComponent>(entity)) {
-            highlight = entityManager->getComponent<HighlightComponent>(entity);
+        if (entityManager.hasComponent<HighlightComponent>(entity)) {
+            highlight = entityManager.getComponent<HighlightComponent>(entity);
         }
 
         if (highlight) {
@@ -111,7 +109,7 @@ void RenderSystem::renderEntities() {
             glStencilMask(0x00); // disable writing to the stencil buffer
             glDisable(GL_DEPTH_TEST);
 
-            auto cameraPosition = entityManager->getComponent<TransformComponent>(context->getCamera())->position;
+            auto cameraPosition = entityManager.getComponent<TransformComponent>(context.getCamera())->position;
             auto highlightModel = highlight->getModel(transform->getModel(),
                                                       glm::length(transform->position - cameraPosition));
             for (auto it = meshes.first; it != meshes.second; it++) {
@@ -127,20 +125,20 @@ void RenderSystem::renderEntities() {
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    context->triangleCount = triangleCount;
+    context.triangleCount = triangleCount;
 
-    if (context->bloomEnabled) {
+    if (context.bloomEnabled) {
         //apply two-pass Gaussian blur
         bool horizontal = true;
         bool firstIteration = true;
         uint16_t blurIterations = 10;
-        context->blurProgram->use();
-        context->blurProgram->setUniform("image", 0);
+        context.blurProgram->use();
+        context.blurProgram->setUniform("image", 0);
 
         for (int i = 0; i < blurIterations; i++) {
             glBindFramebuffer(GL_FRAMEBUFFER, blurFramebuffers[horizontal]);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-            context->blurProgram->setUniform("horizontal", horizontal);
+            context.blurProgram->setUniform("horizontal", horizontal);
             glBindTexture(GL_TEXTURE_2D, firstIteration ? bloomTextures[1] : blurTextures[!horizontal]);
             renderQuad();
             horizontal = !horizontal;
@@ -154,17 +152,17 @@ void RenderSystem::renderEntities() {
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-        context->bloomProgram->use();
+        context.bloomProgram->use();
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, bloomTextures[0]);
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, blurTextures[!horizontal]);
 
-        context->bloomProgram->setUniform("scene", 0);
-        context->bloomProgram->setUniform("bloomBlur", 1);
-        context->bloomProgram->setUniform("bloom", context->bloomEnabled);
-        context->bloomProgram->setUniform("exposure", 1.0f);
+        context.bloomProgram->setUniform("scene", 0);
+        context.bloomProgram->setUniform("bloomBlur", 1);
+        context.bloomProgram->setUniform("bloom", context.bloomEnabled);
+        context.bloomProgram->setUniform("exposure", 1.0f);
 
         renderQuad();
     }
@@ -172,14 +170,14 @@ void RenderSystem::renderEntities() {
 
 void RenderSystem::renderMesh(MeshComponent *mesh, ShaderProgram *shaderProgram, glm::mat4 model) {
     shaderProgram->use();
-    shaderProgram->setUniform("view", context->getView());
-    shaderProgram->setUniform("projection", context->getProjection());
+    shaderProgram->setUniform("view", context.getView());
+    shaderProgram->setUniform("projection", context.getProjection());
     shaderProgram->setUniform("model", model);
     shaderProgram->setUniform("objectColor", glm::vec3(0.5, 0.5, 0.5));
     shaderProgram->setUniform("lightColor", glm::vec3(1, 1, 1));
-//    shaderProgram->setUniform("lightPos", entityManager->getComponent<TransformComponent>(context->light)->position);
+//    shaderProgram->setUniform("lightPos", entityManager.getComponent<TransformComponent>(context.light)->position);
     shaderProgram->setUniform("viewPos",
-                              entityManager->getComponent<TransformComponent>(context->getCamera())->position);
+                              entityManager.getComponent<TransformComponent>(context.getCamera())->position);
     shaderProgram->setUniform("maxHeight", mesh->maxHeight);
 
     if (mesh->textures.size() > 0) {
@@ -241,7 +239,7 @@ void RenderSystem::initBloomBuffers() {
 
     for (int i = 0; i < 2; i++) {
         glBindTexture(GL_TEXTURE_2D, bloomTextures[i]);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, context->width, context->height, 0, GL_RGB, GL_FLOAT, nullptr);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, context.width, context.height, 0, GL_RGB, GL_FLOAT, nullptr);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -252,7 +250,7 @@ void RenderSystem::initBloomBuffers() {
     unsigned int rboDepth;
     glGenRenderbuffers(1, &rboDepth);
     glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, context->width, context->height);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, context.width, context.height);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth);
 
     uint32_t attachments[2] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1};
@@ -270,7 +268,7 @@ void RenderSystem::initBloomBuffers() {
     for (int i = 0; i < 2; i++) {
         glBindFramebuffer(GL_FRAMEBUFFER, blurFramebuffers[i]);
         glBindTexture(GL_TEXTURE_2D, blurTextures[i]);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, context->width, context->height, 0, GL_RGB, GL_FLOAT, nullptr);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, context.width, context.height, 0, GL_RGB, GL_FLOAT, nullptr);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);

@@ -1,5 +1,5 @@
 #include "cg/ui/UserInterface.h"
-#include <json.hpp>
+#include <nlohmann/json.hpp>
 #include <fstream>
 #include <string>
 #include <iomanip>
@@ -8,8 +8,10 @@
 using json = nlohmann::json;
 
 
-UserInterface::UserInterface(EntityManager *entityManager, GLContext *context)
-        : entityManager(entityManager), context(context), settingsFilename("settings.json"), terrainProfileName("") {
+UserInterface::UserInterface(EntityManager &entityManager, GLContext &context, PlanetEditor &planetEditor,
+                             EntityWindow &entityWindow, SkyboxEditor &skyboxEditor)
+        : entityManager(entityManager), context(context), planetEditor(planetEditor), entityWindow(entityWindow),
+          skyboxEditor(skyboxEditor), settingsFilename("settings.json"), terrainProfileName("") {
     views = {"Spaceship", "Perspective", "Top", "Side"};
     noiseFunctions = {"Open Simplex", "Perlin", "Test"};
 
@@ -32,16 +34,6 @@ UserInterface::UserInterface(EntityManager *entityManager, GLContext *context)
     settings.persistence = 1.0;
     settings.seed = 1;
     settings.redistribution = 1.0;
-
-    entityWindow = new EntityWindow(entityManager, context);
-    planetEditor = new PlanetEditor(*entityManager, *context);
-    skyboxEditor = new SkyboxEditor(*entityManager, *context);
-}
-
-UserInterface::~UserInterface() {
-    delete entityWindow;
-    delete planetEditor;
-    delete skyboxEditor;
 }
 
 void UserInterface::init() {
@@ -52,10 +44,10 @@ void UserInterface::init() {
     auto regularFontPath = std::filesystem::absolute("./assets/fonts/Roboto-Regular.ttf");
     auto blackFontPath = std::filesystem::absolute("./assets/fonts/Roboto-Black.ttf");
 
-    context->uiRegularFont = io.Fonts->AddFontFromFileTTF(regularFontPath.string().c_str(), 13.0f);
-    context->uiBlackFont = io.Fonts->AddFontFromFileTTF(blackFontPath.string().c_str(), 13.0f);
-    context->uiEntityTitleFont = io.Fonts->AddFontFromFileTTF(blackFontPath.string().c_str(), 14.0f);
-    context->uiEntityFont = io.Fonts->AddFontFromFileTTF(lightFontPath.string().c_str(), 13.0f);
+    context.uiRegularFont = io.Fonts->AddFontFromFileTTF(regularFontPath.string().c_str(), 13.0f);
+    context.uiBlackFont = io.Fonts->AddFontFromFileTTF(blackFontPath.string().c_str(), 13.0f);
+    context.uiEntityTitleFont = io.Fonts->AddFontFromFileTTF(blackFontPath.string().c_str(), 14.0f);
+    context.uiEntityFont = io.Fonts->AddFontFromFileTTF(lightFontPath.string().c_str(), 13.0f);
 
     setupTheme(true, 0.9);
 }
@@ -65,22 +57,22 @@ void UserInterface::render() {
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
-    ImGui::PushFont(context->uiEntityFont);
+    ImGui::PushFont(context.uiEntityFont);
 
     renderSpaceDisplay();
     renderAppInfoDisplay();
 
-    if (context->showEntityNames) {
+    if (context.showEntityNames) {
         renderEntityNames();
     }
 
     ImGui::PopFont();
 
-    if (context->displayCursor) {
+    if (context.displayCursor) {
         renderMainMenu();
     }
 
-    if (context->displayGui) {
+    if (context.displayGui) {
         renderSceneInfoWindow();
         renderCameraInfoWindow();
     }
@@ -89,8 +81,8 @@ void UserInterface::render() {
         ImGui::ShowDemoWindow();
     }
 
-    if (context->displayCursor && showPlanetEditor) {
-        planetEditor->render();
+    if (context.displayCursor && showPlanetEditor) {
+        planetEditor.render();
     }
 
     if (showTerrainGeneratorWindow) {
@@ -98,11 +90,11 @@ void UserInterface::render() {
     }
 
     if (showSkyboxEditor) {
-        skyboxEditor->render();
+        skyboxEditor.render();
     }
 
     if (showEntityWindow) {
-        entityWindow->render();
+        entityWindow.render();
     }
 
     ImGui::Render();
@@ -112,7 +104,7 @@ void UserInterface::renderMainMenu() {
     if (ImGui::BeginMainMenuBar()) {
         if (ImGui::BeginMenu("File")) {
             if (ImGui::MenuItem("Quit")) {
-                glfwSetWindowShouldClose(context->getWindow(), true);
+                glfwSetWindowShouldClose(context.getWindow(), true);
             }
             ImGui::EndMenu();
         }
@@ -136,20 +128,20 @@ void UserInterface::renderMainMenu() {
 }
 
 void UserInterface::renderSceneInfoWindow() {
-    ImGui::SetNextWindowPos(ImVec2(context->getWidth() - 170, 25));
+    ImGui::SetNextWindowPos(ImVec2(context.getWidth() - 170, 25));
     ImGui::Begin("Scene Information", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize);
 
-    ImGui::Text("Frame time: %.3f ms", context->getFrameTime());
-    ImGui::Text("Triangles: %d\n", context->triangleCount);
+    ImGui::Text("Frame time: %.3f ms", context.getFrameTime());
+    ImGui::Text("Triangles: %d\n", context.triangleCount);
     ImGui::End();
 }
 
 void UserInterface::renderCameraInfoWindow() {
-    auto cameraEntity = context->getCamera();
-    auto transform = entityManager->getComponent<TransformComponent>(cameraEntity);
-    auto camera = entityManager->getComponent<CameraComponent>(cameraEntity);
+    auto cameraEntity = context.getCamera();
+    auto transform = entityManager.getComponent<TransformComponent>(cameraEntity);
+    auto camera = entityManager.getComponent<CameraComponent>(cameraEntity);
 
-    ImGui::SetNextWindowPos(ImVec2(context->getWidth() - 320, context->getHeight() - 160));
+    ImGui::SetNextWindowPos(ImVec2(context.getWidth() - 320, context.getHeight() - 160));
     ImGui::Begin("Camera Information", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize);
 
     if (ImGui::BeginCombo("View", currentView)) {
@@ -158,13 +150,13 @@ void UserInterface::renderCameraInfoWindow() {
             if (ImGui::Selectable(views[n], isSelected)) {
                 currentView = const_cast<char *>(views[n]);
                 if (n == 0) {
-                    context->setActiveCamera(context->spaceshipCamera);
+                    context.setActiveCamera(context.spaceshipCamera);
                 } else if (n == 1) {
-                    context->setActiveCamera(context->perspectiveCamera);
+                    context.setActiveCamera(context.perspectiveCamera);
                 } else if (n == 2) {
-                    context->setActiveCamera(context->topCamera);
+                    context.setActiveCamera(context.topCamera);
                 } else if (n == 3) {
-                    context->setActiveCamera(context->sideCamera);
+                    context.setActiveCamera(context.sideCamera);
                 }
             }
             if (isSelected) {
@@ -399,16 +391,16 @@ void UserInterface::updateTerrain(Terrain *terrain, TerrainSettings &settings) {
 }
 
 void UserInterface::renderSpaceDisplay() {
-    ImGui::PushFont(context->uiEntityFont);
+    ImGui::PushFont(context.uiEntityFont);
 
     ImGui::Begin("Space Display", &showSpaceDisplay,
                  ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
                  ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoInputs |
                  ImGuiWindowFlags_NoBackground);
-    ImGui::SetWindowPos(ImVec2(0, context->displayCursor ? 15 : 0));
+    ImGui::SetWindowPos(ImVec2(0, context.displayCursor ? 15 : 0));
 
-    auto player = context->player;
-    auto velocity = entityManager->getComponent<VelocityComponent>(player);
+    auto player = context.player;
+    auto velocity = entityManager.getComponent<VelocityComponent>(player);
 
     ImGui::Text("Speed: %.1f m/s", glm::length(velocity->velocity));
     ImGui::Text("Gravity: %.1f", glm::length(velocity->gravity));
@@ -419,17 +411,17 @@ void UserInterface::renderSpaceDisplay() {
 }
 
 void UserInterface::renderEntityNames() {
-    auto entity = context->selectedEntity;
+    auto entity = context.selectedEntity;
 
     if (entity) {
-        auto transform = entityManager->getComponent<TransformComponent>(entity);
-        auto cameraTransform = entityManager->getComponent<TransformComponent>(context->getCamera());
-        auto camera = entityManager->getComponent<CameraComponent>(context->getCamera());
+        auto transform = entityManager.getComponent<TransformComponent>(entity);
+        auto cameraTransform = entityManager.getComponent<TransformComponent>(context.getCamera());
+        auto camera = entityManager.getComponent<CameraComponent>(context.getCamera());
         auto pos = glm::vec4(transform->position, 1.0);
 
-        if (entityManager->hasComponent<CollisionComponent>(entity)) {
-            auto collision = entityManager->getComponent<CollisionComponent>(entity);
-            if (!context->viewFrustum->isInside(collision->boundingSphere)) {
+        if (entityManager.hasComponent<CollisionComponent>(entity)) {
+            auto collision = entityManager.getComponent<CollisionComponent>(entity);
+            if (!context.viewFrustum->isInside(collision->boundingSphere)) {
                 return;
             }
             float radius = collision->boundingSphere.getRadius();
@@ -440,26 +432,26 @@ void UserInterface::renderEntityNames() {
         auto distance = glm::length(transform->position - cameraTransform->position);
         if (distance < MAX_DISTANCE) return;
 
-        auto clipSpace = context->getProjection() * context->getView() * pos;
+        auto clipSpace = context.getProjection() * context.getView() * pos;
         auto normalizedDeviceSpace = glm::vec3(clipSpace) / clipSpace.w;
 
         auto screen = glm::vec2(normalizedDeviceSpace);
-        screen.x = (screen.x + 1.0) / 2.0 * context->getWidth();
-        screen.y = (1.0 - screen.y) / 2.0 * context->getHeight();
+        screen.x = (screen.x + 1.0) / 2.0 * context.getWidth();
+        screen.y = (1.0 - screen.y) / 2.0 * context.getHeight();
 
-        if (screen.x >= 0.0 && screen.x <= context->getWidth() && screen.y >= 0.0 && screen.y <= context->getHeight()) {
+        if (screen.x >= 0.0 && screen.x <= context.getWidth() && screen.y >= 0.0 && screen.y <= context.getHeight()) {
             ImGui::Begin("Planet", &showSpaceDisplay,
                          ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
                          ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoInputs |
                          ImGuiWindowFlags_NoBackground);
             ImGui::SetWindowPos(ImVec2(screen.x, screen.y));
 
-            ImGui::PushFont(context->uiEntityTitleFont);
+            ImGui::PushFont(context.uiEntityTitleFont);
             ImGui::Text("Entity %d", entity->id);
             ImGui::PopFont();
             ImGui::Text("Position: (%.1f, %.1f, %.1f)", pos.x, pos.y, pos.z);
-            if (entityManager->hasComponent<MassComponent>(entity)) {
-                auto mass = entityManager->getComponent<MassComponent>(entity);
+            if (entityManager.hasComponent<MassComponent>(entity)) {
+                auto mass = entityManager.getComponent<MassComponent>(entity);
                 ImGui::Text("Mass: %.1f", mass->mass);
             }
 
@@ -548,25 +540,25 @@ void UserInterface::setupTheme(bool styleDark, float alpha) {
 }
 
 void UserInterface::renderAppInfoDisplay() {
-    ImGui::PushFont(context->uiEntityFont);
+    ImGui::PushFont(context.uiEntityFont);
 
     ImGui::Begin("Application Info", &showSpaceDisplay,
                  ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
                  ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoInputs |
                  ImGuiWindowFlags_NoBackground);
-    ImGui::SetWindowPos(ImVec2(context->width - 120, context->displayCursor ? 15 : 0));
+    ImGui::SetWindowPos(ImVec2(context.width - 120, context.displayCursor ? 15 : 0));
 
-    ImGui::PushFont(context->uiEntityTitleFont);
+    ImGui::PushFont(context.uiEntityTitleFont);
     ImGui::Text("Mode");
     ImGui::PopFont();
     ImGui::SameLine();
-    ImGui::Text("%s", context->displayWireframe ? "Wireframe" : "Shaded");
+    ImGui::Text("%s", context.displayWireframe ? "Wireframe" : "Shaded");
 
-    ImGui::PushFont(context->uiEntityTitleFont);
+    ImGui::PushFont(context.uiEntityTitleFont);
     ImGui::Text("Bloom");
     ImGui::PopFont();
     ImGui::SameLine();
-    ImGui::Text("%s", context->bloomEnabled ? "Enabled" : "Disabled");
+    ImGui::Text("%s", context.bloomEnabled ? "Enabled" : "Disabled");
 
     ImGui::End();
 

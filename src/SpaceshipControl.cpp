@@ -1,15 +1,15 @@
 #include "cg/SpaceshipControl.h"
 
-SpaceshipControl::SpaceshipControl(Entity *spaceship, Entity *camera, EntityManager *entityManager, GLContext &context) : velocity(glm::vec3(0)), context(context) {
-    this->cameraTransform = entityManager->getComponent<TransformComponent>(camera);
-    this->cameraComponent = entityManager->getComponent<CameraComponent>(camera);
-    this->velocityComponent = entityManager->getComponent<VelocityComponent>(camera);
-    this->entityManager = entityManager;
-    viewFrustum = new ViewFrustum(*cameraComponent, *cameraTransform);
+SpaceshipControl::SpaceshipControl(EntityManager &entityManager, GLContext &context)
+        : entityManager(entityManager), context(context), velocity(glm::vec3(0)), viewFrustum(nullptr) {
 }
 
-SpaceshipControl::~SpaceshipControl() {
+void SpaceshipControl::setCamera(Entity *camera) {
+    this->cameraTransform = entityManager.getComponent<TransformComponent>(camera);
+    this->cameraComponent = entityManager.getComponent<CameraComponent>(camera);
+    this->velocityComponent = entityManager.getComponent<VelocityComponent>(camera);
     delete viewFrustum;
+    viewFrustum = new ViewFrustum(*cameraComponent, *cameraTransform);
 }
 
 void SpaceshipControl::processMouseMovement(float offsetX, float offsetY) {

@@ -4,191 +4,159 @@
 #include <cg/terrain/OpenSimplexNoise.h>
 #include <cg/terrain/PerlinNoise.h>
 #include <cg/IcoSphere.h>
-#include <cg/entities/components/OrbitComponent.h>
-#include <cg/skybox/SkyboxStar.h>
-#include <cg/collision/BoundingSphere.h>
-#include <cg/PlanetGenerator.h>
 #include "cg/Application.h"
 
-bool onUpdateTerrain(Terrain *terrain, TerrainSettings &settings) {
-    bool success = terrain->update(settings);
-
-    return success;
+Application::Application(EntityManager &entityManager, GLContext &context, UniverseEntityFactory &universeEntityFactory,
+                         RenderSystem &renderSystem, MovementSystem &movementSystem, OrbitSystem &orbitSystem,
+                         InputSystem &inputSystem, GravitySystem &gravitySystem, CollisionSystem &collisionSystem)
+        : entityManager(entityManager), context(context), universeEntityFactory(universeEntityFactory),
+          renderSystem(renderSystem), movementSystem(movementSystem), orbitSystem(orbitSystem), inputSystem(inputSystem),
+          gravitySystem(gravitySystem), collisionSystem(collisionSystem) {
 }
 
-Application::Application(std::string title, int width, int height) {
-    entityManager = new EntityManager();
-    context = new GLContext(entityManager, title, width, height);
+void Application::init(std::string title, uint16_t width, uint16_t height) {
+    context.init(title, width, height);
 
-    universeEntityFactory = new UniverseEntityFactory(*entityManager, universe, *context);
+    context.meshProgram = new ShaderProgram();
+    context.meshProgram->attachShader("./assets/shaders/mesh.vert", ShaderType::VertexShader);
+    context.meshProgram->attachShader("./assets/shaders/mesh.frag", ShaderType::FragmentShader);
+    context.meshProgram->link();
 
-    renderSystem = new RenderSystem(entityManager, context);
-    inputSystem = new InputSystem(entityManager, context, renderSystem);
-    movementSystem = new MovementSystem(entityManager, context);
-    orbitSystem = new OrbitSystem(entityManager, context);
-}
+    context.meshTextureProgram = new ShaderProgram();
+    context.meshTextureProgram->attachShader("./assets/shaders/meshTexture.vert", ShaderType::VertexShader);
+    context.meshTextureProgram->attachShader("./assets/shaders/meshTexture.frag", ShaderType::FragmentShader);
+    context.meshTextureProgram->link();
 
-Application::~Application() {
-    // Systems
-    delete renderSystem;
-    delete inputSystem;
-    delete movementSystem;
-    delete gravitySystem;
-    delete orbitSystem;
-    delete collisionSystem;
+    context.starProgram = new ShaderProgram();
+    context.starProgram->attachShader("./assets/shaders/starTexture.vert", ShaderType::VertexShader);
+    context.starProgram->attachShader("./assets/shaders/starTexture.frag", ShaderType::FragmentShader);
+    context.starProgram->link();
 
-    // Factories and contexts
-    delete universeEntityFactory;
-    delete context;
-    delete entityManager;
-}
+    context.planetProgram = new ShaderProgram();
+    context.planetProgram->attachShader("./assets/shaders/planet.vert", ShaderType::VertexShader);
+    context.planetProgram->attachShader("./assets/shaders/planet.frag", ShaderType::FragmentShader);
+    context.planetProgram->link();
 
-void Application::init() {
-    context->init();
+    context.gridProgram = new ShaderProgram();
+    context.gridProgram->attachShader("./assets/shaders/grid.vert", ShaderType::VertexShader);
+    context.gridProgram->attachShader("./assets/shaders/grid.frag", ShaderType::FragmentShader);
+    context.gridProgram->link();
 
-    context->meshProgram = new ShaderProgram();
-    context->meshProgram->attachShader("./assets/shaders/mesh.vert", ShaderType::VertexShader);
-    context->meshProgram->attachShader("./assets/shaders/mesh.frag", ShaderType::FragmentShader);
-    context->meshProgram->link();
+    context.highlightProgram = new ShaderProgram();
+    context.highlightProgram->attachShader("./assets/shaders/highlight.vert", ShaderType::VertexShader);
+    context.highlightProgram->attachShader("./assets/shaders/highlight.frag", ShaderType::FragmentShader);
+    context.highlightProgram->link();
 
-    context->meshTextureProgram = new ShaderProgram();
-    context->meshTextureProgram->attachShader("./assets/shaders/meshTexture.vert", ShaderType::VertexShader);
-    context->meshTextureProgram->attachShader("./assets/shaders/meshTexture.frag", ShaderType::FragmentShader);
-    context->meshTextureProgram->link();
+    context.meshWithLightProgram = new ShaderProgram();
+    context.meshWithLightProgram->attachShader("./assets/shaders/meshWithLight.vert", ShaderType::VertexShader);
+    context.meshWithLightProgram->attachShader("./assets/shaders/meshWithLight.frag", ShaderType::FragmentShader);
+    context.meshWithLightProgram->link();
 
-    context->starProgram = new ShaderProgram();
-    context->starProgram->attachShader("./assets/shaders/starTexture.vert", ShaderType::VertexShader);
-    context->starProgram->attachShader("./assets/shaders/starTexture.frag", ShaderType::FragmentShader);
-    context->starProgram->link();
+    context.meshTestLightProgram = new ShaderProgram();
+    context.meshTestLightProgram->attachShader("./assets/shaders/mesh.vert", ShaderType::VertexShader);
+    context.meshTestLightProgram->attachShader("./assets/shaders/meshTestLight.frag", ShaderType::FragmentShader);
+    context.meshTestLightProgram->link();
 
-    context->planetProgram = new ShaderProgram();
-    context->planetProgram->attachShader("./assets/shaders/planet.vert", ShaderType::VertexShader);
-    context->planetProgram->attachShader("./assets/shaders/planet.frag", ShaderType::FragmentShader);
-    context->planetProgram->link();
+    context.skyboxProgram = new ShaderProgram();
+    context.skyboxProgram->attachShader("./assets/shaders/skybox.vert", ShaderType::VertexShader);
+    context.skyboxProgram->attachShader("./assets/shaders/skybox.frag", ShaderType::FragmentShader);
+    context.skyboxProgram->link();
 
-    context->gridProgram = new ShaderProgram();
-    context->gridProgram->attachShader("./assets/shaders/grid.vert", ShaderType::VertexShader);
-    context->gridProgram->attachShader("./assets/shaders/grid.frag", ShaderType::FragmentShader);
-    context->gridProgram->link();
+    context.bloomProgram = new ShaderProgram();
+    context.bloomProgram->attachShader("./assets/shaders/finalBloom.vert", ShaderType::VertexShader);
+    context.bloomProgram->attachShader("./assets/shaders/finalBloom.frag", ShaderType::FragmentShader);
+    context.bloomProgram->link();
 
-    context->highlightProgram = new ShaderProgram();
-    context->highlightProgram->attachShader("./assets/shaders/highlight.vert", ShaderType::VertexShader);
-    context->highlightProgram->attachShader("./assets/shaders/highlight.frag", ShaderType::FragmentShader);
-    context->highlightProgram->link();
-
-    context->meshWithLightProgram = new ShaderProgram();
-    context->meshWithLightProgram->attachShader("./assets/shaders/meshWithLight.vert", ShaderType::VertexShader);
-    context->meshWithLightProgram->attachShader("./assets/shaders/meshWithLight.frag", ShaderType::FragmentShader);
-    context->meshWithLightProgram->link();
-
-    context->meshTestLightProgram = new ShaderProgram();
-    context->meshTestLightProgram->attachShader("./assets/shaders/mesh.vert", ShaderType::VertexShader);
-    context->meshTestLightProgram->attachShader("./assets/shaders/meshTestLight.frag", ShaderType::FragmentShader);
-    context->meshTestLightProgram->link();
-
-    context->skyboxProgram = new ShaderProgram();
-    context->skyboxProgram->attachShader("./assets/shaders/skybox.vert", ShaderType::VertexShader);
-    context->skyboxProgram->attachShader("./assets/shaders/skybox.frag", ShaderType::FragmentShader);
-    context->skyboxProgram->link();
-
-    context->bloomProgram = new ShaderProgram();
-    context->bloomProgram->attachShader("./assets/shaders/finalBloom.vert", ShaderType::VertexShader);
-    context->bloomProgram->attachShader("./assets/shaders/finalBloom.frag", ShaderType::FragmentShader);
-    context->bloomProgram->link();
-
-    context->blurProgram = new ShaderProgram();
-    context->blurProgram->attachShader("./assets/shaders/gaussianBlur.vert", ShaderType::VertexShader);
-    context->blurProgram->attachShader("./assets/shaders/gaussianBlur.frag", ShaderType::FragmentShader);
-    context->blurProgram->link();
+    context.blurProgram = new ShaderProgram();
+    context.blurProgram->attachShader("./assets/shaders/gaussianBlur.vert", ShaderType::VertexShader);
+    context.blurProgram->attachShader("./assets/shaders/gaussianBlur.frag", ShaderType::FragmentShader);
+    context.blurProgram->link();
 
     auto playerPosition = glm::vec3(0, 0, 0);
     auto playerBuilder = EntityBuilder::create();
-    context->player = playerBuilder
+    context.player = playerBuilder
             ->withTransform(playerPosition)
             ->withSphereCollision(0.01f)
             ->withVelocity(new VelocityComponent())
             ->withMass(10)
             ->withCamera(CameraComponent::Mode::FirstPersonShip, CameraComponent::Type::Perspective, glm::vec3(0, 0, 0),
-                         glm::normalize(-playerPosition), glm::vec3(0, 1, 0), context->getAspect())
-            ->build(entityManager);
+                         glm::normalize(-playerPosition), glm::vec3(0, 1, 0), context.getAspect())
+            ->build(&entityManager);
     delete playerBuilder;
-    context->setActiveCamera(context->player);
+    context.setActiveCamera(context.player);
 
     createCameras();
 
-    gravitySystem = new GravitySystem(entityManager, context->player);
-    collisionSystem = new CollisionSystem(entityManager, context->player);
+    collisionSystem.init(context.player);
+    renderSystem.init();
+    inputSystem.init();
+    movementSystem.init();
+    gravitySystem.init(context.player);
+    orbitSystem.init();
 
-    collisionSystem->init();
-    renderSystem->init();
-    inputSystem->init();
-    movementSystem->init();
-    gravitySystem->init();
-    orbitSystem->init();
-
-    context->grid = createGrid(62, 62, false);
+    context.grid = createGrid(62, 62, false);
 
     auto galaxy = universe.getGalaxy(0, 0, 0);
-    universeEntityFactory->createEntities(galaxy.getSolarSystems(0, 0, 0));
+    universeEntityFactory.createEntities(galaxy.getSolarSystems(0, 0, 0));
 
-    inputSystem->createSpaceshipControl(nullptr, context->player);
+    inputSystem.createSpaceshipControl(nullptr, context.player);
 
-    context->generateSkybox = true;
-    context->skyboxSettings = DEFAULT_SKYBOX_SETTINGS;
+    context.generateSkybox = true;
+    context.skyboxSettings = DEFAULT_SKYBOX_SETTINGS;
 }
 
 void Application::run() {
-    while (!context->shouldClose()) {
-        if (context->generateSkybox) {
-            if (entityManager->hasMultiComponent<MeshComponent>(context->player)) {
-                entityManager->removeMultiComponents<MeshComponent>(context->player);
+    while (!context.shouldClose()) {
+        if (context.generateSkybox) {
+            if (entityManager.hasMultiComponent<MeshComponent>(context.player)) {
+                entityManager.removeMultiComponents<MeshComponent>(context.player);
             }
-            sky = new Skybox(context->skyboxSettings, "./assets/textures/skybox1", context->skyboxProgram);
-            entityManager->addMultiComponent<MeshComponent>(context->player, sky);
+            sky = new Skybox(context.skyboxSettings, "./assets/textures/skybox1", context.skyboxProgram);
+            entityManager.addMultiComponent<MeshComponent>(context.player, sky);
 
             auto skyboxEntityManager = new EntityManager();
-            context->update();
+            context.update();
 
             glDisable(GL_CULL_FACE);
-            context->setActiveCamera(context->skyboxCamera);
-            auto camera = entityManager->getComponent<CameraComponent>(context->skyboxCamera);
-            sky->render(renderSystem, skyboxEntityManager, camera);
+            context.setActiveCamera(context.skyboxCamera);
+            auto camera = entityManager.getComponent<CameraComponent>(context.skyboxCamera);
+            sky->render(&renderSystem, skyboxEntityManager, camera);
 
             // Cleanup
             delete skyboxEntityManager;
-            context->setActiveCamera(context->player);
-            glViewport(0, 0, context->getWidth(), context->getHeight());
+            context.setActiveCamera(context.player);
+            glViewport(0, 0, context.getWidth(), context.getHeight());
             glEnable(GL_CULL_FACE);
 
-            context->generateSkybox = false;
+            context.generateSkybox = false;
             printf("Finished generating skybox!\n");
         }
 
-        context->update();
+        context.update();
 
         // Update shader with light info
         int index = 0;
         std::vector<std::pair<LightComponent *, TransformComponent *>> lights;
-        for (auto &pair : entityManager->getComponents<LightComponent>()) {
+        for (auto &pair : entityManager.getComponents<LightComponent>()) {
             // TODO: Take the MAX_LIGHTS closes to the camera
             if (index++ >= MAX_LIGHTS) {
                 break;
             }
             auto entity = pair.first;
             auto light = dynamic_cast<LightComponent *>(pair.second);
-            auto transform = entityManager->getComponent<TransformComponent>(entity);
+            auto transform = entityManager.getComponent<TransformComponent>(entity);
             lights.emplace_back(std::make_pair(light, transform));
         }
-        setLightUniforms(context->planetProgram, lights);
+        setLightUniforms(context.planetProgram, lights);
 
         // Process systems
-        gravitySystem->update();
-        orbitSystem->update();
-        inputSystem->update();
-        context->updateViewFrustum();
-        movementSystem->update();
-        collisionSystem->update();
-        renderSystem->update();
+        gravitySystem.update();
+        orbitSystem.update();
+        inputSystem.update();
+        context.updateViewFrustum();
+        movementSystem.update();
+        collisionSystem.update();
+        renderSystem.update();
     }
 }
 
@@ -199,11 +167,11 @@ void Application::createCameras() {
     auto position = glm::vec3(0, 200, 0);
 
     auto builder = EntityBuilder::create();
-    context->skyboxCamera = builder
+    context.skyboxCamera = builder
             ->withTransform(0, 0, 0)
             ->withCamera(CameraComponent::Mode::CubeMap, CameraComponent::Type::CubeMapType, target,
                          glm::normalize(-position), glm::vec3(0, 1, 0), 1)
-            ->build(entityManager);
+            ->build(&entityManager);
     delete builder;
 }
 
@@ -242,8 +210,8 @@ Entity *Application::createGrid(int width, int height, bool showYAxis) {
 
     auto builder = EntityBuilder::create();
     auto entity = builder
-            ->withMesh(vertices, indices, textures, context->gridProgram, GL_LINES)
-            ->build(entityManager);
+            ->withMesh(vertices, indices, textures, context.gridProgram, GL_LINES)
+            ->build(&entityManager);
     delete builder;
     return entity;
 }

@@ -12,8 +12,7 @@ class UserInterface {
 public:
     static const uint16_t MAX_PROFILE_LENGTH = 32;
 
-    explicit UserInterface(EntityManager *entityManager, GLContext *context);
-    ~UserInterface();
+    explicit UserInterface(EntityManager &, GLContext &, PlanetEditor &, EntityWindow &, SkyboxEditor &);
 
     void init();
 
@@ -26,12 +25,12 @@ public:
     TerrainSettings settings;
 
 private:
-    EntityManager *entityManager;
-    GLContext *context;
+    EntityManager &entityManager;
+    GLContext &context;
 
-    PlanetEditor *planetEditor;
-    EntityWindow *entityWindow;
-    SkyboxEditor *skyboxEditor;
+    PlanetEditor &planetEditor;
+    EntityWindow &entityWindow;
+    SkyboxEditor &skyboxEditor;
 
     bool showSpaceDisplay = true;
     bool showDemoWindow = false;
